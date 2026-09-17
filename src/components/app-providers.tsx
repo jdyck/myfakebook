@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { ClerkProvider, useAuth } from "@clerk/nextjs";
+import { shadcn } from "@clerk/ui/themes";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 
@@ -26,14 +27,18 @@ function AuthenticatedConvexProvider({
 export function AppProviders({ children }: { children: ReactNode }) {
   if (clerkPublishableKey && convexClient) {
     return (
-      <ClerkProvider publishableKey={clerkPublishableKey}>
+      <ClerkProvider appearance={{ theme: shadcn }} publishableKey={clerkPublishableKey}>
         <AuthenticatedConvexProvider>{children}</AuthenticatedConvexProvider>
       </ClerkProvider>
     );
   }
 
   if (clerkPublishableKey) {
-    return <ClerkProvider publishableKey={clerkPublishableKey}>{children}</ClerkProvider>;
+    return (
+      <ClerkProvider appearance={{ theme: shadcn }} publishableKey={clerkPublishableKey}>
+        {children}
+      </ClerkProvider>
+    );
   }
 
   if (convexClient) {

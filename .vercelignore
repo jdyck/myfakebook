@@ -1,0 +1,7 @@
+# Local-only files that are not part of the deployed application
+local/
+.idea/
+.next/
+node_modules/
+.git/
+.convex/
