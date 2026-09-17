@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyFakebook
 
-## Getting Started
+MyFakebook is a Next.js App Router workspace for writing, organizing, viewing, and exporting online lead sheets.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 + React 19
+- Clerk for authentication
+- Convex for authenticated chart persistence
+- abcjs for live engraving and browser playback
+- A small server-side ABC → MusicXML converter for portable exports
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The editor works without credentials and saves drafts to local storage. To enable Clerk and Convex:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Copy `.env.example` to `.env.local` and add your Clerk keys.
+2. Run `npx convex dev` and follow the prompts to create/link a Convex deployment.
+3. Add the generated Convex URL and your Clerk Frontend API URL to `.env.local`.
+4. Run `npm run dev` again.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Vercel and shadcn/ui
 
-## Learn More
+The project is configured for Vercel deployment and includes Vercel Web Analytics. Link the local project once, set the Clerk and Convex variables from `.env.example` in the Vercel project settings, and enable Web Analytics in the Vercel dashboard:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run vercel:link
+npm run vercel:deploy
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Use `npm run vercel:dev` to run the app through the Vercel development environment. shadcn/ui is configured for Tailwind v4 in `components.json`; add generated components under `src/components/ui` and use the shared `cn` helper from `@/lib/utils`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Convex functions live in `convex/`. Generated files in `convex/_generated/` are intentionally committed because the app imports their types.
 
-## Deploy on Vercel
+## Export flow
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`POST /api/musicxml` accepts `{ "abc": "..." }` and returns a downloadable MusicXML 4.0 document. The converter supports common ABC 2.1 headers, key signatures, meters, tempos, notes, rests, chords, repeats, ties, broken rhythms, and inline harmony names.
