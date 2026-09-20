@@ -41,13 +41,13 @@ export function ThemeToggle() {
   return (
     <button
       aria-label="Toggle light and dark mode"
-      className="theme-toggle"
+      className="grid size-8 cursor-pointer place-items-center rounded-[8px] border border-[var(--line-strong)] bg-transparent text-[var(--muted)] transition-[border-color,background-color,color] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed"
       title="Toggle light and dark mode"
       type="button"
       onClick={toggleTheme}
     >
-      <Moon className="theme-toggle-dark" aria-hidden="true" size={15} strokeWidth={1.8} />
-      <Sun className="theme-toggle-light" aria-hidden="true" size={15} strokeWidth={1.8} />
+      <Moon className="block dark:hidden" aria-hidden="true" size={15} strokeWidth={1.8} />
+      <Sun className="hidden dark:block" aria-hidden="true" size={15} strokeWidth={1.8} />
     </button>
   );
 }

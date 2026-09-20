@@ -167,29 +167,37 @@ export function MyFakebookWorkspace({
   }
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="brand-lockup">
-          <div className="brand-mark" aria-hidden="true">
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-20 flex min-h-[58px] items-center justify-between border-b border-[var(--line)] bg-[var(--paper)] px-6 max-[720px]:min-h-[54px] max-[720px]:px-3.5">
+        <div className="flex items-center gap-[9px]">
+          <div className="grid size-7 place-items-center rounded-[8px] bg-[var(--accent)] text-white" aria-hidden="true">
             <Music2 size={17} strokeWidth={2.2} />
           </div>
-          <span className="brand-name">MyFakebook</span>
+          <span className="text-[15px] font-[760] tracking-[-0.025em] text-[var(--ink)]">MyFakebook</span>
         </div>
-        <div className="topbar-actions">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
           <AuthControls configured={clerkConfigured} />
         </div>
       </header>
 
-      <div className={`shell-grid ${persistenceEnabled ? "has-sidebar" : ""}`}>
+      <div
+        className={`mx-auto grid min-h-[calc(100vh-58px)] max-w-[1440px] grid-cols-[minmax(0,1fr)] max-[720px]:block ${
+          persistenceEnabled ? "grid-cols-[208px_minmax(0,1fr)]" : ""
+        }`}
+      >
         {persistenceEnabled && (
-          <aside className="sidebar" aria-label="Saved charts">
-            <div className="sidebar-header">
-              <span className="sidebar-title">Saved charts</span>
+          <aside
+            className="min-w-0 border-r border-[var(--line)] px-[15px] py-[25px] max-[720px]:hidden"
+            aria-label="Saved charts"
+          >
+            <div className="grid gap-1 px-2">
+              <span className="text-[13px] font-[680] text-[var(--ink)]">Saved charts</span>
             </div>
             <ScorePersistence
               abc={abc}
               enabled={persistenceEnabled}
+              hydrated={hydrated}
               onLoad={(score) => {
                 setTitle(score.title);
                 setAbc(score.abc);
@@ -201,100 +209,145 @@ export function MyFakebookWorkspace({
           </aside>
         )}
 
-        <main className="workspace">
-          <div className="workspace-heading">
-            <div className="heading-copy">
-              <h1 className="workspace-title">
+        <main className="min-w-0 max-[1080px]:px-[22px] max-[1080px]:pt-7 max-[1080px]:pb-9 max-[720px]:px-3.5 max-[720px]:pt-[22px] max-[720px]:pb-7">
+          <div className="mb-5 flex items-start justify-between gap-6 max-[720px]:block">
+            <div className="min-w-0 flex-1">
+              <h1 className="m-0">
                 <input
                   aria-label="Lead sheet title"
-                  className="workspace-title-input"
+                  className="block w-full max-w-[520px] border-0 border-b border-b-transparent bg-transparent text-[clamp(24px,3vw,32px)] font-[740] leading-[1.05] tracking-[-0.055em] text-[var(--ink)] outline-0 transition-[border-color] duration-[160ms] ease-in-out hover:border-b-[var(--accent)] focus:border-b-[var(--accent)]"
                   value={title}
                   onChange={(event) => updateTitle(event.target.value)}
                 />
               </h1>
-              <div className="score-meta">
+              <div className="mt-2 flex items-center gap-2.5 whitespace-nowrap text-[10px] text-[var(--muted-soft)]">
                 <span>{keyLabel}</span>
-                <span className="score-meta-divider" />
+                <span className="size-[3px] rounded-full bg-[var(--line-strong)]" />
                 <span>{meterLabel}</span>
-                <span className="score-meta-divider" />
+                <span className="size-[3px] rounded-full bg-[var(--line-strong)]" />
                 <span>{tempoLabel} BPM</span>
               </div>
-              {feedback && <p className="workspace-feedback" role="status">{feedback}</p>}
+              {feedback && (
+                <p className="mt-2.5 mb-0 text-[11px] text-[var(--muted)]" role="status">
+                  {feedback}
+                </p>
+              )}
             </div>
-            <div className="heading-actions">
-              <button className="button-secondary" type="button" onClick={handleNewScore}>
+            <div className="flex flex-wrap items-center justify-end gap-[7px] max-[720px]:mt-4 max-[720px]:[justify-content:stretch]">
+              <button
+                className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border border-[var(--line-strong)] bg-[var(--paper)] px-[11px] text-[11px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55] max-[720px]:flex-1"
+                type="button"
+                onClick={handleNewScore}
+              >
                 <Plus size={13} strokeWidth={2} />
                 New
               </button>
-              <button className="button-secondary" type="button" onClick={() => fileInputRef.current?.click()}>
+              <button
+                className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border border-[var(--line-strong)] bg-[var(--paper)] px-[11px] text-[11px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55] max-[720px]:flex-1"
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+              >
                 <Upload size={13} strokeWidth={1.8} />
                 Import
               </button>
-              <button className="button-primary" disabled={exporting} type="button" onClick={handleExport}>
+              <button
+                className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border border-[var(--accent)] bg-[var(--accent)] px-[11px] text-[11px] font-[650] text-white transition-[border-color,background-color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent-deep)] hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55] max-[720px]:flex-1"
+                disabled={exporting}
+                type="button"
+                onClick={handleExport}
+              >
                 <Download size={13} strokeWidth={1.8} />
                 {exporting ? "Converting…" : "Export MusicXML"}
               </button>
             </div>
           </div>
 
-          <div className="workspace-grid">
-            <section className="surface-card editor-card" aria-label="ABC editor">
-              <div className="card-toolbar">
-                <div className="card-toolbar-left">
-                  <div className="card-label">
-                    <FileMusic className="card-label-icon" size={15} strokeWidth={1.8} />
+          <div className="grid min-w-0 grid-cols-[minmax(0,1.04fr)_minmax(360px,0.96fr)] gap-4 max-[1080px]:grid-cols-[minmax(0,1fr)]">
+            <section
+              className="flex min-h-[620px] min-w-0 flex-col overflow-hidden rounded-[11px] border border-[var(--line)] bg-[var(--paper)] max-[1080px]:min-h-auto"
+              aria-label="ABC editor"
+            >
+              <div className="flex min-h-12 items-center justify-between gap-3 border-b border-[var(--line)] px-3.5 max-[720px]:px-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-[12px] font-[700] text-[var(--ink)]">
+                    <FileMusic className="text-[var(--accent)]" size={15} strokeWidth={1.8} />
                     ABC source
                   </div>
-                  <span className="format-pill">.abc</span>
+                  <span className="rounded-[4px] bg-[var(--paper-soft)] px-1.5 py-1 font-mono text-[9px] font-[600] tracking-[0.03em] text-[var(--muted-soft)]">
+                    .abc
+                  </span>
                 </div>
-                <div className="card-toolbar-right">
-                  <button className="button-ghost" type="button" onClick={handleFormat}>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border border-transparent bg-transparent px-[11px] text-[11px] font-[650] text-[var(--muted)] transition-[background-color,color,opacity] duration-[160ms] ease-in-out hover:bg-[var(--paper-soft)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+                    type="button"
+                    onClick={handleFormat}
+                  >
                     <Settings2 size={13} strokeWidth={1.8} />
                     Format
                   </button>
-                  <button className="button-ghost" type="button" onClick={handleCopy}>
+                  <button
+                    className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border border-transparent bg-transparent px-[11px] text-[11px] font-[650] text-[var(--muted)] transition-[background-color,color,opacity] duration-[160ms] ease-in-out hover:bg-[var(--paper-soft)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+                    type="button"
+                    onClick={handleCopy}
+                  >
                     {copied ? <Check size={13} strokeWidth={2} /> : <Copy size={13} strokeWidth={1.8} />}
                     {copied ? "Copied" : "Copy"}
                   </button>
                 </div>
               </div>
 
-              <div className="editor-wrap">
-                <div className="line-numbers" aria-hidden="true">
-                  {Array.from({ length: lineCount }, (_, index) => <span key={index}>{index + 1}</span>)}
+              <div className="m-3.5 grid min-h-[515px] flex-1 grid-cols-[40px_minmax(0,1fr)] overflow-hidden rounded-[8px] border border-[var(--line)] bg-[var(--paper-soft)] max-[720px]:m-3">
+                <div
+                  className="overflow-hidden border-r border-[var(--line)] bg-[var(--editor-gutter)] pb-[17px] pl-0 pr-[9px] pt-3.5 text-right font-mono text-[11px] leading-[1.8] text-[var(--muted-soft)] select-none"
+                  aria-hidden="true"
+                >
+                  {Array.from({ length: lineCount }, (_, index) => (
+                    <span className="block h-[19.8px]" key={index}>
+                      {index + 1}
+                    </span>
+                  ))}
                 </div>
                 <textarea
                   aria-label="ABC notation source"
-                  className="abc-editor"
+                  className="min-h-[510px] w-full resize-none whitespace-pre border-0 bg-transparent px-4 pb-[17px] pt-3.5 font-mono text-[11.5px] leading-[1.8] text-[var(--ink)] outline-0 [tab-size:2] selection:bg-[#ddd9ff] dark:selection:bg-[#4a4387] dark:selection:text-white"
                   spellCheck={false}
                   value={abc}
                   onChange={(event) => setAbc(event.target.value)}
                 />
               </div>
 
-              <div className="editor-foot">
-                <div className="editor-foot-left">
+              <div className="flex min-h-[46px] items-center justify-between gap-3 px-3.5 max-[720px]:items-start max-[720px]:flex-col max-[720px]:justify-center max-[720px]:gap-1.5 max-[720px]:px-3 max-[720px]:py-[9px]">
+                <div className="flex flex-wrap items-center gap-3 font-mono text-[9px] text-[var(--muted-soft)]">
                   <span>{sourceLength} chars</span>
                   <span>{lineCount} lines</span>
                 </div>
-                <div className="editor-foot-right">
-                  <span className={`parse-state ${conversion ? "" : "error"}`}>
-                    <span className="status-dot" />
+                <div className="flex flex-wrap items-center gap-3 font-mono text-[9px] text-[var(--muted-soft)]">
+                  <span className={`flex items-center gap-1.5 ${conversion ? "text-[var(--green)]" : "text-[var(--amber)]"}`}>
+                    <span
+                      className={`size-1.5 shrink-0 rounded-full ${conversion ? "bg-[var(--green)]" : "bg-[var(--amber)]"}`}
+                    />
                     {conversion ? "Ready to export" : "Check source"}
                   </span>
-                  <span className="save-state"><span className="status-dot" />{saveStatus}</span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-[5px] shrink-0 rounded-full bg-[var(--green)]" />
+                    {saveStatus}
+                  </span>
                 </div>
               </div>
             </section>
 
-            <section className="surface-card preview-card" aria-label="Lead sheet preview">
-              <div className="card-toolbar">
-                <div className="card-label">
-                  <Music2 className="card-label-icon" size={15} strokeWidth={1.8} />
+            <section
+              className="flex min-h-[620px] min-w-0 flex-col overflow-hidden rounded-[11px] border border-[var(--line)] bg-[var(--paper)] max-[1080px]:min-h-auto"
+              aria-label="Lead sheet preview"
+            >
+              <div className="flex min-h-12 items-center justify-between gap-3 border-b border-[var(--line)] px-3.5 max-[720px]:px-3">
+                <div className="flex items-center gap-2 text-[12px] font-[700] text-[var(--ink)]">
+                  <Music2 className="text-[var(--accent)]" size={15} strokeWidth={1.8} />
                   Preview
                 </div>
               </div>
-              <div className="preview-body">
+              <div className="flex min-h-[570px] flex-1 flex-col p-3.5 max-[1080px]:min-h-[520px] max-[720px]:min-h-[440px] max-[720px]:p-3">
                 <AbcPreview abc={abc} key={abc} />
               </div>
             </section>
