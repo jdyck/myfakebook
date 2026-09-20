@@ -40,6 +40,17 @@ export const save = mutation({
       return args.id;
     }
 
+    const existing = await ctx.db
+      .query("scores")
+      .withIndex("by_owner", (query) => query.eq("ownerId", ownerId))
+      .filter((query) => query.and(query.eq(query.field("title"), title), query.eq(query.field("abc"), abc)))
+      .order("desc")
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, { updatedAt });
+      return existing._id;
+    }
+
     return ctx.db.insert("scores", { ownerId, title, abc, updatedAt });
   },
 });

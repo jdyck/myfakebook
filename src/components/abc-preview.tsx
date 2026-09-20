@@ -94,22 +94,32 @@ export function AbcPreview({ abc }: { abc: string }) {
 
   return (
     <>
-      <div className="sheet-paper" aria-label="Rendered lead sheet">
-        <div ref={targetRef} className={`abcjs-container${error ? " is-hidden" : ""}`} />
+      <div
+        className="relative min-h-[480px] flex-1 overflow-auto rounded-[8px] border border-[var(--line)] bg-[#fffefb] px-3.5 py-[18px] [scrollbar-color:#d1d1cb_transparent] dark:bg-[#f7f4e9] max-[720px]:min-h-[390px]"
+        aria-label="Rendered lead sheet"
+      >
+        <div>
+          <div
+            ref={targetRef}
+            className={`min-w-[500px] px-2 pb-3.5 pt-2.5 [&_svg]:overflow-visible [&_svg]:text-[#252631] ${error ? "hidden" : ""}`}
+          />
+        </div>
         {error && (
-          <div className="preview-error">
+          <div className="grid min-h-[320px] place-items-center p-[30px] text-center text-[11px] leading-[1.6] text-[var(--amber)]">
             <div>
               {error}
-              <code>Check the ABC header and note syntax.</code>
+              <code className="mt-[7px] block font-mono text-[10px] text-[var(--muted-soft)]">
+                Check the ABC header and note syntax.
+              </code>
             </div>
           </div>
         )}
       </div>
-      <div className="transport">
-        <div className="transport-left">
+      <div className="mt-3 flex items-center border-t border-[var(--line)] pt-3">
+        <div className="flex items-center gap-2">
           <button
             aria-label={isPlaying ? "Stop playback" : "Play lead sheet"}
-            className="transport-button"
+            className="grid size-[31px] cursor-pointer place-items-center rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] text-[var(--accent)] transition-[border-color,background-color] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed"
             disabled={Boolean(error) || isLoading}
             type="button"
             onClick={togglePlayback}
@@ -122,7 +132,7 @@ export function AbcPreview({ abc }: { abc: string }) {
               <Play size={13} fill="currentColor" strokeWidth={1.8} />
             )}
           </button>
-          <span className="transport-label">{isPlaying ? "Playing" : "Play preview"}</span>
+          <span className="text-[10px] font-[650] text-[var(--muted)]">{isPlaying ? "Playing" : "Play preview"}</span>
         </div>
       </div>
     </>

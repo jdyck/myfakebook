@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html className="bg-[var(--canvas)]" lang="en">
+      <body className="m-0 min-h-screen bg-[var(--canvas)] font-sans text-[var(--ink)] selection:bg-[#d9d6ff] selection:text-[#27235e] dark:selection:bg-[#4a4387] dark:selection:text-white">
         <AppProviders>{children}</AppProviders>
         <Analytics />
       </body>
