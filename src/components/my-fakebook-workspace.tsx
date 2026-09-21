@@ -17,18 +17,24 @@ import { AbcPreview } from "@/components/abc-preview";
 import { ScorePersistence } from "@/components/score-persistence";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { abcToMusicXml, DEFAULT_ABC, type MusicXmlResult } from "@/lib/abc";
+import { PUBLIC_CATALOG, type PublicCatalogChart } from "@/lib/public-catalog";
 
 type MyFakebookWorkspaceProps = {
   clerkConfigured: boolean;
   persistenceEnabled: boolean;
+  catalog: readonly PublicCatalogChart[];
 };
 
 export function MyFakebookWorkspace({
   clerkConfigured,
   persistenceEnabled,
+  catalog,
 }: MyFakebookWorkspaceProps) {
-  const [abc, setAbc] = useState(DEFAULT_ABC);
-  const [title, setTitle] = useState("Midnight Walk");
+  const initialCatalogChart = catalog[0] ?? PUBLIC_CATALOG[0];
+  const [abc, setAbc] = useState(initialCatalogChart?.abc ?? DEFAULT_ABC);
+  const [title, setTitle] = useState(initialCatalogChart?.title ?? "Midnight Walk");
+  const [sourceLabel, setSourceLabel] = useState("Public catalog");
+  const [selectedCatalogId, setSelectedCatalogId] = useState<string | null>(initialCatalogChart?.id ?? null);
   const [hydrated, setHydrated] = useState(false);
   const [saveStatus, setSaveStatus] = useState(persistenceEnabled ? "Connecting…" : "Saved locally");
   const [copied, setCopied] = useState(false);
@@ -49,7 +55,7 @@ export function MyFakebookWorkspace({
   const scoreTitle = title.trim() || "Untitled lead sheet";
   const keyLabel = abc.match(/^K:\s*(.*)$/m)?.[1]?.trim() || "C";
   const meterLabel = abc.match(/^M:\s*(.*)$/m)?.[1]?.trim() || "4/4";
-  const tempoLabel = abc.match(/^Q:.*?=\s*(\d+)/m)?.[1] || abc.match(/^Q:\s*(\d+)/m)?.[1] || "104";
+  const tempoLabel = abc.match(/^Q:.*?=\s*(\d+)/m)?.[1] || abc.match(/^Q:\s*(\d+)/m)?.[1] || "";
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -60,6 +66,10 @@ export function MyFakebookWorkspace({
           const draft = JSON.parse(stored) as { title?: string; abc?: string };
           if (typeof draft.abc === "string" && draft.abc.trim()) setAbc(draft.abc);
           if (typeof draft.title === "string" && draft.title.trim()) setTitle(draft.title);
+          if (typeof draft.abc === "string" && draft.abc.trim()) {
+            setSourceLabel("Guest draft");
+            setSelectedCatalogId(null);
+          }
         }
       } catch {
         // A local draft is a convenience; the editor should still load if storage is unavailable.
@@ -82,6 +92,8 @@ export function MyFakebookWorkspace({
   const handleStatus = useCallback((status: string) => setSaveStatus(status), []);
 
   function updateTitle(value: string) {
+    setSourceLabel("Guest draft");
+    setSelectedCatalogId(null);
     setTitle(value);
     setAbc((current) => {
       if (/^T:.*$/m.test(current)) return current.replace(/^T:.*$/m, `T:${value}`);
@@ -92,10 +104,14 @@ export function MyFakebookWorkspace({
   function handleNewScore() {
     setTitle("Midnight Walk");
     setAbc(DEFAULT_ABC);
+    setSourceLabel("Guest draft");
+    setSelectedCatalogId(null);
     setFeedback("Fresh lead sheet ready");
   }
 
   function handleFormat() {
+    setSourceLabel("Guest draft");
+    setSelectedCatalogId(null);
     setAbc((current) =>
       current
         .replaceAll("\r\n", "\n")
@@ -105,6 +121,20 @@ export function MyFakebookWorkspace({
         .replace(/\n{3,}/g, "\n\n"),
     );
     setFeedback("ABC spacing cleaned up");
+  }
+
+  function handleOpenCatalogChart(chart: PublicCatalogChart) {
+    setTitle(chart.title);
+    setAbc(chart.abc);
+    setSourceLabel("Public catalog");
+    setSelectedCatalogId(chart.id);
+    setFeedback(`Opened ${chart.title} from the public catalog`);
+  }
+
+  function handleAbcChange(value: string) {
+    setSourceLabel("Guest draft");
+    setSelectedCatalogId(null);
+    setAbc(value);
   }
 
   async function handleCopy() {
@@ -123,7 +153,7 @@ export function MyFakebookWorkspace({
     const reader = new FileReader();
     reader.onload = () => {
       const nextAbc = typeof reader.result === "string" ? reader.result : "";
-      setAbc(nextAbc);
+      handleAbcChange(nextAbc);
       const importedTitle = nextAbc.match(/^T:\s*(.*)$/m)?.[1]?.trim();
       if (importedTitle) setTitle(importedTitle);
       setFeedback(`Imported ${file.name}`);
@@ -201,6 +231,8 @@ export function MyFakebookWorkspace({
               onLoad={(score) => {
                 setTitle(score.title);
                 setAbc(score.abc);
+                setSourceLabel("My Songs");
+                setSelectedCatalogId(null);
                 setFeedback(`Loaded ${score.title}`);
               }}
               onStatus={handleStatus}
@@ -210,6 +242,49 @@ export function MyFakebookWorkspace({
         )}
 
         <main className="min-w-0 max-[1080px]:px-[22px] max-[1080px]:pt-7 max-[1080px]:pb-9 max-[720px]:px-3.5 max-[720px]:pt-[22px] max-[720px]:pb-7">
+          <section
+            aria-labelledby="public-catalog-heading"
+            className="mb-5 rounded-[11px] border border-[var(--line)] bg-[var(--paper)] px-4 py-3.5"
+          >
+            <div className="mb-2.5 flex items-baseline justify-between gap-3">
+              <div>
+                <h2 id="public-catalog-heading" className="m-0 text-[12px] font-[720] text-[var(--ink)]">
+                  Public catalog
+                </h2>
+                <p className="m-0 mt-1 text-[10px] text-[var(--muted-soft)]">Published charts available to every guest.</p>
+              </div>
+              <span className="font-mono text-[9px] text-[var(--muted-soft)]">{catalog.length} chart{catalog.length === 1 ? "" : "s"}</span>
+            </div>
+            <div className="grid gap-1.5">
+              {catalog.map((chart) => {
+                const isSelected = selectedCatalogId === chart.id;
+                return (
+                  <button
+                    aria-pressed={isSelected}
+                    className={`flex w-full items-center justify-between gap-3 rounded-[8px] border px-3 py-2 text-left transition-[border-color,background-color] duration-[160ms] ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${
+                      isSelected
+                        ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                        : "border-[var(--line)] bg-[var(--paper-soft)] hover:border-[var(--line-strong)]"
+                    }`}
+                    key={chart.id}
+                    type="button"
+                    onClick={() => handleOpenCatalogChart(chart)}
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate text-[11px] font-[680] text-[var(--ink)]">{chart.title}</span>
+                      <span className="mt-0.5 block truncate text-[10px] text-[var(--muted-soft)]">
+                        {chart.writers} · {chart.rhythm}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-[10px] font-[650] text-[var(--accent-deep)]">
+                      {isSelected ? "Open" : "View"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
           <div className="mb-5 flex items-start justify-between gap-6 max-[720px]:block">
             <div className="min-w-0 flex-1">
               <h1 className="m-0">
@@ -220,12 +295,26 @@ export function MyFakebookWorkspace({
                   onChange={(event) => updateTitle(event.target.value)}
                 />
               </h1>
-              <div className="mt-2 flex items-center gap-2.5 whitespace-nowrap text-[10px] text-[var(--muted-soft)]">
+              <div className="mt-2 flex flex-wrap items-center gap-2.5 text-[10px] text-[var(--muted-soft)]">
+                <span className="font-[650] text-[var(--accent-deep)]">{sourceLabel}</span>
+                <span className="size-[3px] rounded-full bg-[var(--line-strong)]" />
+                {abc.match(/^C:\s*(.*)$/m)?.[1]?.trim() && (
+                  <>
+                    <span>{abc.match(/^C:\s*(.*)$/m)?.[1]?.trim()}</span>
+                    <span className="size-[3px] rounded-full bg-[var(--line-strong)]" />
+                  </>
+                )}
+                {abc.match(/^R:\s*(.*)$/m)?.[1]?.trim() && (
+                  <>
+                    <span>{abc.match(/^R:\s*(.*)$/m)?.[1]?.trim()}</span>
+                    <span className="size-[3px] rounded-full bg-[var(--line-strong)]" />
+                  </>
+                )}
                 <span>{keyLabel}</span>
                 <span className="size-[3px] rounded-full bg-[var(--line-strong)]" />
                 <span>{meterLabel}</span>
                 <span className="size-[3px] rounded-full bg-[var(--line-strong)]" />
-                <span>{tempoLabel} BPM</span>
+                <span>{tempoLabel ? `${tempoLabel} BPM` : "Tempo not set"}</span>
               </div>
               {feedback && (
                 <p className="mt-2.5 mb-0 text-[11px] text-[var(--muted)]" role="status">
@@ -313,7 +402,7 @@ export function MyFakebookWorkspace({
                   className="min-h-[510px] w-full resize-none whitespace-pre border-0 bg-transparent px-4 pb-[17px] pt-3.5 font-mono text-[11.5px] leading-[1.8] text-[var(--ink)] outline-0 [tab-size:2] selection:bg-[#ddd9ff] dark:selection:bg-[#4a4387] dark:selection:text-white"
                   spellCheck={false}
                   value={abc}
-                  onChange={(event) => setAbc(event.target.value)}
+                  onChange={(event) => handleAbcChange(event.target.value)}
                 />
               </div>
 

@@ -1,4 +1,5 @@
 import { MyFakebookWorkspace } from "@/components/my-fakebook-workspace";
+import { PUBLIC_CATALOG } from "@/lib/public-catalog";
 
 export default function Home() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
@@ -8,6 +9,7 @@ export default function Home() {
     <MyFakebookWorkspace
       clerkConfigured={clerkConfigured}
       persistenceEnabled={clerkConfigured && convexConfigured}
+      catalog={PUBLIC_CATALOG}
     />
   );
 }

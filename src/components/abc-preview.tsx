@@ -26,6 +26,7 @@ export function AbcPreview({ abc }: { abc: string }) {
   useEffect(() => {
     if (synthRef.current?.getIsRunning()) synthRef.current.stop();
     synthRef.current = null;
+    tuneRef.current = null;
     let errorTimeout: number | undefined;
     const scheduleError = (message: string) => {
       errorTimeout = window.setTimeout(() => setError(message), 0);
