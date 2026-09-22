@@ -17,6 +17,7 @@ import { AbcPreview } from "@/components/abc-preview";
 import { ScorePersistence } from "@/components/score-persistence";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { abcToMusicXml, DEFAULT_ABC, type MusicXmlResult } from "@/lib/abc";
+import { DEFAULT_DISPLAY_SETTINGS, type ChartDisplaySettings } from "@/lib/abc-display";
 import { PUBLIC_CATALOG, type PublicCatalogChart } from "@/lib/public-catalog";
 
 type MyFakebookWorkspaceProps = {
@@ -40,6 +41,7 @@ export function MyFakebookWorkspace({
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [displaySettings, setDisplaySettings] = useState<ChartDisplaySettings>(DEFAULT_DISPLAY_SETTINGS);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const conversion = useMemo<MusicXmlResult | null>(() => {
@@ -56,6 +58,10 @@ export function MyFakebookWorkspace({
   const keyLabel = abc.match(/^K:\s*(.*)$/m)?.[1]?.trim() || "C";
   const meterLabel = abc.match(/^M:\s*(.*)$/m)?.[1]?.trim() || "4/4";
   const tempoLabel = abc.match(/^Q:.*?=\s*(\d+)/m)?.[1] || abc.match(/^Q:\s*(\d+)/m)?.[1] || "";
+
+  function updateDisplaySettings(patch: Partial<ChartDisplaySettings>) {
+    setDisplaySettings((current) => ({ ...current, ...patch }));
+  }
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -173,7 +179,7 @@ export function MyFakebookWorkspace({
       const response = await fetch("/api/musicxml", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ abc }),
+        body: JSON.stringify({ abc, display: displaySettings }),
       });
       if (!response.ok) {
         const error = (await response.json()) as { error?: string };
@@ -322,6 +328,42 @@ export function MyFakebookWorkspace({
                 </p>
               )}
             </div>
+            <fieldset
+              aria-label="Display controls"
+              className="flex flex-wrap items-center justify-end gap-2 border-0 p-0 max-[720px]:justify-start"
+            >
+              <legend className="sr-only">Display controls</legend>
+              <label className="flex items-center gap-1.5 text-[10px] font-[650] text-[var(--muted)]">
+                Transpose
+                <select
+                  aria-label="Chart transposition"
+                  className="rounded-[6px] border border-[var(--line-strong)] bg-[var(--paper)] px-1.5 py-1 text-[10px] text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+                  value={displaySettings.transposition}
+                  onChange={(event) => updateDisplaySettings({ transposition: Number(event.target.value) })}
+                >
+                  {Array.from({ length: 25 }, (_, index) => index - 12).map((steps) => (
+                    <option key={steps} value={steps}>
+                      {steps > 0 ? `+${steps}` : steps}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {([
+                ["showChords", "Show chords"],
+                ["showLyrics", "Show lyrics"],
+              ] as const).map(([setting, label]) => (
+                <label className="inline-flex items-center gap-1 text-[10px] font-[650] text-[var(--muted)]" key={setting}>
+                  <input
+                    aria-label={label}
+                    checked={displaySettings[setting]}
+                    className="size-3 accent-[var(--accent)]"
+                    type="checkbox"
+                    onChange={(event) => updateDisplaySettings({ [setting]: event.target.checked })}
+                  />
+                  {label.replace("Show ", "")}
+                </label>
+              ))}
+            </fieldset>
             <div className="flex flex-wrap items-center justify-end gap-[7px] max-[720px]:mt-4 max-[720px]:[justify-content:stretch]">
               <button
                 className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border border-[var(--line-strong)] bg-[var(--paper)] px-[11px] text-[11px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55] max-[720px]:flex-1"
@@ -437,7 +479,13 @@ export function MyFakebookWorkspace({
                 </div>
               </div>
               <div className="flex min-h-[570px] flex-1 flex-col p-3.5 max-[1080px]:min-h-[520px] max-[720px]:min-h-[440px] max-[720px]:p-3">
-                <AbcPreview abc={abc} key={abc} />
+                <AbcPreview
+                  abc={abc}
+                  key={abc}
+                  showChords={displaySettings.showChords}
+                  showLyrics={displaySettings.showLyrics}
+                  transposition={displaySettings.transposition}
+                />
               </div>
             </section>
           </div>

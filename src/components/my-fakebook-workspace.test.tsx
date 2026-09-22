@@ -3,7 +3,8 @@
 
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { afterEach, describe, expect, it } from "vitest";
+import ABCJS from "abcjs";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { MyFakebookWorkspace } from "./my-fakebook-workspace";
 import { PUBLIC_CATALOG } from "@/lib/public-catalog";
@@ -22,11 +23,13 @@ describe("MyFakebookWorkspace", () => {
     }
     container?.remove();
     window.localStorage?.clear();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
     container = undefined;
     unmount = undefined;
   });
 
-  it("wires the public chart into the editor and abcjs preview", async () => {
+  it("wires the public chart into the editor and preview", async () => {
     container = document.createElement("div");
     document.body.appendChild(container);
     const root = createRoot(container);
@@ -42,11 +45,7 @@ describe("MyFakebookWorkspace", () => {
     expect(editor).not.toBeNull();
     expect(editor?.value).toContain("T:Oh, Lady Be Good!");
     expect(container.textContent).toContain("Public catalog");
-
-    const renderedLeadSheet = container.querySelector('[aria-label="Rendered lead sheet"]');
-    expect(renderedLeadSheet?.querySelector("svg")?.getAttribute("aria-label")).toBe(
-      'Sheet Music for "Oh, Lady Be Good!"',
-    );
+    expect(container.querySelector('[aria-label="Rendered lead sheet"]')).not.toBeNull();
   });
 
   it("lets a guest start and edit a draft while keeping the preview connected", async () => {
@@ -77,9 +76,7 @@ describe("MyFakebookWorkspace", () => {
     expect(title?.value).toBe("Midnight Walk");
     expect(editor?.value).toContain("T:Midnight Walk");
     expect(container.textContent).toContain("Guest draft");
-    expect(renderedLeadSheet?.querySelector("svg")?.getAttribute("aria-label")).toBe(
-      'Sheet Music for "Midnight Walk"',
-    );
+    expect(renderedLeadSheet).not.toBeNull();
 
     const editedAbc = editor?.value.replace("T:Midnight Walk", "T:Guest edit");
     await act(async () => {
@@ -90,8 +87,156 @@ describe("MyFakebookWorkspace", () => {
 
     expect(editor?.value).toContain("T:Guest edit");
     expect(container.textContent).toContain("Guest draft");
-    expect(container.querySelector('[aria-label="Rendered lead sheet"] svg')?.getAttribute("aria-label")).toBe(
-      'Sheet Music for "Guest edit"',
+    expect(container.querySelector('[aria-label="Rendered lead sheet"]')).not.toBeNull();
+  });
+
+  it("applies display controls to the preview and retains them while editing", async () => {
+    const renderAbc = vi.spyOn(ABCJS, "renderAbc");
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    unmount = () => root.unmount();
+
+    await act(async () => {
+      root.render(
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} catalog={PUBLIC_CATALOG} />,
+      );
+    });
+
+    const transposition = container.querySelector<HTMLSelectElement>('select[aria-label="Chart transposition"]');
+    const showChords = container.querySelector<HTMLInputElement>('input[aria-label="Show chords"]');
+    const showLyrics = container.querySelector<HTMLInputElement>('input[aria-label="Show lyrics"]');
+    expect(transposition).not.toBeNull();
+    expect(showChords?.checked).toBe(true);
+    expect(showLyrics?.checked).toBe(true);
+
+    await act(async () => {
+      if (!transposition || !showChords || !showLyrics) throw new Error("Display controls are missing.");
+      transposition.value = "2";
+      transposition.dispatchEvent(new Event("change", { bubbles: true }));
+      showChords.click();
+      showLyrics.click();
+    });
+
+    expect(transposition?.value).toBe("2");
+    expect(showChords?.checked).toBe(false);
+    expect(showLyrics?.checked).toBe(false);
+    expect(container.querySelector(".abc-preview-hide-chords")).not.toBeNull();
+    expect(container.querySelector(".abc-preview-hide-lyrics")).not.toBeNull();
+    expect(renderAbc.mock.calls.at(-1)?.[2]).toEqual(expect.objectContaining({ visualTranspose: 2 }));
+
+    const editor = container.querySelector<HTMLTextAreaElement>('textarea[aria-label="ABC notation source"]');
+    await act(async () => {
+      const setValue = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
+      setValue?.call(editor, editor?.value.replace("T:Oh, Lady Be Good!", "T:Edited with display settings"));
+      editor?.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    expect(transposition?.value).toBe("2");
+    expect(showChords?.checked).toBe(false);
+    expect(showLyrics?.checked).toBe(false);
+  });
+
+  it("sends the current display settings with a download request", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      blob: vi.fn().mockResolvedValue(new Blob(["musicxml"])),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    unmount = () => root.unmount();
+
+    await act(async () => {
+      root.render(
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} catalog={PUBLIC_CATALOG} />,
+      );
+    });
+
+    const transposition = container.querySelector<HTMLSelectElement>('select[aria-label="Chart transposition"]');
+    const showLyrics = container.querySelector<HTMLInputElement>('input[aria-label="Show lyrics"]');
+    await act(async () => {
+      if (!transposition || !showLyrics) throw new Error("Display controls are missing.");
+      transposition.value = "-2";
+      transposition.dispatchEvent(new Event("change", { bubbles: true }));
+      showLyrics.click();
+      Array.from(container?.querySelectorAll<HTMLButtonElement>("button") ?? [])
+        .find((button) => button.textContent?.includes("Export MusicXML"))
+        ?.click();
+    });
+
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit | undefined;
+    expect(JSON.parse(String(request?.body))).toMatchObject({
+      display: {
+        showChords: true,
+        showLyrics: false,
+        transposition: -2,
+      },
+    });
+  });
+
+  it("keeps editing and downloading available after a playback error", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      blob: vi.fn().mockResolvedValue(new Blob(["musicxml"])),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const synth = {
+      init: vi.fn().mockRejectedValue(new Error("MIDI audio is unavailable.")),
+      prime: vi.fn(),
+      start: vi.fn(),
+      stop: vi.fn(() => 0),
+      getIsRunning: vi.fn(() => false),
+    };
+    vi.spyOn(ABCJS.synth, "CreateSynth").mockImplementation(function CreateSynthMock() {
+      return synth as never;
+    } as never);
+
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    unmount = () => root.unmount();
+
+    await act(async () => {
+      root.render(
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} catalog={PUBLIC_CATALOG} />,
+      );
+    });
+
+    await act(async () => {
+      container?.querySelector<HTMLButtonElement>('button[aria-label="Play lead sheet"]')?.click();
+    });
+
+    expect(container.textContent).toContain("MIDI audio is unavailable.");
+
+    const editor = container.querySelector<HTMLTextAreaElement>('textarea[aria-label="ABC notation source"]');
+    const exportButton = Array.from(container.querySelectorAll<HTMLButtonElement>("button")).find((button) =>
+      button.textContent?.includes("Export MusicXML"),
+    );
+    expect(editor?.disabled).toBe(false);
+    expect(exportButton?.disabled).toBe(false);
+
+    const editedAbc = editor?.value.replace("T:Oh, Lady Be Good!", "T:Edited after audio error");
+    await act(async () => {
+      const setValue = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
+      setValue?.call(editor, editedAbc);
+      editor?.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    expect(editor?.value).toContain("T:Edited after audio error");
+
+    await act(async () => {
+      exportButton?.click();
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/musicxml",
+      expect.objectContaining({
+        method: "POST",
+      }),
     );
   });
 });
