@@ -35,6 +35,7 @@ export function MyFakebookWorkspace({
   const [abc, setAbc] = useState(initialCatalogChart?.abc ?? DEFAULT_ABC);
   const [title, setTitle] = useState(initialCatalogChart?.title ?? "Midnight Walk");
   const [sourceLabel, setSourceLabel] = useState("Public catalog");
+  const [isPublicCatalog, setIsPublicCatalog] = useState(true);
   const [selectedCatalogId, setSelectedCatalogId] = useState<string | null>(initialCatalogChart?.id ?? null);
   const [hydrated, setHydrated] = useState(false);
   const [saveStatus, setSaveStatus] = useState(persistenceEnabled ? "Connecting…" : "Saved locally");
@@ -74,6 +75,7 @@ export function MyFakebookWorkspace({
           if (typeof draft.title === "string" && draft.title.trim()) setTitle(draft.title);
           if (typeof draft.abc === "string" && draft.abc.trim()) {
             setSourceLabel("Guest draft");
+            setIsPublicCatalog(false);
             setSelectedCatalogId(null);
           }
         }
@@ -98,7 +100,7 @@ export function MyFakebookWorkspace({
   const handleStatus = useCallback((status: string) => setSaveStatus(status), []);
 
   function updateTitle(value: string) {
-    setSourceLabel("Guest draft");
+    setSourceLabel(isPublicCatalog ? "Public catalog edit" : "Guest draft");
     setSelectedCatalogId(null);
     setTitle(value);
     setAbc((current) => {
@@ -111,12 +113,13 @@ export function MyFakebookWorkspace({
     setTitle("Midnight Walk");
     setAbc(DEFAULT_ABC);
     setSourceLabel("Guest draft");
+    setIsPublicCatalog(false);
     setSelectedCatalogId(null);
     setFeedback("Fresh lead sheet ready");
   }
 
   function handleFormat() {
-    setSourceLabel("Guest draft");
+    setSourceLabel(isPublicCatalog ? "Public catalog edit" : "Guest draft");
     setSelectedCatalogId(null);
     setAbc((current) =>
       current
@@ -133,12 +136,13 @@ export function MyFakebookWorkspace({
     setTitle(chart.title);
     setAbc(chart.abc);
     setSourceLabel("Public catalog");
+    setIsPublicCatalog(true);
     setSelectedCatalogId(chart.id);
     setFeedback(`Opened ${chart.title} from the public catalog`);
   }
 
   function handleAbcChange(value: string) {
-    setSourceLabel("Guest draft");
+    setSourceLabel(isPublicCatalog ? "Public catalog edit" : "Guest draft");
     setSelectedCatalogId(null);
     setAbc(value);
   }
@@ -234,12 +238,19 @@ export function MyFakebookWorkspace({
               abc={abc}
               enabled={persistenceEnabled}
               hydrated={hydrated}
+              isPublicCatalog={isPublicCatalog}
               onLoad={(score) => {
                 setTitle(score.title);
                 setAbc(score.abc);
                 setSourceLabel("My Songs");
+                setIsPublicCatalog(false);
                 setSelectedCatalogId(null);
                 setFeedback(`Loaded ${score.title}`);
+              }}
+              onSavedToLibrary={() => {
+                setSourceLabel("My Songs");
+                setIsPublicCatalog(false);
+                setSelectedCatalogId(null);
               }}
               onStatus={handleStatus}
               title={scoreTitle}
