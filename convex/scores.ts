@@ -54,3 +54,18 @@ export const save = mutation({
     return ctx.db.insert("scores", { ownerId, title, abc, updatedAt });
   },
 });
+
+export const remove = mutation({
+  args: {
+    id: v.id("scores"),
+  },
+  handler: async (ctx, args) => {
+    const ownerId = await currentOwner(ctx);
+    const existing = await ctx.db.get(args.id);
+
+    if (!existing || existing.ownerId !== ownerId) throw new Error("Score not found");
+
+    await ctx.db.delete(args.id);
+    return args.id;
+  },
+});

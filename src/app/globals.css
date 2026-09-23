@@ -91,3 +91,30 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+
+.abc-preview-hide-chords .abcjs-chord,
+.abc-preview-hide-lyrics .abcjs-lyric {
+  display: none !important;
+}
+
+.abcjs-note-playing,
+.abcjs-note-playing path,
+.abcjs-note-playing text,
+.abcjs-note-playing ellipse,
+.abcjs-note-playing line,
+.abcjs-note-playing polygon,
+.abcjs-note-playing rect {
+  fill: var(--accent) !important;
+  stroke: var(--accent) !important;
+}
+
+.abcjs-note-start-selected,
+.abcjs-note-start-selected path,
+.abcjs-note-start-selected text,
+.abcjs-note-start-selected ellipse,
+.abcjs-note-start-selected line,
+.abcjs-note-start-selected polygon,
+.abcjs-note-start-selected rect {
+  fill: var(--accent-deep) !important;
+  stroke: var(--accent-deep) !important;
+}

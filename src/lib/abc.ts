@@ -39,6 +39,7 @@ type ParsedItem = {
   duration: number;
   pitches: Pitch[];
   chord?: string;
+  lyric?: string;
   tieStart?: boolean;
   tieStop?: boolean;
 };
@@ -296,6 +297,18 @@ function parseMeasures(header: HeaderInfo) {
   let pendingChord: string | undefined;
   let pendingBrokenRatio = 1;
   let tieActive = false;
+  const lyricTokens = header.bodyLines
+    .filter((line) => /^w:/i.test(line.trim()))
+    .flatMap((line) => line.trim().replace(/^w:\s*/i, "").split(/\s+/))
+    .map((token) => token.replace(/[|*]$/g, "").replace(/-$/g, ""))
+    .filter(Boolean);
+  let lyricIndex = 0;
+
+  const nextLyric = () => {
+    const lyric = lyricTokens[lyricIndex];
+    lyricIndex += 1;
+    return lyric;
+  };
 
   const finishMeasure = (bar: string) => {
     if (current.length === 0) {
@@ -381,6 +394,7 @@ function parseMeasures(header: HeaderInfo) {
             duration: duration.duration * pendingBrokenRatio,
             pitches,
             chord: pendingChord,
+            lyric: nextLyric(),
             tieStop: tieActive,
           };
           current.push(item);
@@ -408,7 +422,8 @@ function parseMeasures(header: HeaderInfo) {
           kind: pitch.pitch ? "note" : "rest",
           duration: duration.duration * pendingBrokenRatio,
           pitches: pitch.pitch ? [pitch.pitch] : [],
-          chord: pitch.pitch ? pendingChord : undefined,
+          chord: pendingChord,
+          lyric: nextLyric(),
           tieStop: pitch.pitch ? tieActive : undefined,
         };
         current.push(item);
@@ -630,6 +645,7 @@ function noteXml(item: ParsedItem, pitch: Pitch | undefined, chordIndex: number)
     if (item.tieStart) lines.push(`<tied type="start"/>`);
     lines.push(`</notations>`);
   }
+  if (item.lyric) lines.push(`<lyric><text>${escapeXml(item.lyric)}</text></lyric>`);
   lines.push(`</note>`);
   return lines;
 }
@@ -643,7 +659,8 @@ export function abcToMusicXml(abc: string): MusicXmlResult {
     (total, measure) => total + measure.items.reduce((count, item) => count + (item.kind === "note" ? item.pitches.length : 0), 0),
     0,
   );
-  if (notes === 0) throw new Error("No notes were found. Add a K: field followed by ABC music.");
+  const musicalEvents = measures.reduce((total, measure) => total + measure.items.length, 0);
+  if (musicalEvents === 0) throw new Error("No notes were found. Add a K: field followed by ABC music.");
 
   const warnings: string[] = [];
   if (header.voiceCount > 1) warnings.push("Multiple voices detected; the first voice is exported.");
