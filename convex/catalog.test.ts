@@ -35,3 +35,54 @@ test("an admin can publish a song from My Songs", async () => {
     }),
   ]);
 });
+
+test("an admin can remove a public song", async () => {
+  const t = convexTest(schema, modules);
+  const asAdmin = t.withIdentity({
+    subject: "admin_1",
+    metadata: { role: "admin" },
+  });
+
+  const privateSongId = await asAdmin.mutation(api.scores.save, {
+    title: "Autumn Song",
+    abc: "T:Autumn Song\nK:C\nC D E F|",
+    updatedAt: Date.now(),
+  });
+
+  const publicSongId = await asAdmin.mutation(api.catalog.publishFromLibrary, {
+    scoreId: privateSongId,
+  });
+
+  await asAdmin.mutation(api.catalog.remove, { id: publicSongId });
+
+  expect(await t.query(api.catalog.listPublished, {})).toEqual([]);
+});
+
+test("a non-admin cannot remove a public song", async () => {
+  const t = convexTest(schema, modules);
+  const asAdmin = t.withIdentity({
+    subject: "admin_1",
+    metadata: { role: "admin" },
+  });
+  const asUser = t.withIdentity({ subject: "user_1" });
+
+  const privateSongId = await asAdmin.mutation(api.scores.save, {
+    title: "Autumn Song",
+    abc: "T:Autumn Song\nK:C\nC D E F|",
+    updatedAt: Date.now(),
+  });
+
+  const publicSongId = await asAdmin.mutation(api.catalog.publishFromLibrary, {
+    scoreId: privateSongId,
+  });
+
+  await expect(asUser.mutation(api.catalog.remove, { id: publicSongId })).rejects.toThrow("Not authorized");
+
+  expect(await t.query(api.catalog.listPublished, {})).toEqual([
+    expect.objectContaining({
+      _id: publicSongId,
+      title: "Autumn Song",
+      status: "published",
+    }),
+  ]);
+});

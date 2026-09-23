@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Authenticated, Unauthenticated, useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useUser } from "@clerk/nextjs";
+import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 
-type LoadedScore = {
+export type LoadedScore = {
   id: Id<"scores">;
   title: string;
   abc: string;
@@ -19,9 +20,11 @@ type ScorePersistenceProps = {
   abc: string;
   hydrated: boolean;
   isPublicCatalog: boolean;
+  currentScore: LoadedScore | null;
+  onCurrentScoreChange: (score: LoadedScore | null) => void;
+  onLibraryScoresChange: (scores: LoadedScore[]) => void;
   onStatus: (status: string) => void;
   onLoad: (score: LoadedScore) => void;
-  onSavedToLibrary: () => void;
 };
 
 export function ScorePersistence({
@@ -37,20 +40,18 @@ function ConnectedScorePersistence({
   abc,
   hydrated,
   isPublicCatalog,
+  currentScore,
+  onCurrentScoreChange,
+  onLibraryScoresChange,
   onStatus,
   onLoad,
-  onSavedToLibrary,
 }: ScorePersistenceProps) {
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const { user } = useUser();
   const saveScore = useMutation(api.scores.save);
-  const publishFromLibrary = useMutation(api.catalog.publishFromLibrary);
   const scores = useQuery(api.scores.listMine, isAuthenticated ? {} : "skip");
   const scoreId = useRef<Id<"scores"> | undefined>(undefined);
+  const libraryScoresRef = useRef<LoadedScore[]>([]);
   const statusRef = useRef(onStatus);
-  const [publishingId, setPublishingId] = useState<Id<"scores"> | null>(null);
-  const [savingCopy, setSavingCopy] = useState(false);
-  const isAdmin = user?.publicMetadata?.role === "admin";
   const persistenceReady = isAuthenticated && hydrated && scores !== undefined;
 
   useEffect(() => {
@@ -58,20 +59,52 @@ function ConnectedScorePersistence({
   }, [onStatus]);
 
   useEffect(() => {
+    if (!scores) return;
+    const nextScores = scores.map((score) => ({ id: score._id, title: score.title, abc: score.abc }));
+    const scoresChanged =
+      nextScores.length !== libraryScoresRef.current.length ||
+      nextScores.some((score, index) => {
+        const previous = libraryScoresRef.current[index];
+        return !previous || previous.id !== score.id || previous.title !== score.title || previous.abc !== score.abc;
+      });
+    if (!scoresChanged) return;
+    libraryScoresRef.current = nextScores;
+    onLibraryScoresChange(nextScores);
+  }, [onLibraryScoresChange, scores]);
+
+  useEffect(() => {
     if (!persistenceReady || isPublicCatalog) return;
 
     if (!scoreId.current) {
       const existingScore = scores.find((score) => score.title === title && score.abc === abc);
       scoreId.current = existingScore?._id;
+      if (existingScore) {
+        onCurrentScoreChange({ id: existingScore._id, title: existingScore.title, abc: existingScore.abc });
+      }
     }
-  }, [abc, isPublicCatalog, persistenceReady, scores, title]);
+  }, [abc, isPublicCatalog, onCurrentScoreChange, persistenceReady, scores, title]);
 
   useEffect(() => {
-    if (isPublicCatalog) scoreId.current = undefined;
-  }, [isPublicCatalog]);
+    if (!isPublicCatalog) return;
+    scoreId.current = undefined;
+    onCurrentScoreChange(null);
+  }, [isPublicCatalog, onCurrentScoreChange]);
 
   useEffect(() => {
-    if (!isAuthenticated || !hydrated || !persistenceReady || isPublicCatalog || !abc.trim()) return;
+    if (isPublicCatalog) return;
+    scoreId.current = currentScore?.id;
+  }, [currentScore?.id, isPublicCatalog]);
+
+  useEffect(() => {
+    if (
+      !isAuthenticated ||
+      !hydrated ||
+      !persistenceReady ||
+      isPublicCatalog ||
+      !abc.trim()
+    ) {
+      return;
+    }
     statusRef.current("Saving…");
     const timeout = window.setTimeout(async () => {
       try {
@@ -82,72 +115,30 @@ function ConnectedScorePersistence({
           updatedAt: Date.now(),
         });
         scoreId.current = savedId;
+        onCurrentScoreChange({ id: savedId, title, abc });
         statusRef.current("Saved to workspace");
       } catch {
         statusRef.current("Couldn’t sync");
       }
     }, 850);
     return () => window.clearTimeout(timeout);
-  }, [abc, hydrated, isAuthenticated, isPublicCatalog, persistenceReady, saveScore, title]);
+  }, [abc, hydrated, isAuthenticated, isPublicCatalog, onCurrentScoreChange, persistenceReady, saveScore, title]);
 
   useEffect(() => {
     if (!isAuthenticated) {
       scoreId.current = undefined;
+      onCurrentScoreChange(null);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, onCurrentScoreChange]);
 
   useEffect(() => {
     if (isLoading) statusRef.current("Connecting…");
     if (!isLoading && !isAuthenticated) statusRef.current("Sign in to sync");
   }, [isAuthenticated, isLoading]);
 
-  async function handlePublish(score: LoadedScore) {
-    setPublishingId(score.id);
-    statusRef.current("Publishing…");
-    try {
-      await publishFromLibrary({ scoreId: score.id });
-      statusRef.current("Published to public catalog");
-    } catch {
-      statusRef.current("Couldn’t publish");
-    } finally {
-      setPublishingId(null);
-    }
-  }
-
-  async function handleSaveToLibrary() {
-    if (!persistenceReady || !abc.trim()) return;
-
-    setSavingCopy(true);
-    statusRef.current("Saving to My Songs…");
-    try {
-      const savedId = await saveScore({
-        title,
-        abc,
-        updatedAt: Date.now(),
-      });
-      scoreId.current = savedId;
-      onSavedToLibrary();
-      statusRef.current("Saved to My Songs");
-    } catch {
-      statusRef.current("Couldn’t save to My Songs");
-    } finally {
-      setSavingCopy(false);
-    }
-  }
-
   return (
     <div className="mt-[17px] grid gap-[3px]" aria-label="Saved charts">
       <Authenticated>
-        {isPublicCatalog && (
-          <button
-            className="mb-2 inline-flex min-h-[32px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--accent)] bg-[var(--accent)] px-2.5 text-[10px] font-[680] text-white transition-[background-color,border-color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent-deep)] hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
-            disabled={savingCopy}
-            type="button"
-            onClick={() => void handleSaveToLibrary()}
-          >
-            {savingCopy ? "Saving…" : "Save to My Songs"}
-          </button>
-        )}
         {scores?.length ? (
           scores
             .filter(
@@ -160,8 +151,10 @@ function ConnectedScorePersistence({
                   className="flex min-w-0 flex-1 cursor-pointer items-center gap-[9px] rounded-[8px] border-0 bg-transparent p-2 text-left transition-[background-color] duration-[160ms] ease-in-out hover:bg-[var(--paper-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed"
                   type="button"
                   onClick={() => {
+                    const loadedScore = { id: score._id, title: score.title, abc: score.abc };
                     scoreId.current = score._id;
-                    onLoad({ id: score._id, title: score.title, abc: score.abc });
+                    onCurrentScoreChange(loadedScore);
+                    onLoad(loadedScore);
                     statusRef.current("Loaded from workspace");
                   }}
                 >
@@ -175,17 +168,6 @@ function ConnectedScorePersistence({
                     </span>
                   </span>
                 </button>
-                {isAdmin && (
-                  <button
-                    aria-label={`Publish ${score.title} to public catalog`}
-                    className="shrink-0 rounded-[6px] border border-[var(--line-strong)] bg-[var(--paper)] px-1.5 py-1 text-[9px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
-                    disabled={publishingId === score._id}
-                    type="button"
-                    onClick={() => void handlePublish({ id: score._id, title: score.title, abc: score.abc })}
-                  >
-                    {publishingId === score._id ? "Publishing…" : "Publish"}
-                  </button>
-                )}
               </div>
             ))
         ) : (
@@ -206,5 +188,258 @@ function ConnectedScorePersistence({
         </div>
       </Unauthenticated>
     </div>
+  );
+}
+
+export function RemoveFromLibraryButton({
+  enabled,
+  score,
+  onRemoved,
+  onStatus,
+}: {
+  enabled: boolean;
+  score: LoadedScore | null;
+  onRemoved: () => void;
+  onStatus: (status: string) => void;
+}) {
+  if (!enabled || !score) return null;
+  return <ConnectedRemoveFromLibraryButton onRemoved={onRemoved} onStatus={onStatus} score={score} />;
+}
+
+function ConnectedRemoveFromLibraryButton({
+  score,
+  onRemoved,
+  onStatus,
+}: {
+  score: LoadedScore;
+  onRemoved: () => void;
+  onStatus: (status: string) => void;
+}) {
+  const removeScore = useMutation(api.scores.remove);
+  const [removing, setRemoving] = useState(false);
+
+  async function handleRemove() {
+    setRemoving(true);
+    onStatus("Removing from My Songs…");
+    try {
+      await removeScore({ id: score.id });
+      onRemoved();
+      onStatus("Removed from My Songs");
+    } catch {
+      onStatus("Couldn’t remove from My Songs");
+    } finally {
+      setRemoving(false);
+    }
+  }
+
+  return (
+    <button
+      aria-label={`Remove ${score.title} from My Songs`}
+      className="inline-flex min-h-[31px] cursor-pointer items-center justify-center gap-1.5 rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      disabled={removing}
+      type="button"
+      onClick={() => void handleRemove()}
+    >
+      <Trash2 size={13} strokeWidth={1.8} />
+      {removing ? "Removing…" : "Remove"}
+    </button>
+  );
+}
+
+export function SaveToLibraryButton({
+  enabled,
+  hydrated,
+  title,
+  abc,
+  onCurrentScoreChange,
+  onSavedToLibrary,
+  onStatus,
+}: {
+  enabled: boolean;
+  hydrated: boolean;
+  title: string;
+  abc: string;
+  onCurrentScoreChange: (score: LoadedScore | null) => void;
+  onSavedToLibrary: () => void;
+  onStatus: (status: string) => void;
+}) {
+  if (!enabled) return null;
+  return (
+    <ConnectedSaveToLibraryButton
+      abc={abc}
+      hydrated={hydrated}
+      onCurrentScoreChange={onCurrentScoreChange}
+      onSavedToLibrary={onSavedToLibrary}
+      onStatus={onStatus}
+      title={title}
+    />
+  );
+}
+
+function ConnectedSaveToLibraryButton({
+  hydrated,
+  title,
+  abc,
+  onCurrentScoreChange,
+  onSavedToLibrary,
+  onStatus,
+}: {
+  hydrated: boolean;
+  title: string;
+  abc: string;
+  onCurrentScoreChange: (score: LoadedScore | null) => void;
+  onSavedToLibrary: () => void;
+  onStatus: (status: string) => void;
+}) {
+  const { isAuthenticated } = useConvexAuth();
+  const saveScore = useMutation(api.scores.save);
+  const scores = useQuery(api.scores.listMine, isAuthenticated ? {} : "skip");
+  const [savingCopy, setSavingCopy] = useState(false);
+  const persistenceReady = isAuthenticated && hydrated && scores !== undefined;
+
+  if (!isAuthenticated) return null;
+
+  async function handleSaveToLibrary() {
+    if (!persistenceReady || !abc.trim()) return;
+
+    setSavingCopy(true);
+    onStatus("Saving to My Songs…");
+    try {
+      const savedId = await saveScore({
+        title,
+        abc,
+        updatedAt: Date.now(),
+      });
+      onCurrentScoreChange({ id: savedId, title, abc });
+      onSavedToLibrary();
+      onStatus("Saved to My Songs");
+    } catch {
+      onStatus("Couldn’t save to My Songs");
+    } finally {
+      setSavingCopy(false);
+    }
+  }
+
+  return (
+    <button
+      className="inline-flex min-h-[32px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--accent)] bg-[var(--accent)] px-2.5 text-[10px] font-[680] text-white transition-[background-color,border-color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent-deep)] hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      disabled={savingCopy}
+      type="button"
+      onClick={() => void handleSaveToLibrary()}
+    >
+      {savingCopy ? "Saving…" : "Save to My Songs"}
+    </button>
+  );
+}
+
+export function AdminPublishButton({
+  enabled,
+  score,
+  onStatus,
+}: {
+  enabled: boolean;
+  score: LoadedScore | null;
+  onStatus: (status: string) => void;
+}) {
+  if (!enabled || !score) return null;
+  return <ConnectedAdminPublishButton onStatus={onStatus} score={score} />;
+}
+
+export function AdminDeletePublicSongButton({
+  enabled,
+  catalogId,
+  onDeleted,
+  onStatus,
+}: {
+  enabled: boolean;
+  catalogId: Id<"catalogCharts"> | null;
+  onDeleted: () => void;
+  onStatus: (status: string) => void;
+}) {
+  if (!enabled || !catalogId) return null;
+  return <ConnectedAdminDeletePublicSongButton catalogId={catalogId} onDeleted={onDeleted} onStatus={onStatus} />;
+}
+
+function ConnectedAdminDeletePublicSongButton({
+  catalogId,
+  onDeleted,
+  onStatus,
+}: {
+  catalogId: Id<"catalogCharts">;
+  onDeleted: () => void;
+  onStatus: (status: string) => void;
+}) {
+  const { user } = useUser();
+  const removeCatalogChart = useMutation(api.catalog.remove);
+  const [removing, setRemoving] = useState(false);
+  const isAdmin = user?.publicMetadata?.role === "admin";
+
+  if (!isAdmin) return null;
+
+  async function handleRemove() {
+    setRemoving(true);
+    onStatus("Deleting from public catalog…");
+    try {
+      await removeCatalogChart({ id: catalogId });
+      onDeleted();
+      onStatus("Deleted from public catalog");
+    } catch {
+      onStatus("Couldn’t delete from public catalog");
+    } finally {
+      setRemoving(false);
+    }
+  }
+
+  return (
+    <button
+      aria-label="Delete public song"
+      className="inline-flex min-h-[31px] cursor-pointer items-center justify-center gap-1.5 rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      disabled={removing}
+      type="button"
+      onClick={() => void handleRemove()}
+    >
+      <Trash2 size={13} strokeWidth={1.8} />
+      {removing ? "Deleting…" : "Delete"}
+    </button>
+  );
+}
+
+function ConnectedAdminPublishButton({
+  score,
+  onStatus,
+}: {
+  score: LoadedScore;
+  onStatus: (status: string) => void;
+}) {
+  const { user } = useUser();
+  const publishFromLibrary = useMutation(api.catalog.publishFromLibrary);
+  const [publishing, setPublishing] = useState(false);
+  const isAdmin = user?.publicMetadata?.role === "admin";
+
+  if (!isAdmin) return null;
+
+  async function handlePublish() {
+    setPublishing(true);
+    onStatus("Publishing…");
+    try {
+      await publishFromLibrary({ scoreId: score.id });
+      onStatus("Published to public catalog");
+    } catch {
+      onStatus("Couldn’t publish");
+    } finally {
+      setPublishing(false);
+    }
+  }
+
+  return (
+    <button
+      aria-label={`Publish ${score.title} to public catalog`}
+      className="inline-flex min-h-[31px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      disabled={publishing}
+      type="button"
+      onClick={() => void handlePublish()}
+    >
+      {publishing ? "Publishing…" : "Publish"}
+    </button>
   );
 }

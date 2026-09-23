@@ -40,6 +40,7 @@ export function CatalogBackedWorkspace({
 
   return (
     <MyFakebookWorkspace
+      catalogIsPersisted={databaseCatalog.length > 0}
       clerkConfigured={clerkConfigured}
       persistenceEnabled={persistenceEnabled}
       catalog={selectPublicCatalog(databaseCatalog, fallbackCatalog)}

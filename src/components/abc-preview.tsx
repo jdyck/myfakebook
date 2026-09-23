@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import ABCJS from "abcjs";
 import { LoaderCircle, Play, Square } from "lucide-react";
 import { prepareAbcForDisplay } from "@/lib/abc-display";
@@ -110,12 +111,16 @@ export function AbcPreview({
   showLyrics = true,
   transposition = 0,
   selectedChordVariant = null,
+  saveAction,
+  publishAction,
 }: {
   abc: string;
   showChords?: boolean;
   showLyrics?: boolean;
   transposition?: number;
   selectedChordVariant?: SelectedChordVariant | null;
+  saveAction?: ReactNode;
+  publishAction?: ReactNode;
 }) {
   const targetRef = useRef<HTMLDivElement>(null);
   const tuneRef = useRef<ABCJS.TuneObject | null>(null);
@@ -443,6 +448,12 @@ export function AbcPreview({
           </span>
         </div>
       </div>
+      {(saveAction || publishAction) && (
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          {saveAction}
+          {publishAction}
+        </div>
+      )}
     </>
   );
 }

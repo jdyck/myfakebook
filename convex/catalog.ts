@@ -115,3 +115,16 @@ export const unpublish = mutation({
     return args.id;
   },
 });
+
+export const remove = mutation({
+  args: { id: v.id("catalogCharts") },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+
+    const chart = await ctx.db.get(args.id);
+    if (!chart) throw new Error("Catalog chart not found");
+
+    await ctx.db.delete(args.id);
+    return args.id;
+  },
+});

@@ -14,8 +14,16 @@ import {
 
 import { AuthControls } from "@/components/auth-controls";
 import { AbcPreview } from "@/components/abc-preview";
-import { ScorePersistence } from "@/components/score-persistence";
+import {
+  AdminDeletePublicSongButton,
+  AdminPublishButton,
+  RemoveFromLibraryButton,
+  SaveToLibraryButton,
+  ScorePersistence,
+  type LoadedScore,
+} from "@/components/score-persistence";
 import { ThemeToggle } from "@/components/theme-toggle";
+import type { Id } from "../../convex/_generated/dataModel";
 import { abcToMusicXml, DEFAULT_ABC, type MusicXmlResult } from "@/lib/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type ChartDisplaySettings } from "@/lib/abc-display";
 import { PUBLIC_CATALOG, type PublicCatalogChart } from "@/lib/public-catalog";
@@ -24,12 +32,40 @@ type MyFakebookWorkspaceProps = {
   clerkConfigured: boolean;
   persistenceEnabled: boolean;
   catalog: readonly PublicCatalogChart[];
+  catalogIsPersisted?: boolean;
 };
+
+function findReplacementCatalogChart(
+  catalog: readonly PublicCatalogChart[],
+  catalogHistory: readonly string[],
+  excludedId: string | null,
+) {
+  for (const chartId of [...catalogHistory].reverse()) {
+    const chart = catalog.find((candidate) => candidate.id === chartId);
+    if (chart && chart.id !== excludedId) return chart;
+  }
+
+  return catalog.find((chart) => chart.id !== excludedId) ?? PUBLIC_CATALOG[0];
+}
+
+function findReplacementLibraryScore(
+  scores: readonly LoadedScore[],
+  libraryHistory: readonly string[],
+  excludedId: string,
+) {
+  for (const scoreId of [...libraryHistory].reverse()) {
+    const score = scores.find((candidate) => candidate.id === scoreId);
+    if (score && score.id !== excludedId) return score;
+  }
+
+  return scores.find((score) => score.id !== excludedId) ?? null;
+}
 
 export function MyFakebookWorkspace({
   clerkConfigured,
   persistenceEnabled,
   catalog,
+  catalogIsPersisted = false,
 }: MyFakebookWorkspaceProps) {
   const initialCatalogChart = catalog[0] ?? PUBLIC_CATALOG[0];
   const [abc, setAbc] = useState(initialCatalogChart?.abc ?? DEFAULT_ABC);
@@ -37,12 +73,16 @@ export function MyFakebookWorkspace({
   const [sourceLabel, setSourceLabel] = useState("Public catalog");
   const [isPublicCatalog, setIsPublicCatalog] = useState(true);
   const [selectedCatalogId, setSelectedCatalogId] = useState<string | null>(initialCatalogChart?.id ?? null);
+  const [catalogHistory, setCatalogHistory] = useState<string[]>(initialCatalogChart ? [initialCatalogChart.id] : []);
   const [hydrated, setHydrated] = useState(false);
   const [saveStatus, setSaveStatus] = useState(persistenceEnabled ? "Connecting…" : "Saved locally");
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [displaySettings, setDisplaySettings] = useState<ChartDisplaySettings>(DEFAULT_DISPLAY_SETTINGS);
+  const [currentScore, setCurrentScore] = useState<LoadedScore | null>(null);
+  const [libraryScores, setLibraryScores] = useState<LoadedScore[]>([]);
+  const [libraryHistory, setLibraryHistory] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const conversion = useMemo<MusicXmlResult | null>(() => {
@@ -90,12 +130,13 @@ export function MyFakebookWorkspace({
 
   useEffect(() => {
     if (!hydrated) return;
+    if (isPublicCatalog && selectedCatalogId) return;
     const timeout = window.setTimeout(() => {
       window.localStorage.setItem("myfakebook:draft", JSON.stringify({ title, abc }));
       if (!persistenceEnabled) setSaveStatus("Saved locally");
     }, 500);
     return () => window.clearTimeout(timeout);
-  }, [abc, hydrated, persistenceEnabled, title]);
+  }, [abc, hydrated, isPublicCatalog, persistenceEnabled, selectedCatalogId, title]);
 
   const handleStatus = useCallback((status: string) => setSaveStatus(status), []);
 
@@ -115,7 +156,19 @@ export function MyFakebookWorkspace({
     setSourceLabel("Guest draft");
     setIsPublicCatalog(false);
     setSelectedCatalogId(null);
+    setCurrentScore(null);
     setFeedback("Fresh lead sheet ready");
+  }
+
+  function handleOpenLibraryScore(score: LoadedScore, feedbackMessage = `Loaded ${score.title}`) {
+    setCurrentScore(score);
+    setTitle(score.title);
+    setAbc(score.abc);
+    setSourceLabel("My Songs");
+    setIsPublicCatalog(false);
+    setSelectedCatalogId(null);
+    setLibraryHistory((history) => [...history.filter((id) => id !== score.id), score.id]);
+    setFeedback(feedbackMessage);
   }
 
   function handleFormat() {
@@ -133,13 +186,37 @@ export function MyFakebookWorkspace({
   }
 
   function handleOpenCatalogChart(chart: PublicCatalogChart) {
+    try {
+      window.localStorage.removeItem("myfakebook:draft");
+      window.localStorage.removeItem("notate:draft");
+    } catch {
+      // A catalog selection should still work when browser storage is unavailable.
+    }
     setTitle(chart.title);
     setAbc(chart.abc);
     setSourceLabel("Public catalog");
     setIsPublicCatalog(true);
     setSelectedCatalogId(chart.id);
+    setCatalogHistory((history) => [...history.filter((id) => id !== chart.id), chart.id]);
+    setCurrentScore(null);
     setFeedback(`Opened ${chart.title} from the public catalog`);
   }
+
+  useEffect(() => {
+    if (!isPublicCatalog || !selectedCatalogId || catalog.some((chart) => chart.id === selectedCatalogId)) return;
+
+    const nextChart = findReplacementCatalogChart(catalog, catalogHistory, selectedCatalogId);
+    if (!nextChart) return;
+
+    const timeout = window.setTimeout(() => {
+      setTitle(nextChart.title);
+      setAbc(nextChart.abc);
+      setSourceLabel("Public catalog");
+      setSelectedCatalogId(nextChart.id);
+      setCurrentScore(null);
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [catalog, catalogHistory, isPublicCatalog, selectedCatalogId]);
 
   function handleAbcChange(value: string) {
     setSourceLabel(isPublicCatalog ? "Public catalog edit" : "Guest draft");
@@ -239,18 +316,11 @@ export function MyFakebookWorkspace({
               enabled={persistenceEnabled}
               hydrated={hydrated}
               isPublicCatalog={isPublicCatalog}
+              currentScore={currentScore}
+              onCurrentScoreChange={setCurrentScore}
+              onLibraryScoresChange={setLibraryScores}
               onLoad={(score) => {
-                setTitle(score.title);
-                setAbc(score.abc);
-                setSourceLabel("My Songs");
-                setIsPublicCatalog(false);
-                setSelectedCatalogId(null);
-                setFeedback(`Loaded ${score.title}`);
-              }}
-              onSavedToLibrary={() => {
-                setSourceLabel("My Songs");
-                setIsPublicCatalog(false);
-                setSelectedCatalogId(null);
+                handleOpenLibraryScore(score);
               }}
               onStatus={handleStatus}
               title={scoreTitle}
@@ -496,6 +566,65 @@ export function MyFakebookWorkspace({
                   showChords={displaySettings.showChords}
                   showLyrics={displaySettings.showLyrics}
                   transposition={displaySettings.transposition}
+                  saveAction={
+                    persistenceEnabled && isPublicCatalog ? (
+                      <SaveToLibraryButton
+                        abc={abc}
+                        enabled={persistenceEnabled}
+                        hydrated={hydrated}
+                        onCurrentScoreChange={setCurrentScore}
+                        onSavedToLibrary={() => {
+                          setSourceLabel("My Songs");
+                          setIsPublicCatalog(false);
+                          setSelectedCatalogId(null);
+                        }}
+                        onStatus={handleStatus}
+                        title={scoreTitle}
+                      />
+                    ) : null
+                  }
+                  publishAction={
+                    persistenceEnabled && isPublicCatalog && catalogIsPersisted && selectedCatalogId ? (
+                      <AdminDeletePublicSongButton
+                        catalogId={selectedCatalogId as Id<"catalogCharts">}
+                        enabled={persistenceEnabled}
+                        onDeleted={() => {
+                          const replacement = findReplacementCatalogChart(catalog, catalogHistory, selectedCatalogId);
+                          if (replacement) {
+                            handleOpenCatalogChart(replacement);
+                            setFeedback(`Deleted public song; opened ${replacement.title}`);
+                          } else {
+                            setSelectedCatalogId(null);
+                            setFeedback("Public song deleted");
+                          }
+                        }}
+                        onStatus={handleStatus}
+                      />
+                    ) : persistenceEnabled && !isPublicCatalog && currentScore ? (
+                      <>
+                        <RemoveFromLibraryButton
+                          enabled={persistenceEnabled}
+                          onRemoved={() => {
+                            if (!currentScore) return;
+                            const replacement = findReplacementLibraryScore(
+                              libraryScores,
+                              libraryHistory,
+                              currentScore.id,
+                            );
+                            setLibraryHistory((history) => history.filter((id) => id !== currentScore.id));
+                            if (replacement) {
+                              handleOpenLibraryScore(replacement, `Removed ${currentScore.title}; opened ${replacement.title}`);
+                            } else {
+                              handleNewScore();
+                            }
+                          }}
+                          onStatus={handleStatus}
+                          score={currentScore}
+                        />
+                        <AdminPublishButton enabled={persistenceEnabled} onStatus={handleStatus} score={currentScore} />
+                      </>
+                    ) : null
+                  }
                 />
               </div>
             </section>
