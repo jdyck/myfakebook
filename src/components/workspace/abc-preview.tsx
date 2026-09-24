@@ -371,7 +371,7 @@ export function AbcPreview({
         <div>
           <div
             ref={targetRef}
-            className={`min-w-[500px] px-2 pb-3.5 pt-2.5 [&_svg]:overflow-visible [&_svg]:text-[#252631] ${
+            className={`min-w-125 px-2 pb-3.5 pt-2.5 [&_svg]:overflow-visible [&_svg]:text-[#252631] ${
               [
                 !showChords && "abc-preview-hide-chords",
                 !showLyrics && "abc-preview-hide-lyrics",

@@ -1,5 +1,5 @@
-import { CatalogBackedWorkspace } from "@/components/catalog-backed-workspace";
-import { MyFakebookWorkspace } from "@/components/my-fakebook-workspace";
+import { CatalogBackedWorkspace } from "@/components/workspace/catalog-backed-workspace";
+import { MyFakebookWorkspace } from "@/components/workspace/my-fakebook-workspace";
 import { PUBLIC_CATALOG } from "@/lib/public-catalog";
 
 export default function Home() {

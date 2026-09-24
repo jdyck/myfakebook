@@ -2,8 +2,8 @@
 
 import { useQuery } from "convex/react";
 
-import { api } from "../../convex/_generated/api";
-import { MyFakebookWorkspace } from "@/components/my-fakebook-workspace";
+import { api } from "../../../convex/_generated/api";
+import { MyFakebookWorkspace } from "@/components/workspace/my-fakebook-workspace";
 import { selectPublicCatalog } from "@/lib/catalog-source";
 import type { PublicCatalogChart } from "@/lib/public-catalog";
 
