@@ -6,7 +6,7 @@ MyFakebook is a digital fakebook for musicians. It has a site-curated public lib
 
 - [Content model](docs/product/CONTENT_MODEL.md): song concepts, fields, ownership, relationships, storage authority, and invariants.
 - [Requirements](local/docs/product/REQUIREMENTS.md): scope, user workflows, priorities, and acceptance criteria.
-- [Song library migration decision](docs/adr/0001-song-libraries-and-convex-migration.md): canonical language and the staged Convex table migration.
+- [Song library migration decision](docs/adr/0001-song-libraries-and-convex-migration.md): canonical language, migration decision, and cleanup status.
 
 ## Language
 

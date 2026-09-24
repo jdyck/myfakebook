@@ -9,11 +9,8 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as catalog from "../catalog.js";
-import type * as migrations from "../migrations.js";
 import type * as privateSongs from "../privateSongs.js";
 import type * as publicSongs from "../publicSongs.js";
-import type * as scores from "../scores.js";
 import type * as songStore from "../songStore.js";
 
 import type {
@@ -24,11 +21,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  catalog: typeof catalog;
-  migrations: typeof migrations;
   privateSongs: typeof privateSongs;
   publicSongs: typeof publicSongs;
-  scores: typeof scores;
   songStore: typeof songStore;
 }>;
 
@@ -58,6 +52,4 @@ export declare const internal: FilterApi<
   FunctionReference<any, "internal">
 >;
 
-export declare const components: {
-  migrations: import("@convex-dev/migrations/_generated/component.js").ComponentApi<"migrations">;
-};
+export declare const components: {};

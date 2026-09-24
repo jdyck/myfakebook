@@ -9,16 +9,14 @@ async function currentOwner(ctx: { auth: { getUserIdentity: () => Promise<{ subj
   return identity.subject;
 }
 
-const compatiblePrivateSongId = v.union(v.id("privateSongs"), v.id("scores"));
-
 export const listMine = query({
   args: {},
-  handler: async (ctx) => listPrivateSongs(ctx, await currentOwner(ctx), "canonical"),
+  handler: async (ctx) => listPrivateSongs(ctx, await currentOwner(ctx)),
 });
 
 export const save = mutation({
   args: {
-    id: v.optional(compatiblePrivateSongId),
+    id: v.optional(v.id("privateSongs")),
     title: v.string(),
     abc: v.string(),
     updatedAt: v.number(),
@@ -26,17 +24,16 @@ export const save = mutation({
   handler: async (ctx, args) => {
     const ownerId = await currentOwner(ctx);
     const title = args.title.trim() || "Untitled lead sheet";
-    const { canonicalId } = await savePrivateSong(
+    return savePrivateSong(
       ctx,
       ownerId,
       { title, abc: args.abc, updatedAt: args.updatedAt },
       args.id,
     );
-    return canonicalId;
   },
 });
 
 export const remove = mutation({
-  args: { id: compatiblePrivateSongId },
+  args: { id: v.id("privateSongs") },
   handler: async (ctx, args) => removePrivateSong(ctx, args.id, await currentOwner(ctx)),
 });
