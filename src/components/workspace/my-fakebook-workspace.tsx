@@ -322,7 +322,7 @@ export function MyFakebookWorkspace({
               publishAction={
                 persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId ? (
                   <AdminDeletePublicSongButton
-                    publicSongId={selectedPublicSongId as Id<"publicSongs"> | Id<"catalogCharts">}
+                    publicSongId={selectedPublicSongId as Id<"publicSongs">}
                     enabled={persistenceEnabled}
                     onDeleted={() => {
                       const replacement = findReplacementPublicSong(publicSongs, publicSongHistory, selectedPublicSongId);

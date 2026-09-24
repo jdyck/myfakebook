@@ -27,12 +27,8 @@ Renaming the tables changes Convex document IDs. Existing records and already-op
 - The migration is additive and resumable before cleanup. The old records remain available for recovery while the copy is being verified.
 - A later contract deployment is required to remove the old schema. Completing a copy alone does not clear the migration.
 
-## Rollout checklist
+## Rollout outcome
 
-1. Deploy the expanded schema, compatibility APIs, and dual-read/dual-write behavior.
-2. Run a dry run of both table-copy migrations in the target Convex deployment.
-3. Run both migrations and wait until Convex reports each as completed.
-4. Verify row counts and that each legacy ID links to a canonical song with matching owner/status, title, ABC, and timestamps.
-5. Deploy the contract release that removes legacy tables and compatibility code only after verification and the old-client grace period.
+On 2026-09-23, read-only audits verified the copies in development (7 private, 3 public) and production (11 private, 29 public), with zero missing, duplicate, or mismatched rows. The contract release now uses only the canonical APIs and tables. The remaining operator step is to permanently delete the old tables from each deployment's Convex dashboard; see the [migration record](../migrations/song-libraries.md).
 
 The operator commands and verification steps are in [the song library migration runbook](../migrations/song-libraries.md).

@@ -15,17 +15,17 @@ test("an admin can publish a song from the Private Library", async () => {
     metadata: { role: "admin" },
   });
 
-  const privateSongId = await asAdmin.mutation(api.scores.save, {
+  const privateSongId = await asAdmin.mutation(api.privateSongs.save, {
     title: "Autumn Song",
     abc: "T:Autumn Song\nK:C\nC D E F|",
     updatedAt: Date.now(),
   });
 
-  await asAdmin.mutation(api.catalog.publishFromLibrary, {
-    scoreId: privateSongId,
+  await asAdmin.mutation(api.publicSongs.publishFromPrivateLibrary, {
+    privateSongId,
   });
 
-  const publishedSongs = await t.query(api.catalog.listPublished, {});
+  const publishedSongs = await t.query(api.publicSongs.listPublished, {});
 
   expect(publishedSongs).toEqual([
     expect.objectContaining({
@@ -43,19 +43,19 @@ test("an admin can remove a public song", async () => {
     metadata: { role: "admin" },
   });
 
-  const privateSongId = await asAdmin.mutation(api.scores.save, {
+  const privateSongId = await asAdmin.mutation(api.privateSongs.save, {
     title: "Autumn Song",
     abc: "T:Autumn Song\nK:C\nC D E F|",
     updatedAt: Date.now(),
   });
 
-  const publicSongId = await asAdmin.mutation(api.catalog.publishFromLibrary, {
-    scoreId: privateSongId,
+  const publicSongId = await asAdmin.mutation(api.publicSongs.publishFromPrivateLibrary, {
+    privateSongId,
   });
 
-  await asAdmin.mutation(api.catalog.remove, { id: publicSongId });
+  await asAdmin.mutation(api.publicSongs.remove, { id: publicSongId });
 
-  expect(await t.query(api.catalog.listPublished, {})).toEqual([]);
+  expect(await t.query(api.publicSongs.listPublished, {})).toEqual([]);
 });
 
 test("a non-admin cannot remove a public song", async () => {
@@ -66,19 +66,19 @@ test("a non-admin cannot remove a public song", async () => {
   });
   const asUser = t.withIdentity({ subject: "user_1" });
 
-  const privateSongId = await asAdmin.mutation(api.scores.save, {
+  const privateSongId = await asAdmin.mutation(api.privateSongs.save, {
     title: "Autumn Song",
     abc: "T:Autumn Song\nK:C\nC D E F|",
     updatedAt: Date.now(),
   });
 
-  const publicSongId = await asAdmin.mutation(api.catalog.publishFromLibrary, {
-    scoreId: privateSongId,
+  const publicSongId = await asAdmin.mutation(api.publicSongs.publishFromPrivateLibrary, {
+    privateSongId,
   });
 
-  await expect(asUser.mutation(api.catalog.remove, { id: publicSongId })).rejects.toThrow("Not authorized");
+  await expect(asUser.mutation(api.publicSongs.remove, { id: publicSongId })).rejects.toThrow("Not authorized");
 
-  expect(await t.query(api.catalog.listPublished, {})).toEqual([
+  expect(await t.query(api.publicSongs.listPublished, {})).toEqual([
     expect.objectContaining({
       _id: publicSongId,
       title: "Autumn Song",

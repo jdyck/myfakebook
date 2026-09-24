@@ -9,8 +9,8 @@ import Link from "next/link";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 
-export type PrivateSongId = Id<"privateSongs"> | Id<"scores">;
-export type PublicSongId = Id<"publicSongs"> | Id<"catalogCharts">;
+export type PrivateSongId = Id<"privateSongs">;
+export type PublicSongId = Id<"publicSongs">;
 
 export type LoadedSong = {
   id: PrivateSongId;
