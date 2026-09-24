@@ -41,7 +41,7 @@ export function ThemeToggle() {
   return (
     <button
       aria-label="Toggle light and dark mode"
-      className="grid size-8 cursor-pointer place-items-center rounded-[8px] border border-[var(--line-strong)] bg-transparent text-[var(--muted)] transition-[border-color,background-color,color] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed"
+      className="grid size-8 cursor-pointer place-items-center rounded-[8px] border border-(--line-strong) bg-transparent text-(--muted) transition-[border-color,background-color,color] duration-160 ease-in-out hover:border-(--accent) hover:bg-(--accent-soft) hover:text-(--accent-deep) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)"
       title="Toggle light and dark mode"
       type="button"
       onClick={toggleTheme}

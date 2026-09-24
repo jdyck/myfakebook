@@ -6,8 +6,8 @@ import { useUser } from "@clerk/nextjs";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
-import { api } from "../../convex/_generated/api";
-import type { Id } from "../../convex/_generated/dataModel";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 export type LoadedScore = {
   id: Id<"scores">;

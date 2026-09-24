@@ -86,6 +86,10 @@ describe("library song deletion", () => {
       );
     });
 
+    const workspaceGrid = container.querySelector("aside")?.parentElement;
+    expect(workspaceGrid?.className).toContain("grid-cols-[208px_minmax(0,1fr)]");
+    expect(workspaceGrid?.className).not.toContain("grid-cols-[minmax(0,1fr)]");
+
     const savedSongButtons = Array.from(
       container.querySelectorAll<HTMLButtonElement>('aside button'),
     );
