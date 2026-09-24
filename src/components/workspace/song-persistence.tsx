@@ -9,98 +9,98 @@ import Link from "next/link";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 
-export type LoadedScore = {
-  id: Id<"scores">;
+export type PrivateSongId = Id<"privateSongs"> | Id<"scores">;
+export type PublicSongId = Id<"publicSongs"> | Id<"catalogCharts">;
+
+export type LoadedSong = {
+  id: PrivateSongId;
   title: string;
   abc: string;
 };
 
-type ScorePersistenceProps = {
+type PrivateLibrarySongsProps = {
   title: string;
   abc: string;
-  hydrated: boolean;
-  isPublicCatalog: boolean;
-  currentScore: LoadedScore | null;
-  onCurrentScoreChange: (score: LoadedScore | null) => void;
-  onLibraryScoresChange: (scores: LoadedScore[]) => void;
+  isPublicSong: boolean;
+  currentSong: LoadedSong | null;
+  onCurrentSongChange: (song: LoadedSong | null) => void;
+  onPrivateSongsChange: (songs: LoadedSong[]) => void;
   onStatus: (status: string) => void;
-  onLoad: (score: LoadedScore) => void;
+  onLoad: (song: LoadedSong) => void;
 };
 
-export function ScorePersistence({
+export function PrivateLibrarySongs({
   enabled,
   ...props
-}: ScorePersistenceProps & { enabled: boolean }) {
+}: PrivateLibrarySongsProps & { enabled: boolean }) {
   if (!enabled) return null;
-  return <ConnectedScorePersistence {...props} />;
+  return <ConnectedPrivateLibrarySongs {...props} />;
 }
 
-function ConnectedScorePersistence({
+function ConnectedPrivateLibrarySongs({
   title,
   abc,
-  hydrated,
-  isPublicCatalog,
-  currentScore,
-  onCurrentScoreChange,
-  onLibraryScoresChange,
+  isPublicSong,
+  currentSong,
+  onCurrentSongChange,
+  onPrivateSongsChange,
   onStatus,
   onLoad,
-}: ScorePersistenceProps) {
+}: PrivateLibrarySongsProps) {
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const saveScore = useMutation(api.scores.save);
-  const scores = useQuery(api.scores.listMine, isAuthenticated ? {} : "skip");
-  const scoreId = useRef<Id<"scores"> | undefined>(undefined);
-  const libraryScoresRef = useRef<LoadedScore[]>([]);
+  const savePrivateSong = useMutation(api.privateSongs.save);
+  const songs = useQuery(api.privateSongs.listMine, isAuthenticated ? {} : "skip");
+  const songId = useRef<PrivateSongId | undefined>(undefined);
+  const privateSongsRef = useRef<LoadedSong[]>([]);
   const statusRef = useRef(onStatus);
-  const persistenceReady = isAuthenticated && hydrated && scores !== undefined;
+  const persistenceReady = isAuthenticated && songs !== undefined;
 
   useEffect(() => {
     statusRef.current = onStatus;
   }, [onStatus]);
 
   useEffect(() => {
-    if (!scores) return;
-    const nextScores = scores.map((score) => ({ id: score._id, title: score.title, abc: score.abc }));
-    const scoresChanged =
-      nextScores.length !== libraryScoresRef.current.length ||
-      nextScores.some((score, index) => {
-        const previous = libraryScoresRef.current[index];
-        return !previous || previous.id !== score.id || previous.title !== score.title || previous.abc !== score.abc;
+    if (!songs) return;
+    const nextSongs = songs.map((song) => ({ id: song._id, title: song.title, abc: song.abc }));
+    const songsChanged =
+      nextSongs.length !== privateSongsRef.current.length ||
+      nextSongs.some((song, index) => {
+        const previous = privateSongsRef.current[index];
+        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc;
       });
-    if (!scoresChanged) return;
-    libraryScoresRef.current = nextScores;
-    onLibraryScoresChange(nextScores);
-  }, [onLibraryScoresChange, scores]);
+    if (!songsChanged) return;
+    privateSongsRef.current = nextSongs;
+    onPrivateSongsChange(nextSongs);
+  }, [onPrivateSongsChange, songs]);
 
   useEffect(() => {
-    if (!persistenceReady || isPublicCatalog) return;
+    if (!persistenceReady || isPublicSong) return;
 
-    if (!scoreId.current) {
-      const existingScore = scores.find((score) => score.title === title && score.abc === abc);
-      scoreId.current = existingScore?._id;
-      if (existingScore) {
-        onCurrentScoreChange({ id: existingScore._id, title: existingScore.title, abc: existingScore.abc });
+    if (!songId.current) {
+      const existingSong = songs.find((song) => song.title === title && song.abc === abc);
+      songId.current = existingSong?._id;
+      if (existingSong) {
+        onCurrentSongChange({ id: existingSong._id, title: existingSong.title, abc: existingSong.abc });
       }
     }
-  }, [abc, isPublicCatalog, onCurrentScoreChange, persistenceReady, scores, title]);
+  }, [abc, isPublicSong, onCurrentSongChange, persistenceReady, songs, title]);
 
   useEffect(() => {
-    if (!isPublicCatalog) return;
-    scoreId.current = undefined;
-    onCurrentScoreChange(null);
-  }, [isPublicCatalog, onCurrentScoreChange]);
+    if (!isPublicSong) return;
+    songId.current = undefined;
+    onCurrentSongChange(null);
+  }, [isPublicSong, onCurrentSongChange]);
 
   useEffect(() => {
-    if (isPublicCatalog) return;
-    scoreId.current = currentScore?.id;
-  }, [currentScore?.id, isPublicCatalog]);
+    if (isPublicSong) return;
+    songId.current = currentSong?.id;
+  }, [currentSong?.id, isPublicSong]);
 
   useEffect(() => {
     if (
       !isAuthenticated ||
-      !hydrated ||
       !persistenceReady ||
-      isPublicCatalog ||
+      isPublicSong ||
       !abc.trim()
     ) {
       return;
@@ -108,63 +108,63 @@ function ConnectedScorePersistence({
     statusRef.current("Saving…");
     const timeout = window.setTimeout(async () => {
       try {
-        const savedId = await saveScore({
-          id: scoreId.current,
+        const savedId = await savePrivateSong({
+          id: songId.current,
           title,
           abc,
           updatedAt: Date.now(),
         });
-        scoreId.current = savedId;
-        onCurrentScoreChange({ id: savedId, title, abc });
-        statusRef.current("Saved to workspace");
+        songId.current = savedId;
+        onCurrentSongChange({ id: savedId, title, abc });
+        statusRef.current("Saved to Private Library");
       } catch {
         statusRef.current("Couldn’t sync");
       }
     }, 850);
     return () => window.clearTimeout(timeout);
-  }, [abc, hydrated, isAuthenticated, isPublicCatalog, onCurrentScoreChange, persistenceReady, saveScore, title]);
+  }, [abc, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, savePrivateSong, title]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      scoreId.current = undefined;
-      onCurrentScoreChange(null);
+      songId.current = undefined;
+      onCurrentSongChange(null);
     }
-  }, [isAuthenticated, onCurrentScoreChange]);
+  }, [isAuthenticated, onCurrentSongChange]);
 
   useEffect(() => {
     if (isLoading) statusRef.current("Connecting…");
-    if (!isLoading && !isAuthenticated) statusRef.current("Sign in to sync");
-  }, [isAuthenticated, isLoading]);
+    if (!isLoading && (!isAuthenticated || isPublicSong)) statusRef.current("Not saved");
+  }, [isAuthenticated, isLoading, isPublicSong]);
 
   return (
-    <div className="mt-[17px] grid gap-[3px]" aria-label="Saved charts">
+    <div className="mt-[17px] grid gap-[3px]" aria-label="Private Library songs">
       <Authenticated>
-        {scores?.length ? (
-          scores
+        {songs?.length ? (
+          songs
             .filter(
-              (score, index, allScores) =>
-                allScores.findIndex((candidate) => candidate.title === score.title && candidate.abc === score.abc) === index,
+              (song, index, allSongs) =>
+                allSongs.findIndex((candidate) => candidate.title === song.title && candidate.abc === song.abc) === index,
             )
-            .map((score) => (
-              <div className="flex items-center gap-1" key={score._id}>
+            .map((song) => (
+              <div className="flex items-center gap-1" key={song._id}>
                 <button
                   className="flex min-w-0 flex-1 cursor-pointer items-center gap-[9px] rounded-[8px] border-0 bg-transparent p-2 text-left transition-[background-color] duration-[160ms] ease-in-out hover:bg-[var(--paper-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed"
                   type="button"
                   onClick={() => {
-                    const loadedScore = { id: score._id, title: score.title, abc: score.abc };
-                    scoreId.current = score._id;
-                    onCurrentScoreChange(loadedScore);
-                    onLoad(loadedScore);
-                    statusRef.current("Loaded from workspace");
+                    const loadedSong = { id: song._id, title: song.title, abc: song.abc };
+                    songId.current = song._id;
+                    onCurrentSongChange(loadedSong);
+                    onLoad(loadedSong);
+                    statusRef.current("Loaded from Private Library");
                   }}
                 >
                   <span className="grid size-6 shrink-0 place-items-center rounded-[6px] border border-[var(--accent-soft)] bg-[var(--accent-soft)] text-[13px] text-[var(--accent-deep)]">
                     ♪
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate text-[11px] font-[620] text-[var(--ink)]">{score.title}</span>
+                    <span className="block truncate text-[11px] font-[620] text-[var(--ink)]">{song.title}</span>
                     <span className="mt-0.5 block text-[10px] text-[var(--muted-soft)]">
-                      {new Date(score.updatedAt).toLocaleDateString()}
+                      {new Date(song.updatedAt).toLocaleDateString()}
                     </span>
                   </span>
                 </button>
@@ -172,7 +172,7 @@ function ConnectedScorePersistence({
             ))
         ) : (
           <div className="px-2 py-3.5 text-[10px] leading-[1.5] text-[var(--muted-soft)]">
-            Your saved charts will appear here.
+            Your private songs will appear here.
           </div>
         )}
       </Authenticated>
@@ -184,49 +184,49 @@ function ConnectedScorePersistence({
           >
             Sign in
           </Link>{" "}
-          to sync charts across devices.
+          to sync your private songs across devices.
         </div>
       </Unauthenticated>
     </div>
   );
 }
 
-export function RemoveFromLibraryButton({
+export function RemovePrivateSongButton({
   enabled,
-  score,
+  song,
   onRemoved,
   onStatus,
 }: {
   enabled: boolean;
-  score: LoadedScore | null;
+  song: LoadedSong | null;
   onRemoved: () => void;
   onStatus: (status: string) => void;
 }) {
-  if (!enabled || !score) return null;
-  return <ConnectedRemoveFromLibraryButton onRemoved={onRemoved} onStatus={onStatus} score={score} />;
+  if (!enabled || !song) return null;
+  return <ConnectedRemovePrivateSongButton onRemoved={onRemoved} onStatus={onStatus} song={song} />;
 }
 
-function ConnectedRemoveFromLibraryButton({
-  score,
+function ConnectedRemovePrivateSongButton({
+  song,
   onRemoved,
   onStatus,
 }: {
-  score: LoadedScore;
+  song: LoadedSong;
   onRemoved: () => void;
   onStatus: (status: string) => void;
 }) {
-  const removeScore = useMutation(api.scores.remove);
+  const removePrivateSong = useMutation(api.privateSongs.remove);
   const [removing, setRemoving] = useState(false);
 
   async function handleRemove() {
     setRemoving(true);
-    onStatus("Removing from My Songs…");
+    onStatus("Removing from Private Library…");
     try {
-      await removeScore({ id: score.id });
+      await removePrivateSong({ id: song.id });
       onRemoved();
-      onStatus("Removed from My Songs");
+      onStatus("Removed from Private Library");
     } catch {
-      onStatus("Couldn’t remove from My Songs");
+      onStatus("Couldn’t remove from Private Library");
     } finally {
       setRemoving(false);
     }
@@ -234,7 +234,7 @@ function ConnectedRemoveFromLibraryButton({
 
   return (
     <button
-      aria-label={`Remove ${score.title} from My Songs`}
+      aria-label={`Remove ${song.title} from Private Library`}
       className="inline-flex min-h-[31px] cursor-pointer items-center justify-center gap-1.5 rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
       disabled={removing}
       type="button"
@@ -246,75 +246,70 @@ function ConnectedRemoveFromLibraryButton({
   );
 }
 
-export function SaveToLibraryButton({
+export function SaveToPrivateLibraryButton({
   enabled,
-  hydrated,
   title,
   abc,
-  onCurrentScoreChange,
-  onSavedToLibrary,
+  onCurrentSongChange,
+  onSavedToPrivateLibrary,
   onStatus,
 }: {
   enabled: boolean;
-  hydrated: boolean;
   title: string;
   abc: string;
-  onCurrentScoreChange: (score: LoadedScore | null) => void;
-  onSavedToLibrary: () => void;
+  onCurrentSongChange: (song: LoadedSong | null) => void;
+  onSavedToPrivateLibrary: () => void;
   onStatus: (status: string) => void;
 }) {
   if (!enabled) return null;
   return (
-    <ConnectedSaveToLibraryButton
+    <ConnectedSaveToPrivateLibraryButton
       abc={abc}
-      hydrated={hydrated}
-      onCurrentScoreChange={onCurrentScoreChange}
-      onSavedToLibrary={onSavedToLibrary}
+      onCurrentSongChange={onCurrentSongChange}
+      onSavedToPrivateLibrary={onSavedToPrivateLibrary}
       onStatus={onStatus}
       title={title}
     />
   );
 }
 
-function ConnectedSaveToLibraryButton({
-  hydrated,
+function ConnectedSaveToPrivateLibraryButton({
   title,
   abc,
-  onCurrentScoreChange,
-  onSavedToLibrary,
+  onCurrentSongChange,
+  onSavedToPrivateLibrary,
   onStatus,
 }: {
-  hydrated: boolean;
   title: string;
   abc: string;
-  onCurrentScoreChange: (score: LoadedScore | null) => void;
-  onSavedToLibrary: () => void;
+  onCurrentSongChange: (song: LoadedSong | null) => void;
+  onSavedToPrivateLibrary: () => void;
   onStatus: (status: string) => void;
 }) {
   const { isAuthenticated } = useConvexAuth();
-  const saveScore = useMutation(api.scores.save);
-  const scores = useQuery(api.scores.listMine, isAuthenticated ? {} : "skip");
+  const savePrivateSong = useMutation(api.privateSongs.save);
+  const songs = useQuery(api.privateSongs.listMine, isAuthenticated ? {} : "skip");
   const [savingCopy, setSavingCopy] = useState(false);
-  const persistenceReady = isAuthenticated && hydrated && scores !== undefined;
+  const persistenceReady = isAuthenticated && songs !== undefined;
 
   if (!isAuthenticated) return null;
 
-  async function handleSaveToLibrary() {
+  async function handleSaveToPrivateLibrary() {
     if (!persistenceReady || !abc.trim()) return;
 
     setSavingCopy(true);
-    onStatus("Saving to My Songs…");
+    onStatus("Saving to Private Library…");
     try {
-      const savedId = await saveScore({
+      const savedId = await savePrivateSong({
         title,
         abc,
         updatedAt: Date.now(),
       });
-      onCurrentScoreChange({ id: savedId, title, abc });
-      onSavedToLibrary();
-      onStatus("Saved to My Songs");
+      onCurrentSongChange({ id: savedId, title, abc });
+      onSavedToPrivateLibrary();
+      onStatus("Saved to Private Library");
     } catch {
-      onStatus("Couldn’t save to My Songs");
+      onStatus("Couldn’t save to Private Library");
     } finally {
       setSavingCopy(false);
     }
@@ -325,52 +320,52 @@ function ConnectedSaveToLibraryButton({
       className="inline-flex min-h-[32px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--accent)] bg-[var(--accent)] px-2.5 text-[10px] font-[680] text-white transition-[background-color,border-color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent-deep)] hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
       disabled={savingCopy}
       type="button"
-      onClick={() => void handleSaveToLibrary()}
+      onClick={() => void handleSaveToPrivateLibrary()}
     >
-      {savingCopy ? "Saving…" : "Save to My Songs"}
+      {savingCopy ? "Saving…" : "Save to Private Library"}
     </button>
   );
 }
 
 export function AdminPublishButton({
   enabled,
-  score,
+  song,
   onStatus,
 }: {
   enabled: boolean;
-  score: LoadedScore | null;
+  song: LoadedSong | null;
   onStatus: (status: string) => void;
 }) {
-  if (!enabled || !score) return null;
-  return <ConnectedAdminPublishButton onStatus={onStatus} score={score} />;
+  if (!enabled || !song) return null;
+  return <ConnectedAdminPublishButton onStatus={onStatus} song={song} />;
 }
 
 export function AdminDeletePublicSongButton({
   enabled,
-  catalogId,
+  publicSongId,
   onDeleted,
   onStatus,
 }: {
   enabled: boolean;
-  catalogId: Id<"catalogCharts"> | null;
+  publicSongId: PublicSongId | null;
   onDeleted: () => void;
   onStatus: (status: string) => void;
 }) {
-  if (!enabled || !catalogId) return null;
-  return <ConnectedAdminDeletePublicSongButton catalogId={catalogId} onDeleted={onDeleted} onStatus={onStatus} />;
+  if (!enabled || !publicSongId) return null;
+  return <ConnectedAdminDeletePublicSongButton publicSongId={publicSongId} onDeleted={onDeleted} onStatus={onStatus} />;
 }
 
 function ConnectedAdminDeletePublicSongButton({
-  catalogId,
+  publicSongId,
   onDeleted,
   onStatus,
 }: {
-  catalogId: Id<"catalogCharts">;
+  publicSongId: PublicSongId;
   onDeleted: () => void;
   onStatus: (status: string) => void;
 }) {
   const { user } = useUser();
-  const removeCatalogChart = useMutation(api.catalog.remove);
+  const removePublicSong = useMutation(api.publicSongs.remove);
   const [removing, setRemoving] = useState(false);
   const isAdmin = user?.publicMetadata?.role === "admin";
 
@@ -378,13 +373,13 @@ function ConnectedAdminDeletePublicSongButton({
 
   async function handleRemove() {
     setRemoving(true);
-    onStatus("Deleting from public catalog…");
+    onStatus("Deleting from Public Library…");
     try {
-      await removeCatalogChart({ id: catalogId });
+      await removePublicSong({ id: publicSongId });
       onDeleted();
-      onStatus("Deleted from public catalog");
+      onStatus("Deleted from Public Library");
     } catch {
-      onStatus("Couldn’t delete from public catalog");
+      onStatus("Couldn’t delete from Public Library");
     } finally {
       setRemoving(false);
     }
@@ -405,14 +400,14 @@ function ConnectedAdminDeletePublicSongButton({
 }
 
 function ConnectedAdminPublishButton({
-  score,
+  song,
   onStatus,
 }: {
-  score: LoadedScore;
+  song: LoadedSong;
   onStatus: (status: string) => void;
 }) {
   const { user } = useUser();
-  const publishFromLibrary = useMutation(api.catalog.publishFromLibrary);
+  const publishFromPrivateLibrary = useMutation(api.publicSongs.publishFromPrivateLibrary);
   const [publishing, setPublishing] = useState(false);
   const isAdmin = user?.publicMetadata?.role === "admin";
 
@@ -422,8 +417,8 @@ function ConnectedAdminPublishButton({
     setPublishing(true);
     onStatus("Publishing…");
     try {
-      await publishFromLibrary({ scoreId: score.id });
-      onStatus("Published to public catalog");
+      await publishFromPrivateLibrary({ privateSongId: song.id });
+      onStatus("Published to Public Library");
     } catch {
       onStatus("Couldn’t publish");
     } finally {
@@ -433,7 +428,7 @@ function ConnectedAdminPublishButton({
 
   return (
     <button
-      aria-label={`Publish ${score.title} to public catalog`}
+      aria-label={`Publish ${song.title} to Public Library`}
       className="inline-flex min-h-[31px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
       disabled={publishing}
       type="button"

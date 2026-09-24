@@ -1,18 +1,18 @@
 import ABCJS from "abcjs";
 
-export type ChartDisplaySettings = {
+export type SongDisplaySettings = {
   transposition: number;
   showChords: boolean;
   showLyrics: boolean;
 };
 
-export const DEFAULT_DISPLAY_SETTINGS: ChartDisplaySettings = {
+export const DEFAULT_DISPLAY_SETTINGS: SongDisplaySettings = {
   transposition: 0,
   showChords: true,
   showLyrics: true,
 };
 
-function prepareVisibilitySource(abc: string, settings: ChartDisplaySettings) {
+function prepareVisibilitySource(abc: string, settings: SongDisplaySettings) {
   let musicStarted = false;
   return abc
     .replaceAll("\r", "")
@@ -29,7 +29,7 @@ function prepareVisibilitySource(abc: string, settings: ChartDisplaySettings) {
     .join("\n");
 }
 
-export function prepareAbcForDisplay(abc: string, settings: ChartDisplaySettings) {
+export function prepareAbcForDisplay(abc: string, settings: SongDisplaySettings) {
   let prepared = prepareVisibilitySource(abc, settings);
   if (settings.transposition) {
     const tunes = ABCJS.parseOnly(prepared);
@@ -38,7 +38,7 @@ export function prepareAbcForDisplay(abc: string, settings: ChartDisplaySettings
   return prepared;
 }
 
-export function prepareAbcForExport(abc: string, settings: ChartDisplaySettings) {
+export function prepareAbcForExport(abc: string, settings: SongDisplaySettings) {
   let musicStarted = false;
   const prepared = abc
     .replaceAll("\r", "")

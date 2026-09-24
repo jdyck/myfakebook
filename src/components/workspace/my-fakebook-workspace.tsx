@@ -5,75 +5,82 @@ import { AbcEditorPanel } from "@/components/workspace/abc-editor-panel";
 import {
   AdminDeletePublicSongButton,
   AdminPublishButton,
-  RemoveFromLibraryButton,
-  SaveToLibraryButton,
-  type LoadedScore,
-} from "@/components/workspace/score-persistence";
+  RemovePrivateSongButton,
+  SaveToPrivateLibraryButton,
+  type LoadedSong,
+} from "@/components/workspace/song-persistence";
 import { Header } from "@/components/layout/header";
 import { PreviewPanel } from "@/components/workspace/preview-panel";
-import { PublicCatalog } from "@/components/workspace/public-catalog";
-import { SavedChartsSidebar } from "@/components/workspace/saved-charts-sidebar";
+import { PublicLibrary } from "@/components/workspace/public-library";
+import { PrivateLibrarySidebar } from "@/components/workspace/private-library-sidebar";
 import { WorkspaceToolbar } from "@/components/workspace/workspace-toolbar";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { abcToMusicXml, DEFAULT_ABC } from "@/lib/abc";
-import { DEFAULT_DISPLAY_SETTINGS, type ChartDisplaySettings } from "@/lib/abc-display";
-import { PUBLIC_CATALOG, type PublicCatalogChart } from "@/lib/public-catalog";
+import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
+import { PUBLIC_LIBRARY, type PublicSong } from "@/lib/public-library";
 
 type MyFakebookWorkspaceProps = {
   clerkConfigured: boolean;
   persistenceEnabled: boolean;
-  catalog: readonly PublicCatalogChart[];
-  catalogIsPersisted?: boolean;
+  publicSongs: readonly PublicSong[];
+  publicLibraryIsPersisted?: boolean;
 };
 
-function findReplacementCatalogChart(
-  catalog: readonly PublicCatalogChart[],
-  catalogHistory: readonly string[],
+function findReplacementPublicSong(
+  publicSongs: readonly PublicSong[],
+  publicSongHistory: readonly string[],
   excludedId: string | null,
 ) {
-  for (const chartId of [...catalogHistory].reverse()) {
-    const chart = catalog.find((candidate) => candidate.id === chartId);
-    if (chart && chart.id !== excludedId) return chart;
+  for (const songId of [...publicSongHistory].reverse()) {
+    const song = publicSongs.find((candidate) => candidate.id === songId);
+    if (song && song.id !== excludedId) return song;
   }
 
-  return catalog.find((chart) => chart.id !== excludedId) ?? PUBLIC_CATALOG[0];
+  return publicSongs.find((song) => song.id !== excludedId) ?? PUBLIC_LIBRARY[0];
 }
 
-function findReplacementLibraryScore(
-  scores: readonly LoadedScore[],
-  libraryHistory: readonly string[],
+function findReplacementPrivateSong(
+  songs: readonly LoadedSong[],
+  privateSongHistory: readonly string[],
   excludedId: string,
 ) {
-  for (const scoreId of [...libraryHistory].reverse()) {
-    const score = scores.find((candidate) => candidate.id === scoreId);
-    if (score && score.id !== excludedId) return score;
+  for (const songId of [...privateSongHistory].reverse()) {
+    const song = songs.find((candidate) => candidate.id === songId);
+    if (song && song.id !== excludedId) return song;
   }
 
-  return scores.find((score) => score.id !== excludedId) ?? null;
+  return songs.find((song) => song.id !== excludedId) ?? null;
 }
 
 export function MyFakebookWorkspace({
   clerkConfigured,
   persistenceEnabled,
-  catalog,
-  catalogIsPersisted = false,
+  publicSongs,
+  publicLibraryIsPersisted = false,
 }: MyFakebookWorkspaceProps) {
-  const initialCatalogChart = catalog[0] ?? PUBLIC_CATALOG[0];
-  const [abc, setAbc] = useState(initialCatalogChart?.abc ?? DEFAULT_ABC);
-  const [title, setTitle] = useState(initialCatalogChart?.title ?? "Midnight Walk");
-  const [sourceLabel, setSourceLabel] = useState("Public catalog");
-  const [isPublicCatalog, setIsPublicCatalog] = useState(true);
-  const [selectedCatalogId, setSelectedCatalogId] = useState<string | null>(initialCatalogChart?.id ?? null);
-  const [catalogHistory, setCatalogHistory] = useState<string[]>(initialCatalogChart ? [initialCatalogChart.id] : []);
-  const [hydrated, setHydrated] = useState(false);
-  const [saveStatus, setSaveStatus] = useState(persistenceEnabled ? "Connecting…" : "Saved locally");
+  const initialPublicSong = publicSongs[0] ?? PUBLIC_LIBRARY[0];
+  const [abc, setAbc] = useState(initialPublicSong?.abc ?? DEFAULT_ABC);
+  const [title, setTitle] = useState(initialPublicSong?.title ?? "Midnight Walk");
+  const [sourceLabel, setSourceLabel] = useState("Public song");
+  const [isPublicSong, setIsPublicSong] = useState(true);
+  const [selectedPublicSongId, setSelectedPublicSongId] = useState<string | null>(initialPublicSong?.id ?? null);
+  const [publicSongHistory, setPublicSongHistory] = useState<string[]>(initialPublicSong ? [initialPublicSong.id] : []);
+  const [saveStatus, setSaveStatus] = useState(persistenceEnabled ? "Connecting…" : "Not saved");
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [displaySettings, setDisplaySettings] = useState<ChartDisplaySettings>(DEFAULT_DISPLAY_SETTINGS);
-  const [currentScore, setCurrentScore] = useState<LoadedScore | null>(null);
-  const [libraryScores, setLibraryScores] = useState<LoadedScore[]>([]);
-  const [libraryHistory, setLibraryHistory] = useState<string[]>([]);
+  const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(DEFAULT_DISPLAY_SETTINGS);
+  const [currentSong, setCurrentSong] = useState<LoadedSong | null>(null);
+  const [privateSongs, setPrivateSongs] = useState<LoadedSong[]>([]);
+  const [privateSongHistory, setPrivateSongHistory] = useState<string[]>([]);
+
+  const handleCurrentSongChange = useCallback(
+    (song: LoadedSong | null) => {
+      setCurrentSong(song);
+      if (song && !isPublicSong) setSourceLabel("Private song");
+    },
+    [isPublicSong],
+  );
 
   const conversion = useMemo(() => {
     try {
@@ -85,50 +92,25 @@ export function MyFakebookWorkspace({
 
   const lineCount = abc.split("\n").length;
   const sourceLength = abc.length;
-  const scoreTitle = title.trim() || "Untitled lead sheet";
-  function updateDisplaySettings(patch: Partial<ChartDisplaySettings>) {
+  const songTitle = title.trim() || "Untitled lead sheet";
+  function updateDisplaySettings(patch: Partial<SongDisplaySettings>) {
     setDisplaySettings((current) => ({ ...current, ...patch }));
   }
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      try {
-        const stored =
-          window.localStorage.getItem("myfakebook:draft") ?? window.localStorage.getItem("notate:draft");
-        if (stored) {
-          const draft = JSON.parse(stored) as { title?: string; abc?: string };
-          if (typeof draft.abc === "string" && draft.abc.trim()) setAbc(draft.abc);
-          if (typeof draft.title === "string" && draft.title.trim()) setTitle(draft.title);
-          if (typeof draft.abc === "string" && draft.abc.trim()) {
-            setSourceLabel("Guest draft");
-            setIsPublicCatalog(false);
-            setSelectedCatalogId(null);
-          }
-        }
-      } catch {
-        // A local draft is a convenience; the editor should still load if storage is unavailable.
-      } finally {
-        setHydrated(true);
-      }
-    }, 0);
-    return () => window.clearTimeout(timeout);
+    try {
+      window.localStorage.removeItem("myfakebook:draft");
+      window.localStorage.removeItem("notate:draft");
+    } catch {
+      // Editing should still work when browser storage is unavailable.
+    }
   }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    if (isPublicCatalog && selectedCatalogId) return;
-    const timeout = window.setTimeout(() => {
-      window.localStorage.setItem("myfakebook:draft", JSON.stringify({ title, abc }));
-      if (!persistenceEnabled) setSaveStatus("Saved locally");
-    }, 500);
-    return () => window.clearTimeout(timeout);
-  }, [abc, hydrated, isPublicCatalog, persistenceEnabled, selectedCatalogId, title]);
 
   const handleStatus = useCallback((status: string) => setSaveStatus(status), []);
 
   function updateTitle(value: string) {
-    setSourceLabel(isPublicCatalog ? "Public catalog edit" : "Guest draft");
-    setSelectedCatalogId(null);
+    setSourceLabel(isPublicSong ? "Public song edit" : "New song");
+    setSelectedPublicSongId(null);
     setTitle(value);
     setAbc((current) => {
       if (/^T:.*$/m.test(current)) return current.replace(/^T:.*$/m, `T:${value}`);
@@ -136,30 +118,30 @@ export function MyFakebookWorkspace({
     });
   }
 
-  function handleNewScore() {
+  function handleNewSong() {
     setTitle("Midnight Walk");
     setAbc(DEFAULT_ABC);
-    setSourceLabel("Guest draft");
-    setIsPublicCatalog(false);
-    setSelectedCatalogId(null);
-    setCurrentScore(null);
+    setSourceLabel("New song");
+    setIsPublicSong(false);
+    setSelectedPublicSongId(null);
+    setCurrentSong(null);
     setFeedback("Fresh lead sheet ready");
   }
 
-  function handleOpenLibraryScore(score: LoadedScore, feedbackMessage = `Loaded ${score.title}`) {
-    setCurrentScore(score);
-    setTitle(score.title);
-    setAbc(score.abc);
-    setSourceLabel("My Songs");
-    setIsPublicCatalog(false);
-    setSelectedCatalogId(null);
-    setLibraryHistory((history) => [...history.filter((id) => id !== score.id), score.id]);
+  function handleOpenPrivateSong(song: LoadedSong, feedbackMessage = `Loaded ${song.title}`) {
+    setCurrentSong(song);
+    setTitle(song.title);
+    setAbc(song.abc);
+    setSourceLabel("Private song");
+    setIsPublicSong(false);
+    setSelectedPublicSongId(null);
+    setPrivateSongHistory((history) => [...history.filter((id) => id !== song.id), song.id]);
     setFeedback(feedbackMessage);
   }
 
   function handleFormat() {
-    setSourceLabel(isPublicCatalog ? "Public catalog edit" : "Guest draft");
-    setSelectedCatalogId(null);
+    setSourceLabel(isPublicSong ? "Public song edit" : "New song");
+    setSelectedPublicSongId(null);
     setAbc((current) =>
       current
         .replaceAll("\r\n", "\n")
@@ -171,42 +153,36 @@ export function MyFakebookWorkspace({
     setFeedback("ABC spacing cleaned up");
   }
 
-  function handleOpenCatalogChart(chart: PublicCatalogChart) {
-    try {
-      window.localStorage.removeItem("myfakebook:draft");
-      window.localStorage.removeItem("notate:draft");
-    } catch {
-      // A catalog selection should still work when browser storage is unavailable.
-    }
-    setTitle(chart.title);
-    setAbc(chart.abc);
-    setSourceLabel("Public catalog");
-    setIsPublicCatalog(true);
-    setSelectedCatalogId(chart.id);
-    setCatalogHistory((history) => [...history.filter((id) => id !== chart.id), chart.id]);
-    setCurrentScore(null);
-    setFeedback(`Opened ${chart.title} from the public catalog`);
+  function handleOpenPublicSong(song: PublicSong) {
+    setTitle(song.title);
+    setAbc(song.abc);
+    setSourceLabel("Public song");
+    setIsPublicSong(true);
+    setSelectedPublicSongId(song.id);
+    setPublicSongHistory((history) => [...history.filter((id) => id !== song.id), song.id]);
+    setCurrentSong(null);
+    setFeedback(`Opened ${song.title} from the Public Library`);
   }
 
   useEffect(() => {
-    if (!isPublicCatalog || !selectedCatalogId || catalog.some((chart) => chart.id === selectedCatalogId)) return;
+    if (!isPublicSong || !selectedPublicSongId || publicSongs.some((song) => song.id === selectedPublicSongId)) return;
 
-    const nextChart = findReplacementCatalogChart(catalog, catalogHistory, selectedCatalogId);
-    if (!nextChart) return;
+    const nextSong = findReplacementPublicSong(publicSongs, publicSongHistory, selectedPublicSongId);
+    if (!nextSong) return;
 
     const timeout = window.setTimeout(() => {
-      setTitle(nextChart.title);
-      setAbc(nextChart.abc);
-      setSourceLabel("Public catalog");
-      setSelectedCatalogId(nextChart.id);
-      setCurrentScore(null);
+      setTitle(nextSong.title);
+      setAbc(nextSong.abc);
+      setSourceLabel("Public song");
+      setSelectedPublicSongId(nextSong.id);
+      setCurrentSong(null);
     }, 0);
     return () => window.clearTimeout(timeout);
-  }, [catalog, catalogHistory, isPublicCatalog, selectedCatalogId]);
+  }, [publicSongs, publicSongHistory, isPublicSong, selectedPublicSongId]);
 
   function handleAbcChange(value: string) {
-    setSourceLabel(isPublicCatalog ? "Public catalog edit" : "Guest draft");
-    setSelectedCatalogId(null);
+    setSourceLabel(isPublicSong ? "Public song edit" : "New song");
+    setSelectedPublicSongId(null);
     setAbc(value);
   }
 
@@ -256,7 +232,7 @@ export function MyFakebookWorkspace({
       const downloadUrl = window.URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = downloadUrl;
-      anchor.download = `${scoreTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.musicxml`;
+      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.musicxml`;
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
@@ -278,24 +254,23 @@ export function MyFakebookWorkspace({
           persistenceEnabled ? "grid-cols-[208px_minmax(0,1fr)]" : "grid-cols-[minmax(0,1fr)]"
         }`}
       >
-        <SavedChartsSidebar
+        <PrivateLibrarySidebar
           abc={abc}
-          currentScore={currentScore}
+          currentSong={currentSong}
           enabled={persistenceEnabled}
-          hydrated={hydrated}
-          isPublicCatalog={isPublicCatalog}
-          onCurrentScoreChange={setCurrentScore}
-          onLibraryScoresChange={setLibraryScores}
-          onLoad={handleOpenLibraryScore}
+          isPublicSong={isPublicSong}
+          onCurrentSongChange={handleCurrentSongChange}
+          onPrivateSongsChange={setPrivateSongs}
+          onLoad={handleOpenPrivateSong}
           onStatus={handleStatus}
-          title={scoreTitle}
+          title={songTitle}
         />
 
         <main className="min-w-0 p-4 max-[1080px]:px-5.5 max-[1080px]:pt-7 max-[1080px]:pb-9 max-[720px]:px-3.5 max-[720px]:pt-5.5 max-[720px]:pb-7">
-          <PublicCatalog
-            catalog={catalog}
-            onOpenChart={handleOpenCatalogChart}
-            selectedCatalogId={selectedCatalogId}
+          <PublicLibrary
+            songs={publicSongs}
+            onOpenSong={handleOpenPublicSong}
+            selectedSongId={selectedPublicSongId}
           />
 
           <WorkspaceToolbar
@@ -306,7 +281,7 @@ export function MyFakebookWorkspace({
             onDisplaySettingsChange={updateDisplaySettings}
             onExport={handleExport}
             onFileImport={handleFileImport}
-            onNew={handleNewScore}
+            onNew={handleNewSong}
             onTitleChange={updateTitle}
             sourceLabel={sourceLabel}
             title={title}
@@ -329,61 +304,60 @@ export function MyFakebookWorkspace({
               abc={abc}
               displaySettings={displaySettings}
               saveAction={
-                persistenceEnabled && isPublicCatalog ? (
-                  <SaveToLibraryButton
+                persistenceEnabled && isPublicSong ? (
+                  <SaveToPrivateLibraryButton
                     abc={abc}
                     enabled={persistenceEnabled}
-                    hydrated={hydrated}
-                    onCurrentScoreChange={setCurrentScore}
-                    onSavedToLibrary={() => {
-                      setSourceLabel("My Songs");
-                      setIsPublicCatalog(false);
-                      setSelectedCatalogId(null);
+                    onCurrentSongChange={handleCurrentSongChange}
+                    onSavedToPrivateLibrary={() => {
+                      setSourceLabel("Private song");
+                      setIsPublicSong(false);
+                      setSelectedPublicSongId(null);
                     }}
                     onStatus={handleStatus}
-                    title={scoreTitle}
+                    title={songTitle}
                   />
                 ) : null
               }
               publishAction={
-                persistenceEnabled && isPublicCatalog && catalogIsPersisted && selectedCatalogId ? (
+                persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId ? (
                   <AdminDeletePublicSongButton
-                    catalogId={selectedCatalogId as Id<"catalogCharts">}
+                    publicSongId={selectedPublicSongId as Id<"publicSongs"> | Id<"catalogCharts">}
                     enabled={persistenceEnabled}
                     onDeleted={() => {
-                      const replacement = findReplacementCatalogChart(catalog, catalogHistory, selectedCatalogId);
+                      const replacement = findReplacementPublicSong(publicSongs, publicSongHistory, selectedPublicSongId);
                       if (replacement) {
-                        handleOpenCatalogChart(replacement);
+                        handleOpenPublicSong(replacement);
                         setFeedback(`Deleted public song; opened ${replacement.title}`);
                       } else {
-                        setSelectedCatalogId(null);
+                        setSelectedPublicSongId(null);
                         setFeedback("Public song deleted");
                       }
                     }}
                     onStatus={handleStatus}
                   />
-                ) : persistenceEnabled && !isPublicCatalog && currentScore ? (
+                ) : persistenceEnabled && !isPublicSong && currentSong ? (
                   <>
-                    <RemoveFromLibraryButton
+                    <RemovePrivateSongButton
                       enabled={persistenceEnabled}
                       onRemoved={() => {
-                        if (!currentScore) return;
-                        const replacement = findReplacementLibraryScore(
-                          libraryScores,
-                          libraryHistory,
-                          currentScore.id,
+                        if (!currentSong) return;
+                        const replacement = findReplacementPrivateSong(
+                          privateSongs,
+                          privateSongHistory,
+                          currentSong.id,
                         );
-                        setLibraryHistory((history) => history.filter((id) => id !== currentScore.id));
+                        setPrivateSongHistory((history) => history.filter((id) => id !== currentSong.id));
                         if (replacement) {
-                          handleOpenLibraryScore(replacement, `Removed ${currentScore.title}; opened ${replacement.title}`);
+                          handleOpenPrivateSong(replacement, `Removed ${currentSong.title}; opened ${replacement.title}`);
                         } else {
-                          handleNewScore();
+                          handleNewSong();
                         }
                       }}
                       onStatus={handleStatus}
-                      score={currentScore}
+                      song={currentSong}
                     />
-                    <AdminPublishButton enabled={persistenceEnabled} onStatus={handleStatus} score={currentScore} />
+                    <AdminPublishButton enabled={persistenceEnabled} onStatus={handleStatus} song={currentSong} />
                   </>
                 ) : null
               }

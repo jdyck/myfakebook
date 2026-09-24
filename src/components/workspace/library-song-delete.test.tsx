@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   mutation: vi.fn().mockResolvedValue("score-id"),
-  scores: [] as Array<{ _id: string; title: string; abc: string; updatedAt: number }>,
+  privateSongs: [] as Array<{ _id: string; title: string; abc: string; updatedAt: number }>,
 }));
 
 vi.mock("convex/react", () => ({
@@ -15,7 +15,7 @@ vi.mock("convex/react", () => ({
   Unauthenticated: () => null,
   useConvexAuth: () => ({ isAuthenticated: true, isLoading: false }),
   useMutation: () => mocks.mutation,
-  useQuery: () => mocks.scores,
+  useQuery: () => mocks.privateSongs,
 }));
 
 vi.mock("@clerk/nextjs", () => ({
@@ -27,7 +27,7 @@ vi.mock("@clerk/nextjs", () => ({
 }));
 
 import { MyFakebookWorkspace } from "./my-fakebook-workspace";
-import { PUBLIC_CATALOG } from "@/lib/public-catalog";
+import { PUBLIC_LIBRARY } from "@/lib/public-library";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -44,7 +44,7 @@ describe("library song deletion", () => {
     container?.remove();
     window.localStorage?.clear();
     mocks.mutation.mockClear();
-    mocks.scores = [];
+    mocks.privateSongs = [];
     vi.restoreAllMocks();
     container = undefined;
     unmount = undefined;
@@ -54,22 +54,22 @@ describe("library song deletion", () => {
     const firstSong = {
       _id: "first-score",
       title: "First Saved Song",
-      abc: PUBLIC_CATALOG[0].abc.replace("T:Oh, Lady Be Good!", "T:First Saved Song"),
+      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:First Saved Song"),
       updatedAt: 1,
     };
     const secondSong = {
       _id: "second-score",
       title: "Second Saved Song",
-      abc: PUBLIC_CATALOG[0].abc.replace("T:Oh, Lady Be Good!", "T:Second Saved Song"),
+      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:Second Saved Song"),
       updatedAt: 2,
     };
     const thirdSong = {
       _id: "third-score",
       title: "Third Saved Song",
-      abc: PUBLIC_CATALOG[0].abc.replace("T:Oh, Lady Be Good!", "T:Third Saved Song"),
+      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:Third Saved Song"),
       updatedAt: 3,
     };
-    mocks.scores = [thirdSong, secondSong, firstSong];
+    mocks.privateSongs = [thirdSong, secondSong, firstSong];
 
     container = document.createElement("div");
     document.body.appendChild(container);
@@ -79,7 +79,7 @@ describe("library song deletion", () => {
     await act(async () => {
       root.render(
         <MyFakebookWorkspace
-          catalog={PUBLIC_CATALOG}
+          publicSongs={PUBLIC_LIBRARY}
           clerkConfigured={false}
           persistenceEnabled
         />,
@@ -100,7 +100,7 @@ describe("library song deletion", () => {
 
     await act(async () => {
       container
-        ?.querySelector<HTMLButtonElement>('button[aria-label="Remove Third Saved Song from My Songs"]')
+        ?.querySelector<HTMLButtonElement>('button[aria-label="Remove Third Saved Song from Private Library"]')
         ?.click();
       await Promise.resolve();
     });

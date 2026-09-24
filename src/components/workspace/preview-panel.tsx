@@ -4,11 +4,11 @@ import type { ReactNode } from "react";
 import { Music2 } from "lucide-react";
 
 import { AbcPreview } from "@/components/workspace/abc-preview";
-import type { ChartDisplaySettings } from "@/lib/abc-display";
+import type { SongDisplaySettings } from "@/lib/abc-display";
 
 type PreviewPanelProps = {
   abc: string;
-  displaySettings: ChartDisplaySettings;
+  displaySettings: SongDisplaySettings;
   saveAction: ReactNode;
   publishAction: ReactNode;
 };

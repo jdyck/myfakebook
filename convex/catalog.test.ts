@@ -8,7 +8,7 @@ import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
 
-test("an admin can publish a song from My Songs", async () => {
+test("an admin can publish a song from the Private Library", async () => {
   const t = convexTest(schema, modules);
   const asAdmin = t.withIdentity({
     subject: "admin_1",
@@ -25,9 +25,9 @@ test("an admin can publish a song from My Songs", async () => {
     scoreId: privateSongId,
   });
 
-  const publishedCatalog = await t.query(api.catalog.listPublished, {});
+  const publishedSongs = await t.query(api.catalog.listPublished, {});
 
-  expect(publishedCatalog).toEqual([
+  expect(publishedSongs).toEqual([
     expect.objectContaining({
       title: "Autumn Song",
       abc: "T:Autumn Song\nK:C\nC D E F|",

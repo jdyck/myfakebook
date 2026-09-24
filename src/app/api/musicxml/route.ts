@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 
 import { abcToMusicXml } from "@/lib/abc";
-import { DEFAULT_DISPLAY_SETTINGS, prepareAbcForExport, type ChartDisplaySettings } from "@/lib/abc-display";
+import { DEFAULT_DISPLAY_SETTINGS, prepareAbcForExport, type SongDisplaySettings } from "@/lib/abc-display";
 
-function readDisplaySettings(value: unknown): ChartDisplaySettings {
+function readDisplaySettings(value: unknown): SongDisplaySettings {
   if (!value || typeof value !== "object") return DEFAULT_DISPLAY_SETTINGS;
-  const candidate = value as Partial<ChartDisplaySettings>;
+  const candidate = value as Partial<SongDisplaySettings>;
   return {
     showChords: typeof candidate.showChords === "boolean" ? candidate.showChords : true,
     showLyrics: typeof candidate.showLyrics === "boolean" ? candidate.showLyrics : true,

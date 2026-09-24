@@ -4,17 +4,17 @@ import type { ChangeEventHandler } from "react";
 
 import { DisplayControls } from "@/components/workspace/display-controls";
 import { WorkspaceActions } from "@/components/workspace/workspace-actions";
-import type { ChartDisplaySettings } from "@/lib/abc-display";
+import type { SongDisplaySettings } from "@/lib/abc-display";
 
 type WorkspaceToolbarProps = {
   abc: string;
   title: string;
   sourceLabel: string;
   feedback: string | null;
-  displaySettings: ChartDisplaySettings;
+  displaySettings: SongDisplaySettings;
   exporting: boolean;
   onTitleChange: (value: string) => void;
-  onDisplaySettingsChange: (patch: Partial<ChartDisplaySettings>) => void;
+  onDisplaySettingsChange: (patch: Partial<SongDisplaySettings>) => void;
   onNew: () => void;
   onExport: () => void;
   onFileImport: ChangeEventHandler<HTMLInputElement>;

@@ -26,7 +26,7 @@ vi.mock("@clerk/nextjs", () => ({
 }));
 
 import { MyFakebookWorkspace } from "./my-fakebook-workspace";
-import { PUBLIC_CATALOG } from "@/lib/public-catalog";
+import { PUBLIC_LIBRARY } from "@/lib/public-library";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -50,22 +50,22 @@ describe("admin public-song deletion", () => {
 
   it("opens the last remaining song after the admin deletes the current song", async () => {
     const firstSong = {
-      ...PUBLIC_CATALOG[0],
+      ...PUBLIC_LIBRARY[0],
       id: "first-song",
       title: "First Song",
-      abc: PUBLIC_CATALOG[0].abc.replace("T:Oh, Lady Be Good!", "T:First Song"),
+      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:First Song"),
     };
     const secondSong = {
-      ...PUBLIC_CATALOG[0],
+      ...PUBLIC_LIBRARY[0],
       id: "second-song",
       title: "Second Song",
-      abc: PUBLIC_CATALOG[0].abc.replace("T:Oh, Lady Be Good!", "T:Second Song"),
+      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:Second Song"),
     };
     const thirdSong = {
-      ...PUBLIC_CATALOG[0],
+      ...PUBLIC_LIBRARY[0],
       id: "third-song",
       title: "Third Song",
-      abc: PUBLIC_CATALOG[0].abc.replace("T:Oh, Lady Be Good!", "T:Third Song"),
+      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:Third Song"),
     };
 
     container = document.createElement("div");
@@ -76,18 +76,18 @@ describe("admin public-song deletion", () => {
     await act(async () => {
       root.render(
         <MyFakebookWorkspace
-          catalog={[firstSong, secondSong, thirdSong]}
-          catalogIsPersisted
+          publicSongs={[firstSong, secondSong, thirdSong]}
+          publicLibraryIsPersisted
           clerkConfigured={false}
           persistenceEnabled
         />,
       );
     });
 
-    const catalogButtons = Array.from(container.querySelectorAll<HTMLButtonElement>('button[aria-pressed]'));
+    const publicLibraryButtons = Array.from(container.querySelectorAll<HTMLButtonElement>('button[aria-pressed]'));
     await act(async () => {
-      catalogButtons[1]?.click();
-      catalogButtons[2]?.click();
+      publicLibraryButtons[1]?.click();
+      publicLibraryButtons[2]?.click();
     });
 
     await act(async () => {

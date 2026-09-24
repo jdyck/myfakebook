@@ -1,10 +1,10 @@
 "use client";
 
-import type { ChartDisplaySettings } from "@/lib/abc-display";
+import type { SongDisplaySettings } from "@/lib/abc-display";
 
 type DisplayControlsProps = {
-  settings: ChartDisplaySettings;
-  onChange: (patch: Partial<ChartDisplaySettings>) => void;
+  settings: SongDisplaySettings;
+  onChange: (patch: Partial<SongDisplaySettings>) => void;
 };
 
 export function DisplayControls({ settings, onChange }: DisplayControlsProps) {
@@ -17,7 +17,7 @@ export function DisplayControls({ settings, onChange }: DisplayControlsProps) {
       <label className="flex items-center gap-1.5 text-[10px] font-[650] text-(--muted)">
         Transpose
         <select
-          aria-label="Chart transposition"
+          aria-label="Song transposition"
           className="rounded-[6px] border border-(--line-strong) bg-(--paper) px-1.5 py-1 text-[10px] text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)"
           value={settings.transposition}
           onChange={(event) => onChange({ transposition: Number(event.target.value) })}

@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
+import { listPrivateSongs, removePrivateSong, savePrivateSong } from "./songStore";
 
 async function currentOwner(ctx: { auth: { getUserIdentity: () => Promise<{ subject: string } | null> } }) {
   const identity = await ctx.auth.getUserIdentity();
@@ -8,64 +9,48 @@ async function currentOwner(ctx: { auth: { getUserIdentity: () => Promise<{ subj
   return identity.subject;
 }
 
+const compatiblePrivateSongId = v.union(v.id("privateSongs"), v.id("scores"));
+
+async function withLegacyScoreErrors<T>(operation: () => Promise<T>) {
+  try {
+    return await operation();
+  } catch (error) {
+    if (error instanceof Error && error.message === "Private song not found") {
+      throw new Error("Score not found");
+    }
+    throw error;
+  }
+}
+
+// Compatibility API. Keep this path while existing clients may still call api.scores.*.
 export const listMine = query({
   args: {},
-  handler: async (ctx) => {
-    const ownerId = await currentOwner(ctx);
-    return ctx.db
-      .query("scores")
-      .withIndex("by_owner_updatedAt", (query) => query.eq("ownerId", ownerId))
-      .order("desc")
-      .take(8);
-  },
+  handler: async (ctx) => listPrivateSongs(ctx, await currentOwner(ctx), "legacy"),
 });
 
 export const save = mutation({
   args: {
-    id: v.optional(v.id("scores")),
+    id: v.optional(compatiblePrivateSongId),
     title: v.string(),
     abc: v.string(),
     updatedAt: v.number(),
   },
-  handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
-    const title = (args.title ?? "").trim() || "Untitled lead sheet";
-    const abc = args.abc ?? "";
-    const updatedAt = args.updatedAt ?? Date.now();
-
-    if (args.id) {
-      const existing = (await ctx.db.get(args.id)) as { ownerId?: string } | null;
-      if (!existing || existing.ownerId !== ownerId) throw new Error("Score not found");
-      await ctx.db.patch(args.id, { title, abc, updatedAt });
-      return args.id;
-    }
-
-    const existing = await ctx.db
-      .query("scores")
-      .withIndex("by_owner", (query) => query.eq("ownerId", ownerId))
-      .filter((query) => query.and(query.eq(query.field("title"), title), query.eq(query.field("abc"), abc)))
-      .order("desc")
-      .first();
-    if (existing) {
-      await ctx.db.patch(existing._id, { updatedAt });
-      return existing._id;
-    }
-
-    return ctx.db.insert("scores", { ownerId, title, abc, updatedAt });
-  },
+  handler: async (ctx, args) =>
+    withLegacyScoreErrors(async () => {
+      const ownerId = await currentOwner(ctx);
+      const title = args.title.trim() || "Untitled lead sheet";
+      const { legacyId } = await savePrivateSong(
+        ctx,
+        ownerId,
+        { title, abc: args.abc, updatedAt: args.updatedAt },
+        args.id,
+      );
+      return legacyId;
+    }),
 });
 
 export const remove = mutation({
-  args: {
-    id: v.id("scores"),
-  },
-  handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
-    const existing = await ctx.db.get(args.id);
-
-    if (!existing || existing.ownerId !== ownerId) throw new Error("Score not found");
-
-    await ctx.db.delete(args.id);
-    return args.id;
-  },
+  args: { id: compatiblePrivateSongId },
+  handler: async (ctx, args) =>
+    withLegacyScoreErrors(async () => removePrivateSong(ctx, args.id, await currentOwner(ctx))),
 });

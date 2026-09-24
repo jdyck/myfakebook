@@ -1,19 +1,19 @@
 # MyFakebook content model
 
-This document owns the concepts, fields, relationships, storage authority, and invariants the product needs to preserve. It intentionally separates product concepts from a specific database schema. [Requirements](../../local/docs/product/REQUIREMENTS.md) define user workflows, delivery priorities, and acceptance criteria.
+This document owns song concepts, fields, relationships, storage authority, and invariants. It intentionally separates product concepts from the database schema. [Requirements](../../local/docs/product/REQUIREMENTS.md) define user workflows, delivery priorities, and acceptance criteria.
 
 ## Core model
 
-### Chart
+### Song
 
-A chart is the single persisted entity. “Song” and “chart” refer to the same thing in product language. There is no separate Song or Work record. Multiple arrangements or versions are represented as separate charts when needed.
+A song is the single persisted music-content entity. A song contains one lead-sheet arrangement; materially different arrangements are separate songs. There is no separate Work or Chart entity.
 
-#### Chart content
+#### Song content
 
-This will be stored in abc notation. 
+Song notation is stored as ABC.
 
 - Title
-- Optional subtitle, such as “Jazz Changes” or “3/4 Version” to distinguish different chart arrangements. 
+- Optional subtitle, such as “Jazz Changes” or “3/4 Version,” to distinguish arrangements
 - Writers, with roles such as composer or lyricist
 - Melody
 - Lyrics
@@ -22,31 +22,30 @@ This will be stored in abc notation.
 - Base key
 - Default tempo
 - Notes
-- Optional source chart reference
+- Optional source song reference
 
-#### Chart metadata
+#### Song metadata
 
 - Publication year, used by the admin when evaluating public-domain eligibility
 - Genre
 - Global tags
-- Public catalog status
-- Owner in the system
+- Public-library publication status
+- Owner
 
-### Public and private charts
+### Public and private songs
 
-Public and private charts have the same shape. Their behavior comes from scope and permissions:
+Public and private songs share the same product content model. Ownership, visibility, and permissions determine their scope:
 
-| Chart scope | Owner | Who can edit it | Persistence behavior |
+| Song scope | Owner | Who can edit the stored song | Persistence behavior |
 |---|---|---|---|
-| Public catalog | System/site | Site admin | Available to guests and users |
-| Private library | User | Owning user | Saved to the user’s library |
-| Guest draft | NA | Current guest | Exists only in the browser session |
+| Public song | Site | Site admin | Published songs appear in the public library |
+| Private song | User | Owning user | Saved to that user’s private library |
 
-A user must copy a public chart into their library before editing it. The private copy is independent of the catalog chart.
+Only published public songs are visible in the public library. Unpublished public songs are admin-only. Opening a public song for experimentation changes only the editor’s unsaved working copy. A signed-in user who wants to keep an edit saves it to the private library, creating an independent private song.
 
 ### Chord-change variant
 
-A chord-change variant is for alternative approaches to a song's harmony. It may apply to one or more measures in a chart. 
+A chord-change variant is an alternative approach to a song's harmony. It may apply to one or more measures in a song.
 
 A variant should have:
 
@@ -54,19 +53,19 @@ A variant should have:
 - Chord content
 - Optional notes
 
-Use variants when the melody, lyrics, meter, and overall chart identity remain the same and the variants are minor to the song. Use a separate chart when the arrangement is drastically different, such as a different meter, form, melody, or full-song treatment.
+Use variants when the melody, lyrics, meter, and overall song identity remain the same and the changes are local harmonic alternatives. Use a separate song when the arrangement is materially different, such as a different meter, form, melody, or full-song treatment.
 
 ### Set list
 
-A set list is an ordered collection of charts owned by a user. 
+A set list is an ordered collection of private songs owned by a user. Users can only see their own set lists.
 
-Users can only see their own lists.
+A set list cannot directly contain a public song. The user must save a copy to their private library first.
 
-A set list cannot directly contain a public catalog chart. The user must copy the chart to their library first.
+A song may be on more than one set list.
 
 ### Display settings
 
-Display settings are current presentation choices, not changes to the chart’s underlying content. They include:
+Display settings are current presentation choices, not changes to the song’s underlying content. They include:
 
 - Transposition
 - Visible melody
@@ -75,47 +74,47 @@ Display settings are current presentation choices, not changes to the chart’s 
 - Playback tempo
 - Selected chord-change variants
 
-The display settings are also used for the downloads. 
+Display settings are also used for downloads.
 
 ## Relationships
 
 ```text
-Public catalog
-└── Public chart
+Public library
+└── Published public songs
 
-User library
-├── User chart
+Private library (per user)
+├── Private songs
 |   ├── Chord-change variants
 |   └── Set-list references
-└── User set list
+└── User set lists
 
-Guest session
-└── Temporary chart draft (in browser memory only)
+Editor workspace
+└── Unsaved song content (discarded on refresh)
 ```
 
 ## Storage model
 
-Most of the data in the chart is stored in an ABC content field. Other fields are for tasks that make the system run smoother or give metadata crucial to the app that aren't appropriate in an ABC file. 
+Most song content is stored in an ABC field. Other fields support product behavior and structured information that does not belong in ABC.
 
 Use one source of truth for each kind of data:
 
 | Data | Authority |
 |---|---|
-| Ownership, visibility, tags, writers, title, subtitle, publication year | Structured chart metadata |
-| Notation and playable chart body | Stored ABC content in the chart record |
-| Current display choices | Browser/session state, or set-list item when intentionally saved |
-| MusicXML, PDF, PNG, SVG, and ABC files | Generated from the current chart and display settings |
+| Ownership, visibility, tags, writers, title, subtitle, publication year | Structured song metadata |
+| Notation and playable song body | ABC content on the song record |
+| Current display choices | Browser/session state, or a set-list item when intentionally saved |
+| MusicXML, PDF, PNG, SVG, and ABC files | Generated from the current song and display settings |
 
-The database record is the source of truth. An ABC download is a portable serialization of that record, not a second independently edited copy.
+The database song record is the source of truth. An ABC download is a portable serialization of that record, not a second independently edited copy.
 
-ABC is the portable chart format; a collection is a ZIP containing ABC files. Import, download, and bulk-download workflows and priorities are defined in the [requirements](../../local/docs/product/REQUIREMENTS.md#requirements).
+ABC is the portable song format; a collection is a ZIP containing ABC files. Import, download, and bulk-download workflows and priorities are defined in the [requirements](../../local/docs/product/REQUIREMENTS.md#requirements).
 
 ## Important invariants
 
-- A user cannot modify a public chart directly.
-- A library copy will not modify its source chart, it is totally separate at the point of duplication.
-- A guest draft is never presented as permanently saved.
-- A set list references a user-owned chart, not a public catalog chart.
-- A private chart can contain content that the admin has never reviewed.
-- Removing a user chart from a user’s library will not remove the public chart that was used as its source.
+- A user cannot modify the stored public song directly.
+- Saving a public song to a private library creates an independent private song.
+- Unsaved editor content exists only in browser memory and is discarded on refresh.
+- A set list references a user-owned private song, not a public song.
+- A private song can contain content that the admin has never reviewed.
+- Removing a private song does not remove the public song it was copied from.
 - No edit-history model is required.

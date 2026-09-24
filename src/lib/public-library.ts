@@ -1,4 +1,4 @@
-export type PublicCatalogChart = {
+export type PublicSong = {
   id: string;
   title: string;
   writers: string;
@@ -6,7 +6,7 @@ export type PublicCatalogChart = {
   abc: string;
 };
 
-export const PUBLIC_CATALOG: readonly PublicCatalogChart[] = [
+export const PUBLIC_LIBRARY: readonly PublicSong[] = [
   {
     id: "oh-lady-be-good",
     title: "Oh, Lady Be Good!",
