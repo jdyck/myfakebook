@@ -1,35 +1,35 @@
 "use client";
 
-import type { PublicCatalogChart } from "@/lib/public-catalog";
+import type { PublicSong } from "@/lib/public-library";
 
-type PublicCatalogProps = {
-  catalog: readonly PublicCatalogChart[];
-  selectedCatalogId: string | null;
-  onOpenChart: (chart: PublicCatalogChart) => void;
+type PublicLibraryProps = {
+  songs: readonly PublicSong[];
+  selectedSongId: string | null;
+  onOpenSong: (song: PublicSong) => void;
 };
 
-export function PublicCatalog({ catalog, selectedCatalogId, onOpenChart }: PublicCatalogProps) {
+export function PublicLibrary({ songs, selectedSongId, onOpenSong }: PublicLibraryProps) {
   return (
     <section
-      aria-labelledby="public-catalog-heading"
+      aria-labelledby="public-library-heading"
       className="mb-5 rounded-[11px] border border-(--line) bg-(--paper) px-4 py-3.5"
     >
       <div className="mb-2.5 flex items-baseline justify-between gap-3">
         <div>
-          <h2 id="public-catalog-heading" className="m-0 text-[12px] font-[720] text-foreground">
-            Public catalog
+          <h2 id="public-library-heading" className="m-0 text-[12px] font-[720] text-foreground">
+            Public Library
           </h2>
           <p className="m-0 mt-1 text-[10px] text-(--muted-soft)">
-            Published charts available to every guest.
+            Public songs available to everyone.
           </p>
         </div>
         <span className="font-mono text-[9px] text-(--muted-soft)">
-          {catalog.length} chart{catalog.length === 1 ? "" : "s"}
+          {songs.length} song{songs.length === 1 ? "" : "s"}
         </span>
       </div>
       <div className="grid gap-1.5">
-        {catalog.map((chart) => {
-          const isSelected = selectedCatalogId === chart.id;
+        {songs.map((song) => {
+          const isSelected = selectedSongId === song.id;
           return (
             <button
               aria-pressed={isSelected}
@@ -38,14 +38,14 @@ export function PublicCatalog({ catalog, selectedCatalogId, onOpenChart }: Publi
                   ? "border-(--accent) bg-(--accent-soft)"
                   : "border-(--line) bg-(--paper-soft) hover:border-(--line-strong)"
               }`}
-              key={chart.id}
+              key={song.id}
               type="button"
-              onClick={() => onOpenChart(chart)}
+              onClick={() => onOpenSong(song)}
             >
               <span className="min-w-0">
-                <span className="block truncate text-[11px] font-[680] text-foreground">{chart.title}</span>
+                <span className="block truncate text-[11px] font-[680] text-foreground">{song.title}</span>
                 <span className="mt-0.5 block truncate text-[10px] text-(--muted-soft)">
-                  {chart.writers} · {chart.rhythm}
+                  {song.writers} · {song.rhythm}
                 </span>
               </span>
               <span className="shrink-0 text-[10px] font-[650] text-(--accent-deep)">

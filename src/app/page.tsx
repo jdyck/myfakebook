@@ -1,6 +1,6 @@
-import { CatalogBackedWorkspace } from "@/components/workspace/catalog-backed-workspace";
+import { PublicLibraryBackedWorkspace } from "@/components/workspace/public-library-backed-workspace";
 import { MyFakebookWorkspace } from "@/components/workspace/my-fakebook-workspace";
-import { PUBLIC_CATALOG } from "@/lib/public-catalog";
+import { PUBLIC_LIBRARY } from "@/lib/public-library";
 
 export default function Home() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
@@ -8,10 +8,10 @@ export default function Home() {
 
   if (convexConfigured) {
     return (
-      <CatalogBackedWorkspace
+      <PublicLibraryBackedWorkspace
         clerkConfigured={clerkConfigured}
         persistenceEnabled={clerkConfigured && convexConfigured}
-        fallbackCatalog={PUBLIC_CATALOG}
+        fallbackSongs={PUBLIC_LIBRARY}
       />
     );
   }
@@ -20,7 +20,7 @@ export default function Home() {
     <MyFakebookWorkspace
       clerkConfigured={clerkConfigured}
       persistenceEnabled={clerkConfigured && convexConfigured}
-      catalog={PUBLIC_CATALOG}
+      publicSongs={PUBLIC_LIBRARY}
     />
   );
 }

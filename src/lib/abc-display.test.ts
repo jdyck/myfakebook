@@ -1,9 +1,9 @@
 import ABCJS from "abcjs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { prepareAbcForExport, type ChartDisplaySettings } from "./abc-display";
+import { prepareAbcForExport, type SongDisplaySettings } from "./abc-display";
 
-const DISPLAY_SETTINGS: ChartDisplaySettings = {
+const DISPLAY_SETTINGS: SongDisplaySettings = {
   showChords: true,
   showLyrics: true,
   transposition: 2,

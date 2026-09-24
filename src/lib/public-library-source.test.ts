@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { selectPublicCatalog } from "./catalog-source";
+import { selectPublicLibrary } from "./public-library-source";
 
-describe("public catalog source", () => {
+describe("Public Library source", () => {
   it("uses database songs when at least one published song exists", () => {
-    const databaseCatalog = [
+    const databaseSongs = [
       {
         id: "database-song",
         title: "Database Song",
@@ -14,7 +14,7 @@ describe("public catalog source", () => {
       },
     ];
 
-    const fallbackCatalog = [
+    const fallbackSongs = [
       {
         id: "fallback-song",
         title: "Fallback Song",
@@ -24,8 +24,8 @@ describe("public catalog source", () => {
       },
     ];
 
-    expect(selectPublicCatalog(databaseCatalog, fallbackCatalog)).toEqual(
-      databaseCatalog,
+    expect(selectPublicLibrary(databaseSongs, fallbackSongs)).toEqual(
+      databaseSongs,
     );
   });
 });

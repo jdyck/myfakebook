@@ -7,7 +7,7 @@ import ABCJS from "abcjs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { MyFakebookWorkspace } from "./my-fakebook-workspace";
-import { PUBLIC_CATALOG } from "@/lib/public-catalog";
+import { PUBLIC_LIBRARY } from "@/lib/public-library";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -37,18 +37,18 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} catalog={PUBLIC_CATALOG} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
       );
     });
 
     const editor = container.querySelector<HTMLTextAreaElement>('textarea[aria-label="ABC notation source"]');
     expect(editor).not.toBeNull();
     expect(editor?.value).toContain("T:Oh, Lady Be Good!");
-    expect(container.textContent).toContain("Public catalog");
+    expect(container.textContent).toContain("Public Library");
     expect(container.querySelector('[aria-label="Rendered lead sheet"]')).not.toBeNull();
   });
 
-  it("lets a guest start and edit a draft while keeping the preview connected", async () => {
+  it("lets a visitor start and edit a new song while keeping the preview connected", async () => {
     container = document.createElement("div");
     document.body.appendChild(container);
     const root = createRoot(container);
@@ -56,7 +56,7 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} catalog={PUBLIC_CATALOG} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
       );
     });
 
@@ -75,7 +75,7 @@ describe("MyFakebookWorkspace", () => {
 
     expect(title?.value).toBe("Midnight Walk");
     expect(editor?.value).toContain("T:Midnight Walk");
-    expect(container.textContent).toContain("Guest draft");
+    expect(container.textContent).toContain("New song");
     expect(renderedLeadSheet).not.toBeNull();
 
     const editedAbc = editor?.value.replace("T:Midnight Walk", "T:Guest edit");
@@ -86,7 +86,7 @@ describe("MyFakebookWorkspace", () => {
     });
 
     expect(editor?.value).toContain("T:Guest edit");
-    expect(container.textContent).toContain("Guest draft");
+    expect(container.textContent).toContain("New song");
     expect(container.querySelector('[aria-label="Rendered lead sheet"]')).not.toBeNull();
   });
 
@@ -99,11 +99,11 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} catalog={PUBLIC_CATALOG} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
       );
     });
 
-    const transposition = container.querySelector<HTMLSelectElement>('select[aria-label="Chart transposition"]');
+    const transposition = container.querySelector<HTMLSelectElement>('select[aria-label="Song transposition"]');
     const showChords = container.querySelector<HTMLInputElement>('input[aria-label="Show chords"]');
     const showLyrics = container.querySelector<HTMLInputElement>('input[aria-label="Show lyrics"]');
     expect(transposition).not.toBeNull();
@@ -151,11 +151,11 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} catalog={PUBLIC_CATALOG} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
       );
     });
 
-    const transposition = container.querySelector<HTMLSelectElement>('select[aria-label="Chart transposition"]');
+    const transposition = container.querySelector<HTMLSelectElement>('select[aria-label="Song transposition"]');
     const showLyrics = container.querySelector<HTMLInputElement>('input[aria-label="Show lyrics"]');
     await act(async () => {
       if (!transposition || !showLyrics) throw new Error("Display controls are missing.");
@@ -202,7 +202,7 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} catalog={PUBLIC_CATALOG} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
       );
     });
 
