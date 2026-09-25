@@ -144,7 +144,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
     event.preventDefault();
     if (!validId) return;
     const song = privateSongs.find((candidate) => candidate._id === selectedSongId);
-    if (!song) return;
+    if (!song || setList?.items.some((item) => item.songId === song._id)) return;
     await runChange(() => addSong({ setListId: validId, songId: song._id }), `${song.title} added`);
     setSelectedSongId("");
   }
@@ -213,9 +213,12 @@ export function SetListDetail({ id }: SetListDetailProps) {
               <label className="sr-only" htmlFor="set-list-song">Add a private song</label>
               <select className={`${fieldClass} min-w-0 flex-1`} id="set-list-song" value={selectedSongId} onChange={(event) => setSelectedSongId(event.target.value)}>
                 <option value="">Choose a song from My Library</option>
-                {privateSongs.map((song) => <option key={song._id} value={song._id}>{song.title}</option>)}
+                {privateSongs.map((song) => {
+                  const alreadyAdded = setList.items.some((item) => item.songId === song._id);
+                  return <option disabled={alreadyAdded} key={song._id} value={song._id}>{alreadyAdded ? `${song.title} (already added)` : song.title}</option>;
+                })}
               </select>
-              <button className={primaryButtonClass} disabled={saving || !selectedSongId} type="submit">Add song</button>
+              <button className={primaryButtonClass} disabled={saving || !selectedSongId || setList.items.some((item) => item.songId === selectedSongId)} type="submit">Add song</button>
               {!privateSongs.length && <p className="m-0 w-full text-xs text-(--muted-soft)">Save a public song to My Library first, then you can add the private copy here. <Link className="text-(--accent-deep) underline" href="/songs">Browse songs</Link></p>}
             </form>
 

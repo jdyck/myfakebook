@@ -7,6 +7,7 @@ import {
   AdminPublicationButton,
   AdminUnpublishPublicSongButton,
   RemoveSongButton,
+  SaveToSetListButton,
   SaveSetListDisplaySettingsButton,
   SaveToMyLibraryButton,
   type LoadedSong,
@@ -295,22 +296,29 @@ export function MyFakebookWorkspace({
               abc={abc}
               displaySettings={displaySettings}
               saveAction={
-                persistenceEnabled && isPublicSong ? (
-                  <SaveToMyLibraryButton
-                    abc={abc}
-                    enabled={persistenceEnabled}
-                    onCurrentSongChange={handleCurrentSongChange}
-                    onSavedToMyLibrary={() => {
-                      setSourceLabel("My song");
-                      setIsPublicSong(false);
-                      setSelectedPublicSongId(null);
-                      setSourcePublicSongId(null);
-                    }}
+                <>
+                  {persistenceEnabled && isPublicSong && (
+                    <SaveToMyLibraryButton
+                      abc={abc}
+                      enabled={persistenceEnabled}
+                      onCurrentSongChange={handleCurrentSongChange}
+                      onSavedToMyLibrary={() => {
+                        setSourceLabel("My song");
+                        setIsPublicSong(false);
+                        setSelectedPublicSongId(null);
+                        setSourcePublicSongId(null);
+                      }}
+                      onStatus={handleStatus}
+                      sourceSongId={sourcePublicSongId}
+                      title={songTitle}
+                    />
+                  )}
+                  <SaveToSetListButton
+                    enabled={persistenceEnabled && !isPublicSong}
                     onStatus={handleStatus}
-                    sourceSongId={sourcePublicSongId}
-                    title={songTitle}
+                    song={currentSong}
                   />
-                ) : null
+                </>
               }
               publishAction={
                 persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId &&

@@ -29,13 +29,17 @@ export const listMine = query({
       .order("desc")
       .collect();
 
-    return Promise.all(setLists.map(async (setList) => ({
-      ...setList,
-      itemCount: (await ctx.db
+    return Promise.all(setLists.map(async (setList) => {
+      const items = await ctx.db
         .query("setListItems")
         .withIndex("by_setList_position", (index) => index.eq("setListId", setList._id))
-        .collect()).length,
-    })));
+        .collect();
+      return {
+        ...setList,
+        itemCount: items.length,
+        songIds: items.map((item) => item.songId),
+      };
+    }));
   },
 });
 
@@ -118,17 +122,20 @@ export const addSong = mutation({
     if (!song || song.ownerId !== ownerId) throw new Error("Save this song to My Library before adding it");
     if (song.publicationState !== "private") throw new Error("Only private songs can be added to a set list");
 
-    const lastItem = await ctx.db
+    const items = await ctx.db
       .query("setListItems")
       .withIndex("by_setList_position", (index) => index.eq("setListId", args.setListId))
       .order("desc")
-      .first();
+      .collect();
+    if (items.some((item) => item.songId === args.songId)) {
+      throw new Error("Song is already on this set list");
+    }
     const now = Date.now();
     const itemId = await ctx.db.insert("setListItems", {
       ownerId,
       setListId: args.setListId,
       songId: args.songId,
-      position: (lastItem?.position ?? -1) + 1,
+      position: (items[0]?.position ?? -1) + 1,
       displaySettings: { transposition: 0, showChords: true, showLyrics: true },
     });
     await ctx.db.patch("setLists", args.setListId, { updatedAt: now });
