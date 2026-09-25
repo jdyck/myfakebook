@@ -11,16 +11,16 @@ type PublicLibraryProps = {
 export function PublicLibrary({ songs, selectedSongId, onOpenSong }: PublicLibraryProps) {
   return (
     <section
-      aria-labelledby="public-library-heading"
+      aria-labelledby="songs-heading"
       className="mb-5 rounded-[11px] border border-(--line) bg-(--paper) px-4 py-3.5"
     >
       <div className="mb-2.5 flex items-baseline justify-between gap-3">
         <div>
-          <h2 id="public-library-heading" className="m-0 text-[12px] font-[720] text-foreground">
-            Public Library
+          <h2 id="songs-heading" className="m-0 text-[12px] font-[720] text-foreground">
+            Songs
           </h2>
           <p className="m-0 mt-1 text-[10px] text-(--muted-soft)">
-            Public songs available to everyone.
+            Songs available to everyone.
           </p>
         </div>
         <span className="font-mono text-[9px] text-(--muted-soft)">

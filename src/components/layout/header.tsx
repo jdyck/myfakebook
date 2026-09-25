@@ -1,6 +1,8 @@
 "use client";
 
+import { Show } from "@clerk/nextjs";
 import { Music2 } from "lucide-react";
+import Link from "next/link";
 
 import { AuthControls } from "@/components/layout/auth-controls";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -19,6 +21,21 @@ export function Header({ clerkConfigured }: HeaderProps) {
         <span className="text-[15px] font-[760] tracking-tight text-foreground">MyFakebook</span>
       </div>
       <div className="flex items-center gap-2">
+        <nav aria-label="Main navigation" className="flex items-center gap-1">
+          <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/songs">
+            Songs
+          </Link>
+          <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/new">
+            New
+          </Link>
+          {clerkConfigured && (
+            <Show when="signed-in">
+              <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/mylibrary">
+                My Library
+              </Link>
+            </Show>
+          )}
+        </nav>
         <ThemeToggle />
         <AuthControls configured={clerkConfigured} />
       </div>

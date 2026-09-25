@@ -2,13 +2,29 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  songs: defineTable({
+    ownerId: v.string(),
+    title: v.string(),
+    writers: v.string(),
+    rhythm: v.string(),
+    abc: v.string(),
+    publicationState: v.union(v.literal("private"), v.literal("published")),
+    updatedAt: v.number(),
+    publishedAt: v.optional(v.number()),
+    catalogId: v.optional(v.string()),
+    legacyPrivateId: v.optional(v.id("privateSongs")),
+    legacyPublicId: v.optional(v.id("publicSongs")),
+  })
+    .index("by_owner_updatedAt", ["ownerId", "updatedAt"])
+    .index("by_publication_updatedAt", ["publicationState", "updatedAt"])
+    .index("by_catalogId", ["catalogId"]),
+
+  // Legacy tables are read only during the transition to songs.
   privateSongs: defineTable({
     ownerId: v.string(),
     title: v.string(),
     abc: v.string(),
     updatedAt: v.number(),
-    // Inert historical source ID retained so migrated documents remain valid.
-    legacyScoreId: v.optional(v.string()),
   })
     .index("by_owner", ["ownerId"])
     .index("by_owner_updatedAt", ["ownerId", "updatedAt"]),
@@ -22,9 +38,13 @@ export default defineSchema({
     createdBy: v.string(),
     updatedAt: v.number(),
     publishedAt: v.optional(v.number()),
-    // Inert historical source ID retained so migrated documents remain valid.
-    legacyCatalogChartId: v.optional(v.string()),
   })
     .index("by_status", ["status"])
-    .index("by_updatedAt", ["updatedAt"]),
+    .index("by_updatedAt", ["updatedAt"])
+    .index("by_createdBy", ["createdBy"]),
+
+  catalogImports: defineTable({
+    libraryId: v.string(),
+    importedAt: v.number(),
+  }).index("by_libraryId", ["libraryId"]),
 });

@@ -5,53 +5,56 @@ import { Authenticated, Unauthenticated, useConvexAuth, useMutation, useQuery } 
 import { useUser } from "@clerk/nextjs";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 
-export type PrivateSongId = Id<"privateSongs">;
-export type PublicSongId = Id<"publicSongs">;
+export type SongId = Id<"songs">;
 
 export type LoadedSong = {
-  id: PrivateSongId;
+  id: SongId;
   title: string;
   abc: string;
+  publicationState: "private" | "published";
 };
 
-type PrivateLibrarySongsProps = {
+type MyLibrarySongsProps = {
   title: string;
   abc: string;
   isPublicSong: boolean;
   currentSong: LoadedSong | null;
   onCurrentSongChange: (song: LoadedSong | null) => void;
-  onPrivateSongsChange: (songs: LoadedSong[]) => void;
+  onMySongsChange: (songs: LoadedSong[]) => void;
   onStatus: (status: string) => void;
   onLoad: (song: LoadedSong) => void;
 };
 
-export function PrivateLibrarySongs({
+export function MyLibrarySongs({
   enabled,
   ...props
-}: PrivateLibrarySongsProps & { enabled: boolean }) {
+}: MyLibrarySongsProps & { enabled: boolean }) {
   if (!enabled) return null;
-  return <ConnectedPrivateLibrarySongs {...props} />;
+  return <ConnectedMyLibrarySongs {...props} />;
 }
 
-function ConnectedPrivateLibrarySongs({
+function ConnectedMyLibrarySongs({
   title,
   abc,
   isPublicSong,
   currentSong,
   onCurrentSongChange,
-  onPrivateSongsChange,
+  onMySongsChange,
   onStatus,
   onLoad,
-}: PrivateLibrarySongsProps) {
+}: MyLibrarySongsProps) {
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const savePrivateSong = useMutation(api.privateSongs.save);
-  const songs = useQuery(api.privateSongs.listMine, isAuthenticated ? {} : "skip");
-  const songId = useRef<PrivateSongId | undefined>(undefined);
-  const privateSongsRef = useRef<LoadedSong[]>([]);
+  const saveSong = useMutation(api.songs.save);
+  const songs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
+  const songId = useRef<SongId | undefined>(undefined);
+  const mySongsRef = useRef<LoadedSong[]>([]);
+  const songsRef = useRef(songs);
+  const currentSongRef = useRef(currentSong);
   const statusRef = useRef(onStatus);
   const persistenceReady = isAuthenticated && songs !== undefined;
 
@@ -60,18 +63,31 @@ function ConnectedPrivateLibrarySongs({
   }, [onStatus]);
 
   useEffect(() => {
+    songsRef.current = songs;
+  }, [songs]);
+
+  useEffect(() => {
+    currentSongRef.current = currentSong;
+  }, [currentSong]);
+
+  useEffect(() => {
     if (!songs) return;
-    const nextSongs = songs.map((song) => ({ id: song._id, title: song.title, abc: song.abc }));
+    const nextSongs = songs.map((song) => ({
+      id: song._id,
+      title: song.title,
+      abc: song.abc,
+      publicationState: song.publicationState,
+    }));
     const songsChanged =
-      nextSongs.length !== privateSongsRef.current.length ||
+      nextSongs.length !== mySongsRef.current.length ||
       nextSongs.some((song, index) => {
-        const previous = privateSongsRef.current[index];
-        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc;
+        const previous = mySongsRef.current[index];
+        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc || previous.publicationState !== song.publicationState;
       });
     if (!songsChanged) return;
-    privateSongsRef.current = nextSongs;
-    onPrivateSongsChange(nextSongs);
-  }, [onPrivateSongsChange, songs]);
+    mySongsRef.current = nextSongs;
+    onMySongsChange(nextSongs);
+  }, [onMySongsChange, songs]);
 
   useEffect(() => {
     if (!persistenceReady || isPublicSong) return;
@@ -80,7 +96,7 @@ function ConnectedPrivateLibrarySongs({
       const existingSong = songs.find((song) => song.title === title && song.abc === abc);
       songId.current = existingSong?._id;
       if (existingSong) {
-        onCurrentSongChange({ id: existingSong._id, title: existingSong.title, abc: existingSong.abc });
+        onCurrentSongChange({ id: existingSong._id, title: existingSong.title, abc: existingSong.abc, publicationState: existingSong.publicationState });
       }
     }
   }, [abc, isPublicSong, onCurrentSongChange, persistenceReady, songs, title]);
@@ -105,24 +121,29 @@ function ConnectedPrivateLibrarySongs({
     ) {
       return;
     }
+    let active = true;
     statusRef.current("Saving…");
     const timeout = window.setTimeout(async () => {
       try {
-        const savedId = await savePrivateSong({
+        const savedId = await saveSong({
           id: songId.current,
           title,
           abc,
-          updatedAt: Date.now(),
         });
+        if (!active) return;
         songId.current = savedId;
-        onCurrentSongChange({ id: savedId, title, abc });
-        statusRef.current("Saved to Private Library");
+        const existingSong = songsRef.current?.find((song) => song._id === savedId);
+        onCurrentSongChange({ id: savedId, title, abc, publicationState: currentSongRef.current?.publicationState ?? existingSong?.publicationState ?? "private" });
+        statusRef.current("Saved to My Library");
       } catch {
-        statusRef.current("Couldn’t sync");
+        if (active) statusRef.current("Couldn’t sync");
       }
     }, 850);
-    return () => window.clearTimeout(timeout);
-  }, [abc, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, savePrivateSong, title]);
+    return () => {
+      active = false;
+      window.clearTimeout(timeout);
+    };
+  }, [abc, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, saveSong, title]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -137,25 +158,21 @@ function ConnectedPrivateLibrarySongs({
   }, [isAuthenticated, isLoading, isPublicSong]);
 
   return (
-    <div className="mt-[17px] grid gap-[3px]" aria-label="Private Library songs">
+    <div className="mt-[17px] grid gap-[3px]" aria-label="My Library songs">
       <Authenticated>
         {songs?.length ? (
           songs
-            .filter(
-              (song, index, allSongs) =>
-                allSongs.findIndex((candidate) => candidate.title === song.title && candidate.abc === song.abc) === index,
-            )
             .map((song) => (
               <div className="flex items-center gap-1" key={song._id}>
                 <button
                   className="flex min-w-0 flex-1 cursor-pointer items-center gap-[9px] rounded-[8px] border-0 bg-transparent p-2 text-left transition-[background-color] duration-[160ms] ease-in-out hover:bg-[var(--paper-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed"
                   type="button"
                   onClick={() => {
-                    const loadedSong = { id: song._id, title: song.title, abc: song.abc };
+                    const loadedSong = { id: song._id, title: song.title, abc: song.abc, publicationState: song.publicationState };
                     songId.current = song._id;
                     onCurrentSongChange(loadedSong);
                     onLoad(loadedSong);
-                    statusRef.current("Loaded from Private Library");
+                    statusRef.current("Loaded from My Library");
                   }}
                 >
                   <span className="grid size-6 shrink-0 place-items-center rounded-[6px] border border-[var(--accent-soft)] bg-[var(--accent-soft)] text-[13px] text-[var(--accent-deep)]">
@@ -164,6 +181,7 @@ function ConnectedPrivateLibrarySongs({
                   <span className="min-w-0">
                     <span className="block truncate text-[11px] font-[620] text-[var(--ink)]">{song.title}</span>
                     <span className="mt-0.5 block text-[10px] text-[var(--muted-soft)]">
+                      {song.publicationState === "published" ? "Published · " : "Private · "}
                       {new Date(song.updatedAt).toLocaleDateString()}
                     </span>
                   </span>
@@ -172,7 +190,7 @@ function ConnectedPrivateLibrarySongs({
             ))
         ) : (
           <div className="px-2 py-3.5 text-[10px] leading-[1.5] text-[var(--muted-soft)]">
-            Your private songs will appear here.
+            Your songs will appear here.
           </div>
         )}
       </Authenticated>
@@ -184,14 +202,14 @@ function ConnectedPrivateLibrarySongs({
           >
             Sign in
           </Link>{" "}
-          to sync your private songs across devices.
+          to sync your songs across devices.
         </div>
       </Unauthenticated>
     </div>
   );
 }
 
-export function RemovePrivateSongButton({
+export function RemoveSongButton({
   enabled,
   song,
   onRemoved,
@@ -203,10 +221,10 @@ export function RemovePrivateSongButton({
   onStatus: (status: string) => void;
 }) {
   if (!enabled || !song) return null;
-  return <ConnectedRemovePrivateSongButton onRemoved={onRemoved} onStatus={onStatus} song={song} />;
+  return <ConnectedRemoveSongButton onRemoved={onRemoved} onStatus={onStatus} song={song} />;
 }
 
-function ConnectedRemovePrivateSongButton({
+function ConnectedRemoveSongButton({
   song,
   onRemoved,
   onStatus,
@@ -215,18 +233,20 @@ function ConnectedRemovePrivateSongButton({
   onRemoved: () => void;
   onStatus: (status: string) => void;
 }) {
-  const removePrivateSong = useMutation(api.privateSongs.remove);
+  const removeSong = useMutation(api.songs.remove);
+  const router = useRouter();
   const [removing, setRemoving] = useState(false);
 
   async function handleRemove() {
     setRemoving(true);
-    onStatus("Removing from Private Library…");
+    onStatus("Removing from My Library…");
     try {
-      await removePrivateSong({ id: song.id });
+      await removeSong({ id: song.id });
       onRemoved();
-      onStatus("Removed from Private Library");
+      onStatus("Removed from My Library");
+      router.push("/mylibrary");
     } catch {
-      onStatus("Couldn’t remove from Private Library");
+      onStatus("Couldn’t remove from My Library");
     } finally {
       setRemoving(false);
     }
@@ -234,7 +254,7 @@ function ConnectedRemovePrivateSongButton({
 
   return (
     <button
-      aria-label={`Remove ${song.title} from Private Library`}
+      aria-label={`Remove ${song.title} from My Library`}
       className="inline-flex min-h-[31px] cursor-pointer items-center justify-center gap-1.5 rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
       disabled={removing}
       type="button"
@@ -246,70 +266,77 @@ function ConnectedRemovePrivateSongButton({
   );
 }
 
-export function SaveToPrivateLibraryButton({
+export function SaveToMyLibraryButton({
   enabled,
   title,
   abc,
+  sourceSongId,
   onCurrentSongChange,
-  onSavedToPrivateLibrary,
+  onSavedToMyLibrary,
   onStatus,
 }: {
   enabled: boolean;
   title: string;
   abc: string;
+  sourceSongId: string | null;
   onCurrentSongChange: (song: LoadedSong | null) => void;
-  onSavedToPrivateLibrary: () => void;
+  onSavedToMyLibrary: () => void;
   onStatus: (status: string) => void;
 }) {
   if (!enabled) return null;
   return (
-    <ConnectedSaveToPrivateLibraryButton
+    <ConnectedSaveToMyLibraryButton
       abc={abc}
+      sourceSongId={sourceSongId}
       onCurrentSongChange={onCurrentSongChange}
-      onSavedToPrivateLibrary={onSavedToPrivateLibrary}
+      onSavedToMyLibrary={onSavedToMyLibrary}
       onStatus={onStatus}
       title={title}
     />
   );
 }
 
-function ConnectedSaveToPrivateLibraryButton({
+function ConnectedSaveToMyLibraryButton({
   title,
   abc,
+  sourceSongId,
   onCurrentSongChange,
-  onSavedToPrivateLibrary,
+  onSavedToMyLibrary,
   onStatus,
 }: {
   title: string;
   abc: string;
+  sourceSongId: string | null;
   onCurrentSongChange: (song: LoadedSong | null) => void;
-  onSavedToPrivateLibrary: () => void;
+  onSavedToMyLibrary: () => void;
   onStatus: (status: string) => void;
 }) {
   const { isAuthenticated } = useConvexAuth();
-  const savePrivateSong = useMutation(api.privateSongs.save);
-  const songs = useQuery(api.privateSongs.listMine, isAuthenticated ? {} : "skip");
+  const saveSong = useMutation(api.songs.save);
+  const songs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
   const [savingCopy, setSavingCopy] = useState(false);
   const persistenceReady = isAuthenticated && songs !== undefined;
+  const ownedSource = songs?.find((song) => song._id === sourceSongId || song.legacyPublicId === sourceSongId);
 
   if (!isAuthenticated) return null;
 
-  async function handleSaveToPrivateLibrary() {
+  async function handleSaveToMyLibrary() {
     if (!persistenceReady || !abc.trim()) return;
 
     setSavingCopy(true);
-    onStatus("Saving to Private Library…");
+    onStatus("Saving to My Library…");
     try {
-      const savedId = await savePrivateSong({
+      const savedId = await saveSong({
+        id: ownedSource?._id,
         title,
         abc,
-        updatedAt: Date.now(),
       });
-      onCurrentSongChange({ id: savedId, title, abc });
-      onSavedToPrivateLibrary();
-      onStatus("Saved to Private Library");
+      const savedSong = songs?.find((song) => song._id === savedId);
+      onCurrentSongChange({ id: savedId, title, abc, publicationState: savedSong?.publicationState ?? "private" });
+      onSavedToMyLibrary();
+      onStatus("Saved to My Library");
     } catch {
-      onStatus("Couldn’t save to Private Library");
+      onStatus("Couldn’t save to My Library");
     } finally {
       setSavingCopy(false);
     }
@@ -320,121 +347,124 @@ function ConnectedSaveToPrivateLibraryButton({
       className="inline-flex min-h-[32px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--accent)] bg-[var(--accent)] px-2.5 text-[10px] font-[680] text-white transition-[background-color,border-color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent-deep)] hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
       disabled={savingCopy}
       type="button"
-      onClick={() => void handleSaveToPrivateLibrary()}
+      onClick={() => void handleSaveToMyLibrary()}
     >
-      {savingCopy ? "Saving…" : "Save to Private Library"}
+      {savingCopy ? "Saving…" : ownedSource ? "Edit in My Library" : "Save to My Library"}
     </button>
   );
 }
 
-export function AdminPublishButton({
+export function AdminPublicationButton({
   enabled,
   song,
+  onChanged,
   onStatus,
 }: {
   enabled: boolean;
   song: LoadedSong | null;
+  onChanged: (song: LoadedSong) => void;
   onStatus: (status: string) => void;
 }) {
   if (!enabled || !song) return null;
-  return <ConnectedAdminPublishButton onStatus={onStatus} song={song} />;
+  return <ConnectedAdminPublicationButton onChanged={onChanged} onStatus={onStatus} song={song} />;
 }
 
-export function AdminDeletePublicSongButton({
-  enabled,
-  publicSongId,
-  onDeleted,
+function ConnectedAdminPublicationButton({
+  song,
+  onChanged,
   onStatus,
 }: {
-  enabled: boolean;
-  publicSongId: PublicSongId | null;
-  onDeleted: () => void;
-  onStatus: (status: string) => void;
-}) {
-  if (!enabled || !publicSongId) return null;
-  return <ConnectedAdminDeletePublicSongButton publicSongId={publicSongId} onDeleted={onDeleted} onStatus={onStatus} />;
-}
-
-function ConnectedAdminDeletePublicSongButton({
-  publicSongId,
-  onDeleted,
-  onStatus,
-}: {
-  publicSongId: PublicSongId;
-  onDeleted: () => void;
+  song: LoadedSong;
+  onChanged: (song: LoadedSong) => void;
   onStatus: (status: string) => void;
 }) {
   const { user } = useUser();
-  const removePublicSong = useMutation(api.publicSongs.remove);
-  const [removing, setRemoving] = useState(false);
+  const publish = useMutation(api.songs.publish);
+  const unpublish = useMutation(api.songs.unpublish);
+  const [changing, setChanging] = useState(false);
   const isAdmin = user?.publicMetadata?.role === "admin";
+  const isPublished = song.publicationState === "published";
 
   if (!isAdmin) return null;
 
-  async function handleRemove() {
-    setRemoving(true);
-    onStatus("Deleting from Public Library…");
+  async function handleChange() {
+    setChanging(true);
+    onStatus(isPublished ? "Unpublishing…" : "Publishing…");
     try {
-      await removePublicSong({ id: publicSongId });
-      onDeleted();
-      onStatus("Deleted from Public Library");
+      await (isPublished ? unpublish : publish)({ id: song.id });
+      onChanged({ ...song, publicationState: isPublished ? "private" : "published" });
+      onStatus(isPublished ? "Song is private" : "Published to Public Library");
     } catch {
-      onStatus("Couldn’t delete from Public Library");
+      onStatus(isPublished ? "Couldn’t unpublish" : "Couldn’t publish");
     } finally {
-      setRemoving(false);
+      setChanging(false);
     }
   }
 
   return (
     <button
-      aria-label="Delete public song"
-      className="inline-flex min-h-[31px] cursor-pointer items-center justify-center gap-1.5 rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
-      disabled={removing}
+      aria-label={`${isPublished ? "Unpublish" : "Publish"} ${song.title}`}
+      className="inline-flex min-h-[31px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      disabled={changing}
       type="button"
-      onClick={() => void handleRemove()}
+      onClick={() => void handleChange()}
     >
-      <Trash2 size={13} strokeWidth={1.8} />
-      {removing ? "Deleting…" : "Delete"}
+      {changing ? (isPublished ? "Unpublishing…" : "Publishing…") : isPublished ? "Unpublish" : "Publish"}
     </button>
   );
 }
 
-function ConnectedAdminPublishButton({
-  song,
+export function AdminUnpublishPublicSongButton({
+  enabled,
+  songId,
   onStatus,
 }: {
-  song: LoadedSong;
+  enabled: boolean;
+  songId: SongId | null;
+  onStatus: (status: string) => void;
+}) {
+  if (!enabled || !songId) return null;
+  return <ConnectedAdminUnpublishPublicSongButton songId={songId} onStatus={onStatus} />;
+}
+
+function ConnectedAdminUnpublishPublicSongButton({
+  songId,
+  onStatus,
+}: {
+  songId: SongId;
   onStatus: (status: string) => void;
 }) {
   const { user } = useUser();
-  const publishFromPrivateLibrary = useMutation(api.publicSongs.publishFromPrivateLibrary);
-  const [publishing, setPublishing] = useState(false);
+  const router = useRouter();
+  const unpublish = useMutation(api.songs.unpublish);
+  const [changing, setChanging] = useState(false);
   const isAdmin = user?.publicMetadata?.role === "admin";
 
   if (!isAdmin) return null;
 
-  async function handlePublish() {
-    setPublishing(true);
-    onStatus("Publishing…");
+  async function handleUnpublish() {
+    setChanging(true);
+    onStatus("Unpublishing…");
     try {
-      await publishFromPrivateLibrary({ privateSongId: song.id });
-      onStatus("Published to Public Library");
+      await unpublish({ id: songId });
+      onStatus("Song is private");
+      router.push(`/mylibrary/${encodeURIComponent(songId)}`);
     } catch {
-      onStatus("Couldn’t publish");
+      onStatus("Couldn’t unpublish");
     } finally {
-      setPublishing(false);
+      setChanging(false);
     }
   }
 
   return (
     <button
-      aria-label={`Publish ${song.title} to Public Library`}
+      aria-label="Unpublish public song"
       className="inline-flex min-h-[31px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
-      disabled={publishing}
+      disabled={changing}
       type="button"
-      onClick={() => void handlePublish()}
+      onClick={() => void handleUnpublish()}
     >
-      {publishing ? "Publishing…" : "Publish"}
+      {changing ? "Unpublishing…" : "Unpublish"}
     </button>
   );
 }

@@ -9,9 +9,8 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as privateSongs from "../privateSongs.js";
-import type * as publicSongs from "../publicSongs.js";
 import type * as songStore from "../songStore.js";
+import type * as songs from "../songs.js";
 
 import type {
   ApiFromModules,
@@ -21,9 +20,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  privateSongs: typeof privateSongs;
-  publicSongs: typeof publicSongs;
   songStore: typeof songStore;
+  songs: typeof songs;
 }>;
 
 /**
