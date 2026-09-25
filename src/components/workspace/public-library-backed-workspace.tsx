@@ -34,7 +34,7 @@ export function PublicLibraryBackedWorkspace({
 
   const publicSongs = publishedSongs.map((song) => ({
     id: song.id,
-    legacyId: song.legacyId,
+    legacyId: "legacyId" in song ? song.legacyId : undefined,
     isLegacy: song.isLegacy,
     title: song.title,
     writers: song.writers,

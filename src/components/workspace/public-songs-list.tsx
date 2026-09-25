@@ -18,7 +18,6 @@ export function PublicSongsListBacked({ clerkConfigured }: {
   const publishedSongs = useQuery(api.songs.listPublicSongs);
   const songs = publishedSongs?.map((song) => ({
     id: song.id,
-    legacyId: song.legacyId,
     isLegacy: song.isLegacy,
     title: song.title,
     writers: song.writers,
