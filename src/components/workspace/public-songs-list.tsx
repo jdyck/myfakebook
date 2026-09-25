@@ -6,28 +6,25 @@ import Link from "next/link";
 import { api } from "../../../convex/_generated/api";
 import { Header } from "@/components/layout/header";
 import type { PublicSong } from "@/lib/public-library";
-import { selectPublicLibrary } from "@/lib/public-library-source";
 
 type PublicSongsListProps = {
   clerkConfigured: boolean;
   songs: readonly PublicSong[] | undefined;
 };
 
-export function PublicSongsListBacked({ clerkConfigured, fallbackSongs }: {
+export function PublicSongsListBacked({ clerkConfigured }: {
   clerkConfigured: boolean;
-  fallbackSongs: readonly PublicSong[];
 }) {
-  const publishedSongs = useQuery(api.publicSongs.listPublished);
-  const songs = publishedSongs && selectPublicLibrary(
-    publishedSongs.map((song) => ({
-      id: song._id,
-      title: song.title,
-      writers: song.writers,
-      rhythm: song.rhythm,
-      abc: song.abc,
-    })),
-    fallbackSongs,
-  );
+  const publishedSongs = useQuery(api.songs.listPublicSongs);
+  const songs = publishedSongs?.map((song) => ({
+    id: song.id,
+    legacyId: song.legacyId,
+    isLegacy: song.isLegacy,
+    title: song.title,
+    writers: song.writers,
+    rhythm: song.rhythm,
+    abc: song.abc,
+  }));
   return <PublicSongsList clerkConfigured={clerkConfigured} songs={songs} />;
 }
 
@@ -47,7 +44,7 @@ export function PublicSongsList({ clerkConfigured, songs }: PublicSongsListProps
         {!songs ? (
           <p role="status">Loading songs…</p>
         ) : songs.length === 0 ? (
-          <p>No public songs yet.</p>
+          <p>No published songs yet.</p>
         ) : (
           <ul className="grid gap-2">
             {songs.map((song) => (

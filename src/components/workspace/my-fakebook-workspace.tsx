@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { AbcEditorPanel } from "@/components/workspace/abc-editor-panel";
 import {
-  AdminDeletePublicSongButton,
-  AdminPublishButton,
-  RemovePrivateSongButton,
-  SaveToPrivateLibraryButton,
+  AdminPublicationButton,
+  AdminUnpublishPublicSongButton,
+  RemoveSongButton,
+  SaveToMyLibraryButton,
   type LoadedSong,
 } from "@/components/workspace/song-persistence";
 import { Header } from "@/components/layout/header";
@@ -16,7 +16,7 @@ import { WorkspaceToolbar } from "@/components/workspace/workspace-toolbar";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { abcToMusicXml, DEFAULT_ABC } from "@/lib/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
-import { PUBLIC_LIBRARY, type PublicSong } from "@/lib/public-library";
+import type { PublicSong } from "@/lib/public-library";
 
 type MyFakebookWorkspaceProps = {
   clerkConfigured: boolean;
@@ -26,19 +26,6 @@ type MyFakebookWorkspaceProps = {
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
 };
-
-function findReplacementPublicSong(
-  publicSongs: readonly PublicSong[],
-  publicSongHistory: readonly string[],
-  excludedId: string | null,
-) {
-  for (const songId of [...publicSongHistory].reverse()) {
-    const song = publicSongs.find((candidate) => candidate.id === songId);
-    if (song && song.id !== excludedId) return song;
-  }
-
-  return publicSongs.find((song) => song.id !== excludedId) ?? PUBLIC_LIBRARY[0];
-}
 
 function findReplacementPrivateSong(
   songs: readonly LoadedSong[],
@@ -61,13 +48,13 @@ export function MyFakebookWorkspace({
   initialPublicSongId,
   initialPrivateSong,
 }: MyFakebookWorkspaceProps) {
-  const initialPublicSong = publicSongs.find((song) => song.id === initialPublicSongId) ?? publicSongs[0] ?? PUBLIC_LIBRARY[0];
+  const initialPublicSong = publicSongs.find((song) => song.id === initialPublicSongId) ?? publicSongs[0];
   const [abc, setAbc] = useState(initialPrivateSong?.abc ?? initialPublicSong?.abc ?? DEFAULT_ABC);
   const [title, setTitle] = useState(initialPrivateSong?.title ?? initialPublicSong?.title ?? "Midnight Walk");
-  const [sourceLabel, setSourceLabel] = useState(initialPrivateSong ? "Private song" : "Public song");
-  const [isPublicSong, setIsPublicSong] = useState(!initialPrivateSong);
+  const [sourceLabel, setSourceLabel] = useState(initialPrivateSong ? (initialPrivateSong.publicationState === "published" ? "Published song" : "Private song") : initialPublicSong ? "Public song" : "New song");
+  const [isPublicSong, setIsPublicSong] = useState(!initialPrivateSong && Boolean(initialPublicSong));
   const [selectedPublicSongId, setSelectedPublicSongId] = useState<string | null>(initialPrivateSong ? null : initialPublicSong?.id ?? null);
-  const [publicSongHistory, setPublicSongHistory] = useState<string[]>(initialPrivateSong ? [] : initialPublicSong ? [initialPublicSong.id] : []);
+  const [sourcePublicSongId, setSourcePublicSongId] = useState<string | null>(initialPrivateSong ? null : initialPublicSong?.id ?? null);
   const [saveStatus, setSaveStatus] = useState(persistenceEnabled ? "Connecting…" : "Not saved");
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -80,7 +67,7 @@ export function MyFakebookWorkspace({
   const handleCurrentSongChange = useCallback(
     (song: LoadedSong | null) => {
       setCurrentSong(song);
-      if (song && !isPublicSong) setSourceLabel("Private song");
+      if (song && !isPublicSong) setSourceLabel(song.publicationState === "published" ? "Published song" : "Private song");
     },
     [isPublicSong],
   );
@@ -127,6 +114,7 @@ export function MyFakebookWorkspace({
     setSourceLabel("New song");
     setIsPublicSong(false);
     setSelectedPublicSongId(null);
+    setSourcePublicSongId(null);
     setCurrentSong(null);
     setFeedback("Fresh lead sheet ready");
   }
@@ -135,9 +123,10 @@ export function MyFakebookWorkspace({
     setCurrentSong(song);
     setTitle(song.title);
     setAbc(song.abc);
-    setSourceLabel("Private song");
+    setSourceLabel(song.publicationState === "published" ? "Published song" : "Private song");
     setIsPublicSong(false);
     setSelectedPublicSongId(null);
+    setSourcePublicSongId(null);
     setPrivateSongHistory((history) => [...history.filter((id) => id !== song.id), song.id]);
     setFeedback(feedbackMessage);
   }
@@ -155,33 +144,6 @@ export function MyFakebookWorkspace({
     );
     setFeedback("ABC spacing cleaned up");
   }
-
-  function handleOpenPublicSong(song: PublicSong) {
-    setTitle(song.title);
-    setAbc(song.abc);
-    setSourceLabel("Public song");
-    setIsPublicSong(true);
-    setSelectedPublicSongId(song.id);
-    setPublicSongHistory((history) => [...history.filter((id) => id !== song.id), song.id]);
-    setCurrentSong(null);
-    setFeedback(`Opened ${song.title} from the Public Library`);
-  }
-
-  useEffect(() => {
-    if (!isPublicSong || !selectedPublicSongId || publicSongs.some((song) => song.id === selectedPublicSongId)) return;
-
-    const nextSong = findReplacementPublicSong(publicSongs, publicSongHistory, selectedPublicSongId);
-    if (!nextSong) return;
-
-    const timeout = window.setTimeout(() => {
-      setTitle(nextSong.title);
-      setAbc(nextSong.abc);
-      setSourceLabel("Public song");
-      setSelectedPublicSongId(nextSong.id);
-      setCurrentSong(null);
-    }, 0);
-    return () => window.clearTimeout(timeout);
-  }, [publicSongs, publicSongHistory, isPublicSong, selectedPublicSongId]);
 
   function handleAbcChange(value: string) {
     setSourceLabel(isPublicSong ? "Public song edit" : "New song");
@@ -263,7 +225,7 @@ export function MyFakebookWorkspace({
           enabled={persistenceEnabled}
           isPublicSong={isPublicSong}
           onCurrentSongChange={handleCurrentSongChange}
-          onPrivateSongsChange={setPrivateSongs}
+          onMySongsChange={setPrivateSongs}
           onLoad={handleOpenPrivateSong}
           onStatus={handleStatus}
           title={songTitle}
@@ -302,59 +264,59 @@ export function MyFakebookWorkspace({
               displaySettings={displaySettings}
               saveAction={
                 persistenceEnabled && isPublicSong ? (
-                  <SaveToPrivateLibraryButton
+                  <SaveToMyLibraryButton
                     abc={abc}
                     enabled={persistenceEnabled}
                     onCurrentSongChange={handleCurrentSongChange}
-                    onSavedToPrivateLibrary={() => {
-                      setSourceLabel("Private song");
+                    onSavedToMyLibrary={() => {
+                      setSourceLabel("My song");
                       setIsPublicSong(false);
                       setSelectedPublicSongId(null);
+                      setSourcePublicSongId(null);
                     }}
                     onStatus={handleStatus}
+                    sourceSongId={sourcePublicSongId}
                     title={songTitle}
                   />
                 ) : null
               }
               publishAction={
-                persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId ? (
-                  <AdminDeletePublicSongButton
-                    publicSongId={selectedPublicSongId as Id<"publicSongs">}
+                persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId &&
+                !publicSongs.find((song) => song.id === selectedPublicSongId)?.isLegacy ? (
+                  <AdminUnpublishPublicSongButton
+                    songId={selectedPublicSongId as Id<"songs">}
                     enabled={persistenceEnabled}
-                    onDeleted={() => {
-                      const replacement = findReplacementPublicSong(publicSongs, publicSongHistory, selectedPublicSongId);
-                      if (replacement) {
-                        handleOpenPublicSong(replacement);
-                        setFeedback(`Deleted public song; opened ${replacement.title}`);
-                      } else {
-                        setSelectedPublicSongId(null);
-                        setFeedback("Public song deleted");
-                      }
-                    }}
                     onStatus={handleStatus}
                   />
                 ) : persistenceEnabled && !isPublicSong && currentSong ? (
                   <>
-                    <RemovePrivateSongButton
+                    {currentSong.publicationState === "private" && (
+                      <RemoveSongButton
+                        enabled={persistenceEnabled}
+                        onRemoved={() => {
+                          if (!currentSong) return;
+                          const replacement = findReplacementPrivateSong(
+                            privateSongs,
+                            privateSongHistory,
+                            currentSong.id,
+                          );
+                          setPrivateSongHistory((history) => history.filter((id) => id !== currentSong.id));
+                          if (replacement) {
+                            handleOpenPrivateSong(replacement, `Removed ${currentSong.title}; opened ${replacement.title}`);
+                          } else {
+                            handleNewSong();
+                          }
+                        }}
+                        onStatus={handleStatus}
+                        song={currentSong}
+                      />
+                    )}
+                    <AdminPublicationButton
                       enabled={persistenceEnabled}
-                      onRemoved={() => {
-                        if (!currentSong) return;
-                        const replacement = findReplacementPrivateSong(
-                          privateSongs,
-                          privateSongHistory,
-                          currentSong.id,
-                        );
-                        setPrivateSongHistory((history) => history.filter((id) => id !== currentSong.id));
-                        if (replacement) {
-                          handleOpenPrivateSong(replacement, `Removed ${currentSong.title}; opened ${replacement.title}`);
-                        } else {
-                          handleNewSong();
-                        }
-                      }}
+                      onChanged={handleCurrentSongChange}
                       onStatus={handleStatus}
                       song={currentSong}
                     />
-                    <AdminPublishButton enabled={persistenceEnabled} onStatus={handleStatus} song={currentSong} />
                   </>
                 ) : null
               }

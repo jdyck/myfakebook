@@ -1,6 +1,4 @@
 import { PublicLibraryBackedWorkspace } from "@/components/workspace/public-library-backed-workspace";
-import { MyFakebookWorkspace } from "@/components/workspace/my-fakebook-workspace";
-import { PUBLIC_LIBRARY } from "@/lib/public-library";
 import { notFound } from "next/navigation";
 
 export default async function SongPage({ params }: { params: Promise<{ id: string }> }) {
@@ -13,20 +11,10 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
       <PublicLibraryBackedWorkspace
         clerkConfigured={clerkConfigured}
         persistenceEnabled={clerkConfigured}
-        fallbackSongs={PUBLIC_LIBRARY}
         initialPublicSongId={id}
       />
     );
   }
 
-  if (!PUBLIC_LIBRARY.some((song) => song.id === id)) notFound();
-
-  return (
-    <MyFakebookWorkspace
-      clerkConfigured={clerkConfigured}
-      persistenceEnabled={false}
-      publicSongs={PUBLIC_LIBRARY}
-      initialPublicSongId={id}
-    />
-  );
+  notFound();
 }

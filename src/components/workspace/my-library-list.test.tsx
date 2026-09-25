@@ -10,8 +10,8 @@ describe("My Library list", () => {
   it("links each saved song to its own page", () => {
     const markup = renderToStaticMarkup(
       <MyLibraryList songs={[
-        { id: "song_1" as Id<"privateSongs">, title: "First Song", updatedAt: 1 },
-        { id: "song_2" as Id<"privateSongs">, title: "Second Song", updatedAt: 2 },
+        { id: "song_1" as Id<"songs">, title: "First Song", updatedAt: 1, publicationState: "private" },
+        { id: "song_2" as Id<"songs">, title: "Second Song", updatedAt: 2, publicationState: "published" },
       ]} />,
     );
 
@@ -19,12 +19,13 @@ describe("My Library list", () => {
     expect(markup).toContain('href="/mylibrary/song_2"');
     expect(markup).toContain("First Song");
     expect(markup).toContain("Second Song");
+    expect(markup).toContain("Published");
     expect(markup).not.toContain("textarea");
   });
 
   it("shows an empty state when there are no saved songs", () => {
     const markup = renderToStaticMarkup(<MyLibraryList songs={[]} />);
     expect(markup).toContain("No songs in your library yet.");
-    expect(markup).toContain('href="/songs"');
+    expect(markup).toContain('href="/new"');
   });
 });

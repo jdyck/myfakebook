@@ -6,7 +6,6 @@ import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import SongsPage from "./page";
-import { PUBLIC_LIBRARY } from "@/lib/public-library";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -42,8 +41,8 @@ describe("Songs page", () => {
     });
 
     expect(container.querySelector("#songs-heading")?.textContent).toBe("Songs");
-    expect(container.textContent).toContain(PUBLIC_LIBRARY[0].title);
+    expect(container.textContent).toContain("No published songs yet.");
     expect(container.querySelector("textarea")).toBeNull();
-    expect(container.querySelector("a[href='/songs/oh-lady-be-good']")?.textContent).toContain(PUBLIC_LIBRARY[0].title);
+    expect(container.querySelector("a[href^='/songs/']")).toBeNull();
   });
 });

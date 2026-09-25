@@ -8,82 +8,55 @@ import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
 
-test("an admin can publish a song from the Private Library", async () => {
+test("an admin publishes the same song in My Library", async () => {
   const t = convexTest(schema, modules);
-  const asAdmin = t.withIdentity({
-    subject: "admin_1",
-    metadata: { role: "admin" },
-  });
+  const asAdmin = t.withIdentity({ subject: "admin_1", metadata: { role: "admin" } });
 
-  const privateSongId = await asAdmin.mutation(api.privateSongs.save, {
+  const songId = await asAdmin.mutation(api.songs.save, {
     title: "Autumn Song",
     abc: "T:Autumn Song\nK:C\nC D E F|",
-    updatedAt: Date.now(),
   });
+  const publishedId = await asAdmin.mutation(api.songs.publish, { id: songId });
 
-  const publicSongId = await asAdmin.mutation(api.publicSongs.publishFromPrivateLibrary, {
-    privateSongId,
-  });
-
-  const publishedSongs = await t.query(api.publicSongs.listPublished, {});
-
-  expect(publishedSongs).toEqual([
-    expect.objectContaining({
-      _id: publicSongId,
-      title: "Autumn Song",
-      abc: "T:Autumn Song\nK:C\nC D E F|",
-      status: "published",
-    }),
+  expect(publishedId).toBe(songId);
+  expect(await t.query(api.songs.listPublicSongs, {})).toEqual([
+    expect.objectContaining({ id: songId, title: "Autumn Song" }),
+  ]);
+  expect(await asAdmin.query(api.songs.listMySongs, {})).toEqual([
+    expect.objectContaining({ _id: songId, publicationState: "published" }),
   ]);
 });
 
-test("an admin can remove a public song", async () => {
+test("unpublishing keeps the song in My Library", async () => {
   const t = convexTest(schema, modules);
-  const asAdmin = t.withIdentity({
-    subject: "admin_1",
-    metadata: { role: "admin" },
-  });
-
-  const privateSongId = await asAdmin.mutation(api.privateSongs.save, {
+  const asAdmin = t.withIdentity({ subject: "admin_1", metadata: { role: "admin" } });
+  const songId = await asAdmin.mutation(api.songs.save, {
     title: "Autumn Song",
     abc: "T:Autumn Song\nK:C\nC D E F|",
-    updatedAt: Date.now(),
   });
 
-  const publicSongId = await asAdmin.mutation(api.publicSongs.publishFromPrivateLibrary, {
-    privateSongId,
-  });
+  await asAdmin.mutation(api.songs.publish, { id: songId });
+  await asAdmin.mutation(api.songs.unpublish, { id: songId });
 
-  await asAdmin.mutation(api.publicSongs.remove, { id: publicSongId });
-
-  expect(await t.query(api.publicSongs.listPublished, {})).toEqual([]);
+  expect(await t.query(api.songs.listPublicSongs, {})).toEqual([]);
+  expect(await asAdmin.query(api.songs.listMySongs, {})).toEqual([
+    expect.objectContaining({ _id: songId, publicationState: "private" }),
+  ]);
 });
 
-test("a non-admin cannot remove a public song", async () => {
+test("a non-admin cannot publish or unpublish a song", async () => {
   const t = convexTest(schema, modules);
-  const asAdmin = t.withIdentity({
-    subject: "admin_1",
-    metadata: { role: "admin" },
-  });
+  const asAdmin = t.withIdentity({ subject: "admin_1", metadata: { role: "admin" } });
   const asUser = t.withIdentity({ subject: "user_1" });
-
-  const privateSongId = await asAdmin.mutation(api.privateSongs.save, {
+  const songId = await asAdmin.mutation(api.songs.save, {
     title: "Autumn Song",
     abc: "T:Autumn Song\nK:C\nC D E F|",
-    updatedAt: Date.now(),
   });
 
-  const publicSongId = await asAdmin.mutation(api.publicSongs.publishFromPrivateLibrary, {
-    privateSongId,
-  });
-
-  await expect(asUser.mutation(api.publicSongs.remove, { id: publicSongId })).rejects.toThrow("Not authorized");
-
-  expect(await t.query(api.publicSongs.listPublished, {})).toEqual([
-    expect.objectContaining({
-      _id: publicSongId,
-      title: "Autumn Song",
-      status: "published",
-    }),
+  await expect(asUser.mutation(api.songs.publish, { id: songId })).rejects.toThrow("Not authorized");
+  await asAdmin.mutation(api.songs.publish, { id: songId });
+  await expect(asUser.mutation(api.songs.unpublish, { id: songId })).rejects.toThrow("Not authorized");
+  expect(await t.query(api.songs.listPublicSongs, {})).toEqual([
+    expect.objectContaining({ id: songId }),
   ]);
 });

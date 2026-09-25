@@ -32,16 +32,18 @@ Song notation is stored as ABC.
 - Public-library publication status
 - Owner
 
-### Public and private songs
+### Ownership and publication
 
-Public and private songs share the same product content model. Ownership, visibility, and permissions determine their scope:
+Every saved song has one owner and one publication state. Publishing changes the visibility of that record; it does not copy the song into a second table or assign it a second identity.
 
-| Song scope | Owner | Who can edit the stored song | Persistence behavior |
+| Song state | Owner | Who can edit the stored song | Where it appears |
 |---|---|---|---|
-| Public song | Site | Site admin | Published songs appear in the public library |
-| Private song | User | Owning user | Saved to that user’s private library |
+| Private | User | Owning user | The owner’s My Library |
+| Published | Admin-owned user record | Owning admin | The owner’s My Library and the public library |
 
-Only published public songs are visible in the public library. Unpublished public songs are admin-only. Opening a public song for experimentation changes only the editor’s unsaved working copy. A signed-in user who wants to keep an edit saves it to the private library, creating an independent private song.
+The owner’s My Library lists both private and published songs with a state badge. The public library lists only published songs. Publishing and unpublishing require the admin role and update the existing record. The regular save mutation cannot set publication state. Editing a published song updates its public version immediately.
+
+Opening another owner’s public song for experimentation changes only the editor’s working copy. A signed-in user who saves that copy creates a separate song record owned by that user.
 
 ### Chord-change variant
 
@@ -57,9 +59,9 @@ Use variants when the melody, lyrics, meter, and overall song identity remain th
 
 ### Set list
 
-A set list is an ordered collection of private songs owned by a user. Users can only see their own set lists.
+A set list is an ordered collection of a user’s private songs. Users can only see their own set lists.
 
-A set list cannot directly contain a public song. The user must save a copy to their private library first.
+A set list cannot contain a published song or another owner’s song. A user must save another owner’s public song as a private copy first.
 
 A song may be on more than one set list.
 
@@ -80,13 +82,12 @@ Display settings are also used for downloads.
 
 ```text
 Public library
-└── Published public songs
+└── View of published song records
 
-Private library (per user)
-├── Private songs
-|   ├── Chord-change variants
-|   └── Set-list references
-└── User set lists
+My Library (per owner)
+├── Private and published song records
+├── Chord-change variants
+└── Set-list references
 
 Editor workspace
 └── Unsaved song content (discarded on refresh)
@@ -111,10 +112,13 @@ ABC is the portable song format; a collection is a ZIP containing ABC files. Imp
 
 ## Important invariants
 
-- A user cannot modify the stored public song directly.
-- Saving a public song to a private library creates an independent private song.
+- Each persisted song has one owner and one record, regardless of publication state.
+- Only an admin can publish or unpublish a song; those changes preserve its record ID and owner.
+- Editing a published song updates the public version immediately.
+- A user cannot modify another owner’s stored song.
+- Saving another owner’s public song creates an independent song owned by the user.
 - Unsaved editor content exists only in browser memory and is discarded on refresh.
-- A set list references a user-owned private song, not a public song.
+- A set list references only private songs owned by the user.
 - A private song can contain content that the admin has never reviewed.
-- Removing a private song does not remove the public song it was copied from.
+- A published song must be unpublished before its owner can remove it.
 - No edit-history model is required.

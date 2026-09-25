@@ -83,7 +83,7 @@ describe("MyFakebookWorkspace", () => {
           clerkConfigured={false}
           persistenceEnabled={false}
           publicSongs={PUBLIC_LIBRARY}
-          initialPrivateSong={{ id: "private-song" as Id<"privateSongs">, title: "My Song", abc: "X:1\nT:My Song\nM:4/4\nK:C\nC D E F |" }}
+          initialPrivateSong={{ id: "private-song" as Id<"songs">, title: "My Song", abc: "X:1\nT:My Song\nM:4/4\nK:C\nC D E F |", publicationState: "private" }}
         />,
       );
     });

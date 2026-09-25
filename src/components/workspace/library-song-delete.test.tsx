@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   mutation: vi.fn().mockResolvedValue("score-id"),
-  privateSongs: [] as Array<{ _id: string; title: string; abc: string; updatedAt: number }>,
+  privateSongs: [] as Array<{ _id: string; title: string; abc: string; updatedAt: number; publicationState: "private" | "published" }>,
 }));
 
 vi.mock("convex/react", () => ({
@@ -58,18 +58,21 @@ describe("library song deletion", () => {
       title: "First Saved Song",
       abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:First Saved Song"),
       updatedAt: 1,
+      publicationState: "private" as const,
     };
     const secondSong = {
       _id: "second-score",
       title: "Second Saved Song",
       abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:Second Saved Song"),
       updatedAt: 2,
+      publicationState: "private" as const,
     };
     const thirdSong = {
       _id: "third-score",
       title: "Third Saved Song",
       abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:Third Saved Song"),
       updatedAt: 3,
+      publicationState: "private" as const,
     };
     mocks.privateSongs = [thirdSong, secondSong, firstSong];
 
@@ -102,7 +105,7 @@ describe("library song deletion", () => {
 
     await act(async () => {
       container
-        ?.querySelector<HTMLButtonElement>('button[aria-label="Remove Third Saved Song from Private Library"]')
+        ?.querySelector<HTMLButtonElement>('button[aria-label="Remove Third Saved Song from My Library"]')
         ?.click();
       await Promise.resolve();
     });

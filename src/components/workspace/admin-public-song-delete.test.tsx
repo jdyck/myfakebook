@@ -1,103 +1,51 @@
 // @vitest-environment jsdom
 
 import { act } from "react";
-import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
+
+import type { Id } from "../../../convex/_generated/dataModel";
 
 const mocks = vi.hoisted(() => ({
-  mutation: vi.fn().mockResolvedValue(undefined),
+  unpublish: vi.fn(),
+  push: vi.fn(),
 }));
 
-vi.mock("convex/react", () => ({
-  Authenticated: ({ children }: { children: ReactNode }) => children,
-  Unauthenticated: () => null,
-  useConvexAuth: () => ({ isAuthenticated: true, isLoading: false }),
-  useMutation: () => mocks.mutation,
-  useQuery: () => [],
-}));
+vi.mock("convex/react", () => ({ useMutation: () => mocks.unpublish }));
+vi.mock("@clerk/nextjs", () => ({ useUser: () => ({ user: { publicMetadata: { role: "admin" } } }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mocks.push }) }));
 
-vi.mock("@clerk/nextjs", () => ({
-  Show: ({ children }: { children: ReactNode }) => children,
-  SignInButton: ({ children }: { children: ReactNode }) => children,
-  SignUpButton: ({ children }: { children: ReactNode }) => children,
-  UserButton: () => null,
-  useUser: () => ({ user: { publicMetadata: { role: "admin" } } }),
-}));
-
-import { MyFakebookWorkspace } from "./my-fakebook-workspace";
-import { PUBLIC_LIBRARY } from "@/lib/public-library";
+import { AdminUnpublishPublicSongButton } from "./song-persistence";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
-describe("admin public-song deletion", () => {
-  let container: HTMLDivElement | undefined;
-  let unmount: (() => void) | undefined;
+afterEach(() => {
+  mocks.unpublish.mockReset();
+  mocks.push.mockReset();
+});
 
-  afterEach(async () => {
-    if (unmount) {
-      await act(async () => {
-        unmount?.();
-      });
-    }
-    container?.remove();
-    window.localStorage?.clear();
-    mocks.mutation.mockClear();
-    vi.restoreAllMocks();
-    container = undefined;
-    unmount = undefined;
-  });
+it("keeps an unpublished song in My Library", async () => {
+  const songId = "song-id" as Id<"songs">;
+  const onStatus = vi.fn();
+  mocks.unpublish.mockResolvedValue(songId);
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
 
-  it("opens the last remaining song after the admin deletes the current song", async () => {
-    const firstSong = {
-      ...PUBLIC_LIBRARY[0],
-      id: "first-song",
-      title: "First Song",
-      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:First Song"),
-    };
-    const secondSong = {
-      ...PUBLIC_LIBRARY[0],
-      id: "second-song",
-      title: "Second Song",
-      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:Second Song"),
-    };
-    const thirdSong = {
-      ...PUBLIC_LIBRARY[0],
-      id: "third-song",
-      title: "Third Song",
-      abc: PUBLIC_LIBRARY[0].abc.replace("T:Oh, Lady Be Good!", "T:Third Song"),
-    };
-
-    container = document.createElement("div");
-    document.body.appendChild(container);
-    const root = createRoot(container);
-    unmount = () => root.unmount();
-
+  try {
     await act(async () => {
-      root.render(
-        <MyFakebookWorkspace
-          publicSongs={[firstSong, secondSong, thirdSong]}
-          publicLibraryIsPersisted
-          clerkConfigured={false}
-          persistenceEnabled
-        />,
-      );
-    });
-
-    const publicLibraryButtons = Array.from(container.querySelectorAll<HTMLButtonElement>('button[aria-pressed]'));
-    await act(async () => {
-      publicLibraryButtons[1]?.click();
-      publicLibraryButtons[2]?.click();
+      root.render(<AdminUnpublishPublicSongButton enabled songId={songId} onStatus={onStatus} />);
     });
 
     await act(async () => {
-      container?.querySelector<HTMLButtonElement>('button[aria-label="Delete public song"]')?.click();
-      await Promise.resolve();
+      container.querySelector<HTMLButtonElement>('button[aria-label="Unpublish public song"]')?.click();
     });
 
-    expect(container.querySelector<HTMLInputElement>('input[aria-label="Lead sheet title"]')?.value).toBe("Second Song");
-    expect(container.querySelector<HTMLTextAreaElement>('textarea[aria-label="ABC notation source"]')?.value).toContain(
-      "T:Second Song",
-    );
-  });
+    expect(mocks.unpublish).toHaveBeenCalledExactlyOnceWith({ id: songId });
+    expect(mocks.push).toHaveBeenCalledExactlyOnceWith(`/mylibrary/${songId}`);
+    expect(onStatus).toHaveBeenLastCalledWith("Song is private");
+  } finally {
+    await act(async () => root.unmount());
+    container.remove();
+  }
 });

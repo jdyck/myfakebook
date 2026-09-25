@@ -25,6 +25,9 @@ export function Header({ clerkConfigured }: HeaderProps) {
           <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/songs">
             Songs
           </Link>
+          <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/new">
+            New
+          </Link>
           {clerkConfigured && (
             <Show when="signed-in">
               <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/mylibrary">

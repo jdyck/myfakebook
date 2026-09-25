@@ -8,15 +8,16 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import { Header } from "@/components/layout/header";
 
 type LibrarySong = {
-  id: Id<"privateSongs">;
+  id: Id<"songs">;
   title: string;
   updatedAt: number;
+  publicationState: "private" | "published";
 };
 
 export function MyLibraryListBacked() {
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const savedSongs = useQuery(api.privateSongs.listMine, isAuthenticated ? {} : "skip");
-  const songs = savedSongs?.map((song) => ({ id: song._id, title: song.title, updatedAt: song.updatedAt }));
+  const savedSongs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
+  const songs = savedSongs?.map((song) => ({ id: song._id, title: song.title, updatedAt: song.updatedAt, publicationState: song.publicationState }));
   return <MyLibraryList songs={songs} loading={isLoading || (isAuthenticated && !savedSongs)} />;
 }
 
@@ -30,7 +31,10 @@ export function MyLibraryList({ songs, loading = false }: { songs: readonly Libr
             <h1 className="text-2xl font-bold">My Library</h1>
             <p className="mt-1 text-sm text-(--muted-soft)">Your saved songs.</p>
           </div>
-          {!loading && songs && <span className="shrink-0 text-xs text-(--muted-soft)">{songs.length} song{songs.length === 1 ? "" : "s"}</span>}
+          <div className="flex items-center gap-3">
+            {!loading && songs && <span className="shrink-0 text-xs text-(--muted-soft)">{songs.length} song{songs.length === 1 ? "" : "s"}</span>}
+            <Link className="rounded-lg bg-(--accent) px-3 py-2 text-xs font-semibold text-white" href="/new">New song</Link>
+          </div>
         </div>
         {loading ? (
           <p role="status">Loading your songs…</p>
@@ -44,7 +48,7 @@ export function MyLibraryList({ songs, loading = false }: { songs: readonly Libr
                 >
                   <span className="min-w-0">
                     <span className="block font-semibold text-foreground">{song.title}</span>
-                    <span className="mt-0.5 block text-xs text-(--muted-soft)">Updated {new Date(song.updatedAt).toLocaleDateString()}</span>
+                    <span className="mt-0.5 block text-xs text-(--muted-soft)">{song.publicationState === "published" ? "Published" : "Private"} · Updated {new Date(song.updatedAt).toLocaleDateString()}</span>
                   </span>
                   <span className="shrink-0 text-xs font-semibold text-(--accent-deep)">Open</span>
                 </Link>
@@ -52,7 +56,7 @@ export function MyLibraryList({ songs, loading = false }: { songs: readonly Libr
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-(--muted)">No songs in your library yet. <Link className="text-(--accent-deep) underline" href="/songs">Browse songs</Link> to get started.</p>
+          <p className="text-sm text-(--muted)">No songs in your library yet. <Link className="text-(--accent-deep) underline" href="/new">Create a song</Link> to get started.</p>
         )}
       </main>
     </div>

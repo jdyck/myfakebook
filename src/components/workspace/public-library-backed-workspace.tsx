@@ -6,13 +6,10 @@ import Link from "next/link";
 import { api } from "../../../convex/_generated/api";
 import { MyFakebookWorkspace } from "@/components/workspace/my-fakebook-workspace";
 import type { LoadedSong } from "@/components/workspace/song-persistence";
-import { selectPublicLibrary } from "@/lib/public-library-source";
-import type { PublicSong } from "@/lib/public-library";
 
 type PublicLibraryBackedWorkspaceProps = {
   clerkConfigured: boolean;
   persistenceEnabled: boolean;
-  fallbackSongs: readonly PublicSong[];
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
 };
@@ -20,11 +17,10 @@ type PublicLibraryBackedWorkspaceProps = {
 export function PublicLibraryBackedWorkspace({
   clerkConfigured,
   persistenceEnabled,
-  fallbackSongs,
   initialPublicSongId,
   initialPrivateSong,
 }: PublicLibraryBackedWorkspaceProps) {
-  const publishedSongs = useQuery(api.publicSongs.listPublished);
+  const publishedSongs = useQuery(api.songs.listPublicSongs);
 
   if (publishedSongs === undefined) {
     return (
@@ -36,16 +32,18 @@ export function PublicLibraryBackedWorkspace({
     );
   }
 
-  const databaseSongs = publishedSongs.map((song) => ({
-    id: song._id,
+  const publicSongs = publishedSongs.map((song) => ({
+    id: song.id,
+    legacyId: song.legacyId,
+    isLegacy: song.isLegacy,
     title: song.title,
     writers: song.writers,
     rhythm: song.rhythm,
     abc: song.abc,
   }));
-  const publicSongs = selectPublicLibrary(databaseSongs, fallbackSongs);
+  const initialSong = publicSongs.find((song) => song.id === initialPublicSongId || song.legacyId === initialPublicSongId);
 
-  if (initialPublicSongId && !publicSongs.some((song) => song.id === initialPublicSongId)) {
+  if (initialPublicSongId && !initialSong) {
     return (
       <main className="grid min-h-screen place-items-center px-6">
         <div className="text-center">
@@ -58,12 +56,12 @@ export function PublicLibraryBackedWorkspace({
 
   return (
     <MyFakebookWorkspace
-      key={initialPrivateSong?.id ?? initialPublicSongId ?? "default"}
-      publicLibraryIsPersisted={databaseSongs.length > 0}
+      key={initialPrivateSong?.id ?? initialSong?.id ?? "default"}
+      publicLibraryIsPersisted={publicSongs.length > 0}
       clerkConfigured={clerkConfigured}
       persistenceEnabled={persistenceEnabled}
       publicSongs={publicSongs}
-      initialPublicSongId={initialPublicSongId}
+      initialPublicSongId={initialSong?.id}
       initialPrivateSong={initialPrivateSong}
     />
   );

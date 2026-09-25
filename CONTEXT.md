@@ -1,6 +1,6 @@
 # MyFakebook Context
 
-MyFakebook is a digital fakebook for musicians. It has a site-curated public library and a separate private library for each user.
+MyFakebook is a digital fakebook for musicians. Each saved song has one owner and one publication state. The public library shows published songs; each owner’s My Library shows all of their songs.
 
 ## Product documents
 
@@ -14,19 +14,19 @@ A lead-sheet arrangement with its own title, notation, and metadata. A materiall
 _Avoid_: Chart, score, work
 
 **Public library**:
-The site-curated collection of published public songs, visible to guests and users.
+The collection view of published song records, visible to guests and users.
 _Avoid_: Public catalog, catalogue
 
-**Private library**:
-A user’s own collection of private songs, visible only to that user.
-_Avoid_: My Songs, personal catalog
+**My Library**:
+An owner’s collection of their private and published songs, visible only to that owner.
+_Avoid_: Private library, My Songs, personal catalog
 
 **Public song**:
-A site-owned song managed by an admin. It appears in the public library only after publication.
+A song record in the published state. It appears in the public library and remains in its owner’s My Library.
 _Avoid_: Catalog chart, public chart
 
 **Private song**:
-A song owned by one user. Saving a public song creates an independent private song.
+A song record in the private state, visible only in its owner’s My Library. Saving another owner’s public song creates an independent record.
 _Avoid_: Score, library chart
 
 **Guest**:
