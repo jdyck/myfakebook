@@ -17,7 +17,8 @@ export default defineSchema({
   })
     .index("by_owner_updatedAt", ["ownerId", "updatedAt"])
     .index("by_publication_updatedAt", ["publicationState", "updatedAt"])
-    .index("by_catalogId", ["catalogId"]),
+    .index("by_catalogId", ["catalogId"])
+    .index("by_legacyPublicId", ["legacyPublicId"]),
 
   setLists: defineTable({
     ownerId: v.string(),

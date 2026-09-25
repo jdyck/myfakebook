@@ -59,9 +59,7 @@ Use variants when the melody, lyrics, meter, and overall song identity remain th
 
 ### Set list
 
-A set list is an ordered collection of a user’s private songs. Users can only see their own set lists.
-
-A set list cannot contain a published song or another owner’s song. A user must save another owner’s public song as a private copy first.
+A set list is an ordered collection of songs. Users can only see their own set lists.
 
 A song may be on more than one set list.
 

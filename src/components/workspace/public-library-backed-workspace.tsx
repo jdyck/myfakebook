@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
 
 import { api } from "../../../convex/_generated/api";
@@ -15,6 +15,8 @@ type PublicLibraryBackedWorkspaceProps = {
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
   initialDisplaySettings?: SongDisplaySettings;
+  setListId?: string;
+  setListItemId?: string;
   setListReturn?: {
     href: string;
     name: string;
@@ -30,9 +32,14 @@ export function PublicLibraryBackedWorkspace({
   initialPublicSongId,
   initialPrivateSong,
   initialDisplaySettings,
+  setListId,
+  setListItemId,
   setListReturn,
 }: PublicLibraryBackedWorkspaceProps) {
+  const { isAuthenticated } = useConvexAuth();
   const publishedSongs = useQuery(api.songs.listPublicSongs);
+  const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
+  const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
 
   if (publishedSongs === undefined) {
     return (
@@ -54,6 +61,15 @@ export function PublicLibraryBackedWorkspace({
     abc: song.abc,
   }));
   const initialSong = publicSongs.find((song) => song.id === initialPublicSongId || song.legacyId === initialPublicSongId);
+  const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === initialSong?.id);
+  const resolvedSetListReturn = setListReturn ?? (setList && setListItem && validSetListId ? {
+    href: `/setlists/${encodeURIComponent(setList._id)}`,
+    name: setList.name,
+    setListId: validSetListId,
+    itemId: setListItem._id,
+    songId: setListItem.songId,
+  } : undefined);
+  const resolvedDisplaySettings = initialDisplaySettings ?? setListItem?.displaySettings;
 
   if (initialPublicSongId && !initialSong) {
     return (
@@ -68,15 +84,15 @@ export function PublicLibraryBackedWorkspace({
 
   return (
     <MyFakebookWorkspace
-      key={`${initialPrivateSong?.id ?? initialSong?.id ?? "default"}:${JSON.stringify(initialDisplaySettings ?? null)}:${setListReturn?.href ?? ""}`}
+      key={`${initialPrivateSong?.id ?? initialSong?.id ?? "default"}:${JSON.stringify(resolvedDisplaySettings ?? null)}:${resolvedSetListReturn?.href ?? ""}`}
       publicLibraryIsPersisted={publicSongs.length > 0}
       clerkConfigured={clerkConfigured}
       persistenceEnabled={persistenceEnabled}
       publicSongs={publicSongs}
       initialPublicSongId={initialSong?.id}
       initialPrivateSong={initialPrivateSong}
-      initialDisplaySettings={initialDisplaySettings}
-      setListReturn={setListReturn}
+      initialDisplaySettings={resolvedDisplaySettings}
+      setListReturn={resolvedSetListReturn}
     />
   );
 }

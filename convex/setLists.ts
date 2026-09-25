@@ -43,6 +43,71 @@ export const listMine = query({
   },
 });
 
+export const listAvailableSongs = query({
+  args: {},
+  handler: async (ctx) => {
+    const ownerId = await currentOwner(ctx);
+    const [ownedSongs, publishedSongs, legacyPublicSongs] = await Promise.all([
+      ctx.db
+        .query("songs")
+        .withIndex("by_owner_updatedAt", (index) => index.eq("ownerId", ownerId))
+        .order("desc")
+        .collect(),
+      ctx.db
+        .query("songs")
+        .withIndex("by_publication_updatedAt", (index) => index.eq("publicationState", "published"))
+        .order("desc")
+        .collect(),
+      ctx.db
+        .query("publicSongs")
+        .withIndex("by_status", (index) => index.eq("status", "published"))
+        .collect(),
+    ]);
+
+    const available = new Map<string, {
+      songId: Id<"songs"> | Id<"publicSongs">;
+      sourceType: "song" | "legacyPublicSong";
+      title: string;
+      isPublic: boolean;
+      updatedAt: number;
+    }>();
+
+    for (const song of ownedSongs) {
+      available.set(song._id, {
+        songId: song._id,
+        sourceType: "song",
+        title: song.title,
+        isPublic: song.publicationState === "published",
+        updatedAt: song.updatedAt,
+      });
+    }
+    for (const song of publishedSongs) {
+      available.set(song._id, {
+        songId: song._id,
+        sourceType: "song",
+        title: song.title,
+        isPublic: true,
+        updatedAt: song.updatedAt,
+      });
+    }
+    const linkedPublishedLegacyIds = new Set(
+      publishedSongs.flatMap((song) => song.legacyPublicId ? [song.legacyPublicId] : []),
+    );
+    for (const song of legacyPublicSongs) {
+      if (linkedPublishedLegacyIds.has(song._id)) continue;
+      available.set(`legacy:${song._id}`, {
+        songId: song._id,
+        sourceType: "legacyPublicSong",
+        title: song.title,
+        isPublic: true,
+        updatedAt: song.updatedAt,
+      });
+    }
+
+    return Array.from(available.values()).sort((a, b) => b.updatedAt - a.updatedAt);
+  },
+});
+
 export const get = query({
   args: { id: v.id("setLists") },
   handler: async (ctx, args) => {
@@ -59,16 +124,19 @@ export const get = query({
 
     return {
       ...setList,
-      items: items.flatMap((item, index) => {
+      items: items.map((item, index) => {
         const song = songs[index];
-        if (!song || song.ownerId !== ownerId || song.publicationState !== "private") return [];
-        return [{
+        const canOpen = Boolean(song && (song.ownerId === ownerId || song.publicationState === "published"));
+        return {
           _id: item._id,
-          songId: song._id,
-          title: song.title,
+          songId: item.songId,
+          title: canOpen && song ? song.title : "Song no longer public",
+          canOpen,
+          isOwned: song?.ownerId === ownerId,
+          abc: canOpen && song ? song.abc : null,
           position: item.position,
           displaySettings: item.displaySettings,
-        }];
+        };
       }),
     };
   },
@@ -114,27 +182,79 @@ export const remove = mutation({
 });
 
 export const addSong = mutation({
-  args: { setListId: v.id("setLists"), songId: v.id("songs") },
+  args: {
+    setListId: v.id("setLists"),
+    songId: v.union(v.id("songs"), v.id("publicSongs")),
+    sourceType: v.union(v.literal("song"), v.literal("legacyPublicSong")),
+  },
   handler: async (ctx, args) => {
     const ownerId = await currentOwner(ctx);
     await ownedSetList(ctx, args.setListId, ownerId);
-    const song = await ctx.db.get("songs", args.songId);
-    if (!song || song.ownerId !== ownerId) throw new Error("Save this song to My Library before adding it");
-    if (song.publicationState !== "private") throw new Error("Only private songs can be added to a set list");
+
+    let songId: Id<"songs">;
+    if (args.sourceType === "song") {
+      const song = await ctx.db.get("songs", args.songId as Id<"songs">);
+      if (!song || (song.ownerId !== ownerId && song.publicationState !== "published")) {
+        throw new Error("Song is not available to add");
+      }
+      songId = song._id;
+    } else {
+      const legacySong = await ctx.db.get("publicSongs", args.songId as Id<"publicSongs">);
+      if (!legacySong || legacySong.status !== "published") {
+        throw new Error("Song is no longer public");
+      }
+
+      const linkedSongs = await ctx.db
+        .query("songs")
+        .withIndex("by_legacyPublicId", (index) => index.eq("legacyPublicId", legacySong._id))
+        .collect();
+      const publishedSong = linkedSongs.find((linkedSong) => linkedSong.publicationState === "published");
+      if (publishedSong) {
+        songId = publishedSong._id;
+      } else {
+        const now = Date.now();
+        const linkedSong = linkedSongs[0];
+        if (linkedSong) {
+          await ctx.db.patch("songs", linkedSong._id, {
+            title: legacySong.title,
+            writers: legacySong.writers,
+            rhythm: legacySong.rhythm,
+            abc: legacySong.abc,
+            publicationState: "published",
+            publishedAt: linkedSong.publishedAt ?? legacySong.publishedAt ?? now,
+            updatedAt: Math.max(linkedSong.updatedAt, legacySong.updatedAt),
+          });
+          songId = linkedSong._id;
+        } else {
+          songId = await ctx.db.insert("songs", {
+            ownerId: legacySong.createdBy,
+            title: legacySong.title,
+            writers: legacySong.writers,
+            rhythm: legacySong.rhythm,
+            abc: legacySong.abc,
+            publicationState: "published",
+            publishedAt: legacySong.publishedAt ?? now,
+            updatedAt: legacySong.updatedAt,
+            legacyPublicId: legacySong._id,
+          });
+        }
+        await ctx.db.delete("publicSongs", legacySong._id);
+      }
+    }
 
     const items = await ctx.db
       .query("setListItems")
       .withIndex("by_setList_position", (index) => index.eq("setListId", args.setListId))
       .order("desc")
       .collect();
-    if (items.some((item) => item.songId === args.songId)) {
+    if (items.some((item) => item.songId === songId)) {
       throw new Error("Song is already on this set list");
     }
     const now = Date.now();
     const itemId = await ctx.db.insert("setListItems", {
       ownerId,
       setListId: args.setListId,
-      songId: args.songId,
+      songId,
       position: (items[0]?.position ?? -1) + 1,
       displaySettings: { transposition: 0, showChords: true, showLyrics: true },
     });
