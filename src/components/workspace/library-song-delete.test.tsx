@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   mutation: vi.fn().mockResolvedValue("score-id"),
-  privateSongs: [] as Array<{ _id: string; title: string; abc: string; updatedAt: number; publicationState: "private" | "published" }>,
+  mySongs: [] as Array<{ _id: string; title: string; abc: string; updatedAt: number; publicationState: "private" | "published" }>,
 }));
 
 vi.mock("convex/react", () => ({
@@ -15,7 +15,7 @@ vi.mock("convex/react", () => ({
   Unauthenticated: () => null,
   useConvexAuth: () => ({ isAuthenticated: true, isLoading: false }),
   useMutation: () => mocks.mutation,
-  useQuery: () => mocks.privateSongs,
+  useQuery: () => mocks.mySongs,
 }));
 
 vi.mock("@clerk/nextjs", () => ({
@@ -46,7 +46,7 @@ describe("library song deletion", () => {
     container?.remove();
     window.localStorage?.clear();
     mocks.mutation.mockClear();
-    mocks.privateSongs = [];
+    mocks.mySongs = [];
     vi.restoreAllMocks();
     container = undefined;
     unmount = undefined;
@@ -74,7 +74,7 @@ describe("library song deletion", () => {
       updatedAt: 3,
       publicationState: "private" as const,
     };
-    mocks.privateSongs = [thirdSong, secondSong, firstSong];
+    mocks.mySongs = [thirdSong, secondSong, firstSong];
 
     container = document.createElement("div");
     document.body.appendChild(container);
@@ -84,7 +84,7 @@ describe("library song deletion", () => {
     await act(async () => {
       root.render(
         <MyFakebookWorkspace
-          publicSongs={PUBLIC_LIBRARY}
+          publishedSongs={PUBLIC_LIBRARY}
           clerkConfigured={false}
           persistenceEnabled
         />,

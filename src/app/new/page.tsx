@@ -6,7 +6,7 @@ export default function NewSongPage() {
     <MyFakebookWorkspace
       clerkConfigured={clerkConfigured}
       persistenceEnabled={clerkConfigured && Boolean(process.env.NEXT_PUBLIC_CONVEX_URL)}
-      publicSongs={[]}
+      publishedSongs={[]}
     />
   );
 }

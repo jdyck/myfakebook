@@ -38,7 +38,7 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publishedSongs={PUBLIC_LIBRARY} />,
       );
     });
 
@@ -61,7 +61,7 @@ describe("MyFakebookWorkspace", () => {
         <MyFakebookWorkspace
           clerkConfigured={false}
           persistenceEnabled={false}
-          publicSongs={[PUBLIC_LIBRARY[0], secondSong]}
+          publishedSongs={[PUBLIC_LIBRARY[0], secondSong]}
           initialPublicSongId={secondSong.id}
         />,
       );
@@ -82,7 +82,7 @@ describe("MyFakebookWorkspace", () => {
         <MyFakebookWorkspace
           clerkConfigured={false}
           persistenceEnabled={false}
-          publicSongs={PUBLIC_LIBRARY}
+          publishedSongs={PUBLIC_LIBRARY}
           initialPrivateSong={{ id: "private-song" as Id<"songs">, title: "My Song", abc: "X:1\nT:My Song\nM:4/4\nK:C\nC D E F |", publicationState: "private" }}
         />,
       );
@@ -101,7 +101,7 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publishedSongs={PUBLIC_LIBRARY} />,
       );
     });
 
@@ -144,7 +144,7 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publishedSongs={PUBLIC_LIBRARY} />,
       );
     });
 
@@ -196,7 +196,7 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publishedSongs={PUBLIC_LIBRARY} />,
       );
     });
 
@@ -247,7 +247,7 @@ describe("MyFakebookWorkspace", () => {
 
     await act(async () => {
       root.render(
-        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publicSongs={PUBLIC_LIBRARY} />,
+        <MyFakebookWorkspace clerkConfigured={false} persistenceEnabled={false} publishedSongs={PUBLIC_LIBRARY} />,
       );
     });
 

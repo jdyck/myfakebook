@@ -95,7 +95,7 @@ function forgetRecentPrivateSong(songId: string) {
 type MyFakebookWorkspaceProps = {
   clerkConfigured: boolean;
   persistenceEnabled: boolean;
-  publicSongs: readonly PublicSong[];
+  publishedSongs: readonly PublicSong[];
   publicLibraryIsPersisted?: boolean;
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
@@ -109,12 +109,12 @@ type MyFakebookWorkspaceProps = {
   };
 };
 
-function findReplacementPrivateSong(
+function findReplacementMySong(
   songs: readonly LoadedSong[],
-  privateSongHistory: readonly string[],
+  mySongHistory: readonly string[],
   excludedId: string,
 ) {
-  for (const songId of [...privateSongHistory].reverse()) {
+  for (const songId of [...mySongHistory].reverse()) {
     const song = songs.find((candidate) => candidate.id === songId);
     if (song && song.id !== excludedId) return song;
   }
@@ -125,14 +125,14 @@ function findReplacementPrivateSong(
 export function MyFakebookWorkspace({
   clerkConfigured,
   persistenceEnabled,
-  publicSongs,
+  publishedSongs,
   publicLibraryIsPersisted = false,
   initialPublicSongId,
   initialPrivateSong,
   initialDisplaySettings,
   setListReturn,
 }: MyFakebookWorkspaceProps) {
-  const initialPublicSong = publicSongs.find((song) => song.id === initialPublicSongId) ?? publicSongs[0];
+  const initialPublicSong = publishedSongs.find((song) => song.id === initialPublicSongId) ?? publishedSongs[0];
   const initialPrivateSongId = initialPrivateSong?.id;
   const [abc, setAbc] = useState(initialPrivateSong?.abc ?? initialPublicSong?.abc ?? DEFAULT_ABC);
   const [title, setTitle] = useState(initialPrivateSong?.title ?? initialPublicSong?.title ?? "Midnight Walk");
@@ -146,13 +146,13 @@ export function MyFakebookWorkspace({
   const [feedback, setFeedback] = useState<string | null>(null);
   const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS);
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
-  const [privateSongs, setPrivateSongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
+  const [mySongs, setMySongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
   const recentPrivateSongSnapshotValue = useSyncExternalStore(
     subscribeToRecentPrivateSongs,
     getRecentPrivateSongSnapshot,
     () => "[]",
   );
-  const privateSongHistory = useMemo(
+  const mySongHistory = useMemo(
     () => mergeRecentPrivateSongIds(
       parseRecentPrivateSongIds(recentPrivateSongSnapshotValue),
       initialPrivateSongId ? [initialPrivateSongId] : [],
@@ -180,7 +180,7 @@ export function MyFakebookWorkspace({
   const sourceLength = abc.length;
   const songTitle = title.trim() || "Untitled lead sheet";
   const selectedPublicSong = selectedPublicSongId
-    ? publicSongs.find((song) => song.id === selectedPublicSongId)
+    ? publishedSongs.find((song) => song.id === selectedPublicSongId)
     : undefined;
   const setListSong: SetListSong | null = isPublicSong
     ? publicLibraryIsPersisted && selectedPublicSong
@@ -335,10 +335,10 @@ export function MyFakebookWorkspace({
           enabled={persistenceEnabled}
           isPublicSong={isPublicSong}
           onCurrentSongChange={handleCurrentSongChange}
-          onMySongsChange={setPrivateSongs}
+          onMySongsChange={setMySongs}
           onLoad={handleOpenPrivateSong}
           onStatus={handleStatus}
-          recentSongIds={privateSongHistory}
+          recentSongIds={mySongHistory}
           title={songTitle}
         />
 
@@ -432,9 +432,9 @@ export function MyFakebookWorkspace({
                         enabled={persistenceEnabled}
                         onRemoved={() => {
                           if (!currentSong) return;
-                          const replacement = findReplacementPrivateSong(
-                            privateSongs,
-                            privateSongHistory,
+                          const replacement = findReplacementMySong(
+                            mySongs,
+                            mySongHistory,
                             currentSong.id,
                           );
                           forgetRecentPrivateSong(currentSong.id);

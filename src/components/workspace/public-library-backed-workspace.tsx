@@ -37,11 +37,11 @@ export function PublicLibraryBackedWorkspace({
   setListReturn,
 }: PublicLibraryBackedWorkspaceProps) {
   const { isAuthenticated } = useConvexAuth();
-  const publishedSongs = useQuery(api.songs.listPublicSongs);
+  const publishedSongDocs = useQuery(api.songs.listPublicSongs);
   const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
   const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
 
-  if (publishedSongs === undefined) {
+  if (publishedSongDocs === undefined) {
     return (
       <main className="grid min-h-screen place-items-center bg-[var(--canvas)] px-6">
         <p className="text-[11px] text-[var(--muted)]" role="status">
@@ -51,7 +51,7 @@ export function PublicLibraryBackedWorkspace({
     );
   }
 
-  const publicSongs = publishedSongs.map((song) => ({
+  const publishedSongs = publishedSongDocs.map((song) => ({
     id: song.id,
     catalogId: "catalogId" in song ? song.catalogId : undefined,
     title: song.title,
@@ -59,7 +59,7 @@ export function PublicLibraryBackedWorkspace({
     rhythm: song.rhythm,
     abc: song.abc,
   }));
-  const initialSong = publicSongs.find((song) => song.id === initialPublicSongId || song.catalogId === initialPublicSongId);
+  const initialSong = publishedSongs.find((song) => song.id === initialPublicSongId || song.catalogId === initialPublicSongId);
   const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === initialSong?.id);
   const resolvedSetListReturn = setListReturn ?? (setList && setListItem && validSetListId ? {
     href: `/setlists/${encodeURIComponent(setList._id)}`,
@@ -84,10 +84,10 @@ export function PublicLibraryBackedWorkspace({
   return (
     <MyFakebookWorkspace
       key={`${initialPrivateSong?.id ?? initialSong?.id ?? "default"}:${JSON.stringify(resolvedDisplaySettings ?? null)}:${resolvedSetListReturn?.href ?? ""}`}
-      publicLibraryIsPersisted={publicSongs.length > 0}
+      publicLibraryIsPersisted={publishedSongs.length > 0}
       clerkConfigured={clerkConfigured}
       persistenceEnabled={persistenceEnabled}
-      publicSongs={publicSongs}
+      publishedSongs={publishedSongs}
       initialPublicSongId={initialSong?.id}
       initialPrivateSong={initialPrivateSong}
       initialDisplaySettings={resolvedDisplaySettings}
