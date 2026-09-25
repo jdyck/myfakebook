@@ -74,6 +74,13 @@ export async function setPublicationState(
   if (!song || song.ownerId !== ownerId) throw new Error("Song not found");
   if (song.publicationState === state) return id;
   if (state === "published" && !song.abc.trim()) throw new Error("ABC content is required");
+  if (state === "published") {
+    const setListItems = await ctx.db
+      .query("setListItems")
+      .withIndex("by_song", (query) => query.eq("songId", id))
+      .collect();
+    if (setListItems.length > 0) throw new Error("Remove this song from its set lists before publishing");
+  }
   const now = Date.now();
   await ctx.db.patch("songs", id, {
     publicationState: state,
@@ -87,6 +94,17 @@ export async function removeSong(ctx: MutationCtx, id: SongId, ownerId: string) 
   const song = await ctx.db.get("songs", id);
   if (!song || song.ownerId !== ownerId) throw new Error("Song not found");
   if (song.publicationState === "published") throw new Error("Unpublish song before removing");
+  const setListItems = await ctx.db
+    .query("setListItems")
+    .withIndex("by_song", (query) => query.eq("songId", id))
+    .collect();
+  for (const item of setListItems) {
+    await ctx.db.delete("setListItems", item._id);
+    const setList = await ctx.db.get("setLists", item.setListId);
+    if (setList?.ownerId === ownerId) {
+      await ctx.db.patch("setLists", setList._id, { updatedAt: Date.now() });
+    }
+  }
   await ctx.db.delete("songs", id);
   return id;
 }

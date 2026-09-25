@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
+import type { SongDisplaySettings } from "@/lib/abc-display";
 
 export type SongId = Id<"songs">;
 
@@ -350,6 +351,58 @@ function ConnectedSaveToMyLibraryButton({
       onClick={() => void handleSaveToMyLibrary()}
     >
       {savingCopy ? "Saving…" : ownedSource ? "Edit in My Library" : "Save to My Library"}
+    </button>
+  );
+}
+
+export function SaveSetListDisplaySettingsButton({
+  setListId,
+  itemId,
+  displaySettings,
+  onStatus,
+}: {
+  setListId: Id<"setLists">;
+  itemId: Id<"setListItems">;
+  displaySettings: SongDisplaySettings;
+  onStatus: (status: string) => void;
+}) {
+  return <ConnectedSaveSetListDisplaySettingsButton displaySettings={displaySettings} itemId={itemId} onStatus={onStatus} setListId={setListId} />;
+}
+
+function ConnectedSaveSetListDisplaySettingsButton({
+  setListId,
+  itemId,
+  displaySettings,
+  onStatus,
+}: {
+  setListId: Id<"setLists">;
+  itemId: Id<"setListItems">;
+  displaySettings: SongDisplaySettings;
+  onStatus: (status: string) => void;
+}) {
+  const updateDisplaySettings = useMutation(api.setLists.updateDisplaySettings);
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await updateDisplaySettings({ setListId, itemId, displaySettings });
+      onStatus("Set-list settings saved");
+    } catch (error) {
+      onStatus(error instanceof Error ? error.message : "Couldn’t save set-list settings");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <button
+      className="rounded-lg bg-(--accent) px-3 py-2 text-xs font-semibold text-white hover:bg-(--accent-deep) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent) disabled:cursor-not-allowed disabled:opacity-50"
+      disabled={saving}
+      onClick={() => void handleSave()}
+      type="button"
+    >
+      {saving ? "Saving…" : "Save set-list settings"}
     </button>
   );
 }

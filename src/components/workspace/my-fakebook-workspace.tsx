@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import Link from "next/link";
 import { AbcEditorPanel } from "@/components/workspace/abc-editor-panel";
 import {
   AdminPublicationButton,
   AdminUnpublishPublicSongButton,
   RemoveSongButton,
+  SaveSetListDisplaySettingsButton,
   SaveToMyLibraryButton,
   type LoadedSong,
 } from "@/components/workspace/song-persistence";
@@ -25,6 +27,14 @@ type MyFakebookWorkspaceProps = {
   publicLibraryIsPersisted?: boolean;
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
+  initialDisplaySettings?: SongDisplaySettings;
+  setListReturn?: {
+    href: string;
+    name: string;
+    setListId: Id<"setLists">;
+    itemId: Id<"setListItems">;
+    songId: Id<"songs">;
+  };
 };
 
 function findReplacementPrivateSong(
@@ -47,6 +57,8 @@ export function MyFakebookWorkspace({
   publicLibraryIsPersisted = false,
   initialPublicSongId,
   initialPrivateSong,
+  initialDisplaySettings,
+  setListReturn,
 }: MyFakebookWorkspaceProps) {
   const initialPublicSong = publicSongs.find((song) => song.id === initialPublicSongId) ?? publicSongs[0];
   const [abc, setAbc] = useState(initialPrivateSong?.abc ?? initialPublicSong?.abc ?? DEFAULT_ABC);
@@ -59,7 +71,7 @@ export function MyFakebookWorkspace({
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(DEFAULT_DISPLAY_SETTINGS);
+  const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS);
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
   const [privateSongs, setPrivateSongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
   const [privateSongHistory, setPrivateSongHistory] = useState<string[]>(initialPrivateSong ? [initialPrivateSong.id] : []);
@@ -232,6 +244,11 @@ export function MyFakebookWorkspace({
         />
 
         <main className="min-w-0 p-4 max-[1080px]:px-5.5 max-[1080px]:pt-7 max-[1080px]:pb-9 max-[720px]:px-3.5 max-[720px]:pt-5.5 max-[720px]:pb-7">
+          {setListReturn && (
+            <Link className="mb-4 inline-block text-xs font-semibold text-(--accent-deep) hover:underline" href={setListReturn.href}>
+              ← Back to {setListReturn.name}
+            </Link>
+          )}
           <WorkspaceToolbar
             abc={abc}
             displaySettings={displaySettings}
@@ -245,6 +262,21 @@ export function MyFakebookWorkspace({
             sourceLabel={sourceLabel}
             title={title}
           />
+
+          {persistenceEnabled && setListReturn && currentSong?.id === setListReturn.songId && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-(--line) bg-(--paper) px-4 py-3">
+              <div>
+                <p className="m-0 text-sm font-semibold">Performance settings for {setListReturn.name}</p>
+                <p className="m-0 mt-1 text-xs text-(--muted-soft)">Save the current transpose and visibility choices to this set-list item.</p>
+              </div>
+              <SaveSetListDisplaySettingsButton
+                displaySettings={displaySettings}
+                itemId={setListReturn.itemId}
+                onStatus={setFeedback}
+                setListId={setListReturn.setListId}
+              />
+            </div>
+          )}
 
           <div className="xl:flex xl:flex-cols-2 gap-4">
             <AbcEditorPanel

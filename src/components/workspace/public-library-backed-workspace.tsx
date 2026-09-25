@@ -4,14 +4,24 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 import { MyFakebookWorkspace } from "@/components/workspace/my-fakebook-workspace";
 import type { LoadedSong } from "@/components/workspace/song-persistence";
+import type { SongDisplaySettings } from "@/lib/abc-display";
 
 type PublicLibraryBackedWorkspaceProps = {
   clerkConfigured: boolean;
   persistenceEnabled: boolean;
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
+  initialDisplaySettings?: SongDisplaySettings;
+  setListReturn?: {
+    href: string;
+    name: string;
+    setListId: Id<"setLists">;
+    itemId: Id<"setListItems">;
+    songId: Id<"songs">;
+  };
 };
 
 export function PublicLibraryBackedWorkspace({
@@ -19,6 +29,8 @@ export function PublicLibraryBackedWorkspace({
   persistenceEnabled,
   initialPublicSongId,
   initialPrivateSong,
+  initialDisplaySettings,
+  setListReturn,
 }: PublicLibraryBackedWorkspaceProps) {
   const publishedSongs = useQuery(api.songs.listPublicSongs);
 
@@ -56,13 +68,15 @@ export function PublicLibraryBackedWorkspace({
 
   return (
     <MyFakebookWorkspace
-      key={initialPrivateSong?.id ?? initialSong?.id ?? "default"}
+      key={`${initialPrivateSong?.id ?? initialSong?.id ?? "default"}:${JSON.stringify(initialDisplaySettings ?? null)}:${setListReturn?.href ?? ""}`}
       publicLibraryIsPersisted={publicSongs.length > 0}
       clerkConfigured={clerkConfigured}
       persistenceEnabled={persistenceEnabled}
       publicSongs={publicSongs}
       initialPublicSongId={initialSong?.id}
       initialPrivateSong={initialPrivateSong}
+      initialDisplaySettings={initialDisplaySettings}
+      setListReturn={setListReturn}
     />
   );
 }
