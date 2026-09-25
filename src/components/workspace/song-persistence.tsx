@@ -20,9 +20,7 @@ export type LoadedSong = {
   publicationState: "private" | "published";
 };
 
-export type SetListSong =
-  | { id: Id<"songs">; sourceType: "song"; title: string }
-  | { id: Id<"publicSongs">; sourceType: "legacyPublicSong"; title: string };
+export type SetListSong = { id: Id<"songs">; title: string };
 
 type MyLibrarySongsProps = {
   title: string;
@@ -345,7 +343,7 @@ function ConnectedSaveToMyLibraryButton({
   const songs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
   const [savingCopy, setSavingCopy] = useState(false);
   const persistenceReady = isAuthenticated && songs !== undefined;
-  const ownedSource = songs?.find((song) => song._id === sourceSongId || song.legacyPublicId === sourceSongId);
+  const ownedSource = songs?.find((song) => song._id === sourceSongId);
 
   if (!isAuthenticated) return null;
 
@@ -429,7 +427,7 @@ function ConnectedSaveToSetListButton({
     setSavingSetListId(setListId);
     setError(null);
     try {
-      await addSong({ setListId, songId: song.id, sourceType: song.sourceType });
+      await addSong({ setListId, songId: song.id });
       onStatus(`${song.title} added to ${setListName}`);
       closeDialog();
     } catch (addError) {

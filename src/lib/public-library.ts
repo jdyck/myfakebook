@@ -1,7 +1,6 @@
 export type PublicSong = {
   id: string;
-  legacyId?: string;
-  isLegacy?: boolean;
+  catalogId?: string;
   title: string;
   writers: string;
   rhythm: string;

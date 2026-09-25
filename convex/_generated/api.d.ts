@@ -12,6 +12,7 @@ import type * as auth from "../auth.js";
 import type * as setLists from "../setLists.js";
 import type * as songStore from "../songStore.js";
 import type * as songs from "../songs.js";
+import type * as validators from "../validators.js";
 
 import type {
   ApiFromModules,
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   setLists: typeof setLists;
   songStore: typeof songStore;
   songs: typeof songs;
+  validators: typeof validators;
 }>;
 
 /**
