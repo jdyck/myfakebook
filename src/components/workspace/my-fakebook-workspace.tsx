@@ -183,13 +183,11 @@ export function MyFakebookWorkspace({
     ? publicSongs.find((song) => song.id === selectedPublicSongId)
     : undefined;
   const setListSong: SetListSong | null = isPublicSong
-    ? selectedPublicSong?.isLegacy === true
-      ? { id: selectedPublicSong.id as Id<"publicSongs">, sourceType: "legacyPublicSong", title: songTitle }
-      : selectedPublicSong?.isLegacy === false
-        ? { id: selectedPublicSong.id as Id<"songs">, sourceType: "song", title: songTitle }
-        : null
+    ? publicLibraryIsPersisted && selectedPublicSong
+      ? { id: selectedPublicSong.id as Id<"songs">, title: songTitle }
+      : null
     : currentSong
-      ? { id: currentSong.id, sourceType: "song", title: currentSong.title }
+      ? { id: currentSong.id, title: currentSong.title }
       : null;
   function updateDisplaySettings(patch: Partial<SongDisplaySettings>) {
     setDisplaySettings((current) => ({ ...current, ...patch }));
@@ -421,8 +419,7 @@ export function MyFakebookWorkspace({
                 </>
               }
               publishAction={
-                persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId &&
-                !publicSongs.find((song) => song.id === selectedPublicSongId)?.isLegacy ? (
+                persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId ? (
                   <AdminUnpublishPublicSongButton
                     songId={selectedPublicSongId as Id<"songs">}
                     enabled={persistenceEnabled}

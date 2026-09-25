@@ -53,14 +53,13 @@ export function PublicLibraryBackedWorkspace({
 
   const publicSongs = publishedSongs.map((song) => ({
     id: song.id,
-    legacyId: "legacyId" in song ? song.legacyId : undefined,
-    isLegacy: song.isLegacy,
+    catalogId: "catalogId" in song ? song.catalogId : undefined,
     title: song.title,
     writers: song.writers,
     rhythm: song.rhythm,
     abc: song.abc,
   }));
-  const initialSong = publicSongs.find((song) => song.id === initialPublicSongId || song.legacyId === initialPublicSongId);
+  const initialSong = publicSongs.find((song) => song.id === initialPublicSongId || song.catalogId === initialPublicSongId);
   const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === initialSong?.id);
   const resolvedSetListReturn = setListReturn ?? (setList && setListItem && validSetListId ? {
     href: `/setlists/${encodeURIComponent(setList._id)}`,

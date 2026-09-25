@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { ClerkProvider, useAuth, useUser } from "@clerk/nextjs";
 import { ConvexProvider, ConvexReactClient, useConvexAuth, useMutation } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
@@ -39,56 +39,24 @@ function AuthenticatedConvexProvider({
 
   return (
     <ConvexProviderWithClerk client={convexClient} useAuth={useAuth}>
-      <LegacySongMigration>{children}</LegacySongMigration>
+      <CatalogSongSync>{children}</CatalogSongSync>
     </ConvexProviderWithClerk>
   );
 }
 
-function LegacySongMigration({ children }: { children: ReactNode }) {
+function CatalogSongSync({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const { user } = useUser();
-  const migrateMine = useMutation(api.songs.migrateMine);
   const ensureCatalogSongs = useMutation(api.songs.ensureCatalogSongs);
-  const userId = user?.id;
   const isAdmin = user?.publicMetadata.role === "admin";
-  const [result, setResult] = useState<{ userId: string; attempt: number; state: "ready" | "error" } | null>(null);
-  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (isLoading || !isAuthenticated || !userId) return;
-    let active = true;
-    async function migrateLegacySongs() {
-      let hasMore = true;
-      while (active && hasMore) {
-        const result = await migrateMine({});
-        hasMore = result.hasMore;
-      }
-      if (active && isAdmin) {
-        await ensureCatalogSongs({
-          songs: PUBLIC_LIBRARY.map(({ id, title, writers, rhythm, abc }) => ({ id, title, writers, rhythm, abc })),
-        });
-      }
-    }
-    void migrateLegacySongs()
-      .then(() => { if (active) setResult({ userId, attempt, state: "ready" }); })
-      .catch(() => { if (active) setResult({ userId, attempt, state: "error" }); });
-    return () => { active = false; };
-  }, [attempt, ensureCatalogSongs, isAdmin, isAuthenticated, isLoading, migrateMine, userId]);
+    if (isLoading || !isAuthenticated || !isAdmin) return;
+    void ensureCatalogSongs({
+      songs: PUBLIC_LIBRARY.map(({ id, title, writers, rhythm, abc }) => ({ id, title, writers, rhythm, abc })),
+    }).catch(() => undefined);
+  }, [ensureCatalogSongs, isAdmin, isAuthenticated, isLoading]);
 
-  const state = isAuthenticated && userId && result?.userId === userId && result.attempt === attempt
-    ? result.state
-    : "loading";
-  if (state === "error") {
-    return (
-      <main className="grid min-h-screen place-items-center gap-3 p-6" role="alert">
-        <div className="text-center">
-          <p>Couldn’t load your songs.</p>
-          <button className="mt-3 rounded-lg bg-(--accent) px-3 py-2 text-sm text-white" onClick={() => setAttempt((value) => value + 1)} type="button">Try again</button>
-        </div>
-      </main>
-    );
-  }
-  if (isLoading || (isAuthenticated && state !== "ready")) return <main className="grid min-h-screen place-items-center" role="status">Loading songs…</main>;
   return children;
 }
 

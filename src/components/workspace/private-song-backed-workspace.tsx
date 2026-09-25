@@ -25,7 +25,7 @@ export function PrivateSongBackedWorkspace({
     return <main className="grid min-h-screen place-items-center" role="status">Loading song…</main>;
   }
 
-  const song = songs?.find((candidate) => candidate._id === id || candidate.legacyPrivateId === id);
+  const song = songs?.find((candidate) => candidate._id === id);
   if (!song) {
     return (
       <main className="grid min-h-screen place-items-center px-6">

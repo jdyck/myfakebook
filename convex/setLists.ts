@@ -2,12 +2,8 @@ import { v } from "convex/values";
 
 import type { Id } from "./_generated/dataModel";
 import { mutation, query, type MutationCtx } from "./_generated/server";
-
-async function currentOwner(ctx: { auth: { getUserIdentity: () => Promise<{ subject: string } | null> } }) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) throw new Error("Not authenticated");
-  return identity.subject;
-}
+import { requireOwner } from "./auth";
+import { songDisplaySettingsValidator } from "./validators";
 
 async function ownedSetList(
   ctx: MutationCtx,
@@ -19,10 +15,24 @@ async function ownedSetList(
   return setList;
 }
 
+async function ownedSetListItem(
+  ctx: MutationCtx,
+  setListId: Id<"setLists">,
+  itemId: Id<"setListItems">,
+  ownerId: string,
+) {
+  await ownedSetList(ctx, setListId, ownerId);
+  const item = await ctx.db.get("setListItems", itemId);
+  if (!item || item.ownerId !== ownerId || item.setListId !== setListId) {
+    throw new Error("Set list item not found");
+  }
+  return item;
+}
+
 export const listMine = query({
   args: {},
   handler: async (ctx) => {
-    const ownerId = await currentOwner(ctx);
+    const ownerId = await requireOwner(ctx);
     const setLists = await ctx.db
       .query("setLists")
       .withIndex("by_owner_updatedAt", (index) => index.eq("ownerId", ownerId))
@@ -46,8 +56,8 @@ export const listMine = query({
 export const listAvailableSongs = query({
   args: {},
   handler: async (ctx) => {
-    const ownerId = await currentOwner(ctx);
-    const [ownedSongs, publishedSongs, legacyPublicSongs] = await Promise.all([
+    const ownerId = await requireOwner(ctx);
+    const [ownedSongs, publishedSongs] = await Promise.all([
       ctx.db
         .query("songs")
         .withIndex("by_owner_updatedAt", (index) => index.eq("ownerId", ownerId))
@@ -58,15 +68,10 @@ export const listAvailableSongs = query({
         .withIndex("by_publication_updatedAt", (index) => index.eq("publicationState", "published"))
         .order("desc")
         .collect(),
-      ctx.db
-        .query("publicSongs")
-        .withIndex("by_status", (index) => index.eq("status", "published"))
-        .collect(),
     ]);
 
     const available = new Map<string, {
-      songId: Id<"songs"> | Id<"publicSongs">;
-      sourceType: "song" | "legacyPublicSong";
+      songId: Id<"songs">;
       title: string;
       isPublic: boolean;
       updatedAt: number;
@@ -75,7 +80,6 @@ export const listAvailableSongs = query({
     for (const song of ownedSongs) {
       available.set(song._id, {
         songId: song._id,
-        sourceType: "song",
         title: song.title,
         isPublic: song.publicationState === "published",
         updatedAt: song.updatedAt,
@@ -84,20 +88,6 @@ export const listAvailableSongs = query({
     for (const song of publishedSongs) {
       available.set(song._id, {
         songId: song._id,
-        sourceType: "song",
-        title: song.title,
-        isPublic: true,
-        updatedAt: song.updatedAt,
-      });
-    }
-    const linkedPublishedLegacyIds = new Set(
-      publishedSongs.flatMap((song) => song.legacyPublicId ? [song.legacyPublicId] : []),
-    );
-    for (const song of legacyPublicSongs) {
-      if (linkedPublishedLegacyIds.has(song._id)) continue;
-      available.set(`legacy:${song._id}`, {
-        songId: song._id,
-        sourceType: "legacyPublicSong",
         title: song.title,
         isPublic: true,
         updatedAt: song.updatedAt,
@@ -111,7 +101,7 @@ export const listAvailableSongs = query({
 export const get = query({
   args: { id: v.id("setLists") },
   handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
+    const ownerId = await requireOwner(ctx);
     const setList = await ctx.db.get("setLists", args.id);
     if (!setList || setList.ownerId !== ownerId) return null;
 
@@ -145,7 +135,7 @@ export const get = query({
 export const create = mutation({
   args: { name: v.string() },
   handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
+    const ownerId = await requireOwner(ctx);
     const name = args.name.trim();
     if (!name) throw new Error("Enter a set list name");
     if (name.length > 80) throw new Error("Set list names must be 80 characters or fewer");
@@ -156,7 +146,7 @@ export const create = mutation({
 export const rename = mutation({
   args: { id: v.id("setLists"), name: v.string() },
   handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
+    const ownerId = await requireOwner(ctx);
     const setList = await ownedSetList(ctx, args.id, ownerId);
     const name = args.name.trim();
     if (!name) throw new Error("Enter a set list name");
@@ -169,7 +159,7 @@ export const rename = mutation({
 export const remove = mutation({
   args: { id: v.id("setLists") },
   handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
+    const ownerId = await requireOwner(ctx);
     const setList = await ownedSetList(ctx, args.id, ownerId);
     const items = await ctx.db
       .query("setListItems")
@@ -184,63 +174,17 @@ export const remove = mutation({
 export const addSong = mutation({
   args: {
     setListId: v.id("setLists"),
-    songId: v.union(v.id("songs"), v.id("publicSongs")),
-    sourceType: v.union(v.literal("song"), v.literal("legacyPublicSong")),
+    songId: v.id("songs"),
   },
   handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
+    const ownerId = await requireOwner(ctx);
     await ownedSetList(ctx, args.setListId, ownerId);
 
-    let songId: Id<"songs">;
-    if (args.sourceType === "song") {
-      const song = await ctx.db.get("songs", args.songId as Id<"songs">);
-      if (!song || (song.ownerId !== ownerId && song.publicationState !== "published")) {
-        throw new Error("Song is not available to add");
-      }
-      songId = song._id;
-    } else {
-      const legacySong = await ctx.db.get("publicSongs", args.songId as Id<"publicSongs">);
-      if (!legacySong || legacySong.status !== "published") {
-        throw new Error("Song is no longer public");
-      }
-
-      const linkedSongs = await ctx.db
-        .query("songs")
-        .withIndex("by_legacyPublicId", (index) => index.eq("legacyPublicId", legacySong._id))
-        .collect();
-      const publishedSong = linkedSongs.find((linkedSong) => linkedSong.publicationState === "published");
-      if (publishedSong) {
-        songId = publishedSong._id;
-      } else {
-        const now = Date.now();
-        const linkedSong = linkedSongs[0];
-        if (linkedSong) {
-          await ctx.db.patch("songs", linkedSong._id, {
-            title: legacySong.title,
-            writers: legacySong.writers,
-            rhythm: legacySong.rhythm,
-            abc: legacySong.abc,
-            publicationState: "published",
-            publishedAt: linkedSong.publishedAt ?? legacySong.publishedAt ?? now,
-            updatedAt: Math.max(linkedSong.updatedAt, legacySong.updatedAt),
-          });
-          songId = linkedSong._id;
-        } else {
-          songId = await ctx.db.insert("songs", {
-            ownerId: legacySong.createdBy,
-            title: legacySong.title,
-            writers: legacySong.writers,
-            rhythm: legacySong.rhythm,
-            abc: legacySong.abc,
-            publicationState: "published",
-            publishedAt: legacySong.publishedAt ?? now,
-            updatedAt: legacySong.updatedAt,
-            legacyPublicId: legacySong._id,
-          });
-        }
-        await ctx.db.delete("publicSongs", legacySong._id);
-      }
+    const song = await ctx.db.get("songs", args.songId);
+    if (!song || (song.ownerId !== ownerId && song.publicationState !== "published")) {
+      throw new Error("Song is not available to add");
     }
+    const songId = song._id;
 
     const items = await ctx.db
       .query("setListItems")
@@ -267,19 +211,11 @@ export const updateDisplaySettings = mutation({
   args: {
     setListId: v.id("setLists"),
     itemId: v.id("setListItems"),
-    displaySettings: v.object({
-      transposition: v.number(),
-      showChords: v.boolean(),
-      showLyrics: v.boolean(),
-    }),
+    displaySettings: songDisplaySettingsValidator,
   },
   handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
-    await ownedSetList(ctx, args.setListId, ownerId);
-    const item = await ctx.db.get("setListItems", args.itemId);
-    if (!item || item.ownerId !== ownerId || item.setListId !== args.setListId) {
-      throw new Error("Set list item not found");
-    }
+    const ownerId = await requireOwner(ctx);
+    const item = await ownedSetListItem(ctx, args.setListId, args.itemId, ownerId);
     if (!Number.isInteger(args.displaySettings.transposition) || args.displaySettings.transposition < -12 || args.displaySettings.transposition > 12) {
       throw new Error("Transposition must be between -12 and +12 semitones");
     }
@@ -292,12 +228,8 @@ export const updateDisplaySettings = mutation({
 export const removeItem = mutation({
   args: { setListId: v.id("setLists"), itemId: v.id("setListItems") },
   handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
-    await ownedSetList(ctx, args.setListId, ownerId);
-    const item = await ctx.db.get("setListItems", args.itemId);
-    if (!item || item.ownerId !== ownerId || item.setListId !== args.setListId) {
-      throw new Error("Set list item not found");
-    }
+    const ownerId = await requireOwner(ctx);
+    const item = await ownedSetListItem(ctx, args.setListId, args.itemId, ownerId);
     await ctx.db.delete("setListItems", item._id);
     await ctx.db.patch("setLists", args.setListId, { updatedAt: Date.now() });
     return item._id;
@@ -307,7 +239,7 @@ export const removeItem = mutation({
 export const reorder = mutation({
   args: { setListId: v.id("setLists"), itemIds: v.array(v.id("setListItems")) },
   handler: async (ctx, args) => {
-    const ownerId = await currentOwner(ctx);
+    const ownerId = await requireOwner(ctx);
     await ownedSetList(ctx, args.setListId, ownerId);
     const items = await ctx.db
       .query("setListItems")

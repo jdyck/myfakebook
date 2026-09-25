@@ -177,9 +177,9 @@ export function SetListDetail({ id }: SetListDetailProps) {
   async function handleAddSong(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!validId) return;
-    const song = availableSongs?.find((candidate) => `${candidate.sourceType}:${candidate.songId}` === selectedSongId);
+    const song = availableSongs?.find((candidate) => candidate.songId === selectedSongId);
     if (!song || setList?.items.some((item) => item.songId === song.songId)) return;
-    const itemId = await runChange(() => addSong({ setListId: validId, songId: song.songId, sourceType: song.sourceType }), `${song.title} added`);
+    const itemId = await runChange(() => addSong({ setListId: validId, songId: song.songId }), `${song.title} added`);
     if (typeof itemId === "string") setSelectedItemId(itemId);
     setSelectedSongId("");
   }
@@ -323,13 +323,13 @@ export function SetListDetail({ id }: SetListDetailProps) {
                 <select className={`${fieldClass} w-full`} id="set-list-song" value={selectedSongId} onChange={(event) => setSelectedSongId(event.target.value)}>
                   <option value="">Choose a song…</option>
                   {availableSongs?.map((song) => {
-                    const selectionKey = `${song.sourceType}:${song.songId}`;
+                    const selectionKey = song.songId;
                     const alreadyAdded = setList.items.some((item) => item.songId === song.songId);
                     const label = `${song.title}${song.isPublic ? " · Public" : ""}`;
                     return <option disabled={alreadyAdded} key={selectionKey} value={selectionKey}>{alreadyAdded ? `${label} (already added)` : label}</option>;
                   })}
                 </select>
-                <button className={primaryButtonClass} disabled={saving || !selectedSongId || !availableSongs?.some((song) => `${song.sourceType}:${song.songId}` === selectedSongId && !setList.items.some((item) => item.songId === song.songId))} type="submit">Add song</button>
+                <button className={primaryButtonClass} disabled={saving || !selectedSongId || !availableSongs?.some((song) => song.songId === selectedSongId && !setList.items.some((item) => item.songId === song.songId))} type="submit">Add song</button>
                 {availableSongs?.length === 0 && <p className="m-0 text-[10px] leading-relaxed text-(--muted-soft)">There are no songs to add yet. Create one or <Link className="text-(--accent-deep) underline" href="/songs">browse public songs</Link>.</p>}
               </form>
 
