@@ -87,6 +87,17 @@ export async function removeSong(ctx: MutationCtx, id: SongId, ownerId: string) 
   const song = await ctx.db.get("songs", id);
   if (!song || song.ownerId !== ownerId) throw new Error("Song not found");
   if (song.publicationState === "published") throw new Error("Unpublish song before removing");
+  const setListItems = await ctx.db
+    .query("setListItems")
+    .withIndex("by_song", (query) => query.eq("songId", id))
+    .collect();
+  for (const item of setListItems) {
+    await ctx.db.delete("setListItems", item._id);
+    const setList = await ctx.db.get("setLists", item.setListId);
+    if (setList) {
+      await ctx.db.patch("setLists", setList._id, { updatedAt: Date.now() });
+    }
+  }
   await ctx.db.delete("songs", id);
   return id;
 }

@@ -17,7 +17,28 @@ export default defineSchema({
   })
     .index("by_owner_updatedAt", ["ownerId", "updatedAt"])
     .index("by_publication_updatedAt", ["publicationState", "updatedAt"])
-    .index("by_catalogId", ["catalogId"]),
+    .index("by_catalogId", ["catalogId"])
+    .index("by_legacyPublicId", ["legacyPublicId"]),
+
+  setLists: defineTable({
+    ownerId: v.string(),
+    name: v.string(),
+    updatedAt: v.number(),
+  }).index("by_owner_updatedAt", ["ownerId", "updatedAt"]),
+
+  setListItems: defineTable({
+    ownerId: v.string(),
+    setListId: v.id("setLists"),
+    songId: v.id("songs"),
+    position: v.number(),
+    displaySettings: v.optional(v.object({
+      transposition: v.number(),
+      showChords: v.boolean(),
+      showLyrics: v.boolean(),
+    })),
+  })
+    .index("by_setList_position", ["setListId", "position"])
+    .index("by_song", ["songId"]),
 
   // Legacy tables are read only during the transition to songs.
   privateSongs: defineTable({

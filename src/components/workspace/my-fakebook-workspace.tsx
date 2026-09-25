@@ -1,13 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore, type ChangeEvent } from "react";
+import Link from "next/link";
 import { AbcEditorPanel } from "@/components/workspace/abc-editor-panel";
 import {
   AdminPublicationButton,
   AdminUnpublishPublicSongButton,
   RemoveSongButton,
+  SaveToSetListButton,
+  SaveSetListDisplaySettingsButton,
   SaveToMyLibraryButton,
   type LoadedSong,
+  type SetListSong,
 } from "@/components/workspace/song-persistence";
 import { Header } from "@/components/layout/header";
 import { PreviewPanel } from "@/components/workspace/preview-panel";
@@ -18,6 +22,76 @@ import { abcToMusicXml, DEFAULT_ABC } from "@/lib/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
 import type { PublicSong } from "@/lib/public-library";
 
+const RECENT_PRIVATE_SONGS_STORAGE_KEY = "myfakebook:recent-private-song-ids";
+const MAX_RECENT_PRIVATE_SONGS = 50;
+const recentPrivateSongListeners = new Set<() => void>();
+let recentPrivateSongSnapshot: string | null = null;
+
+function getRecentPrivateSongSnapshot() {
+  try {
+    recentPrivateSongSnapshot = window.localStorage.getItem(RECENT_PRIVATE_SONGS_STORAGE_KEY) ?? "[]";
+  } catch {
+    recentPrivateSongSnapshot ??= "[]";
+  }
+  return recentPrivateSongSnapshot;
+}
+
+function subscribeToRecentPrivateSongs(listener: () => void) {
+  recentPrivateSongListeners.add(listener);
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key !== RECENT_PRIVATE_SONGS_STORAGE_KEY) return;
+    recentPrivateSongSnapshot = event.newValue ?? "[]";
+    listener();
+  };
+  window.addEventListener("storage", handleStorage);
+
+  return () => {
+    recentPrivateSongListeners.delete(listener);
+    window.removeEventListener("storage", handleStorage);
+  };
+}
+
+function parseRecentPrivateSongIds(snapshot: string) {
+  try {
+    const savedIds: unknown = JSON.parse(snapshot);
+    return Array.isArray(savedIds)
+      ? savedIds.filter((songId): songId is string => typeof songId === "string").slice(-MAX_RECENT_PRIVATE_SONGS)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function mergeRecentPrivateSongIds(...histories: (readonly string[])[]) {
+  return histories
+    .flat()
+    .reverse()
+    .filter((songId, index, allSongIds) => allSongIds.indexOf(songId) === index)
+    .reverse()
+    .slice(-MAX_RECENT_PRIVATE_SONGS);
+}
+
+function writeRecentPrivateSongIds(songIds: readonly string[]) {
+  const nextSnapshot = JSON.stringify(songIds.slice(-MAX_RECENT_PRIVATE_SONGS));
+  recentPrivateSongSnapshot = nextSnapshot;
+  try {
+    window.localStorage.setItem(RECENT_PRIVATE_SONGS_STORAGE_KEY, nextSnapshot);
+  } catch {
+    // Recent song navigation should still work when browser storage is unavailable.
+  }
+  recentPrivateSongListeners.forEach((listener) => listener());
+}
+
+function recordRecentPrivateSong(songId: string) {
+  const history = parseRecentPrivateSongIds(getRecentPrivateSongSnapshot());
+  writeRecentPrivateSongIds(mergeRecentPrivateSongIds(history.filter((id) => id !== songId), [songId]));
+}
+
+function forgetRecentPrivateSong(songId: string) {
+  const history = parseRecentPrivateSongIds(getRecentPrivateSongSnapshot());
+  writeRecentPrivateSongIds(history.filter((id) => id !== songId));
+}
+
 type MyFakebookWorkspaceProps = {
   clerkConfigured: boolean;
   persistenceEnabled: boolean;
@@ -25,6 +99,14 @@ type MyFakebookWorkspaceProps = {
   publicLibraryIsPersisted?: boolean;
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
+  initialDisplaySettings?: SongDisplaySettings;
+  setListReturn?: {
+    href: string;
+    name: string;
+    setListId: Id<"setLists">;
+    itemId: Id<"setListItems">;
+    songId: Id<"songs">;
+  };
 };
 
 function findReplacementPrivateSong(
@@ -47,8 +129,11 @@ export function MyFakebookWorkspace({
   publicLibraryIsPersisted = false,
   initialPublicSongId,
   initialPrivateSong,
+  initialDisplaySettings,
+  setListReturn,
 }: MyFakebookWorkspaceProps) {
   const initialPublicSong = publicSongs.find((song) => song.id === initialPublicSongId) ?? publicSongs[0];
+  const initialPrivateSongId = initialPrivateSong?.id;
   const [abc, setAbc] = useState(initialPrivateSong?.abc ?? initialPublicSong?.abc ?? DEFAULT_ABC);
   const [title, setTitle] = useState(initialPrivateSong?.title ?? initialPublicSong?.title ?? "Midnight Walk");
   const [sourceLabel, setSourceLabel] = useState(initialPrivateSong ? (initialPrivateSong.publicationState === "published" ? "Published song" : "Private song") : initialPublicSong ? "Public song" : "New song");
@@ -59,10 +144,21 @@ export function MyFakebookWorkspace({
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(DEFAULT_DISPLAY_SETTINGS);
+  const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS);
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
   const [privateSongs, setPrivateSongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
-  const [privateSongHistory, setPrivateSongHistory] = useState<string[]>(initialPrivateSong ? [initialPrivateSong.id] : []);
+  const recentPrivateSongSnapshotValue = useSyncExternalStore(
+    subscribeToRecentPrivateSongs,
+    getRecentPrivateSongSnapshot,
+    () => "[]",
+  );
+  const privateSongHistory = useMemo(
+    () => mergeRecentPrivateSongIds(
+      parseRecentPrivateSongIds(recentPrivateSongSnapshotValue),
+      initialPrivateSongId ? [initialPrivateSongId] : [],
+    ),
+    [initialPrivateSongId, recentPrivateSongSnapshotValue],
+  );
 
   const handleCurrentSongChange = useCallback(
     (song: LoadedSong | null) => {
@@ -83,6 +179,18 @@ export function MyFakebookWorkspace({
   const lineCount = abc.split("\n").length;
   const sourceLength = abc.length;
   const songTitle = title.trim() || "Untitled lead sheet";
+  const selectedPublicSong = selectedPublicSongId
+    ? publicSongs.find((song) => song.id === selectedPublicSongId)
+    : undefined;
+  const setListSong: SetListSong | null = isPublicSong
+    ? selectedPublicSong?.isLegacy === true
+      ? { id: selectedPublicSong.id as Id<"publicSongs">, sourceType: "legacyPublicSong", title: songTitle }
+      : selectedPublicSong?.isLegacy === false
+        ? { id: selectedPublicSong.id as Id<"songs">, sourceType: "song", title: songTitle }
+        : null
+    : currentSong
+      ? { id: currentSong.id, sourceType: "song", title: currentSong.title }
+      : null;
   function updateDisplaySettings(patch: Partial<SongDisplaySettings>) {
     setDisplaySettings((current) => ({ ...current, ...patch }));
   }
@@ -95,6 +203,10 @@ export function MyFakebookWorkspace({
       // Editing should still work when browser storage is unavailable.
     }
   }, []);
+
+  useEffect(() => {
+    if (initialPrivateSongId) recordRecentPrivateSong(initialPrivateSongId);
+  }, [initialPrivateSongId]);
 
   const handleStatus = useCallback((status: string) => setSaveStatus(status), []);
 
@@ -127,7 +239,7 @@ export function MyFakebookWorkspace({
     setIsPublicSong(false);
     setSelectedPublicSongId(null);
     setSourcePublicSongId(null);
-    setPrivateSongHistory((history) => [...history.filter((id) => id !== song.id), song.id]);
+    recordRecentPrivateSong(song.id);
     setFeedback(feedbackMessage);
   }
 
@@ -228,10 +340,16 @@ export function MyFakebookWorkspace({
           onMySongsChange={setPrivateSongs}
           onLoad={handleOpenPrivateSong}
           onStatus={handleStatus}
+          recentSongIds={privateSongHistory}
           title={songTitle}
         />
 
         <main className="min-w-0 p-4 max-[1080px]:px-5.5 max-[1080px]:pt-7 max-[1080px]:pb-9 max-[720px]:px-3.5 max-[720px]:pt-5.5 max-[720px]:pb-7">
+          {setListReturn && (
+            <Link className="mb-4 inline-block text-xs font-semibold text-(--accent-deep) hover:underline" href={setListReturn.href}>
+              ← Back to {setListReturn.name}
+            </Link>
+          )}
           <WorkspaceToolbar
             abc={abc}
             displaySettings={displaySettings}
@@ -245,6 +363,21 @@ export function MyFakebookWorkspace({
             sourceLabel={sourceLabel}
             title={title}
           />
+
+          {persistenceEnabled && setListReturn && (currentSong?.id === setListReturn.songId || selectedPublicSongId === setListReturn.songId) && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-(--line) bg-(--paper) px-4 py-3">
+              <div>
+                <p className="m-0 text-sm font-semibold">Performance settings for {setListReturn.name}</p>
+                <p className="m-0 mt-1 text-xs text-(--muted-soft)">Save the current transpose and visibility choices to this set-list item.</p>
+              </div>
+              <SaveSetListDisplaySettingsButton
+                displaySettings={displaySettings}
+                itemId={setListReturn.itemId}
+                onStatus={setFeedback}
+                setListId={setListReturn.setListId}
+              />
+            </div>
+          )}
 
           <div className="xl:flex xl:flex-cols-2 gap-4">
             <AbcEditorPanel
@@ -263,22 +396,29 @@ export function MyFakebookWorkspace({
               abc={abc}
               displaySettings={displaySettings}
               saveAction={
-                persistenceEnabled && isPublicSong ? (
-                  <SaveToMyLibraryButton
-                    abc={abc}
+                <>
+                  {persistenceEnabled && isPublicSong && (
+                    <SaveToMyLibraryButton
+                      abc={abc}
+                      enabled={persistenceEnabled}
+                      onCurrentSongChange={handleCurrentSongChange}
+                      onSavedToMyLibrary={() => {
+                        setSourceLabel("My song");
+                        setIsPublicSong(false);
+                        setSelectedPublicSongId(null);
+                        setSourcePublicSongId(null);
+                      }}
+                      onStatus={handleStatus}
+                      sourceSongId={sourcePublicSongId}
+                      title={songTitle}
+                    />
+                  )}
+                  <SaveToSetListButton
                     enabled={persistenceEnabled}
-                    onCurrentSongChange={handleCurrentSongChange}
-                    onSavedToMyLibrary={() => {
-                      setSourceLabel("My song");
-                      setIsPublicSong(false);
-                      setSelectedPublicSongId(null);
-                      setSourcePublicSongId(null);
-                    }}
                     onStatus={handleStatus}
-                    sourceSongId={sourcePublicSongId}
-                    title={songTitle}
+                    song={setListSong}
                   />
-                ) : null
+                </>
               }
               publishAction={
                 persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId &&
@@ -300,7 +440,7 @@ export function MyFakebookWorkspace({
                             privateSongHistory,
                             currentSong.id,
                           );
-                          setPrivateSongHistory((history) => history.filter((id) => id !== currentSong.id));
+                          forgetRecentPrivateSong(currentSong.id);
                           if (replacement) {
                             handleOpenPrivateSong(replacement, `Removed ${currentSong.title}; opened ${replacement.title}`);
                           } else {
