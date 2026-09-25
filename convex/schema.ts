@@ -7,8 +7,6 @@ export default defineSchema({
     title: v.string(),
     abc: v.string(),
     updatedAt: v.number(),
-    // Inert historical source ID retained so migrated documents remain valid.
-    legacyScoreId: v.optional(v.string()),
   })
     .index("by_owner", ["ownerId"])
     .index("by_owner_updatedAt", ["ownerId", "updatedAt"]),
@@ -22,8 +20,6 @@ export default defineSchema({
     createdBy: v.string(),
     updatedAt: v.number(),
     publishedAt: v.optional(v.number()),
-    // Inert historical source ID retained so migrated documents remain valid.
-    legacyCatalogChartId: v.optional(v.string()),
   })
     .index("by_status", ["status"])
     .index("by_updatedAt", ["updatedAt"]),
