@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { MyFakebookWorkspace } from "./my-fakebook-workspace";
 import { PUBLIC_LIBRARY } from "@/lib/public-library";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -44,8 +45,52 @@ describe("MyFakebookWorkspace", () => {
     const editor = container.querySelector<HTMLTextAreaElement>('textarea[aria-label="ABC notation source"]');
     expect(editor).not.toBeNull();
     expect(editor?.value).toContain("T:Oh, Lady Be Good!");
-    expect(container.textContent).toContain("Public Library");
+    expect(container.querySelector("#songs-heading")).toBeNull();
     expect(container.querySelector('[aria-label="Rendered lead sheet"]')).not.toBeNull();
+  });
+
+  it("opens the public song selected by the route", async () => {
+    const secondSong = { ...PUBLIC_LIBRARY[0], id: "second-song", title: "Second Song", abc: "X:1\nT:Second Song\nM:4/4\nK:C\nC D E F |" };
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    unmount = () => root.unmount();
+
+    await act(async () => {
+      root.render(
+        <MyFakebookWorkspace
+          clerkConfigured={false}
+          persistenceEnabled={false}
+          publicSongs={[PUBLIC_LIBRARY[0], secondSong]}
+          initialPublicSongId={secondSong.id}
+        />,
+      );
+    });
+
+    expect(container.querySelector<HTMLInputElement>('input[aria-label="Lead sheet title"]')?.value).toBe("Second Song");
+    expect(container.querySelector<HTMLTextAreaElement>('textarea[aria-label="ABC notation source"]')?.value).toContain("T:Second Song");
+  });
+
+  it("opens a private song selected from My Library", async () => {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    unmount = () => root.unmount();
+
+    await act(async () => {
+      root.render(
+        <MyFakebookWorkspace
+          clerkConfigured={false}
+          persistenceEnabled={false}
+          publicSongs={PUBLIC_LIBRARY}
+          initialPrivateSong={{ id: "private-song" as Id<"privateSongs">, title: "My Song", abc: "X:1\nT:My Song\nM:4/4\nK:C\nC D E F |" }}
+        />,
+      );
+    });
+
+    expect(container.querySelector<HTMLInputElement>('input[aria-label="Lead sheet title"]')?.value).toBe("My Song");
+    expect(container.querySelector<HTMLTextAreaElement>('textarea[aria-label="ABC notation source"]')?.value).toContain("T:My Song");
+    expect(container.textContent).toContain("Private song");
   });
 
   it("lets a visitor start and edit a new song while keeping the preview connected", async () => {

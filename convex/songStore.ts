@@ -20,7 +20,7 @@ export async function listPrivateSongs(ctx: ReadCtx, ownerId: string) {
     .query("privateSongs")
     .withIndex("by_owner_updatedAt", (query) => query.eq("ownerId", ownerId))
     .order("desc")
-    .take(8);
+    .collect();
 }
 
 export async function listPublicSongs(ctx: ReadCtx, status?: "draft" | "published") {

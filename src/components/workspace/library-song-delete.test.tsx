@@ -26,6 +26,8 @@ vi.mock("@clerk/nextjs", () => ({
   useUser: () => ({ user: { publicMetadata: {} } }),
 }));
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+
 import { MyFakebookWorkspace } from "./my-fakebook-workspace";
 import { PUBLIC_LIBRARY } from "@/lib/public-library";
 

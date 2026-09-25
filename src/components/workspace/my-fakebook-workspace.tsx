@@ -11,7 +11,6 @@ import {
 } from "@/components/workspace/song-persistence";
 import { Header } from "@/components/layout/header";
 import { PreviewPanel } from "@/components/workspace/preview-panel";
-import { PublicLibrary } from "@/components/workspace/public-library";
 import { PrivateLibrarySidebar } from "@/components/workspace/private-library-sidebar";
 import { WorkspaceToolbar } from "@/components/workspace/workspace-toolbar";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -24,6 +23,8 @@ type MyFakebookWorkspaceProps = {
   persistenceEnabled: boolean;
   publicSongs: readonly PublicSong[];
   publicLibraryIsPersisted?: boolean;
+  initialPublicSongId?: string;
+  initialPrivateSong?: LoadedSong;
 };
 
 function findReplacementPublicSong(
@@ -57,22 +58,24 @@ export function MyFakebookWorkspace({
   persistenceEnabled,
   publicSongs,
   publicLibraryIsPersisted = false,
+  initialPublicSongId,
+  initialPrivateSong,
 }: MyFakebookWorkspaceProps) {
-  const initialPublicSong = publicSongs[0] ?? PUBLIC_LIBRARY[0];
-  const [abc, setAbc] = useState(initialPublicSong?.abc ?? DEFAULT_ABC);
-  const [title, setTitle] = useState(initialPublicSong?.title ?? "Midnight Walk");
-  const [sourceLabel, setSourceLabel] = useState("Public song");
-  const [isPublicSong, setIsPublicSong] = useState(true);
-  const [selectedPublicSongId, setSelectedPublicSongId] = useState<string | null>(initialPublicSong?.id ?? null);
-  const [publicSongHistory, setPublicSongHistory] = useState<string[]>(initialPublicSong ? [initialPublicSong.id] : []);
+  const initialPublicSong = publicSongs.find((song) => song.id === initialPublicSongId) ?? publicSongs[0] ?? PUBLIC_LIBRARY[0];
+  const [abc, setAbc] = useState(initialPrivateSong?.abc ?? initialPublicSong?.abc ?? DEFAULT_ABC);
+  const [title, setTitle] = useState(initialPrivateSong?.title ?? initialPublicSong?.title ?? "Midnight Walk");
+  const [sourceLabel, setSourceLabel] = useState(initialPrivateSong ? "Private song" : "Public song");
+  const [isPublicSong, setIsPublicSong] = useState(!initialPrivateSong);
+  const [selectedPublicSongId, setSelectedPublicSongId] = useState<string | null>(initialPrivateSong ? null : initialPublicSong?.id ?? null);
+  const [publicSongHistory, setPublicSongHistory] = useState<string[]>(initialPrivateSong ? [] : initialPublicSong ? [initialPublicSong.id] : []);
   const [saveStatus, setSaveStatus] = useState(persistenceEnabled ? "Connecting…" : "Not saved");
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(DEFAULT_DISPLAY_SETTINGS);
-  const [currentSong, setCurrentSong] = useState<LoadedSong | null>(null);
-  const [privateSongs, setPrivateSongs] = useState<LoadedSong[]>([]);
-  const [privateSongHistory, setPrivateSongHistory] = useState<string[]>([]);
+  const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
+  const [privateSongs, setPrivateSongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
+  const [privateSongHistory, setPrivateSongHistory] = useState<string[]>(initialPrivateSong ? [initialPrivateSong.id] : []);
 
   const handleCurrentSongChange = useCallback(
     (song: LoadedSong | null) => {
@@ -267,12 +270,6 @@ export function MyFakebookWorkspace({
         />
 
         <main className="min-w-0 p-4 max-[1080px]:px-5.5 max-[1080px]:pt-7 max-[1080px]:pb-9 max-[720px]:px-3.5 max-[720px]:pt-5.5 max-[720px]:pb-7">
-          <PublicLibrary
-            songs={publicSongs}
-            onOpenSong={handleOpenPublicSong}
-            selectedSongId={selectedPublicSongId}
-          />
-
           <WorkspaceToolbar
             abc={abc}
             displaySettings={displaySettings}

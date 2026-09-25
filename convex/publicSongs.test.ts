@@ -21,7 +21,7 @@ test("an admin can publish a song from the Private Library", async () => {
     updatedAt: Date.now(),
   });
 
-  await asAdmin.mutation(api.publicSongs.publishFromPrivateLibrary, {
+  const publicSongId = await asAdmin.mutation(api.publicSongs.publishFromPrivateLibrary, {
     privateSongId,
   });
 
@@ -29,6 +29,7 @@ test("an admin can publish a song from the Private Library", async () => {
 
   expect(publishedSongs).toEqual([
     expect.objectContaining({
+      _id: publicSongId,
       title: "Autumn Song",
       abc: "T:Autumn Song\nK:C\nC D E F|",
       status: "published",

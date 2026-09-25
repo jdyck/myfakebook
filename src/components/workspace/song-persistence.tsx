@@ -5,6 +5,7 @@ import { Authenticated, Unauthenticated, useConvexAuth, useMutation, useQuery } 
 import { useUser } from "@clerk/nextjs";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -407,6 +408,7 @@ function ConnectedAdminPublishButton({
   onStatus: (status: string) => void;
 }) {
   const { user } = useUser();
+  const router = useRouter();
   const publishFromPrivateLibrary = useMutation(api.publicSongs.publishFromPrivateLibrary);
   const [publishing, setPublishing] = useState(false);
   const isAdmin = user?.publicMetadata?.role === "admin";
@@ -417,8 +419,9 @@ function ConnectedAdminPublishButton({
     setPublishing(true);
     onStatus("Publishing…");
     try {
-      await publishFromPrivateLibrary({ privateSongId: song.id });
+      const publicSongId = await publishFromPrivateLibrary({ privateSongId: song.id });
       onStatus("Published to Public Library");
+      router.push(`/songs/${encodeURIComponent(publicSongId)}`);
     } catch {
       onStatus("Couldn’t publish");
     } finally {

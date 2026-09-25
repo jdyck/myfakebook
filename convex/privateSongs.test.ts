@@ -42,3 +42,27 @@ test("a user cannot remove another user's song", async () => {
     }),
   ]);
 });
+
+test("a user can list all saved songs without seeing another user's songs", async () => {
+  const t = convexTest(schema, modules);
+  const owner = t.withIdentity({ subject: "owner_1" });
+  const otherUser = t.withIdentity({ subject: "user_2" });
+
+  for (let index = 0; index < 10; index += 1) {
+    await owner.mutation(api.privateSongs.save, {
+      title: `Song ${index}`,
+      abc: `T:Song ${index}\nK:C\nC|`,
+      updatedAt: index,
+    });
+  }
+  await otherUser.mutation(api.privateSongs.save, {
+    title: "Someone else's song",
+    abc: "T:Someone else's song\nK:C\nC|",
+    updatedAt: 20,
+  });
+
+  const songs = await owner.query(api.privateSongs.listMine, {});
+  expect(songs).toHaveLength(10);
+  expect(songs[0].title).toBe("Song 9");
+  expect(songs.map((song) => song.title)).not.toContain("Someone else's song");
+});
