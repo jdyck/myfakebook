@@ -1,0 +1,161 @@
+/* Component styles. */
+@layer components {
+  .style1 {
+    margin-inline: auto;
+  }
+  .style12 {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
+  .style4 {
+    margin-top: var(--spacing);
+  }
+  .style2 {
+    margin-bottom: calc(var(--spacing) * 5);
+  }
+  .style11,
+.style12 {
+    display: block;
+  }
+  .style2,
+.style5,
+.style9 {
+    display: flex;
+  }
+  .style8 {
+    display: grid;
+  }
+  .style0 {
+    min-height: 100vh;
+  }
+  .style1 {
+    max-width: var(--container-3xl);
+  }
+  .style10 {
+    min-width: 0px;
+  }
+  .style6,
+.style13 {
+    flex-shrink: 0;
+  }
+  .style2 {
+    align-items: baseline;
+  }
+  .style5,
+.style9 {
+    align-items: center;
+  }
+  .style2,
+.style9 {
+    justify-content: space-between;
+  }
+  .style8 {
+    gap: calc(var(--spacing) * 2);
+  }
+  .style5 {
+    gap: calc(var(--spacing) * 3);
+  }
+  .style2,
+.style9 {
+    gap: calc(var(--spacing) * 4);
+  }
+  .style7,
+.style9 {
+    border-radius: var(--ui-radius);
+  }
+  .style9 {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+  }
+  .style9 {
+    border-color: var(--line);
+  }
+  .style7 {
+    background-color: var(--accent);
+  }
+  .style9 {
+    background-color: var(--paper);
+  }
+  .style7 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .style1,
+.style9 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .style7 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .style9 {
+    padding-block: calc(var(--spacing) * 3);
+  }
+  .style1 {
+    padding-block: calc(var(--spacing) * 8);
+  }
+  .style3 {
+    font-size: var(--text-2xl);
+    line-height: var(--component-leading, var(--text-2xl--line-height));
+  }
+  .style4,
+.style14 {
+    font-size: var(--text-sm);
+    line-height: var(--component-leading, var(--text-sm--line-height));
+  }
+  .style6,
+.style7,
+.style12,
+.style13 {
+    font-size: var(--text-xs);
+    line-height: var(--component-leading, var(--text-xs--line-height));
+  }
+  .style3 {
+    --component-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+  .style7,
+.style11,
+.style13 {
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .style13,
+.style15 {
+    color: var(--accent-deep);
+  }
+  .style14 {
+    color: var(--muted);
+  }
+  .style4,
+.style6,
+.style12 {
+    color: var(--muted-soft);
+  }
+  .style11 {
+    color: var(--ink);
+  }
+  .style7 {
+    color: var(--color-white);
+  }
+  .style15 {
+    text-decoration-line: underline;
+  }
+  @media (hover: hover) {
+    .style9:hover {
+      border-color: var(--line-strong);
+    }
+  }
+  .style9:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+  }
+  .style9:focus-visible {
+    outline-offset: 2px;
+  }
+  .style9:focus-visible {
+    outline-color: var(--accent);
+  }
+  @media (width < 720px) {
+    .style1 {
+      padding-block: calc(var(--spacing) * 5);
+    }
+  }
+}

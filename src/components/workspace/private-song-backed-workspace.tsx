@@ -6,6 +6,7 @@ import Link from "next/link";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { PublicLibraryBackedWorkspace } from "@/components/workspace/public-library-backed-workspace";
+import componentStyles from "./private-song-backed-workspace.module.css";
 
 export function PrivateSongBackedWorkspace({
   id,
@@ -22,16 +23,16 @@ export function PrivateSongBackedWorkspace({
   const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
 
   if (isLoading || (isAuthenticated && (songs === undefined || (validSetListId && setList === undefined)))) {
-    return <main className="grid min-h-screen place-items-center" role="status">Loading song…</main>;
+    return <main className={componentStyles.style0} role="status">Loading song…</main>;
   }
 
   const song = songs?.find((candidate) => candidate._id === id);
   if (!song) {
     return (
-      <main className="grid min-h-screen place-items-center px-6">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold">Song not found</h1>
-          <Link className="mt-3 inline-block text-(--accent-deep) underline" href="/mylibrary">Back to My Library</Link>
+      <main className={componentStyles.style1}>
+        <div className={componentStyles.style2}>
+          <h1 className={componentStyles.style3}>Song not found</h1>
+          <Link className={componentStyles.style4} href="/mylibrary">Back to My Library</Link>
         </div>
       </main>
     );

@@ -1,0 +1,51 @@
+/* Component styles. */
+@layer components {
+  .style5 {
+    margin-top: calc(var(--spacing) * 3);
+  }
+  .style0,
+.style2 {
+    display: grid;
+  }
+  .style5 {
+    display: inline-block;
+  }
+  .style0,
+.style2 {
+    min-height: 100vh;
+  }
+  .style0,
+.style2 {
+    place-items: center;
+  }
+  .style0 {
+    background-color: var(--canvas);
+  }
+  .style0,
+.style2 {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+  .style3 {
+    text-align: center;
+  }
+  .style4 {
+    font-size: var(--text-xl);
+    line-height: var(--component-leading, var(--text-xl--line-height));
+  }
+  .style1 {
+    font-size: 11px;
+  }
+  .style4 {
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .style5 {
+    color: var(--accent-deep);
+  }
+  .style1 {
+    color: var(--muted);
+  }
+  .style5 {
+    text-decoration-line: underline;
+  }
+}

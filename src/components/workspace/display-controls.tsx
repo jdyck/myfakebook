@@ -1,6 +1,7 @@
 "use client";
 
 import type { SongDisplaySettings } from "@/lib/abc-display";
+import componentStyles from "./display-controls.module.css";
 
 type DisplayControlsProps = {
   settings: SongDisplaySettings;
@@ -11,14 +12,14 @@ export function DisplayControls({ settings, onChange }: DisplayControlsProps) {
   return (
     <fieldset
       aria-label="Display controls"
-      className="flex flex-wrap items-center justify-end gap-2 border-0 p-0 max-[720px]:justify-start"
+      className={componentStyles.style0}
     >
-      <legend className="sr-only">Display controls</legend>
-      <label className="flex items-center gap-1.5 text-[10px] font-[650] text-(--muted)">
+      <legend className={componentStyles.style1}>Display controls</legend>
+      <label className={componentStyles.style2}>
         Transpose
         <select
           aria-label="Song transposition"
-          className="rounded-[6px] border border-(--line-strong) bg-(--paper) px-1.5 py-1 text-[10px] text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)"
+          className={componentStyles.style3}
           value={settings.transposition}
           onChange={(event) => onChange({ transposition: Number(event.target.value) })}
         >
@@ -33,11 +34,11 @@ export function DisplayControls({ settings, onChange }: DisplayControlsProps) {
         ["showChords", "Show chords"],
         ["showLyrics", "Show lyrics"],
       ] as const).map(([setting, label]) => (
-        <label className="inline-flex items-center gap-1 text-[10px] font-[650] text-[var(--muted)]" key={setting}>
+        <label className={componentStyles.style4} key={setting}>
           <input
             aria-label={label}
             checked={settings[setting]}
-            className="size-3 accent-[var(--accent)]"
+            className={componentStyles.style5}
             type="checkbox"
             onChange={(event) => onChange({ [setting]: event.target.checked })}
           />

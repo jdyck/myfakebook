@@ -8,6 +8,7 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import { MyFakebookWorkspace } from "@/components/workspace/my-fakebook-workspace";
 import type { LoadedSong } from "@/components/workspace/song-persistence";
 import type { SongDisplaySettings } from "@/lib/abc-display";
+import componentStyles from "./public-library-backed-workspace.module.css";
 
 type PublicLibraryBackedWorkspaceProps = {
   clerkConfigured: boolean;
@@ -43,8 +44,8 @@ export function PublicLibraryBackedWorkspace({
 
   if (publishedSongDocs === undefined) {
     return (
-      <main className="grid min-h-screen place-items-center bg-[var(--canvas)] px-6">
-        <p className="text-[11px] text-[var(--muted)]" role="status">
+      <main className={componentStyles.style0}>
+        <p className={componentStyles.style1} role="status">
           Loading Public Library…
         </p>
       </main>
@@ -72,10 +73,10 @@ export function PublicLibraryBackedWorkspace({
 
   if (initialPublicSongId && !initialSong) {
     return (
-      <main className="grid min-h-screen place-items-center px-6">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold">Song not found</h1>
-          <Link className="mt-3 inline-block text-(--accent-deep) underline" href="/songs">Browse songs</Link>
+      <main className={componentStyles.style2}>
+        <div className={componentStyles.style3}>
+          <h1 className={componentStyles.style4}>Song not found</h1>
+          <Link className={componentStyles.style5} href="/songs">Browse songs</Link>
         </div>
       </main>
     );

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { SongDisplaySettings } from "@/lib/abc-display";
+import componentStyles from "./song-persistence.module.css";
 
 export type SongId = Id<"songs">;
 
@@ -171,22 +172,23 @@ function ConnectedMyLibrarySongs({
   }, [isAuthenticated, isLoading, isPublicSong]);
 
   return (
-    <section className="mt-[17px]" aria-labelledby="recent-songs-heading">
-      <h2 className="px-2 text-[10px] font-[680] uppercase tracking-[0.08em] text-[var(--muted-soft)]" id="recent-songs-heading">
+    <section className={componentStyles.style0} aria-labelledby="recent-songs-heading">
+      <h2 className={componentStyles.style1} id="recent-songs-heading">
         Recently viewed songs
       </h2>
       <Authenticated>
         {songs === undefined ? (
-          <p className="px-2 py-3.5 text-[10px] leading-[1.5] text-[var(--muted-soft)]" role="status">
+          <p className={componentStyles.style2} role="status">
             Loading your songs…
           </p>
         ) : recentSongs.length ? (
-          <div className="mt-2 grid gap-[3px]" aria-label="Recently viewed songs">
+          <div className={componentStyles.style3} aria-label="Recently viewed songs">
             {recentSongs.map((song) => (
-              <div className="flex items-center gap-1" key={song._id}>
-                <button
-                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-[9px] rounded-[8px] border-0 bg-transparent p-2 text-left transition-[background-color] duration-[160ms] ease-in-out hover:bg-[var(--paper-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed"
-                  type="button"
+              <div className={componentStyles.style4} key={song._id}>
+                <Link
+                  aria-current={currentSong?.id === song._id ? "page" : undefined}
+                  className={componentStyles.style5}
+                  href={`/mylibrary/${encodeURIComponent(song._id)}`}
                   onClick={() => {
                     const loadedSong = { id: song._id, title: song.title, abc: song.abc, publicationState: song.publicationState };
                     songId.current = song._id;
@@ -195,36 +197,36 @@ function ConnectedMyLibrarySongs({
                     statusRef.current("Loaded from My Library");
                   }}
                 >
-                  <span className="grid size-6 shrink-0 place-items-center rounded-[6px] border border-[var(--accent-soft)] bg-[var(--accent-soft)] text-[13px] text-[var(--accent-deep)]">
+                  <span className={componentStyles.style6}>
                     ♪
                   </span>
-                  <span className="min-w-0">
-                    <span className="block truncate text-[11px] font-[620] text-[var(--ink)]">{song.title}</span>
-                    <span className="mt-0.5 block text-[10px] text-[var(--muted-soft)]">
+                  <span className={componentStyles.style7}>
+                    <span className={componentStyles.style8}>{song.title}</span>
+                    <span className={componentStyles.style9}>
                       {song.publicationState === "published" ? "Published · " : "Private · "}
                       {new Date(song.updatedAt).toLocaleDateString()}
                     </span>
                   </span>
-                </button>
+                </Link>
               </div>
             ))}
           </div>
         ) : (
-          <div className="px-2 py-3.5 text-[10px] leading-[1.5] text-[var(--muted-soft)]">
+          <div className={componentStyles.style2}>
             Songs you open will appear here.
           </div>
         )}
         <Link
-          className="mt-2 block rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-center text-[10px] font-[650] text-[var(--accent-deep)] no-underline transition-[border-color,background-color] hover:border-[var(--line-strong)] hover:bg-[var(--paper-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+          className={componentStyles.style10}
           href="/mylibrary"
         >
           All my songs
         </Link>
       </Authenticated>
       <Unauthenticated>
-        <div className="px-2 py-3.5 text-[10px] leading-[1.5] text-[var(--muted-soft)]">
+        <div className={componentStyles.style2}>
           <Link
-            className="font-[650] text-[var(--accent-deep)] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+            className={componentStyles.style11}
             href="/sign-in"
           >
             Sign in
@@ -282,7 +284,7 @@ function ConnectedRemoveSongButton({
   return (
     <button
       aria-label={`Remove ${song.title} from My Library`}
-      className="inline-flex min-h-[31px] cursor-pointer items-center justify-center gap-1.5 rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      className={componentStyles.style12}
       disabled={removing}
       type="button"
       onClick={() => void handleRemove()}
@@ -371,7 +373,7 @@ function ConnectedSaveToMyLibraryButton({
 
   return (
     <button
-      className="inline-flex min-h-[32px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--accent)] bg-[var(--accent)] px-2.5 text-[10px] font-[680] text-white transition-[background-color,border-color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent-deep)] hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      className={componentStyles.style13}
       disabled={savingCopy}
       type="button"
       onClick={() => void handleSaveToMyLibrary()}
@@ -441,7 +443,7 @@ function ConnectedSaveToSetListButton({
     <>
       <button
         aria-haspopup="dialog"
-        className="inline-flex min-h-[32px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--accent)] bg-[var(--accent)] px-2.5 text-[10px] font-[680] text-white transition-[background-color,border-color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent-deep)] hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+        className={componentStyles.style13}
         disabled={savingSetListId !== null}
         type="button"
         onClick={() => {
@@ -453,50 +455,50 @@ function ConnectedSaveToSetListButton({
       </button>
       <dialog
         aria-labelledby={`add-to-set-list-title-${song.id}`}
-        className="m-auto max-h-[calc(100dvh_-_2rem)] w-[min(28rem,calc(100%_-_2rem))] overflow-visible border-0 bg-transparent p-0 text-foreground backdrop:bg-black/50"
+        className={componentStyles.style14}
         onClick={(event) => {
           if (event.target === event.currentTarget) closeDialog();
         }}
         onClose={() => setIsOpen(false)}
         ref={dialogRef}
       >
-        <section className="flex max-h-[calc(100dvh_-_2rem)] flex-col overflow-hidden rounded-xl border border-(--line) bg-(--paper) shadow-2xl">
-          <header className="flex items-start justify-between gap-4 border-b border-(--line) p-4">
-            <div className="min-w-0">
-              <h2 className="m-0 text-base font-bold" id={`add-to-set-list-title-${song.id}`}>Add to a set list</h2>
-              <p className="m-0 mt-1 truncate text-sm text-(--muted-soft)" title={song.title}>{song.title}</p>
+        <section className={componentStyles.style15}>
+          <header className={componentStyles.style16}>
+            <div className={componentStyles.style7}>
+              <h2 className={componentStyles.style17} id={`add-to-set-list-title-${song.id}`}>Add to a set list</h2>
+              <p className={componentStyles.style18} title={song.title}>{song.title}</p>
             </div>
             <button
               aria-label="Close"
               autoFocus
-              className="grid size-8 shrink-0 place-items-center rounded-lg border border-(--line) text-(--muted) hover:bg-(--paper-soft) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)"
+              className={componentStyles.style19}
               onClick={closeDialog}
               type="button"
             >
               <X aria-hidden="true" size={15} />
             </button>
           </header>
-          <div className="max-h-[65vh] overflow-y-auto p-3">
+          <div className={componentStyles.style20}>
             {setLists === undefined ? (
-              <p className="p-2 text-sm text-(--muted-soft)" role="status">Loading your set lists…</p>
+              <p className={componentStyles.style21} role="status">Loading your set lists…</p>
             ) : setLists.length ? (
-              <ul className="m-0 grid list-none gap-2 p-0">
+              <ul className={componentStyles.style22}>
                 {setLists.map((setList) => {
                   const alreadyAdded = setList.songIds.some((songId) => String(songId) === String(song.id));
                   const isSavingThisList = savingSetListId === setList._id;
                   return (
                     <li key={setList._id}>
                       <button
-                        className="flex w-full items-center justify-between gap-3 rounded-lg border border-(--line) bg-(--paper) px-3 py-2.5 text-left hover:border-(--line-strong) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent) disabled:cursor-not-allowed disabled:opacity-60"
+                        className={componentStyles.style23}
                         disabled={alreadyAdded || savingSetListId !== null}
                         onClick={() => void handleAddToSetList(setList._id, setList.name)}
                         type="button"
                       >
-                        <span className="min-w-0">
-                          <span className="block truncate text-sm font-semibold text-foreground">{setList.name}</span>
-                          <span className="mt-0.5 block text-xs text-(--muted-soft)">{setList.itemCount} song{setList.itemCount === 1 ? "" : "s"} · Updated {new Date(setList.updatedAt).toLocaleDateString()}</span>
+                        <span className={componentStyles.style7}>
+                          <span className={componentStyles.style24}>{setList.name}</span>
+                          <span className={componentStyles.style25}>{setList.itemCount} song{setList.itemCount === 1 ? "" : "s"} · Updated {new Date(setList.updatedAt).toLocaleDateString()}</span>
                         </span>
-                        <span className="shrink-0 text-xs font-semibold text-(--accent-deep)">
+                        <span className={componentStyles.style26}>
                           {isSavingThisList ? "Adding…" : alreadyAdded ? "Already added" : "Add song"}
                         </span>
                       </button>
@@ -505,13 +507,13 @@ function ConnectedSaveToSetListButton({
                 })}
               </ul>
             ) : (
-              <div className="px-2 py-5 text-center">
-                <p className="m-0 font-semibold">No set lists yet</p>
-                <p className="m-0 mt-1 text-sm text-(--muted-soft)">Create a set list before adding this song.</p>
-                <Link className="mt-3 inline-block text-sm font-semibold text-(--accent-deep) underline" href="/setlists">Create a set list</Link>
+              <div className={componentStyles.style27}>
+                <p className={componentStyles.style28}>No set lists yet</p>
+                <p className={componentStyles.style29}>Create a set list before adding this song.</p>
+                <Link className={componentStyles.style30} href="/setlists">Create a set list</Link>
               </div>
             )}
-            {error && <p className="mb-1 mt-3 px-2 text-sm text-(--ui-destructive)" role="alert">{error}</p>}
+            {error && <p className={componentStyles.style31} role="alert">{error}</p>}
           </div>
         </section>
       </dialog>
@@ -561,7 +563,7 @@ function ConnectedSaveSetListDisplaySettingsButton({
 
   return (
     <button
-      className="rounded-lg bg-(--accent) px-3 py-2 text-xs font-semibold text-white hover:bg-(--accent-deep) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent) disabled:cursor-not-allowed disabled:opacity-50"
+      className={componentStyles.style32}
       disabled={saving}
       onClick={() => void handleSave()}
       type="button"
@@ -621,7 +623,7 @@ function ConnectedAdminPublicationButton({
   return (
     <button
       aria-label={`${isPublished ? "Unpublish" : "Publish"} ${song.title}`}
-      className="inline-flex min-h-[31px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      className={componentStyles.style33}
       disabled={changing}
       type="button"
       onClick={() => void handleChange()}
@@ -676,7 +678,7 @@ function ConnectedAdminUnpublishPublicSongButton({
   return (
     <button
       aria-label="Unpublish public song"
-      className="inline-flex min-h-[31px] cursor-pointer items-center justify-center rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] px-2.5 text-[10px] font-[650] text-[var(--muted)] transition-[border-color,color,opacity] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-[0.55]"
+      className={componentStyles.style33}
       disabled={changing}
       type="button"
       onClick={() => void handleUnpublish()}

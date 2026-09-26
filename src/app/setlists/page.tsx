@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { Header } from "@/components/layout/header";
 import { SetListsIndex } from "@/components/workspace/set-lists";
+import componentStyles from "./page.module.css";
 
 export default async function SetListsPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
@@ -12,11 +13,11 @@ export default async function SetListsPage() {
   if (convexConfigured) return <SetListsIndex />;
 
   return (
-    <div className="min-h-screen">
+    <div className={componentStyles.style0}>
       <Header clerkConfigured />
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="text-2xl font-bold">Set lists</h1>
-        <p className="mt-2 text-sm text-(--muted-soft)">Connect Convex to create and save set lists.</p>
+      <main className={componentStyles.style1}>
+        <h1 className={componentStyles.style2}>Set lists</h1>
+        <p className={componentStyles.style3}>Connect Convex to create and save set lists.</p>
       </main>
     </div>
   );

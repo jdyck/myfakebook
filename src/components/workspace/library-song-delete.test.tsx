@@ -29,6 +29,7 @@ vi.mock("@clerk/nextjs", () => ({
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 import { MyFakebookWorkspace } from "./my-fakebook-workspace";
+import componentStyles from "./my-fakebook-workspace.module.css";
 import { PUBLIC_LIBRARY } from "@/lib/public-library";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -92,8 +93,8 @@ describe("library song deletion", () => {
     });
 
     const workspaceGrid = container.querySelector("aside")?.parentElement;
-    expect(workspaceGrid?.className).toContain("grid-cols-[208px_minmax(0,1fr)]");
-    expect(workspaceGrid?.className).not.toContain("grid-cols-[minmax(0,1fr)]");
+    expect(workspaceGrid?.className).toContain(componentStyles.workspaceGridWithSidebar);
+    expect(workspaceGrid?.className).not.toContain(componentStyles.workspaceGridWithoutSidebar);
 
     const savedSongButtons = Array.from(
       container.querySelectorAll<HTMLButtonElement>('aside button'),

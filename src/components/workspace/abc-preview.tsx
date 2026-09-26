@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import ABCJS from "abcjs";
 import { LoaderCircle, Play, Square } from "lucide-react";
 import { prepareAbcForDisplay } from "@/lib/abc-display";
+import componentStyles from "./abc-preview.module.css";
 
 type Synth = {
   init: (options: {
@@ -34,6 +35,70 @@ type SelectedChordVariant = {
 };
 
 type PlaybackPart = "melody" | "chords" | "both";
+
+const BRAVURA_BASELINE_SHIFT = "0.3em";
+const BRAVURA_BOUNDARY_SPACING = "0.09em";
+const CHORD_LABEL_Y_OFFSET = 50; // SVG user units; positive values move chord labels down.
+
+function isBravuraSymbol(codePoint: number) {
+  return (
+    (codePoint >= 0x2669 && codePoint <= 0x266f) ||
+    (codePoint >= 0xe000 && codePoint <= 0xf5fa) ||
+    (codePoint >= 0x1d100 && codePoint <= 0x1d1e8)
+  );
+}
+
+function raiseBravuraChordGlyphs(container: HTMLElement) {
+  const chordLabels = container.querySelectorAll<SVGTextElement>(".abcjs-chord");
+
+  for (const chordLabel of chordLabels) {
+    const textNodes: Text[] = [];
+    const walker = document.createTreeWalker(chordLabel, NodeFilter.SHOW_TEXT);
+    let currentNode = walker.nextNode();
+
+    while (currentNode) {
+      if (currentNode.nodeValue) textNodes.push(currentNode as Text);
+      currentNode = walker.nextNode();
+    }
+
+    const hasBravuraSymbol = textNodes.some((textNode) =>
+      Array.from(textNode.data).some((character) => isBravuraSymbol(character.codePointAt(0) ?? 0)),
+    );
+    if (!hasBravuraSymbol) continue;
+
+    let previousWasBravura: boolean | null = null;
+    for (const textNode of textNodes) {
+      const characters = Array.from(textNode.data);
+      const replacement = document.createDocumentFragment();
+      for (const character of characters) {
+        const isBravura = isBravuraSymbol(character.codePointAt(0) ?? 0);
+        const glyph = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        if (isBravura) glyph.setAttribute("baseline-shift", BRAVURA_BASELINE_SHIFT);
+        if (previousWasBravura !== null && previousWasBravura !== isBravura) {
+          glyph.setAttribute("dx", BRAVURA_BOUNDARY_SPACING);
+        }
+        glyph.textContent = character;
+        replacement.appendChild(glyph);
+        previousWasBravura = isBravura;
+      }
+      textNode.replaceWith(replacement);
+    }
+  }
+}
+
+function offsetChordLabels(container: HTMLElement, offset: number) {
+  const chordLabels = container.querySelectorAll<SVGTextElement>(".abcjs-chord");
+
+  for (const chordLabel of chordLabels) {
+    const y = chordLabel.getAttribute("y");
+    if (y === null) continue;
+
+    const currentY = Number(y);
+    if (Number.isFinite(currentY)) {
+      chordLabel.setAttribute("y", String(currentY + offset));
+    }
+  }
+}
 
 function countMeasures(abc: string) {
   try {
@@ -227,6 +292,8 @@ export function AbcPreview({
           setStartMeasure(measure);
         },
       });
+      offsetChordLabels(targetRef.current, CHORD_LABEL_Y_OFFSET);
+      raiseBravuraChordGlyphs(targetRef.current);
       tuneRef.current = rendered[0];
       timingRef.current = new ABCJS.TimingCallbacks(tuneRef.current, {
         eventCallback: handleTimingEvent,
@@ -365,40 +432,40 @@ export function AbcPreview({
   return (
     <>
       <div
-        className="relative min-h-[480px] flex-1 overflow-auto rounded-[8px] border border-[var(--line)] bg-[#fffefb] px-3.5 py-[18px] [scrollbar-color:#d1d1cb_transparent] dark:bg-[#f7f4e9] max-[720px]:min-h-[390px]"
+        className={componentStyles.style0}
         aria-label="Rendered lead sheet"
       >
         <div>
           <div
             ref={targetRef}
-            className={`min-w-125 px-2 pb-3.5 pt-2.5 [&_svg]:overflow-visible [&_svg]:text-[#252631] ${
+            className={`${componentStyles.style1} abcjs-preview ${
               [
                 !showChords && "abc-preview-hide-chords",
                 !showLyrics && "abc-preview-hide-lyrics",
               ]
                 .filter(Boolean)
                 .join(" ")
-            } ${error ? "hidden" : ""}`}
+            } ${error ? componentStyles.style2 : ""}`}
           />
         </div>
         {error && (
-          <div className="grid min-h-[320px] place-items-center p-[30px] text-center text-[11px] leading-[1.6] text-[var(--amber)]">
+          <div className={componentStyles.style3}>
             <div>
               {error}
-              <code className="mt-[7px] block font-mono text-[10px] text-[var(--muted-soft)]">
+              <code className={componentStyles.style4}>
                 Check the ABC header and note syntax.
               </code>
             </div>
           </div>
         )}
       </div>
-      <div className="mt-3 flex items-center border-t border-[var(--line)] pt-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-1.5 text-[10px] font-[650] text-[var(--muted)]">
+      <div className={componentStyles.style5}>
+        <div className={componentStyles.style6}>
+          <label className={componentStyles.style7}>
             Parts
             <select
               aria-label="Playback parts"
-              className="rounded-[6px] border border-[var(--line-strong)] bg-[var(--paper)] px-1.5 py-1 text-[10px] text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+              className={componentStyles.style8}
               value={playbackPart}
               onChange={(event) => setPlaybackPart(event.target.value as PlaybackPart)}
             >
@@ -407,11 +474,11 @@ export function AbcPreview({
               <option value="both">Melody + chords</option>
             </select>
           </label>
-          <label className="flex items-center gap-1.5 text-[10px] font-[650] text-[var(--muted)]">
+          <label className={componentStyles.style7}>
             Start measure
             <select
               aria-label="Playback start measure"
-              className="rounded-[6px] border border-[var(--line-strong)] bg-[var(--paper)] px-1.5 py-1 text-[10px] text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+              className={componentStyles.style8}
               value={startMeasure}
               onChange={(event) => {
                 clearSelectedNote();
@@ -430,26 +497,26 @@ export function AbcPreview({
           </label>
           <button
             aria-label={isPlaying ? "Stop playback" : isPaused ? "Resume playback" : "Play lead sheet"}
-            className="grid size-[31px] cursor-pointer place-items-center rounded-[7px] border border-[var(--line-strong)] bg-[var(--paper)] text-[var(--accent)] transition-[border-color,background-color] duration-[160ms] ease-in-out hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed"
+            className={componentStyles.style9}
             disabled={Boolean(error) || isLoading}
             type="button"
             onClick={togglePlayback}
           >
             {isLoading ? (
-              <LoaderCircle className="animate-spin" size={14} strokeWidth={2} />
+              <LoaderCircle className={componentStyles.style10} size={14} strokeWidth={2} />
             ) : isPlaying ? (
               <Square size={12} fill="currentColor" strokeWidth={1.8} />
             ) : (
               <Play size={13} fill="currentColor" strokeWidth={1.8} />
             )}
           </button>
-          <span className="text-[10px] font-[650] text-[var(--muted)]">
+          <span className={componentStyles.style11}>
             {isPlaying ? "Playing" : isPaused ? "Paused" : "Play preview"}
           </span>
         </div>
       </div>
       {(saveAction || publishAction) && (
-        <div className="mt-2 flex flex-wrap items-center gap-2">
+        <div className={componentStyles.style12}>
           {saveAction}
           {publishAction}
         </div>

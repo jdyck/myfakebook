@@ -1,0 +1,41 @@
+/* Component styles. */
+@layer components {
+  .style4 {
+    margin-top: calc(var(--spacing) * 3);
+  }
+  .style0,
+.style1 {
+    display: grid;
+  }
+  .style4 {
+    display: inline-block;
+  }
+  .style0,
+.style1 {
+    min-height: 100vh;
+  }
+  .style0,
+.style1 {
+    place-items: center;
+  }
+  .style1 {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+  .style2 {
+    text-align: center;
+  }
+  .style3 {
+    font-size: var(--text-xl);
+    line-height: var(--component-leading, var(--text-xl--line-height));
+  }
+  .style3 {
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .style4 {
+    color: var(--accent-deep);
+  }
+  .style4 {
+    text-decoration-line: underline;
+  }
+}

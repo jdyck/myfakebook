@@ -5,6 +5,7 @@ import type { ChangeEventHandler } from "react";
 import { DisplayControls } from "@/components/workspace/display-controls";
 import { WorkspaceActions } from "@/components/workspace/workspace-actions";
 import type { SongDisplaySettings } from "@/lib/abc-display";
+import componentStyles from "./workspace-toolbar.module.css";
 
 type WorkspaceToolbarProps = {
   abc: string;
@@ -40,39 +41,39 @@ export function WorkspaceToolbar({
   const tempoLabel = abc.match(/^Q:.*?=\s*(\d+)/m)?.[1] || abc.match(/^Q:\s*(\d+)/m)?.[1] || "";
 
   return (
-    <div className="mb-5 flex items-start justify-between gap-6 max-[720px]:block">
-      <div className="min-w-0 flex-1">
-        <h1 className="m-0">
+    <div className={componentStyles.style0}>
+      <div className={componentStyles.style1}>
+        <h1 className={componentStyles.style2}>
           <input
             aria-label="Lead sheet title"
-            className="block w-full max-w-130 border-0 border-b border-b-transparent bg-transparent text-[clamp(24px,3vw,32px)] font-[740] leading-[1.05] tracking-[-0.055em] text-foreground outline-0 transition-[border-color] duration-160 ease-in-out hover:border-b-(--accent)"
+            className={componentStyles.style3}
             value={title}
             onChange={(event) => onTitleChange(event.target.value)}
           />
         </h1>
-        <div className="mt-2 flex flex-wrap items-center gap-2.5 text-[10px] text-(--muted-soft)">
-          <span className="font-[650] text-(--accent-deep)">{sourceLabel}</span>
-          <span className="size-0.75 rounded-full bg-(--line-strong)" />
+        <div className={componentStyles.style4}>
+          <span className={componentStyles.style5}>{sourceLabel}</span>
+          <span className={componentStyles.style6} />
           {composerLabel && (
             <>
               <span>{composerLabel}</span>
-              <span className="size-0.75 rounded-full bg-(--line-strong)" />
+              <span className={componentStyles.style6} />
             </>
           )}
           {rhythmLabel && (
             <>
               <span>{rhythmLabel}</span>
-              <span className="size-0.75 rounded-full bg-(--line-strong)" />
+              <span className={componentStyles.style6} />
             </>
           )}
           <span>{keyLabel}</span>
-          <span className="size-0.75 rounded-full bg-(--line-strong)" />
+          <span className={componentStyles.style6} />
           <span>{meterLabel}</span>
-          <span className="size-0.75 rounded-full bg-(--line-strong)" />
+          <span className={componentStyles.style6} />
           <span>{tempoLabel ? `${tempoLabel} BPM` : "Tempo not set"}</span>
         </div>
         {feedback && (
-          <p className="mt-2.5 mb-0 text-[11px] text-(--muted)" role="status">
+          <p className={componentStyles.style7} role="status">
             {feedback}
           </p>
         )}

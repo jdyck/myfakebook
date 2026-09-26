@@ -1,0 +1,155 @@
+/* Component styles. */
+@layer components {
+  .style0 {
+    display: flex;
+  }
+  .style1,
+.style2 {
+    display: inline-flex;
+  }
+  .style1,
+.style2 {
+    min-height: 34px;
+  }
+  .style1,
+.style2 {
+    cursor: pointer;
+  }
+  .style0 {
+    flex-wrap: wrap;
+  }
+  .style0,
+.style1,
+.style2 {
+    align-items: center;
+  }
+  .style1,
+.style2 {
+    justify-content: center;
+  }
+  .style0 {
+    justify-content: flex-end;
+  }
+  .style0,
+.style1,
+.style2 {
+    gap: 7px;
+  }
+  .style1,
+.style2 {
+    border-radius: 8px;
+  }
+  .style1,
+.style2 {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+  }
+  .style2 {
+    border-color: var(--accent);
+  }
+  .style1 {
+    border-color: var(--line-strong);
+  }
+  .style2 {
+    background-color: var(--accent);
+  }
+  .style1 {
+    background-color: var(--paper);
+  }
+  .style1,
+.style2 {
+    padding-inline: 11px;
+  }
+  .style1,
+.style2 {
+    font-size: 11px;
+  }
+  .style1,
+.style2 {
+    --component-font-weight: 650;
+    font-weight: 650;
+  }
+  .style1 {
+    color: var(--muted);
+  }
+  .style2 {
+    color: var(--color-white);
+  }
+  .style2 {
+    transition-property: border-color,background-color,opacity;
+    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
+    transition-duration: var(--component-duration, var(--default-transition-duration));
+  }
+  .style1 {
+    transition-property: border-color,color,opacity;
+    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
+    transition-duration: var(--component-duration, var(--default-transition-duration));
+  }
+  .style1,
+.style2 {
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+  }
+  .style1,
+.style2 {
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+  @media (hover: hover) {
+    .style1:hover {
+      border-color: var(--accent);
+    }
+  }
+  @media (hover: hover) {
+    .style2:hover {
+      border-color: var(--accent-deep);
+    }
+  }
+  @media (hover: hover) {
+    .style2:hover {
+      background-color: var(--accent-deep);
+    }
+  }
+  @media (hover: hover) {
+    .style1:hover {
+      color: var(--ink);
+    }
+  }
+  .style1:focus-visible,
+.style2:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+  }
+  .style1:focus-visible,
+.style2:focus-visible {
+    outline-offset: 2px;
+  }
+  .style1:focus-visible,
+.style2:focus-visible {
+    outline-color: var(--accent);
+  }
+  .style1:disabled,
+.style2:disabled {
+    cursor: not-allowed;
+  }
+  .style1:disabled,
+.style2:disabled {
+    opacity: 0.55;
+  }
+  @media (width < 720px) {
+    .style0 {
+      margin-top: calc(var(--spacing) * 4);
+    }
+  }
+  @media (width < 720px) {
+    .style1,
+.style2 {
+      flex: 1;
+    }
+  }
+  @media (width < 720px) {
+    .style0 {
+      justify-content: stretch;
+    }
+  }
+}

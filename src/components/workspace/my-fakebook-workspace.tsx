@@ -21,6 +21,7 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import { abcToMusicXml, DEFAULT_ABC } from "@/lib/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
 import type { PublicSong } from "@/lib/public-library";
+import componentStyles from "./my-fakebook-workspace.module.css";
 
 const RECENT_PRIVATE_SONGS_STORAGE_KEY = "myfakebook:recent-private-song-ids";
 const MAX_RECENT_PRIVATE_SONGS = 50;
@@ -321,12 +322,12 @@ export function MyFakebookWorkspace({
   }
 
   return (
-    <div className="min-h-screen">
+    <div className={componentStyles.style0}>
       <Header clerkConfigured={clerkConfigured} />
 
       <div
-        className={`mx-auto grid min-h-[calc(100vh-58px)] max-[720px]:block ${
-          persistenceEnabled ? "grid-cols-[208px_minmax(0,1fr)]" : "grid-cols-[minmax(0,1fr)]"
+        className={`${componentStyles.workspaceGrid} ${
+          persistenceEnabled ? componentStyles.workspaceGridWithSidebar : componentStyles.workspaceGridWithoutSidebar
         }`}
       >
         <PrivateLibrarySidebar
@@ -342,9 +343,9 @@ export function MyFakebookWorkspace({
           title={songTitle}
         />
 
-        <main className="min-w-0 p-4 max-[1080px]:px-5.5 max-[1080px]:pt-7 max-[1080px]:pb-9 max-[720px]:px-3.5 max-[720px]:pt-5.5 max-[720px]:pb-7">
+        <main className={componentStyles.style1}>
           {setListReturn && (
-            <Link className="mb-4 inline-block text-xs font-semibold text-(--accent-deep) hover:underline" href={setListReturn.href}>
+            <Link className={componentStyles.style2} href={setListReturn.href}>
               ← Back to {setListReturn.name}
             </Link>
           )}
@@ -363,10 +364,10 @@ export function MyFakebookWorkspace({
           />
 
           {persistenceEnabled && setListReturn && (currentSong?.id === setListReturn.songId || selectedPublicSongId === setListReturn.songId) && (
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-(--line) bg-(--paper) px-4 py-3">
+            <div className={componentStyles.style3}>
               <div>
-                <p className="m-0 text-sm font-semibold">Performance settings for {setListReturn.name}</p>
-                <p className="m-0 mt-1 text-xs text-(--muted-soft)">Save the current transpose and visibility choices to this set-list item.</p>
+                <p className={componentStyles.style4}>Performance settings for {setListReturn.name}</p>
+                <p className={componentStyles.style5}>Save the current transpose and visibility choices to this set-list item.</p>
               </div>
               <SaveSetListDisplaySettingsButton
                 displaySettings={displaySettings}
@@ -377,7 +378,7 @@ export function MyFakebookWorkspace({
             </div>
           )}
 
-          <div className="xl:flex xl:flex-cols-2 gap-4">
+          <div className={componentStyles.style6}>
             <AbcEditorPanel
               abc={abc}
               copied={copied}

@@ -7,6 +7,7 @@ import {
 import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
 import { api } from "../../../convex/_generated/api";
+import componentStyles from "./private-library-sidebar.module.css";
 
 type PrivateLibrarySidebarProps = {
   enabled: boolean;
@@ -37,11 +38,11 @@ export function PrivateLibrarySidebar({
 
   return (
     <aside
-      className="min-w-0 border-r border-(--line) px-3.75 py-6.25 max-[720px]:hidden"
+      className={componentStyles.style0}
       aria-label="My Library"
     >
-      <div className="grid gap-1 px-2">
-        <span className="text-[13px] font-[680] text-foreground">My Library</span>
+      <div className={componentStyles.style1}>
+        <span className={componentStyles.style2}>My Library</span>
       </div>
       <MyLibrarySongs
         abc={abc}
@@ -65,44 +66,44 @@ function RecentSetLists() {
   const setLists = useQuery(api.setLists.listMine, isAuthenticated ? {} : "skip");
 
   return (
-    <section className="mt-6" aria-labelledby="recent-set-lists-heading">
-      <h2 className="px-2 text-[10px] font-[680] uppercase tracking-[0.08em] text-[var(--muted-soft)]" id="recent-set-lists-heading">
+    <section className={componentStyles.style3} aria-labelledby="recent-set-lists-heading">
+      <h2 className={componentStyles.style4} id="recent-set-lists-heading">
         Recent set lists
       </h2>
       {isLoading || (isAuthenticated && setLists === undefined) ? (
-        <p className="px-2 py-3.5 text-[10px] leading-[1.5] text-[var(--muted-soft)]" role="status">
+        <p className={componentStyles.style5} role="status">
           Loading your set lists…
         </p>
       ) : !isAuthenticated ? (
-        <p className="px-2 py-3.5 text-[10px] leading-[1.5] text-[var(--muted-soft)]">
-          <Link className="font-[650] text-[var(--accent-deep)] no-underline hover:underline" href="/sign-in">
+        <p className={componentStyles.style5}>
+          <Link className={componentStyles.style6} href="/sign-in">
             Sign in
           </Link>{" "}
           to sync your set lists.
         </p>
       ) : setLists?.length ? (
-        <div className="mt-2 grid gap-[3px]" aria-label="Recent set lists">
+        <div className={componentStyles.style7} aria-label="Recent set lists">
           {setLists.slice(0, 5).map((setList) => (
             <Link
-              className="block min-w-0 rounded-[8px] p-2 no-underline transition-[background-color] duration-[160ms] ease-in-out hover:bg-[var(--paper-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+              className={componentStyles.style8}
               href={`/setlists/${encodeURIComponent(setList._id)}`}
               key={setList._id}
             >
-              <span className="block truncate text-[11px] font-[620] text-[var(--ink)]">{setList.name}</span>
-              <span className="mt-0.5 block text-[10px] text-[var(--muted-soft)]">
+              <span className={componentStyles.style9}>{setList.name}</span>
+              <span className={componentStyles.style10}>
                 {setList.itemCount} song{setList.itemCount === 1 ? "" : "s"} · Updated {new Date(setList.updatedAt).toLocaleDateString()}
               </span>
             </Link>
           ))}
         </div>
       ) : (
-        <p className="px-2 py-3.5 text-[10px] leading-[1.5] text-[var(--muted-soft)]">
+        <p className={componentStyles.style5}>
           Your set lists will appear here.
         </p>
       )}
       {isAuthenticated && (
         <Link
-          className="mt-2 block rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-center text-[10px] font-[650] text-[var(--accent-deep)] no-underline transition-[border-color,background-color] hover:border-[var(--line-strong)] hover:bg-[var(--paper-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+          className={componentStyles.style11}
           href="/setlists"
         >
           All set lists

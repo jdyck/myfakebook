@@ -5,6 +5,7 @@ import { Music2 } from "lucide-react";
 
 import { AbcPreview } from "@/components/workspace/abc-preview";
 import type { SongDisplaySettings } from "@/lib/abc-display";
+import componentStyles from "./preview-panel.module.css";
 
 type PreviewPanelProps = {
   abc: string;
@@ -16,16 +17,16 @@ type PreviewPanelProps = {
 export function PreviewPanel({ abc, displaySettings, saveAction, publishAction }: PreviewPanelProps) {
   return (
     <section
-      className="flex flex-col overflow-hidden rounded-[11px] border border-(--line) bg-(--paper) w-xl "
+      className={componentStyles.style0}
       aria-label="Lead sheet preview"
     >
-      <div className="flex min-h-12 items-center justify-between gap-3 border-b border-[var(--line)] px-3.5 max-[720px]:px-3">
-        <div className="flex items-center gap-2 text-[12px] font-[700] text-[var(--ink)]">
-          <Music2 className="text-[var(--accent)]" size={15} strokeWidth={1.8} />
+      <div className={componentStyles.style1}>
+        <div className={componentStyles.style2}>
+          <Music2 className={componentStyles.style3} size={15} strokeWidth={1.8} />
           Preview
         </div>
       </div>
-      <div className="flex min-h-[570px] flex-1 flex-col p-3.5 max-[1080px]:min-h-[520px] max-[720px]:min-h-[440px] max-[720px]:p-3">
+      <div className={componentStyles.style4}>
         <AbcPreview
           abc={abc}
           key={abc}

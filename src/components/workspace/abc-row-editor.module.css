@@ -1,0 +1,248 @@
+/* Component styles. */
+@layer components {
+  .style5 {
+    margin: 0px;
+  }
+  .style2,
+.style7 {
+    margin: calc(var(--spacing) * 3.5);
+  }
+  .style1,
+.style4 {
+    margin-inline: calc(var(--spacing) * 3.5);
+  }
+  .style1,
+.style4 {
+    margin-top: calc(var(--spacing) * 3);
+  }
+  .style1,
+.style4 {
+    margin-bottom: 0px;
+  }
+  .style9 {
+    display: block;
+  }
+  .style0,
+.style3,
+.style4 {
+    display: flex;
+  }
+  .style7 {
+    display: grid;
+  }
+  .style9 {
+    height: 21px;
+  }
+  .style10 {
+    height: 100%;
+  }
+  .style0,
+.style3 {
+    min-height: 0px;
+  }
+  .style2 {
+    min-height: 480px;
+  }
+  .style7,
+.style10 {
+    min-height: 515px;
+  }
+  .style10 {
+    width: 100%;
+  }
+  .style0,
+.style2,
+.style3,
+.style7 {
+    flex: 1;
+  }
+  .style2,
+.style10 {
+    resize: none;
+  }
+  .style7 {
+    grid-template-columns: 42px minmax(0,1fr);
+  }
+  .style0,
+.style3 {
+    flex-direction: column;
+  }
+  .style4 {
+    flex-wrap: wrap;
+  }
+  .style4 {
+    align-items: center;
+  }
+  .style4 {
+    justify-content: space-between;
+  }
+  .style4 {
+    gap: calc(var(--spacing) * 2);
+  }
+  .style10 {
+    overflow: auto;
+  }
+  .style3,
+.style7,
+.style8 {
+    overflow: hidden;
+  }
+  .style1,
+.style2,
+.style7 {
+    border-radius: 8px;
+  }
+  .style1,
+.style2,
+.style7 {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+  }
+  .style10 {
+    border-style: var(--component-border-style);
+    border-width: 0px;
+  }
+  .style8 {
+    border-right-style: var(--component-border-style);
+    border-right-width: 1px;
+  }
+  .style1,
+.style2,
+.style7,
+.style8 {
+    border-color: var(--line);
+  }
+  .style8 {
+    background-color: var(--editor-gutter);
+  }
+  .style1,
+.style2,
+.style7 {
+    background-color: var(--paper-soft);
+  }
+  .style10 {
+    background-color: transparent;
+  }
+  .style1 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .style2,
+.style10 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .style1 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .style2,
+.style10 {
+    padding-block: calc(var(--spacing) * 3.5);
+  }
+  .style8 {
+    padding-top: calc(var(--spacing) * 3.5);
+  }
+  .style8 {
+    padding-right: 7px;
+  }
+  .style8 {
+    padding-bottom: 17px;
+  }
+  .style8 {
+    padding-left: 0px;
+  }
+  .style8 {
+    text-align: right;
+  }
+  .style2,
+.style8,
+.style10 {
+    font-family: var(--font-inconsolata);
+  }
+  .style5,
+.style6,
+.style8 {
+    font-size: 10px;
+  }
+  .style2,
+.style10 {
+    font-size: 11.5px;
+  }
+  .style1 {
+    font-size: 11px;
+  }
+  .style1,
+.style5 {
+    --component-leading: calc(var(--spacing) * 5);
+    line-height: calc(var(--spacing) * 5);
+  }
+  .style2,
+.style8,
+.style9,
+.style10 {
+    --component-leading: 21px;
+    line-height: 21px;
+  }
+  .style10 {
+    white-space: pre;
+  }
+  .style10 {
+    tab-size: 2;
+  }
+  .style6 {
+    color: var(--amber);
+  }
+  .style2,
+.style10 {
+    color: var(--ink);
+  }
+  .style1 {
+    color: var(--muted);
+  }
+  .style5,
+.style8 {
+    color: var(--muted-soft);
+  }
+  .style10 {
+    outline-style: var(--component-outline-style);
+    outline-width: 0px;
+  }
+  .style2 {
+    --component-outline-style: none;
+    outline-style: none;
+  }
+  .style8 {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .style10 ::selection {
+    background-color: #ddd9ff;
+  }
+  .style10::selection {
+    background-color: #ddd9ff;
+  }
+  .style2:focus {
+    border-color: var(--accent);
+  }
+  @media (width < 720px) {
+    .style2,
+.style7 {
+      margin: calc(var(--spacing) * 3);
+    }
+  }
+  @media (width < 720px) {
+    .style4 {
+      margin-inline: calc(var(--spacing) * 3);
+    }
+  }
+  .style10:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+    background-color: #4a4387;
+  }
+  .style10:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+    background-color: #4a4387;
+  }
+  .style10:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+    color: var(--color-white);
+  }
+  .style10:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+    color: var(--color-white);
+  }
+}

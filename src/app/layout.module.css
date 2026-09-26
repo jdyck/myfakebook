@@ -1,0 +1,43 @@
+/* Component styles. */
+@layer components {
+  .style1 {
+    margin: 0px;
+  }
+  .style1 {
+    min-height: 100vh;
+  }
+  .style0,
+.style1 {
+    background-color: var(--canvas);
+  }
+  .style1 {
+    font-family: var(--font-inter);
+  }
+  .style1 {
+    color: var(--ink);
+  }
+  .style1 ::selection {
+    background-color: #d9d6ff;
+  }
+  .style1::selection {
+    background-color: #d9d6ff;
+  }
+  .style1 ::selection {
+    color: #27235e;
+  }
+  .style1::selection {
+    color: #27235e;
+  }
+  .style1:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+    background-color: #4a4387;
+  }
+  .style1:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+    background-color: #4a4387;
+  }
+  .style1:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+    color: var(--color-white);
+  }
+  .style1:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+    color: var(--color-white);
+  }
+}

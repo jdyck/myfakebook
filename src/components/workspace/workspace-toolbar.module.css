@@ -1,0 +1,143 @@
+/* Component styles. */
+@layer components {
+  .style2 {
+    margin: 0px;
+  }
+  .style4 {
+    margin-top: calc(var(--spacing) * 2);
+  }
+  .style7 {
+    margin-top: calc(var(--spacing) * 2.5);
+  }
+  .style7 {
+    margin-bottom: 0px;
+  }
+  .style0 {
+    margin-bottom: calc(var(--spacing) * 5);
+  }
+  .style3 {
+    display: block;
+  }
+  .style0,
+.style4 {
+    display: flex;
+  }
+  .style6 {
+    width: calc(var(--spacing) * 0.75);
+    height: calc(var(--spacing) * 0.75);
+  }
+  .style3 {
+    width: 100%;
+  }
+  .style3 {
+    max-width: calc(var(--spacing) * 130);
+  }
+  .style1 {
+    min-width: 0px;
+  }
+  .style1 {
+    flex: 1;
+  }
+  .style4 {
+    flex-wrap: wrap;
+  }
+  .style4 {
+    align-items: center;
+  }
+  .style0 {
+    align-items: flex-start;
+  }
+  .style0 {
+    justify-content: space-between;
+  }
+  .style4 {
+    gap: calc(var(--spacing) * 2.5);
+  }
+  .style0 {
+    gap: calc(var(--spacing) * 6);
+  }
+  .style6 {
+    border-radius: calc(infinity * 1px);
+  }
+  .style3 {
+    border-style: var(--component-border-style);
+    border-width: 0px;
+  }
+  .style3 {
+    border-bottom-style: var(--component-border-style);
+    border-bottom-width: 1px;
+  }
+  .style3 {
+    border-bottom-color: transparent;
+  }
+  .style6 {
+    background-color: var(--line-strong);
+  }
+  .style3 {
+    background-color: transparent;
+  }
+  .style4 {
+    font-size: 10px;
+  }
+  .style7 {
+    font-size: 11px;
+  }
+  .style3 {
+    font-size: clamp(24px, 3vw, 32px);
+  }
+  .style3 {
+    --component-leading: 1.05;
+    line-height: 1.05;
+  }
+  .style5 {
+    --component-font-weight: 650;
+    font-weight: 650;
+  }
+  .style3 {
+    --component-font-weight: 740;
+    font-weight: 740;
+  }
+  .style3 {
+    --component-tracking: -0.055em;
+    letter-spacing: -0.055em;
+  }
+  .style5 {
+    color: var(--accent-deep);
+  }
+  .style7 {
+    color: var(--muted);
+  }
+  .style4 {
+    color: var(--muted-soft);
+  }
+  .style3 {
+    color: var(--ink);
+  }
+  .style3 {
+    outline-style: var(--component-outline-style);
+    outline-width: 0px;
+  }
+  .style3 {
+    transition-property: border-color;
+    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
+    transition-duration: var(--component-duration, var(--default-transition-duration));
+  }
+  .style3 {
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+  }
+  .style3 {
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+  @media (hover: hover) {
+    .style3:hover {
+      border-bottom-color: var(--accent);
+    }
+  }
+  @media (width < 720px) {
+    .style0 {
+      display: block;
+    }
+  }
+}

@@ -1,0 +1,196 @@
+/* Component styles. */
+@layer components {
+  .style10 {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
+  .style7,
+.style11 {
+    margin-top: calc(var(--spacing) * 2);
+  }
+  .style3 {
+    margin-top: calc(var(--spacing) * 6);
+  }
+  .style8,
+.style9,
+.style10,
+.style11 {
+    display: block;
+  }
+  .style1,
+.style7 {
+    display: grid;
+  }
+  .style0,
+.style8 {
+    min-width: 0px;
+  }
+  .style1 {
+    gap: var(--spacing);
+  }
+  .style7 {
+    gap: 3px;
+  }
+  .style9 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .style8 {
+    border-radius: 8px;
+  }
+  .style11 {
+    border-radius: var(--ui-radius);
+  }
+  .style11 {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+  }
+  .style0 {
+    border-right-style: var(--component-border-style);
+    border-right-width: 1px;
+  }
+  .style0 {
+    border-color: var(--line);
+  }
+  .style11 {
+    border-color: var(--line);
+  }
+  .style11 {
+    background-color: var(--paper);
+  }
+  .style8 {
+    padding: calc(var(--spacing) * 2);
+  }
+  .style1,
+.style4,
+.style5 {
+    padding-inline: calc(var(--spacing) * 2);
+  }
+  .style11 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .style0 {
+    padding-inline: calc(var(--spacing) * 3.75);
+  }
+  .style11 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .style5 {
+    padding-block: calc(var(--spacing) * 3.5);
+  }
+  .style0 {
+    padding-block: calc(var(--spacing) * 6.25);
+  }
+  .style11 {
+    text-align: center;
+  }
+  .style4,
+.style5,
+.style10,
+.style11 {
+    font-size: 10px;
+  }
+  .style9 {
+    font-size: 11px;
+  }
+  .style2 {
+    font-size: 13px;
+  }
+  .style5 {
+    --component-leading: 1.5;
+    line-height: 1.5;
+  }
+  .style9 {
+    --component-font-weight: 620;
+    font-weight: 620;
+  }
+  .style6,
+.style11 {
+    --component-font-weight: 650;
+    font-weight: 650;
+  }
+  .style2,
+.style4 {
+    --component-font-weight: 680;
+    font-weight: 680;
+  }
+  .style4 {
+    --component-tracking: 0.08em;
+    letter-spacing: 0.08em;
+  }
+  .style6,
+.style11 {
+    color: var(--accent-deep);
+  }
+  .style9 {
+    color: var(--ink);
+  }
+  .style4,
+.style5,
+.style10 {
+    color: var(--muted-soft);
+  }
+  .style2 {
+    color: var(--ink);
+  }
+  .style4 {
+    text-transform: uppercase;
+  }
+  .style6,
+.style8,
+.style11 {
+    text-decoration-line: none;
+  }
+  .style8 {
+    transition-property: background-color;
+    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
+    transition-duration: var(--component-duration, var(--default-transition-duration));
+  }
+  .style11 {
+    transition-property: border-color,background-color;
+    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
+    transition-duration: var(--component-duration, var(--default-transition-duration));
+  }
+  .style8 {
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+  }
+  .style8 {
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+  @media (hover: hover) {
+    .style11:hover {
+      border-color: var(--line-strong);
+    }
+  }
+  @media (hover: hover) {
+    .style8:hover,
+.style11:hover {
+      background-color: var(--paper-soft);
+    }
+  }
+  @media (hover: hover) {
+    .style6:hover {
+      text-decoration-line: underline;
+    }
+  }
+  .style8:focus-visible,
+.style11:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+  }
+  .style8:focus-visible,
+.style11:focus-visible {
+    outline-offset: 2px;
+  }
+  .style8:focus-visible,
+.style11:focus-visible {
+    outline-color: var(--accent);
+  }
+  @media (width < 720px) {
+    .style0 {
+      display: none;
+    }
+  }
+}

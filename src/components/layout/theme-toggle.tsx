@@ -2,6 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useEffect } from "react";
+import componentStyles from "./theme-toggle.module.css";
 
 const THEME_STORAGE_KEY = "myfakebook:theme";
 const LEGACY_THEME_STORAGE_KEY = "notate:theme";
@@ -41,13 +42,13 @@ export function ThemeToggle() {
   return (
     <button
       aria-label="Toggle light and dark mode"
-      className="grid size-8 cursor-pointer place-items-center rounded-[8px] border border-(--line-strong) bg-transparent text-(--muted) transition-[border-color,background-color,color] duration-160 ease-in-out hover:border-(--accent) hover:bg-(--accent-soft) hover:text-(--accent-deep) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)"
+      className={componentStyles.style0}
       title="Toggle light and dark mode"
       type="button"
       onClick={toggleTheme}
     >
-      <Moon className="block dark:hidden" aria-hidden="true" size={15} strokeWidth={1.8} />
-      <Sun className="hidden dark:block" aria-hidden="true" size={15} strokeWidth={1.8} />
+      <Moon className={componentStyles.style1} aria-hidden="true" size={15} strokeWidth={1.8} />
+      <Sun className={componentStyles.style2} aria-hidden="true" size={15} strokeWidth={1.8} />
     </button>
   );
 }

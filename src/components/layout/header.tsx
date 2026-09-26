@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { AuthControls } from "@/components/layout/auth-controls";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import componentStyles from "./header.module.css";
 
 type HeaderProps = {
   clerkConfigured: boolean;
@@ -13,27 +14,27 @@ type HeaderProps = {
 
 export function Header({ clerkConfigured }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-20 flex min-h-14.5 items-center justify-between border-b border-(--line) bg-(--paper) px-6 max-[720px]:min-h-13.5 max-[720px]:px-3.5">
-      <div className="flex items-center gap-2.25">
-        <div className="grid size-7 place-items-center rounded-[8px] bg-(--accent) text-white" aria-hidden="true">
+    <header className={componentStyles.style0}>
+      <div className={componentStyles.style1}>
+        <div className={componentStyles.style2} aria-hidden="true">
           <Music2 size={17} strokeWidth={2.2} />
         </div>
-        <span className="text-[15px] font-[760] tracking-tight text-foreground">MyFakebook</span>
+        <span className={componentStyles.style3}>MyFakebook</span>
       </div>
-      <div className="flex items-center gap-2">
-        <nav aria-label="Main navigation" className="flex items-center gap-1">
-          <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/songs">
+      <div className={componentStyles.style4}>
+        <nav aria-label="Main navigation" className={componentStyles.style5}>
+          <Link className={componentStyles.style6} href="/songs">
             Songs
           </Link>
-          <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/new">
+          <Link className={componentStyles.style6} href="/new">
             New
           </Link>
           {clerkConfigured && (
             <Show when="signed-in">
-              <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/mylibrary">
+              <Link className={componentStyles.style6} href="/mylibrary">
                 My Library
               </Link>
-              <Link className="rounded-[8px] px-2 py-1.5 text-[11px] font-[650] text-(--muted) hover:bg-(--paper-soft) hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)" href="/setlists">
+              <Link className={componentStyles.style6} href="/setlists">
                 Set lists
               </Link>
             </Show>
