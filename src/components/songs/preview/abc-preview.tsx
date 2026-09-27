@@ -100,6 +100,38 @@ function offsetChordLabels(container: HTMLElement, offset: number) {
   }
 }
 
+function centerLyricsUnderNoteheads(container: HTMLElement) {
+  const lyricLabels = container.querySelectorAll<SVGTextElement>(".abcjs-lyric");
+
+  for (const lyricLabel of lyricLabels) {
+    const note = lyricLabel.closest<SVGGElement>("g.abcjs-note");
+    if (!note) continue;
+
+    const noteheads = note.querySelectorAll<SVGGraphicsElement>(".abcjs-notehead");
+    let left = Number.POSITIVE_INFINITY;
+    let right = Number.NEGATIVE_INFINITY;
+
+    for (const notehead of noteheads) {
+      try {
+        const bounds = notehead.getBBox();
+        if (bounds.width <= 0) continue;
+        left = Math.min(left, bounds.x);
+        right = Math.max(right, bounds.x + bounds.width);
+      } catch {
+        // Keep abcjs's original lyric anchor if the browser can't measure the SVG head.
+      }
+    }
+
+    if (!Number.isFinite(left) || !Number.isFinite(right)) continue;
+
+    const noteheadCenter = (left + right) / 2;
+    lyricLabel.setAttribute("x", String(noteheadCenter));
+    lyricLabel.querySelectorAll<SVGTSpanElement>("tspan").forEach((line) => {
+      line.setAttribute("x", String(noteheadCenter));
+    });
+  }
+}
+
 function countMeasures(abc: string) {
   try {
     return Math.max(1, ABCJS.extractMeasures(abc)[0]?.measures.length ?? 1);
@@ -292,6 +324,7 @@ export function AbcPreview({
           setStartMeasure(measure);
         },
       });
+      centerLyricsUnderNoteheads(targetRef.current);
       offsetChordLabels(targetRef.current, CHORD_LABEL_Y_OFFSET);
       raiseBravuraChordGlyphs(targetRef.current);
       tuneRef.current = rendered[0];
