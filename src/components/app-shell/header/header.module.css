@@ -2,130 +2,86 @@
 @layer components {
   .siteHeader {
     position: sticky;
-  }
-  .siteHeader {
     top: 0px;
-  }
-  .siteHeader {
     z-index: 20;
-  }
-  .siteHeader,
-.brandIdentity,
-.headerTools,
-.primaryNavigation {
-    display: flex;
-  }
-  .brandIcon {
-    display: grid;
-  }
-  .brandIcon {
-    width: calc(var(--spacing) * 7);
-    height: calc(var(--spacing) * 7);
-  }
-  .siteHeader {
     min-height: calc(var(--spacing) * 14.5);
+    justify-content: space-between;
+    border-bottom-style: var(--component-border-style);
+    border-bottom-width: 1px;
+    border-color: var(--line);
+    background-color: var(--paper);
+    padding-inline: calc(var(--spacing) * 6);
   }
-  .brandIcon {
-    place-items: center;
-  }
+
   .siteHeader,
-.brandIdentity,
-.headerTools,
-.primaryNavigation {
+  .brandIdentity,
+  .headerTools,
+  .primaryNavigation {
+    display: flex;
     align-items: center;
   }
-  .siteHeader {
-    justify-content: space-between;
+
+  .brandIcon {
+    display: grid;
+    width: calc(var(--spacing) * 7);
+    height: calc(var(--spacing) * 7);
+    place-items: center;
+    background-color: var(--accent);
+    color: var(--color-white);
   }
+
   .primaryNavigation {
     gap: var(--spacing);
   }
+
   .headerTools {
     gap: calc(var(--spacing) * 2);
   }
+
   .brandIdentity {
     gap: calc(var(--spacing) * 2.25);
   }
+
   .brandIcon,
-.navigationLink {
+  .navigationLink {
     border-radius: 8px;
   }
-  .siteHeader {
-    border-bottom-style: var(--component-border-style);
-    border-bottom-width: 1px;
-  }
-  .siteHeader {
-    border-color: var(--line);
-  }
-  .brandIcon {
-    background-color: var(--accent);
-  }
-  .siteHeader {
-    background-color: var(--paper);
-  }
+
   .navigationLink {
     padding-inline: calc(var(--spacing) * 2);
-  }
-  .siteHeader {
-    padding-inline: calc(var(--spacing) * 6);
-  }
-  .navigationLink {
     padding-block: calc(var(--spacing) * 1.5);
-  }
-  .navigationLink {
     font-size: 11px;
-  }
-  .brandName {
-    font-size: 15px;
-  }
-  .navigationLink {
     --component-font-weight: 650;
     font-weight: 650;
-  }
-  .brandName {
-    --component-font-weight: 760;
-    font-weight: 760;
-  }
-  .brandName {
-    --component-tracking: var(--tracking-tight);
-    letter-spacing: var(--tracking-tight);
-  }
-  .navigationLink {
     color: var(--muted);
   }
+
   .brandName {
+    font-size: 15px;
+    --component-font-weight: 760;
+    font-weight: 760;
+    --component-tracking: var(--tracking-tight);
+    letter-spacing: var(--tracking-tight);
     color: var(--ink);
   }
-  .brandIcon {
-    color: var(--color-white);
-  }
+
   @media (hover: hover) {
     .navigationLink:hover {
       background-color: var(--paper-soft);
-    }
-  }
-  @media (hover: hover) {
-    .navigationLink:hover {
       color: var(--ink);
     }
   }
+
   .navigationLink:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
-  }
-  .navigationLink:focus-visible {
     outline-offset: 2px;
-  }
-  .navigationLink:focus-visible {
     outline-color: var(--accent);
   }
+
   @media (width < 720px) {
     .siteHeader {
       min-height: calc(var(--spacing) * 13.5);
-    }
-  }
-  @media (width < 720px) {
-    .siteHeader {
       padding-inline: calc(var(--spacing) * 3.5);
     }
   }

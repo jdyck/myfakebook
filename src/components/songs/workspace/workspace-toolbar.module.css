@@ -3,138 +3,94 @@
   .songTitleHeading {
     margin: 0px;
   }
+
   .songMetadataList {
     margin-top: calc(var(--spacing) * 2);
-  }
-  .feedbackStatus {
-    margin-top: calc(var(--spacing) * 2.5);
-  }
-  .feedbackStatus {
-    margin-bottom: 0px;
-  }
-  .workspaceToolbar {
-    margin-bottom: calc(var(--spacing) * 5);
-  }
-  .songTitleInput {
-    display: block;
-  }
-  .workspaceToolbar,
-.songMetadataList {
-    display: flex;
-  }
-  .metadataSeparator {
-    width: calc(var(--spacing) * 0.75);
-    height: calc(var(--spacing) * 0.75);
-  }
-  .songTitleInput {
-    width: 100%;
-  }
-  .songTitleInput {
-    max-width: calc(var(--spacing) * 130);
-  }
-  .songMetadataBlock {
-    min-width: 0px;
-  }
-  .songMetadataBlock {
-    flex: 1;
-  }
-  .songMetadataList {
     flex-wrap: wrap;
-  }
-  .songMetadataList {
     align-items: center;
-  }
-  .workspaceToolbar {
-    align-items: flex-start;
-  }
-  .workspaceToolbar {
-    justify-content: space-between;
-  }
-  .songMetadataList {
     gap: calc(var(--spacing) * 2.5);
-  }
-  .workspaceToolbar {
-    gap: calc(var(--spacing) * 6);
-  }
-  .metadataSeparator {
-    border-radius: calc(infinity * 1px);
-  }
-  .songTitleInput {
-    border-style: var(--component-border-style);
-    border-width: 0px;
-  }
-  .songTitleInput {
-    border-bottom-style: var(--component-border-style);
-    border-bottom-width: 1px;
-  }
-  .songTitleInput {
-    border-bottom-color: transparent;
-  }
-  .metadataSeparator {
-    background-color: var(--line-strong);
-  }
-  .songTitleInput {
-    background-color: transparent;
-  }
-  .songMetadataList {
     font-size: 10px;
-  }
-  .feedbackStatus {
-    font-size: 11px;
-  }
-  .songTitleInput {
-    font-size: clamp(24px, 3vw, 32px);
-  }
-  .songTitleInput {
-    --component-leading: 1.05;
-    line-height: 1.05;
-  }
-  .songSourceBadge {
-    --component-font-weight: 650;
-    font-weight: 650;
-  }
-  .songTitleInput {
-    --component-font-weight: 740;
-    font-weight: 740;
-  }
-  .songTitleInput {
-    --component-tracking: -0.055em;
-    letter-spacing: -0.055em;
-  }
-  .songSourceBadge {
-    color: var(--accent-deep);
-  }
-  .feedbackStatus {
-    color: var(--muted);
-  }
-  .songMetadataList {
     color: var(--muted-soft);
   }
-  .songTitleInput {
-    color: var(--ink);
+
+  .feedbackStatus {
+    margin-top: calc(var(--spacing) * 2.5);
+    margin-bottom: 0px;
+    font-size: 11px;
+    color: var(--muted);
   }
+
+  .workspaceToolbar {
+    margin-bottom: calc(var(--spacing) * 5);
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: calc(var(--spacing) * 6);
+  }
+
   .songTitleInput {
+    display: block;
+    width: 100%;
+    max-width: calc(var(--spacing) * 130);
+    border-style: var(--component-border-style);
+    border-width: 0px;
+    border-bottom-style: var(--component-border-style);
+    border-bottom-width: 1px;
+    border-bottom-color: transparent;
+    background-color: transparent;
+    font-size: clamp(24px, 3vw, 32px);
+    --component-leading: 1.05;
+    line-height: 1.25;
+    --component-font-weight: 740;
+    font-weight: 740;
+    --component-tracking: -0.055em;
+    letter-spacing: -0.055em;
+    color: var(--ink);
     outline-style: var(--component-outline-style);
     outline-width: 0px;
-  }
-  .songTitleInput {
     transition-property: border-color;
-    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
-    transition-duration: var(--component-duration, var(--default-transition-duration));
-  }
-  .songTitleInput {
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
     --component-duration: 160ms;
     transition-duration: 160ms;
-  }
-  .songTitleInput {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
+
+  .workspaceToolbar,
+  .songMetadataList {
+    display: flex;
+  }
+
+  .metadataSeparator {
+    width: calc(var(--spacing) * 0.75);
+    height: calc(var(--spacing) * 0.75);
+    border-radius: calc(infinity * 1px);
+    background-color: var(--line-strong);
+  }
+
+  .songMetadataBlock {
+    min-width: 0px;
+    flex: 1;
+  }
+
+  .songSourceBadge {
+    --component-font-weight: 650;
+    font-weight: 650;
+    color: var(--accent-deep);
+  }
+
   @media (hover: hover) {
     .songTitleInput:hover {
       border-bottom-color: var(--accent);
     }
   }
+
   @media (width < 720px) {
     .workspaceToolbar {
       display: block;

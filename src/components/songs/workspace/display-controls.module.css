@@ -11,96 +11,173 @@
     white-space: nowrap;
     border-width: 0;
   }
+
   .displaySettings,
-.transposeFieldLabel {
+  .transposeFieldLabel {
     display: flex;
   }
+
+  .displayControls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: calc(var(--spacing) * 2);
+  }
+
   .displayToggleLabel {
     display: inline-flex;
+    gap: var(--spacing);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 650;
   }
+
   .displayToggleCheckbox {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
+    accent-color: var(--accent);
   }
+
   .displaySettings {
     flex-wrap: wrap;
-  }
-  .displaySettings,
-.transposeFieldLabel,
-.displayToggleLabel {
-    align-items: center;
-  }
-  .displaySettings {
     justify-content: flex-end;
-  }
-  .displayToggleLabel {
-    gap: var(--spacing);
-  }
-  .transposeFieldLabel {
-    gap: calc(var(--spacing) * 1.5);
-  }
-  .displaySettings {
     gap: calc(var(--spacing) * 2);
-  }
-  .transposeSelect {
-    border-radius: 6px;
-  }
-  .transposeSelect {
-    border-style: var(--component-border-style);
-    border-width: 1px;
-  }
-  .displaySettings {
     border-style: var(--component-border-style);
     border-width: 0px;
-  }
-  .transposeSelect {
-    border-color: var(--line-strong);
-  }
-  .transposeSelect {
-    background-color: var(--paper);
-  }
-  .displaySettings {
     padding: 0px;
   }
-  .transposeSelect {
-    padding-inline: calc(var(--spacing) * 1.5);
+
+  .optionsList {
+    display: grid;
+    gap: calc(var(--spacing) * 3);
+    border: 0;
+    padding: 0;
   }
-  .transposeSelect {
-    padding-block: var(--spacing);
-  }
+
+  .displaySettings,
   .transposeFieldLabel,
-.transposeSelect,
-.displayToggleLabel {
+  .displayToggleLabel {
+    align-items: center;
+  }
+
+  .transposeFieldLabel {
+    gap: calc(var(--spacing) * 1.5);
+    color: var(--muted);
+  }
+
+  .transposeSelect {
+    border-radius: 6px;
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    border-color: var(--line-strong);
+    background-color: var(--paper);
+    padding-inline: calc(var(--spacing) * 1.5);
+    padding-block: var(--spacing);
+    color: var(--ink);
+  }
+
+  .transposeFieldLabel,
+  .transposeSelect {
     font-size: 10px;
   }
-  .transposeFieldLabel,
-.displayToggleLabel {
+
+  .transposeFieldLabel {
     --component-font-weight: 650;
     font-weight: 650;
   }
-  .transposeFieldLabel {
+
+  .viewOptionsButton,
+  .closeOptionsButton {
+    display: inline-flex;
+    min-height: 34px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding-inline: calc(var(--spacing) * 3);
+    background-color: var(--paper);
     color: var(--muted);
+    font-size: 11px;
+    font-weight: 650;
+    transition-property: border-color, color, background-color;
+    transition-duration: 160ms;
+    transition-timing-function: var(--ease-in-out);
   }
-  .displayToggleLabel {
-    color: var(--muted);
-  }
-  .transposeSelect {
+
+  .optionsDialog {
+    width: min(24rem, calc(100% - 2rem));
+    margin: auto;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background-color: var(--paper);
     color: var(--ink);
+    box-shadow: 0 16px 48px rgb(0 0 0 / 18%);
   }
-  .displayToggleCheckbox {
-    accent-color: var(--accent);
+
+  .optionsDialogContent {
+    padding: calc(var(--spacing) * 5);
   }
+
+  .optionsDialogHeader,
+  .optionsDialogFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .optionsDialogTitle {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .optionsLegend {
+    margin-bottom: calc(var(--spacing) * 3);
+    color: var(--muted-soft);
+    font-size: 11px;
+    font-weight: 650;
+  }
+
+  .optionsDialogFooter {
+    justify-content: flex-end;
+    margin-top: calc(var(--spacing) * 5);
+  }
+
+  .optionsDialog::backdrop {
+    background-color: rgb(0 0 0 / 50%);
+  }
+
+  @media (hover: hover) {
+    .viewOptionsButton:hover,
+    .closeOptionsButton:hover {
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+  }
+
+  .viewOptionsButton:focus-visible,
+  .closeOptionsButton:focus-visible,
+  .displayToggleCheckbox:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
   .transposeSelect:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
-  }
-  .transposeSelect:focus-visible {
     outline-offset: 2px;
-  }
-  .transposeSelect:focus-visible {
     outline-color: var(--accent);
   }
+
   @media (width < 720px) {
+    .displayControls {
+      justify-content: flex-start;
+      margin-top: calc(var(--spacing) * 3);
+    }
+
     .displaySettings {
       justify-content: flex-start;
     }

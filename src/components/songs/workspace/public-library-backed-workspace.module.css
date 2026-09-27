@@ -2,50 +2,36 @@
 @layer components {
   .browseSongsLink {
     margin-top: calc(var(--spacing) * 3);
-  }
-  .loadingPage,
-.notFoundPage {
-    display: grid;
-  }
-  .browseSongsLink {
     display: inline-block;
+    color: var(--accent-deep);
+    text-decoration-line: underline;
   }
+
   .loadingPage,
-.notFoundPage {
+  .notFoundPage {
+    display: grid;
     min-height: 100vh;
-  }
-  .loadingPage,
-.notFoundPage {
     place-items: center;
+    padding-inline: calc(var(--spacing) * 6);
   }
+
   .loadingPage {
     background-color: var(--canvas);
   }
-  .loadingPage,
-.notFoundPage {
-    padding-inline: calc(var(--spacing) * 6);
-  }
+
   .notFoundContent {
     text-align: center;
   }
+
   .notFoundTitle {
     font-size: var(--text-xl);
     line-height: var(--component-leading, var(--text-xl--line-height));
-  }
-  .loadingStatus {
-    font-size: 11px;
-  }
-  .notFoundTitle {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .browseSongsLink {
-    color: var(--accent-deep);
-  }
+
   .loadingStatus {
+    font-size: 11px;
     color: var(--muted);
-  }
-  .browseSongsLink {
-    text-decoration-line: underline;
   }
 }

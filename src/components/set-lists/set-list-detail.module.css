@@ -1,9 +1,10 @@
 /* Component styles. */
 @layer components {
   .dropIndicator,
-.dragPreview {
+  .dragPreview {
     pointer-events: none;
   }
+
   .visuallyHidden {
     position: absolute;
     width: 1px;
@@ -15,703 +16,712 @@
     white-space: nowrap;
     border-width: 0;
   }
+
   .dropIndicator {
     position: absolute;
+    right: calc(var(--spacing) * 2);
+    left: calc(var(--spacing) * 2);
+    z-index: 20;
+    height: 3px;
+    border-radius: calc(infinity * 1px);
+    --component-shadow: 0 0 0 2px var(--component-shadow-color, var(--paper));
+    box-shadow:
+      var(--component-inset-shadow), var(--component-inset-ring-shadow),
+      var(--component-ring-offset-shadow), var(--component-ring-shadow),
+      var(--component-shadow);
   }
+
   .dragPreview {
     position: fixed;
+    z-index: 100;
+    height: calc(var(--spacing) * 10);
+    overflow: hidden;
+    border-style: var(--component-border-style);
+    border-width: 2px;
+    padding-inline: calc(var(--spacing) * 2.5);
+    --component-shadow:
+      0 20px 25px -5px var(--component-shadow-color, rgb(0 0 0 / 0.1)),
+      0 8px 10px -6px var(--component-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow:
+      var(--component-inset-shadow), var(--component-inset-ring-shadow),
+      var(--component-ring-offset-shadow), var(--component-ring-shadow),
+      var(--component-shadow);
   }
+
   .orderedSongItem {
     position: relative;
+    padding: var(--spacing);
+    transition-property:
+      color, background-color, border-color, outline-color,
+      text-decoration-color, fill, stroke, --component-gradient-from,
+      --component-gradient-via, --component-gradient-to;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
   }
+
   .dropIndicatorBefore {
     top: calc(5px * -1);
   }
-  .dropIndicator {
-    right: calc(var(--spacing) * 2);
-  }
+
   .dropIndicatorAfter {
     bottom: calc(5px * -1);
   }
-  .dropIndicator {
-    left: calc(var(--spacing) * 2);
-  }
-  .dropIndicator {
-    z-index: 20;
-  }
-  .dragPreview {
-    z-index: 100;
-  }
+
   .noAvailableSongsMessage {
     margin: 0px;
+    --component-leading: var(--leading-relaxed);
+    line-height: var(--leading-relaxed);
   }
+
   .notFoundSection,
-.setListWorkspace,
-.selectedSongLayout,
-.selectedSongEmptyState {
+  .setListWorkspace,
+  .selectedSongLayout,
+  .selectedSongEmptyState {
     margin-inline: auto;
   }
+
   .unavailableBadge {
     margin-top: calc(var(--spacing) * 0.5);
   }
+
   .setListSongCount {
     margin-top: var(--spacing);
   }
+
   .orderedSongList,
-.emptyStateDescription {
+  .emptyStateDescription {
     margin-top: calc(var(--spacing) * 2);
   }
+
   .emptyStateBrowseLink {
     margin-top: calc(var(--spacing) * 3);
   }
+
   .setListSidebarHeader,
-.renameSetListForm {
+  .renameSetListForm {
     margin-top: calc(var(--spacing) * 4);
   }
+
   .addSongForm,
-.setListSongsSection {
+  .setListSongsSection {
     margin-top: calc(var(--spacing) * 5);
+    border-top-style: var(--component-border-style);
+    border-top-width: 1px;
+    padding-top: calc(var(--spacing) * 4);
   }
+
   .notFoundSection {
     margin-top: calc(var(--spacing) * 8);
+    max-width: var(--container-3xl);
+    padding: calc(var(--spacing) * 5);
   }
+
   .selectedSongEmptyState {
     margin-top: calc(var(--spacing) * 12);
+    max-width: var(--container-xl);
+    padding-inline: calc(var(--spacing) * 5);
+    text-align: center;
   }
+
   .selectedSongPosition {
     margin-bottom: var(--spacing);
   }
+
   .actionStatusMessage {
     margin-bottom: calc(var(--spacing) * 3);
   }
+
   .selectedSongContent,
-.selectedSongDisplaySettings {
+  .selectedSongDisplaySettings {
     margin-bottom: calc(var(--spacing) * 4);
+    flex-wrap: wrap;
   }
+
   .songName,
-.unavailableBadge {
+  .unavailableBadge {
     display: block;
   }
+
   .setListSidebarHeader,
-.songsSectionHeader,
-.songItemDragControls,
-.songSelectionButton,
-.songItemActions,
-.selectedSongLayout,
-.selectedSongContent,
-.selectedSongDisplaySettings,
-.transposeFieldLabel,
-.selectedSongPreview,
-.dragPreview {
+  .songsSectionHeader,
+  .songItemDragControls,
+  .songSelectionButton,
+  .songItemActions,
+  .selectedSongLayout,
+  .selectedSongContent,
+  .selectedSongDisplaySettings,
+  .transposeFieldLabel,
+  .selectedSongPreview,
+  .dragPreview {
     display: flex;
   }
+
   .setListWorkspace,
-.renameSetListForm,
-.addSongForm,
-.orderedSongList,
-.dragHandleButton,
-.songPositionNumber,
-.moveSongButton,
-.removeSongButton {
+  .renameSetListForm,
+  .addSongForm,
+  .orderedSongList,
+  .dragHandleButton,
+  .songPositionNumber,
+  .moveSongButton,
+  .removeSongButton {
     display: grid;
   }
+
   .deleteSetListButton,
-.displayToggleLabel {
+  .displayToggleLabel {
     display: inline-flex;
   }
+
   .displayToggleCheckbox {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
+    accent-color: var(--accent);
   }
+
   .songPositionNumber {
     width: calc(var(--spacing) * 6);
     height: calc(var(--spacing) * 6);
   }
+
   .moveSongButton,
-.removeSongButton {
+  .removeSongButton {
     width: calc(var(--spacing) * 8);
     height: calc(var(--spacing) * 8);
   }
+
   .dragHandleButton {
     width: calc(var(--spacing) * 9);
     height: calc(var(--spacing) * 9);
-  }
-  .dragPreview {
-    height: calc(var(--spacing) * 10);
-  }
-  .dropIndicator {
-    height: 3px;
-  }
-  .selectedSongPreview {
-    min-height: 620px;
-  }
-  .pageContent,
-.setListWorkspace {
-    min-height: calc(100vh - 58px);
-  }
-  .selectedSongLayout {
-    min-height: calc(100vh - 106px);
-  }
-  .pageShell {
-    min-height: 100vh;
-  }
-  .formField {
-    width: 100%;
-  }
-  .notFoundSection {
-    max-width: var(--container-3xl);
-  }
-  .selectedSongLayout {
-    max-width: var(--container-5xl);
-  }
-  .setListWorkspace {
-    max-width: 1600px;
-  }
-  .selectedSongEmptyState {
-    max-width: var(--container-xl);
-  }
-  .setListSidebar,
-.titleAndDetails,
-.songSelectionButton,
-.selectedSongSection,
-.dragPreviewSongName {
-    min-width: 0px;
-  }
-  .songSelectionButton,
-.selectedSongPreview,
-.dragPreviewSongName {
-    flex: 1;
-  }
-  .deleteSetListButton,
-.dragHandleButton,
-.songPositionNumber,
-.songItemActions,
-.openSongWorkspaceLink,
-.dragPreviewIcon,
-.dragPreviewHint {
-    flex-shrink: 0;
-  }
-  .dragHandleButton {
     cursor: grab;
-  }
-  .dragHandleButton {
     touch-action: none;
-  }
-  .setListWorkspace {
-    grid-template-columns: 300px minmax(0,1fr);
-  }
-  .selectedSongLayout,
-.selectedSongPreview {
-    flex-direction: column;
-  }
-  .selectedSongContent,
-.selectedSongDisplaySettings {
-    flex-wrap: wrap;
-  }
-  .dragHandleButton,
-.songPositionNumber,
-.moveSongButton,
-.removeSongButton {
-    place-items: center;
-  }
-  .deleteSetListButton,
-.songsSectionHeader,
-.songItemDragControls,
-.songSelectionButton,
-.songItemActions,
-.selectedSongDisplaySettings,
-.transposeFieldLabel,
-.displayToggleLabel,
-.dragPreview {
-    align-items: center;
-  }
-  .setListSidebarHeader,
-.selectedSongContent {
-    align-items: flex-start;
-  }
-  .setListSidebarHeader,
-.songsSectionHeader,
-.selectedSongContent {
-    justify-content: space-between;
-  }
-  .songItemDragControls {
-    gap: var(--spacing);
-  }
-  .deleteSetListButton,
-.orderedSongList,
-.displayToggleLabel {
-    gap: calc(var(--spacing) * 1.5);
-  }
-  .setListSidebarHeader,
-.renameSetListForm,
-.addSongForm,
-.songsSectionHeader,
-.songSelectionButton,
-.transposeFieldLabel,
-.dragPreview {
-    gap: calc(var(--spacing) * 2);
-  }
-  .selectedSongContent {
-    gap: calc(var(--spacing) * 3);
-  }
-  .selectedSongDisplaySettings {
-    column-gap: calc(var(--spacing) * 5);
-  }
-  .selectedSongDisplaySettings {
-    row-gap: calc(var(--spacing) * 2);
-  }
-  .saveSetListNameButton {
-    justify-self: flex-start;
-  }
-  .songName,
-.dragPreviewSongName {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .dragPreview {
-    overflow: hidden;
-  }
-  .dropIndicator {
-    border-radius: calc(infinity * 1px);
-  }
-  .sharedField,
-.sharedButton,
-.sharedPrimaryButton,
-.orderedSongItem,
-.dragHandleButton,
-.dragPreview {
-    border-radius: var(--ui-radius);
-  }
-  .songSelectionButton,
-.songPositionNumber {
-    border-radius: calc(var(--ui-radius) - 2px);
-  }
-  .notFoundSection,
-.selectedSongDisplaySettings,
-.selectedSongPreview,
-.selectedSongEmptyState {
-    border-radius: calc(var(--ui-radius) + 4px);
-  }
-  .sharedField,
-.sharedButton,
-.notFoundSection,
-.orderedSongItem,
-.dragHandleButton,
-.selectedSongDisplaySettings,
-.selectedSongPreview,
-.selectedSongEmptyState {
-    border-style: var(--component-border-style);
-    border-width: 1px;
-  }
-  .dragPreview {
-    border-style: var(--component-border-style);
-    border-width: 2px;
-  }
-  .setListWorkspace {
-    border-inline-style: var(--component-border-style);
-    border-inline-width: 1px;
-  }
-  .addSongForm,
-.setListSongsSection {
-    border-top-style: var(--component-border-style);
-    border-top-width: 1px;
-  }
-  .setListSidebar {
-    border-right-style: var(--component-border-style);
-    border-right-width: 1px;
-  }
-  .draggedSongItem,
-.selectedSongEmptyState {
-    --component-border-style: dashed;
-    border-style: dashed;
-  }
-  .selectedSongItem,
-.draggedSongItem,
-.dragPreview {
-    border-color: var(--accent);
-  }
-  .dragHandleButton {
     border-color: var(--accent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--accent) 30%, transparent);
     }
+    -webkit-user-select: none;
+    user-select: none;
   }
-  .sharedButton,
-.notFoundSection,
-.setListWorkspace,
-.setListSidebar,
-.addSongForm,
-.setListSongsSection,
-.unselectedSongItem,
-.selectedSongDisplaySettings,
-.selectedSongPreview {
-    border-color: var(--line);
-  }
-  .sharedField,
-.selectedSongEmptyState {
-    border-color: var(--line-strong);
-  }
-  .sharedPrimaryButton,
-.dropIndicator {
-    background-color: var(--accent);
-  }
-  .selectedSongItem,
-.draggedSongItem,
-.dropTargetSongItem,
-.dragHandleButton {
-    background-color: var(--accent-soft);
-  }
-  .pageShell {
-    background-color: var(--canvas);
-  }
-  .sharedField,
-.sharedButton,
-.notFoundSection,
-.setListWorkspace,
-.orderedSongItem,
-.selectedSongDisplaySettings,
-.selectedSongPreview,
-.dragPreview {
-    background-color: var(--paper);
-  }
-  .setListSidebar,
-.songPositionNumber,
-.selectedSongEmptyState {
-    background-color: var(--paper-soft);
-  }
-  .dragHandleButton,
-.moveSongButton,
-.removeSongButton {
-    padding: 0px;
-  }
-  .orderedSongItem {
-    padding: var(--spacing);
-  }
+
   .selectedSongPreview {
+    min-height: 620px;
     padding: calc(var(--spacing) * 4);
   }
-  .notFoundSection {
-    padding: calc(var(--spacing) * 5);
+
+  .pageContent,
+  .setListWorkspace {
+    min-height: calc(100vh - 58px);
   }
-  .songsSectionHeader,
-.emptySongListMessage {
-    padding-inline: var(--spacing);
+
+  .selectedSongLayout {
+    min-height: calc(100vh - 106px);
+    max-width: var(--container-5xl);
   }
-  .songSelectionButton {
-    padding-inline: calc(var(--spacing) * 1.5);
+
+  .pageShell {
+    min-height: 100vh;
+    background-color: var(--canvas);
   }
-  .transposeSelect {
-    padding-inline: calc(var(--spacing) * 2);
+
+  .formField {
+    width: 100%;
   }
-  .dragPreview {
-    padding-inline: calc(var(--spacing) * 2.5);
+
+  .setListWorkspace {
+    max-width: 1600px;
+    grid-template-columns: 300px minmax(0, 1fr);
+    border-inline-style: var(--component-border-style);
+    border-inline-width: 1px;
   }
-  .sharedField,
-.sharedButton,
-.sharedPrimaryButton {
-    padding-inline: calc(var(--spacing) * 3);
-  }
+
   .setListSidebar,
-.selectedSongDisplaySettings {
-    padding-inline: calc(var(--spacing) * 4);
+  .titleAndDetails,
+  .songSelectionButton,
+  .selectedSongSection,
+  .dragPreviewSongName {
+    min-width: 0px;
   }
-  .selectedSongEmptyState {
-    padding-inline: calc(var(--spacing) * 5);
+
+  .songSelectionButton,
+  .selectedSongPreview,
+  .dragPreviewSongName {
+    flex: 1;
   }
-  .loadingStatus,
-.selectedSongSection {
-    padding-inline: calc(var(--spacing) * 6);
+
+  .deleteSetListButton,
+  .dragHandleButton,
+  .songPositionNumber,
+  .songItemActions,
+  .openSongWorkspaceLink,
+  .dragPreviewIcon,
+  .dragPreviewHint {
+    flex-shrink: 0;
   }
-  .transposeSelect {
-    padding-block: var(--spacing);
+
+  .selectedSongLayout,
+  .selectedSongPreview {
+    flex-direction: column;
   }
+
+  .dragHandleButton,
+  .songPositionNumber,
+  .moveSongButton,
+  .removeSongButton {
+    place-items: center;
+  }
+
+  .deleteSetListButton,
+  .songsSectionHeader,
+  .songItemDragControls,
+  .songSelectionButton,
+  .songItemActions,
+  .selectedSongDisplaySettings,
+  .transposeFieldLabel,
+  .displayToggleLabel,
+  .dragPreview {
+    align-items: center;
+  }
+
+  .setListSidebarHeader,
+  .selectedSongContent {
+    align-items: flex-start;
+  }
+
+  .setListSidebarHeader,
+  .songsSectionHeader,
+  .selectedSongContent {
+    justify-content: space-between;
+  }
+
+  .songItemDragControls {
+    gap: var(--spacing);
+  }
+
+  .deleteSetListButton,
+  .orderedSongList,
+  .displayToggleLabel {
+    gap: calc(var(--spacing) * 1.5);
+  }
+
+  .setListSidebarHeader,
+  .renameSetListForm,
+  .addSongForm,
+  .songsSectionHeader,
+  .songSelectionButton,
+  .transposeFieldLabel,
+  .dragPreview {
+    gap: calc(var(--spacing) * 2);
+  }
+
+  .selectedSongContent {
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .selectedSongDisplaySettings {
+    column-gap: calc(var(--spacing) * 5);
+    row-gap: calc(var(--spacing) * 2);
+  }
+
+  .saveSetListNameButton {
+    justify-self: flex-start;
+  }
+
+  .songName,
+  .dragPreviewSongName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .sharedField,
-.sharedButton,
-.sharedPrimaryButton,
-.songSelectionButton {
-    padding-block: calc(var(--spacing) * 2);
+  .sharedButton,
+  .sharedPrimaryButton,
+  .orderedSongItem,
+  .dragHandleButton,
+  .dragPreview {
+    border-radius: var(--ui-radius);
   }
-  .emptySongListMessage,
-.selectedSongDisplaySettings {
-    padding-block: calc(var(--spacing) * 3);
+
+  .songSelectionButton,
+  .songPositionNumber {
+    border-radius: calc(var(--ui-radius) - 2px);
   }
+
+  .notFoundSection,
+  .selectedSongDisplaySettings,
+  .selectedSongPreview,
+  .selectedSongEmptyState {
+    border-radius: calc(var(--ui-radius) + 4px);
+  }
+
+  .sharedField,
+  .sharedButton,
+  .notFoundSection,
+  .orderedSongItem,
+  .dragHandleButton,
+  .selectedSongDisplaySettings,
+  .selectedSongPreview,
+  .selectedSongEmptyState {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+  }
+
   .setListSidebar {
+    border-right-style: var(--component-border-style);
+    border-right-width: 1px;
     padding-block: calc(var(--spacing) * 5);
   }
+
+  .draggedSongItem,
+  .selectedSongEmptyState {
+    --component-border-style: dashed;
+    border-style: dashed;
+  }
+
+  .selectedSongItem,
+  .draggedSongItem,
+  .dragPreview {
+    border-color: var(--accent);
+  }
+
+  .sharedButton,
+  .notFoundSection,
+  .setListWorkspace,
+  .setListSidebar,
+  .addSongForm,
+  .setListSongsSection,
+  .unselectedSongItem,
+  .selectedSongDisplaySettings,
+  .selectedSongPreview {
+    border-color: var(--line);
+  }
+
+  .sharedField,
+  .selectedSongEmptyState {
+    border-color: var(--line-strong);
+  }
+
+  .sharedPrimaryButton,
+  .dropIndicator {
+    background-color: var(--accent);
+  }
+
+  .selectedSongItem,
+  .draggedSongItem,
+  .dropTargetSongItem,
+  .dragHandleButton {
+    background-color: var(--accent-soft);
+  }
+
+  .sharedField,
+  .sharedButton,
+  .notFoundSection,
+  .setListWorkspace,
+  .orderedSongItem,
+  .selectedSongDisplaySettings,
+  .selectedSongPreview,
+  .dragPreview {
+    background-color: var(--paper);
+  }
+
+  .setListSidebar,
+  .songPositionNumber,
+  .selectedSongEmptyState {
+    background-color: var(--paper-soft);
+  }
+
+  .dragHandleButton,
+  .moveSongButton,
+  .removeSongButton {
+    padding: 0px;
+  }
+
+  .songsSectionHeader,
+  .emptySongListMessage {
+    padding-inline: var(--spacing);
+  }
+
+  .songSelectionButton {
+    padding-inline: calc(var(--spacing) * 1.5);
+    text-align: left;
+  }
+
+  .transposeSelect {
+    padding-inline: calc(var(--spacing) * 2);
+    padding-block: var(--spacing);
+  }
+
+  .sharedField,
+  .sharedButton,
+  .sharedPrimaryButton {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+
+  .setListSidebar,
+  .selectedSongDisplaySettings {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+
+  .loadingStatus,
+  .selectedSongSection {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+
+  .sharedField,
+  .sharedButton,
+  .sharedPrimaryButton,
+  .songSelectionButton {
+    padding-block: calc(var(--spacing) * 2);
+  }
+
+  .emptySongListMessage,
+  .selectedSongDisplaySettings {
+    padding-block: calc(var(--spacing) * 3);
+  }
+
   .selectedSongSection {
     padding-block: calc(var(--spacing) * 6);
   }
+
   .loadingStatus,
-.selectedSongEmptyState {
+  .selectedSongEmptyState {
     padding-block: calc(var(--spacing) * 8);
   }
-  .addSongForm,
-.setListSongsSection {
-    padding-top: calc(var(--spacing) * 4);
-  }
-  .selectedSongEmptyState {
-    text-align: center;
-  }
-  .songSelectionButton {
-    text-align: left;
-  }
+
   .selectedSongTitle {
     font-size: var(--text-2xl);
     line-height: var(--component-leading, var(--text-2xl--line-height));
   }
+
   .setListTitle,
-.emptyStateTitle {
+  .emptyStateTitle {
     font-size: var(--text-lg);
     line-height: var(--component-leading, var(--text-lg--line-height));
   }
+
   .sharedField,
-.notFoundDescription,
-.emptyStateDescription {
+  .notFoundDescription,
+  .emptyStateDescription {
     font-size: var(--text-sm);
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
+
   .notFoundTitle {
     font-size: var(--text-xl);
     line-height: var(--component-leading, var(--text-xl--line-height));
   }
+
   .sharedButton,
-.sharedPrimaryButton,
-.backToSetListsLink,
-.setListSongCount,
-.songName,
-.emptySongListMessage,
-.actionStatusMessage,
-.openSongWorkspaceLink,
-.transposeFieldLabel,
-.transposeSelect,
-.displayToggleLabel,
-.emptyStateBrowseLink,
-.dragPreview {
+  .sharedPrimaryButton,
+  .backToSetListsLink,
+  .setListSongCount,
+  .songName,
+  .emptySongListMessage,
+  .actionStatusMessage,
+  .openSongWorkspaceLink,
+  .transposeFieldLabel,
+  .transposeSelect,
+  .displayToggleLabel,
+  .emptyStateBrowseLink,
+  .dragPreview {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
+
   .reorderHint,
-.unavailableBadge,
-.dragPreviewHint {
+  .unavailableBadge,
+  .dragPreviewHint {
     font-size: 9px;
   }
+
   .formFieldLabel,
-.noAvailableSongsMessage,
-.songsSectionTitle,
-.songPositionNumber,
-.selectedSongPosition {
+  .noAvailableSongsMessage,
+  .songsSectionTitle,
+  .songPositionNumber,
+  .selectedSongPosition {
     font-size: 10px;
   }
-  .noAvailableSongsMessage {
-    --component-leading: var(--leading-relaxed);
-    line-height: var(--leading-relaxed);
-  }
+
   .setListTitle {
     --component-leading: var(--leading-tight);
     line-height: var(--leading-tight);
+    overflow-wrap: break-word;
   }
+
   .notFoundTitle,
-.setListTitle,
-.songsSectionTitle,
-.selectedSongPosition,
-.selectedSongTitle,
-.emptyStateTitle {
+  .setListTitle,
+  .songsSectionTitle,
+  .selectedSongPosition,
+  .selectedSongTitle,
+  .emptyStateTitle {
     --component-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
+
   .dragPreviewHint {
     --component-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
   }
+
   .sharedButton,
-.sharedPrimaryButton,
-.backToSetListsLink,
-.formFieldLabel,
-.songPositionNumber,
-.songName,
-.openSongWorkspaceLink,
-.dragPreview {
+  .sharedPrimaryButton,
+  .backToSetListsLink,
+  .formFieldLabel,
+  .songPositionNumber,
+  .songName,
+  .openSongWorkspaceLink,
+  .dragPreview {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
+
   .songsSectionTitle,
-.selectedSongPosition {
+  .selectedSongPosition {
     --component-tracking: 0.08em;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
-  .setListTitle {
-    overflow-wrap: break-word;
-  }
+
   .backToSetListsLink,
-.browsePublicSongsLink,
-.dragHandleButton,
-.songPositionNumber,
-.openSongWorkspaceLink,
-.dragPreviewIcon {
+  .browsePublicSongsLink,
+  .dragHandleButton,
+  .songPositionNumber,
+  .openSongWorkspaceLink,
+  .dragPreviewIcon {
     color: var(--accent-deep);
   }
+
   .formFieldLabel,
-.actionStatusMessage,
-.transposeFieldLabel,
-.displayToggleLabel {
+  .actionStatusMessage,
+  .transposeFieldLabel,
+  .displayToggleLabel {
     color: var(--muted);
   }
+
   .notFoundDescription,
-.setListSongCount,
-.noAvailableSongsMessage,
-.songsSectionTitle,
-.reorderHint,
-.unavailableBadge,
-.emptySongListMessage,
-.selectedSongPosition,
-.emptyStateDescription,
-.emptyStateBrowseLink,
-.dragPreviewHint {
+  .setListSongCount,
+  .noAvailableSongsMessage,
+  .songsSectionTitle,
+  .reorderHint,
+  .unavailableBadge,
+  .emptySongListMessage,
+  .selectedSongPosition,
+  .emptyStateDescription,
+  .emptyStateBrowseLink,
+  .dragPreviewHint {
     color: var(--muted-soft);
   }
+
   .deleteSetListButton,
-.removeSongButton {
+  .removeSongButton {
     color: var(--ui-destructive);
   }
+
   .sharedField,
-.sharedButton,
-.songName,
-.dragPreview {
+  .sharedButton,
+  .songName,
+  .dragPreview {
     color: var(--ink);
   }
+
   .sharedPrimaryButton {
     color: var(--color-white);
   }
-  .songsSectionTitle,
-.selectedSongPosition {
-    text-transform: uppercase;
-  }
+
   .browsePublicSongsLink {
     text-decoration-line: underline;
   }
-  .displayToggleCheckbox {
-    accent-color: var(--accent);
-  }
+
   .draggedSongItem {
     opacity: 45%;
   }
-  .dropIndicator {
-    --component-shadow: 0 0 0 2px var(--component-shadow-color, var(--paper));
-    box-shadow: var(--component-inset-shadow), var(--component-inset-ring-shadow), var(--component-ring-offset-shadow), var(--component-ring-shadow), var(--component-shadow);
-  }
-  .dragPreview {
-    --component-shadow: 0 20px 25px -5px var(--component-shadow-color, rgb(0 0 0 / 0.1)), 0 8px 10px -6px var(--component-shadow-color, rgb(0 0 0 / 0.1));
-    box-shadow: var(--component-inset-shadow), var(--component-inset-ring-shadow), var(--component-ring-offset-shadow), var(--component-ring-shadow), var(--component-shadow);
-  }
-  .orderedSongItem {
-    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --component-gradient-from, --component-gradient-via, --component-gradient-to;
-    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
-    transition-duration: var(--component-duration, var(--default-transition-duration));
-  }
-  .dragHandleButton {
-    -webkit-user-select: none;
-    user-select: none;
-  }
+
   @media (hover: hover) {
     .dragHandleButton:hover {
       border-color: var(--accent);
     }
-  }
-  @media (hover: hover) {
+
     .sharedButton:hover {
       border-color: var(--line-strong);
     }
-  }
-  @media (hover: hover) {
+
     .sharedPrimaryButton:hover {
       background-color: var(--accent-deep);
     }
-  }
-  @media (hover: hover) {
+
     .backToSetListsLink:hover,
-.openSongWorkspaceLink:hover {
+    .openSongWorkspaceLink:hover {
       text-decoration-line: underline;
     }
   }
+
   .sharedField:focus-visible,
-.sharedButton:focus-visible,
-.sharedPrimaryButton:focus-visible,
-.dragHandleButton:focus-visible,
-.songSelectionButton:focus-visible {
+  .sharedButton:focus-visible,
+  .sharedPrimaryButton:focus-visible,
+  .dragHandleButton:focus-visible,
+  .songSelectionButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
+    outline-color: var(--accent);
   }
+
   .songSelectionButton:focus-visible {
     outline-offset: 1px;
   }
+
   .sharedField:focus-visible,
-.sharedButton:focus-visible,
-.sharedPrimaryButton:focus-visible,
-.dragHandleButton:focus-visible {
+  .sharedButton:focus-visible,
+  .sharedPrimaryButton:focus-visible,
+  .dragHandleButton:focus-visible {
     outline-offset: 2px;
   }
-  .sharedField:focus-visible,
-.sharedButton:focus-visible,
-.sharedPrimaryButton:focus-visible,
-.dragHandleButton:focus-visible,
-.songSelectionButton:focus-visible {
-    outline-color: var(--accent);
-  }
+
   .dragHandleButton:active {
     cursor: grabbing;
   }
+
   .sharedButton:disabled,
-.sharedPrimaryButton:disabled,
-.songSelectionButton:disabled {
+  .sharedPrimaryButton:disabled,
+  .songSelectionButton:disabled {
     cursor: not-allowed;
   }
+
   .sharedButton:disabled,
-.sharedPrimaryButton:disabled {
+  .sharedPrimaryButton:disabled {
     opacity: 50%;
   }
+
   .songSelectionButton:disabled {
     opacity: 55%;
   }
+
   @media (width < 800px) {
     .setListWorkspace {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
-  }
-  @media (width < 800px) {
+
     .setListSidebar {
       border-right-style: var(--component-border-style);
       border-right-width: 0px;
-    }
-  }
-  @media (width < 800px) {
-    .setListSidebar {
       border-bottom-style: var(--component-border-style);
       border-bottom-width: 1px;
-    }
-  }
-  @media (width < 800px) {
-    .setListSidebar {
       padding-block: calc(var(--spacing) * 4);
     }
   }
+
   @media (width < 720px) {
     .selectedSongPreview {
       min-height: 500px;
-    }
-  }
-  @media (width < 720px) {
-    .selectedSongPreview {
       padding: calc(var(--spacing) * 3);
     }
-  }
-  @media (width < 720px) {
+
     .selectedSongSection {
       padding-inline: calc(var(--spacing) * 3.5);
-    }
-  }
-  @media (width < 720px) {
-    .selectedSongSection {
       padding-block: calc(var(--spacing) * 4);
     }
   }

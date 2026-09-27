@@ -182,9 +182,7 @@ function ConnectedRecentMyLibrarySongs({
                     statusRef.current("Loaded from My Library");
                   }}
                 >
-                  <span className={componentStyles.recentSongIcon}>
-                    ♪
-                  </span>
+
                   <span className={componentStyles.songDetails}>
                     <span className={componentStyles.songTitle}>{song.title}</span>
                     <span className={componentStyles.songPublicationDetails}>

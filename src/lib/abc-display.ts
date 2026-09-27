@@ -12,6 +12,41 @@ export const DEFAULT_DISPLAY_SETTINGS: SongDisplaySettings = {
   showLyrics: true,
 };
 
+export type TranspositionChoice = {
+  steps: number;
+  key: string;
+};
+
+function keyLabelFromAbc(abc: string) {
+  const keyField = abc.match(/^K:\s*([^\r\n]*)/m)?.[1]?.trim() ?? "C";
+  if (/^none$/i.test(keyField)) return "No key";
+  if (/^hp$/i.test(keyField)) return "Highland pipes";
+
+  const key = keyField.match(
+    /^([A-G][#b]?(?:\s*(?:major|maj|ionian|ion|minor|min|m|aeolian|aeo|mixolydian|mix|dorian|dor|phrygian|phr|lydian|lyd|locrian|loc))?)/i,
+  )?.[1];
+  return key?.replace(/\s+/g, " ").trim() || "Unknown key";
+}
+
+export function getTranspositionChoices(abc: string): TranspositionChoice[] {
+  const source = abc.replaceAll("\r", "");
+  let keyField = source.match(/^K:\s*([^\r\n]*)/m)?.[1]?.trim();
+  if (!keyField) {
+    const keySignature = ABCJS.parseOnly(source)[0]?.getKeySignature();
+    keyField = keySignature?.root === "none"
+      ? "none"
+      : `${keySignature?.root ?? "C"}${keySignature?.acc ?? ""}${keySignature?.mode ?? ""}`;
+  }
+
+  const keySource = `K:${keyField}\nC`;
+  const tunes = ABCJS.parseOnly(keySource);
+
+  return Array.from({ length: 25 }, (_, index) => index - 12).map((steps) => {
+    const transposed = steps === 0 ? keySource : ABCJS.strTranspose(keySource, tunes, steps);
+    return { steps, key: keyLabelFromAbc(transposed) };
+  });
+}
+
 function prepareVisibilitySource(abc: string, settings: SongDisplaySettings) {
   let musicStarted = false;
   return abc

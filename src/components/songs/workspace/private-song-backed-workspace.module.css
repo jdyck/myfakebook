@@ -2,40 +2,30 @@
 @layer components {
   .backToLibraryLink {
     margin-top: calc(var(--spacing) * 3);
-  }
-  .loadingPage,
-.notFoundPage {
-    display: grid;
-  }
-  .backToLibraryLink {
     display: inline-block;
+    color: var(--accent-deep);
+    text-decoration-line: underline;
   }
+
   .loadingPage,
-.notFoundPage {
+  .notFoundPage {
+    display: grid;
     min-height: 100vh;
-  }
-  .loadingPage,
-.notFoundPage {
     place-items: center;
   }
+
   .notFoundPage {
     padding-inline: calc(var(--spacing) * 6);
   }
+
   .notFoundContent {
     text-align: center;
   }
+
   .notFoundTitle {
     font-size: var(--text-xl);
     line-height: var(--component-leading, var(--text-xl--line-height));
-  }
-  .notFoundTitle {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
-  }
-  .backToLibraryLink {
-    color: var(--accent-deep);
-  }
-  .backToLibraryLink {
-    text-decoration-line: underline;
   }
 }

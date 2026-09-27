@@ -1,140 +1,110 @@
 /* Component styles. */
 @layer components {
   .settingsBannerTitle,
-.settingsBannerDescription {
+  .settingsBannerDescription {
     margin: 0px;
   }
+
   .workspaceGrid {
     margin-inline: auto;
-  }
-  .settingsBannerDescription {
-    margin-top: var(--spacing);
-  }
-  .setListReturnLink,
-.setListSettingsBanner {
-    margin-bottom: calc(var(--spacing) * 4);
-  }
-  .setListSettingsBanner {
-    display: flex;
-  }
-  .workspaceGrid {
     display: grid;
-  }
-  .setListReturnLink {
-    display: inline-block;
-  }
-  .workspaceGrid {
     min-height: calc(100vh - 58px);
   }
+
+  .settingsBannerDescription {
+    margin-top: var(--spacing);
+    color: var(--muted-soft);
+  }
+
+  .setListReturnLink,
+  .setListSettingsBanner {
+    margin-bottom: calc(var(--spacing) * 4);
+  }
+
+  .setListSettingsBanner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--spacing) * 3);
+    border-radius: calc(var(--ui-radius) + 4px);
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    border-color: var(--line);
+    background-color: var(--paper);
+    padding-inline: calc(var(--spacing) * 4);
+    padding-block: calc(var(--spacing) * 3);
+  }
+
+  .setListReturnLink {
+    display: inline-block;
+    color: var(--accent-deep);
+  }
+
   .appShell {
     min-height: 100vh;
   }
+
   .workspaceMain {
     min-width: 0px;
+    padding: calc(var(--spacing) * 4);
   }
+
   .workspaceGridWithSidebar {
-    grid-template-columns: 208px minmax(0,1fr);
+    grid-template-columns: 208px minmax(0, 1fr);
   }
+
   .workspaceGridWithoutSidebar {
-    grid-template-columns: minmax(0,1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
-  .setListSettingsBanner {
-    flex-wrap: wrap;
-  }
-  .setListSettingsBanner {
-    align-items: center;
-  }
-  .setListSettingsBanner {
-    justify-content: space-between;
-  }
-  .setListSettingsBanner {
-    gap: calc(var(--spacing) * 3);
-  }
+
   .editorAndPreview {
     gap: calc(var(--spacing) * 4);
   }
-  .setListSettingsBanner {
-    border-radius: calc(var(--ui-radius) + 4px);
-  }
-  .setListSettingsBanner {
-    border-style: var(--component-border-style);
-    border-width: 1px;
-  }
-  .setListSettingsBanner {
-    border-color: var(--line);
-  }
-  .setListSettingsBanner {
-    background-color: var(--paper);
-  }
-  .workspaceMain {
-    padding: calc(var(--spacing) * 4);
-  }
-  .setListSettingsBanner {
-    padding-inline: calc(var(--spacing) * 4);
-  }
-  .setListSettingsBanner {
-    padding-block: calc(var(--spacing) * 3);
-  }
+
   .settingsBannerTitle {
     font-size: var(--text-sm);
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
+
   .setListReturnLink,
-.settingsBannerDescription {
+  .settingsBannerDescription {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
+
   .setListReturnLink,
-.settingsBannerTitle {
+  .settingsBannerTitle {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .setListReturnLink {
-    color: var(--accent-deep);
-  }
-  .settingsBannerDescription {
-    color: var(--muted-soft);
-  }
+
   @media (hover: hover) {
     .setListReturnLink:hover {
       text-decoration-line: underline;
     }
   }
+
   @media (width < 1080px) {
     .workspaceMain {
       padding-inline: calc(var(--spacing) * 5.5);
-    }
-  }
-  @media (width < 1080px) {
-    .workspaceMain {
       padding-top: calc(var(--spacing) * 7);
-    }
-  }
-  @media (width < 1080px) {
-    .workspaceMain {
       padding-bottom: calc(var(--spacing) * 9);
     }
   }
+
   @media (width < 720px) {
     .workspaceGrid {
       display: block;
     }
-  }
-  @media (width < 720px) {
+
     .workspaceMain {
       padding-inline: calc(var(--spacing) * 3.5);
-    }
-  }
-  @media (width < 720px) {
-    .workspaceMain {
       padding-top: calc(var(--spacing) * 5.5);
-    }
-  }
-  @media (width < 720px) {
-    .workspaceMain {
       padding-bottom: calc(var(--spacing) * 7);
     }
   }
+
   @media (width >= 80rem) {
     .editorAndPreview {
       display: flex;

@@ -84,7 +84,7 @@ export function WorkspaceToolbar({
           </p>
         )}
       </div>
-      <DisplayControls settings={displaySettings} onChange={onDisplaySettingsChange} />
+      <DisplayControls abc={abc} settings={displaySettings} onChange={onDisplaySettingsChange} />
       <WorkspaceActions
         exporting={exporting}
         onExport={onExport}

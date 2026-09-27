@@ -3,246 +3,195 @@
   .editorInstructions {
     margin: 0px;
   }
+
   .unsupportedSourceTextarea,
-.rowEditorGrid {
+  .rowEditorGrid {
     margin: calc(var(--spacing) * 3.5);
   }
+
   .unsupportedFormatMessage,
-.editorInstructionsRow {
+  .editorInstructionsRow {
     margin-inline: calc(var(--spacing) * 3.5);
-  }
-  .unsupportedFormatMessage,
-.editorInstructionsRow {
     margin-top: calc(var(--spacing) * 3);
-  }
-  .unsupportedFormatMessage,
-.editorInstructionsRow {
     margin-bottom: 0px;
   }
+
   .rowLabel {
     display: block;
-  }
-  .unsupportedEditorPanel,
-.easyEditorPanel,
-.editorInstructionsRow {
-    display: flex;
-  }
-  .rowEditorGrid {
-    display: grid;
-  }
-  .rowLabel {
     height: 21px;
   }
+
+  .unsupportedEditorPanel,
+  .easyEditorPanel,
+  .editorInstructionsRow {
+    display: flex;
+  }
+
+  .rowEditorGrid {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
   .rowTextarea {
     height: 100%;
-  }
-  .unsupportedEditorPanel,
-.easyEditorPanel {
-    min-height: 0px;
-  }
-  .unsupportedSourceTextarea {
-    min-height: 480px;
-  }
-  .rowEditorGrid,
-.rowTextarea {
-    min-height: 515px;
-  }
-  .rowTextarea {
     width: 100%;
-  }
-  .unsupportedEditorPanel,
-.unsupportedSourceTextarea,
-.easyEditorPanel,
-.rowEditorGrid {
-    flex: 1;
-  }
-  .unsupportedSourceTextarea,
-.rowTextarea {
-    resize: none;
-  }
-  .rowEditorGrid {
-    grid-template-columns: 42px minmax(0,1fr);
-  }
-  .unsupportedEditorPanel,
-.easyEditorPanel {
-    flex-direction: column;
-  }
-  .editorInstructionsRow {
-    flex-wrap: wrap;
-  }
-  .editorInstructionsRow {
-    align-items: center;
-  }
-  .editorInstructionsRow {
-    justify-content: space-between;
-  }
-  .editorInstructionsRow {
-    gap: calc(var(--spacing) * 2);
-  }
-  .rowTextarea {
     overflow: auto;
-  }
-  .easyEditorPanel,
-.rowEditorGrid,
-.rowLabelGutter {
-    overflow: hidden;
-  }
-  .unsupportedFormatMessage,
-.unsupportedSourceTextarea,
-.rowEditorGrid {
-    border-radius: 8px;
-  }
-  .unsupportedFormatMessage,
-.unsupportedSourceTextarea,
-.rowEditorGrid {
-    border-style: var(--component-border-style);
-    border-width: 1px;
-  }
-  .rowTextarea {
     border-style: var(--component-border-style);
     border-width: 0px;
-  }
-  .rowLabelGutter {
-    border-right-style: var(--component-border-style);
-    border-right-width: 1px;
-  }
-  .unsupportedFormatMessage,
-.unsupportedSourceTextarea,
-.rowEditorGrid,
-.rowLabelGutter {
-    border-color: var(--line);
-  }
-  .rowLabelGutter {
-    background-color: var(--editor-gutter);
-  }
-  .unsupportedFormatMessage,
-.unsupportedSourceTextarea,
-.rowEditorGrid {
-    background-color: var(--paper-soft);
-  }
-  .rowTextarea {
     background-color: transparent;
-  }
-  .unsupportedFormatMessage {
-    padding-inline: calc(var(--spacing) * 3);
-  }
-  .unsupportedSourceTextarea,
-.rowTextarea {
-    padding-inline: calc(var(--spacing) * 4);
-  }
-  .unsupportedFormatMessage {
-    padding-block: calc(var(--spacing) * 2);
-  }
-  .unsupportedSourceTextarea,
-.rowTextarea {
-    padding-block: calc(var(--spacing) * 3.5);
-  }
-  .rowLabelGutter {
-    padding-top: calc(var(--spacing) * 3.5);
-  }
-  .rowLabelGutter {
-    padding-right: 7px;
-  }
-  .rowLabelGutter {
-    padding-bottom: 17px;
-  }
-  .rowLabelGutter {
-    padding-left: 0px;
-  }
-  .rowLabelGutter {
-    text-align: right;
-  }
-  .unsupportedSourceTextarea,
-.rowLabelGutter,
-.rowTextarea {
-    font-family: var(--font-inconsolata);
-  }
-  .editorInstructions,
-.rowValidationMessage,
-.rowLabelGutter {
-    font-size: 10px;
-  }
-  .unsupportedSourceTextarea,
-.rowTextarea {
-    font-size: 11.5px;
-  }
-  .unsupportedFormatMessage {
-    font-size: 11px;
-  }
-  .unsupportedFormatMessage,
-.editorInstructions {
-    --component-leading: calc(var(--spacing) * 5);
-    line-height: calc(var(--spacing) * 5);
-  }
-  .unsupportedSourceTextarea,
-.rowLabelGutter,
-.rowLabel,
-.rowTextarea {
-    --component-leading: 21px;
-    line-height: 21px;
-  }
-  .rowTextarea {
     white-space: pre;
-  }
-  .rowTextarea {
     tab-size: 2;
-  }
-  .rowValidationMessage {
-    color: var(--amber);
-  }
-  .unsupportedSourceTextarea,
-.rowTextarea {
-    color: var(--ink);
-  }
-  .unsupportedFormatMessage {
-    color: var(--muted);
-  }
-  .editorInstructions,
-.rowLabelGutter {
-    color: var(--muted-soft);
-  }
-  .rowTextarea {
     outline-style: var(--component-outline-style);
     outline-width: 0px;
   }
+
+  .unsupportedEditorPanel,
+  .easyEditorPanel {
+    min-height: 0px;
+    flex-direction: column;
+  }
+
   .unsupportedSourceTextarea {
+    min-height: 480px;
     --component-outline-style: none;
     outline-style: none;
   }
+
+  .rowEditorGrid,
+  .rowTextarea {
+    min-height: 515px;
+  }
+
+  .unsupportedEditorPanel,
+  .unsupportedSourceTextarea,
+  .easyEditorPanel,
+  .rowEditorGrid {
+    flex: 1;
+  }
+
+  .unsupportedSourceTextarea,
+  .rowTextarea {
+    resize: none;
+    padding-inline: calc(var(--spacing) * 4);
+    padding-block: calc(var(--spacing) * 3.5);
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+
+  .editorInstructionsRow {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--spacing) * 2);
+  }
+
+  .easyEditorPanel,
+  .rowEditorGrid,
   .rowLabelGutter {
+    overflow: hidden;
+  }
+
+  .unsupportedFormatMessage,
+  .unsupportedSourceTextarea,
+  .rowEditorGrid {
+    border-radius: 8px;
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    background-color: var(--paper-soft);
+  }
+
+  .rowLabelGutter {
+    border-right-style: var(--component-border-style);
+    border-right-width: 1px;
+    background-color: var(--editor-gutter);
+    padding-top: calc(var(--spacing) * 3.5);
+    padding-right: 7px;
+    padding-bottom: 17px;
+    padding-left: 0px;
+    text-align: right;
     -webkit-user-select: none;
     user-select: none;
   }
+
+  .unsupportedFormatMessage,
+  .unsupportedSourceTextarea,
+  .rowEditorGrid,
+  .rowLabelGutter {
+    border-color: var(--line);
+  }
+
+  .unsupportedFormatMessage {
+    padding-inline: calc(var(--spacing) * 3);
+    padding-block: calc(var(--spacing) * 2);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .unsupportedSourceTextarea,
+  .rowLabelGutter,
+  .rowTextarea {
+    font-family: var(--font-inconsolata);
+  }
+
+  .editorInstructions,
+  .rowValidationMessage,
+  .rowLabelGutter {
+    font-size: 10px;
+  }
+
+  .unsupportedFormatMessage,
+  .editorInstructions {
+    --component-leading: calc(var(--spacing) * 5);
+    line-height: calc(var(--spacing) * 5);
+  }
+
+  .unsupportedSourceTextarea,
+  .rowLabelGutter,
+  .rowLabel,
+  .rowTextarea {
+    --component-leading: 21px;
+    line-height: 21px;
+  }
+
+  .rowValidationMessage {
+    color: var(--amber);
+  }
+
+  .editorInstructions,
+  .rowLabelGutter {
+    color: var(--muted-soft);
+  }
+
   .rowTextarea ::selection {
     background-color: #ddd9ff;
   }
+
   .rowTextarea::selection {
     background-color: #ddd9ff;
   }
+
   .unsupportedSourceTextarea:focus {
     border-color: var(--accent);
   }
+
   @media (width < 720px) {
     .unsupportedSourceTextarea,
-.rowEditorGrid {
+    .rowEditorGrid {
       margin: calc(var(--spacing) * 3);
     }
-  }
-  @media (width < 720px) {
+
     .editorInstructionsRow {
       margin-inline: calc(var(--spacing) * 3);
     }
   }
+
   .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
     background-color: #4a4387;
-  }
-  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
-    background-color: #4a4387;
-  }
-  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
     color: var(--color-white);
   }
+
   .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+    background-color: #4a4387;
     color: var(--color-white);
   }
 }

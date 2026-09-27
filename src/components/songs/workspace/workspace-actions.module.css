@@ -2,57 +2,66 @@
 @layer components {
   .workspaceActionGroup {
     display: flex;
-  }
-  .secondaryActionButton,
-.exportButton {
-    display: inline-flex;
-  }
-  .secondaryActionButton,
-.exportButton {
-    min-height: 34px;
-  }
-  .secondaryActionButton,
-.exportButton {
-    cursor: pointer;
-  }
-  .workspaceActionGroup {
     flex-wrap: wrap;
-  }
-  .workspaceActionGroup,
-.secondaryActionButton,
-.exportButton {
-    align-items: center;
-  }
-  .secondaryActionButton,
-.exportButton {
-    justify-content: center;
-  }
-  .workspaceActionGroup {
     justify-content: flex-end;
   }
-  .workspaceActionGroup,
-.secondaryActionButton,
-.exportButton {
-    gap: 7px;
-  }
+
   .secondaryActionButton,
-.exportButton {
+  .exportButton {
+    display: inline-flex;
+    min-height: 34px;
+    cursor: pointer;
+    justify-content: center;
     border-radius: 8px;
-  }
-  .secondaryActionButton,
-.exportButton {
     border-style: var(--component-border-style);
     border-width: 1px;
+    padding-inline: 11px;
+    font-size: 11px;
+    --component-font-weight: 650;
+    font-weight: 650;
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
   }
+
+  .workspaceActionGroup,
+  .secondaryActionButton,
+  .exportButton {
+    align-items: center;
+    gap: 7px;
+  }
+
   .exportButton {
     border-color: var(--accent);
+    background-color: var(--accent);
+    color: var(--color-white);
+    transition-property: border-color, background-color, opacity;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
   }
+
   .secondaryActionButton {
     border-color: var(--line-strong);
+    background-color: var(--paper);
+    color: var(--muted);
+    transition-property: border-color, color, opacity;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
   }
-  .exportButton {
-    background-color: var(--accent);
-  }
+
   .exportMenuPopup {
     min-width: 140px;
     padding: 4px;
@@ -62,6 +71,7 @@
     box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
     color: var(--ink);
   }
+
   .exportMenuItem {
     display: flex;
     width: 100%;
@@ -76,112 +86,53 @@
     font-size: 12px;
     text-align: left;
   }
+
   .exportMenuItem[data-highlighted] {
     background-color: var(--accent-soft);
     color: var(--accent-deep);
     outline: none;
   }
+
   .exportMenuItem:disabled {
     cursor: not-allowed;
     opacity: 0.55;
   }
-  .secondaryActionButton {
-    background-color: var(--paper);
-  }
-  .secondaryActionButton,
-.exportButton {
-    padding-inline: 11px;
-  }
-  .secondaryActionButton,
-.exportButton {
-    font-size: 11px;
-  }
-  .secondaryActionButton,
-.exportButton {
-    --component-font-weight: 650;
-    font-weight: 650;
-  }
-  .secondaryActionButton {
-    color: var(--muted);
-  }
-  .exportButton {
-    color: var(--color-white);
-  }
-  .exportButton {
-    transition-property: border-color,background-color,opacity;
-    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
-    transition-duration: var(--component-duration, var(--default-transition-duration));
-  }
-  .secondaryActionButton {
-    transition-property: border-color,color,opacity;
-    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
-    transition-duration: var(--component-duration, var(--default-transition-duration));
-  }
-  .secondaryActionButton,
-.exportButton {
-    --component-duration: 160ms;
-    transition-duration: 160ms;
-  }
-  .secondaryActionButton,
-.exportButton {
-    --component-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-  }
+
   @media (hover: hover) {
     .secondaryActionButton:hover {
       border-color: var(--accent);
+      color: var(--ink);
     }
-  }
-  @media (hover: hover) {
+
     .exportButton:hover {
       border-color: var(--accent-deep);
-    }
-  }
-  @media (hover: hover) {
-    .exportButton:hover {
       background-color: var(--accent-deep);
     }
   }
-  @media (hover: hover) {
-    .secondaryActionButton:hover {
-      color: var(--ink);
-    }
-  }
+
   .secondaryActionButton:focus-visible,
-.exportButton:focus-visible {
+  .exportButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
-  }
-  .secondaryActionButton:focus-visible,
-.exportButton:focus-visible {
     outline-offset: 2px;
-  }
-  .secondaryActionButton:focus-visible,
-.exportButton:focus-visible {
     outline-color: var(--accent);
   }
+
   .secondaryActionButton:disabled,
-.exportButton:disabled {
+  .exportButton:disabled {
     cursor: not-allowed;
-  }
-  .secondaryActionButton:disabled,
-.exportButton:disabled {
     opacity: 0.55;
   }
+
   @media (width < 720px) {
     .workspaceActionGroup {
       margin-top: calc(var(--spacing) * 4);
+      justify-content: stretch;
     }
-  }
-  @media (width < 720px) {
+
     .secondaryActionButton,
     .exportButton {
       flex: 1;
-    }
-  }
-  @media (width < 720px) {
-    .workspaceActionGroup {
-      justify-content: stretch;
     }
   }
 }

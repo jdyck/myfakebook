@@ -10,6 +10,7 @@ import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { Header } from "@/components/app-shell/header/header";
 import { AbcPreview } from "@/components/songs/preview/abc-preview";
+import { TransposeMenu } from "@/components/songs/workspace/transpose-menu";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
 import componentStyles from "./set-list-detail.module.css";
 
@@ -387,12 +388,14 @@ export function SetListDetail({ id }: SetListDetailProps) {
 
                   <fieldset className={componentStyles.selectedSongDisplaySettings} aria-label={`${selectedItem.title} display settings`}>
                     <legend className={componentStyles.visuallyHidden}>Display settings for {selectedItem.title}</legend>
-                    <label className={componentStyles.transposeFieldLabel}>
-                      Transpose
-                      <select aria-label={`Transpose ${selectedItem.title}`} className={`${componentStyles.sharedField} ${componentStyles.transposeSelect}`} value={selectedSettings.transposition} onChange={(event) => void handleDisplayChange(selectedItem._id, { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }, { transposition: Number(event.target.value) })}>
-                        {Array.from({ length: 25 }, (_, step) => step - 12).map((step) => <option key={step} value={step}>{step > 0 ? `+${step}` : step}</option>)}
-                      </select>
-                    </label>
+                    <div className={componentStyles.transposeFieldLabel}>
+                      <TransposeMenu
+                        abc={selectedItem.abc}
+                        ariaLabel={`Transpose ${selectedItem.title}`}
+                        value={selectedSettings.transposition}
+                        onChange={(transposition) => void handleDisplayChange(selectedItem._id, { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }, { transposition })}
+                      />
+                    </div>
                     {([
                       ["showChords", "Show chords"],
                       ["showLyrics", "Show lyrics"],

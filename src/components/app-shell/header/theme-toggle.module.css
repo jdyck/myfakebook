@@ -3,79 +3,57 @@
   .moonIcon {
     display: block;
   }
+
   .themeToggleButton {
     display: grid;
-  }
-  .sunIcon {
-    display: none;
-  }
-  .themeToggleButton {
     width: calc(var(--spacing) * 8);
     height: calc(var(--spacing) * 8);
-  }
-  .themeToggleButton {
     cursor: pointer;
-  }
-  .themeToggleButton {
     place-items: center;
-  }
-  .themeToggleButton {
     border-radius: 8px;
-  }
-  .themeToggleButton {
     border-style: var(--component-border-style);
     border-width: 1px;
-  }
-  .themeToggleButton {
     border-color: var(--line-strong);
-  }
-  .themeToggleButton {
     background-color: transparent;
-  }
-  .themeToggleButton {
     color: var(--muted);
-  }
-  .themeToggleButton {
-    transition-property: border-color,background-color,color;
-    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
-    transition-duration: var(--component-duration, var(--default-transition-duration));
-  }
-  .themeToggleButton {
+    transition-property: border-color, background-color, color;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
     --component-duration: 160ms;
     transition-duration: 160ms;
-  }
-  .themeToggleButton {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
+
+  .sunIcon {
+    display: none;
+  }
+
   @media (hover: hover) {
     .themeToggleButton:hover {
       border-color: var(--accent);
-    }
-  }
-  @media (hover: hover) {
-    .themeToggleButton:hover {
       background-color: var(--accent-soft);
-    }
-  }
-  @media (hover: hover) {
-    .themeToggleButton:hover {
       color: var(--accent-deep);
     }
   }
+
   .themeToggleButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
-  }
-  .themeToggleButton:focus-visible {
     outline-offset: 2px;
-  }
-  .themeToggleButton:focus-visible {
     outline-color: var(--accent);
   }
+
   .sunIcon:where([data-theme="dark"], [data-theme="dark"] *) {
     display: block;
   }
+
   .moonIcon:where([data-theme="dark"], [data-theme="dark"] *) {
     display: none;
   }

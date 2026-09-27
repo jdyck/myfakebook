@@ -2,42 +2,33 @@
 @layer components {
   .pageBody {
     margin: 0px;
-  }
-  .pageBody {
     min-height: 100vh;
-  }
-  .fontVariables,
-.pageBody {
-    background-color: var(--canvas);
-  }
-  .pageBody {
     font-family: var(--font-inter);
-  }
-  .pageBody {
     color: var(--ink);
   }
+
+  .fontVariables,
+  .pageBody {
+    background-color: var(--canvas);
+  }
+
   .pageBody ::selection {
     background-color: #d9d6ff;
+    color: #27235e;
   }
+
   .pageBody::selection {
     background-color: #d9d6ff;
-  }
-  .pageBody ::selection {
     color: #27235e;
   }
-  .pageBody::selection {
-    color: #27235e;
-  }
+
   .pageBody:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
     background-color: #4a4387;
-  }
-  .pageBody:where([data-theme="dark"], [data-theme="dark"] *)::selection {
-    background-color: #4a4387;
-  }
-  .pageBody:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
     color: var(--color-white);
   }
+
   .pageBody:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+    background-color: #4a4387;
     color: var(--color-white);
   }
 }
