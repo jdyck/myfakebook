@@ -38,11 +38,11 @@ export function PrivateLibrarySidebar({
 
   return (
     <aside
-      className={componentStyles.style0}
+      className={componentStyles.librarySidebar}
       aria-label="My Library"
     >
-      <div className={componentStyles.style1}>
-        <span className={componentStyles.style2}>My Library</span>
+      <div className={componentStyles.libraryHeadingBar}>
+        <span className={componentStyles.libraryTitle}>My Library</span>
       </div>
       <MyLibrarySongs
         abc={abc}
@@ -66,44 +66,44 @@ function RecentSetLists() {
   const setLists = useQuery(api.setLists.listMine, isAuthenticated ? {} : "skip");
 
   return (
-    <section className={componentStyles.style3} aria-labelledby="recent-set-lists-heading">
-      <h2 className={componentStyles.style4} id="recent-set-lists-heading">
+    <section className={componentStyles.recentSetListsSection} aria-labelledby="recent-set-lists-heading">
+      <h2 className={componentStyles.sectionHeading} id="recent-set-lists-heading">
         Recent set lists
       </h2>
       {isLoading || (isAuthenticated && setLists === undefined) ? (
-        <p className={componentStyles.style5} role="status">
+        <p className={componentStyles.setListsMessage} role="status">
           Loading your set lists…
         </p>
       ) : !isAuthenticated ? (
-        <p className={componentStyles.style5}>
-          <Link className={componentStyles.style6} href="/sign-in">
+        <p className={componentStyles.setListsMessage}>
+          <Link className={componentStyles.signInLink} href="/sign-in">
             Sign in
           </Link>{" "}
           to sync your set lists.
         </p>
       ) : setLists?.length ? (
-        <div className={componentStyles.style7} aria-label="Recent set lists">
+        <div className={componentStyles.recentSetListList} aria-label="Recent set lists">
           {setLists.slice(0, 5).map((setList) => (
             <Link
-              className={componentStyles.style8}
+              className={componentStyles.recentSetListLink}
               href={`/setlists/${encodeURIComponent(setList._id)}`}
               key={setList._id}
             >
-              <span className={componentStyles.style9}>{setList.name}</span>
-              <span className={componentStyles.style10}>
+              <span className={componentStyles.setListName}>{setList.name}</span>
+              <span className={componentStyles.setListMetadata}>
                 {setList.itemCount} song{setList.itemCount === 1 ? "" : "s"} · Updated {new Date(setList.updatedAt).toLocaleDateString()}
               </span>
             </Link>
           ))}
         </div>
       ) : (
-        <p className={componentStyles.style5}>
+        <p className={componentStyles.setListsMessage}>
           Your set lists will appear here.
         </p>
       )}
       {isAuthenticated && (
         <Link
-          className={componentStyles.style11}
+          className={componentStyles.allSetListsLink}
           href="/setlists"
         >
           All set lists

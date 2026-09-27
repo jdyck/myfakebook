@@ -1,132 +1,132 @@
 /* Component styles. */
 @layer components {
-  .style1 {
+  .pageContent {
     margin-inline: auto;
   }
-  .style10 {
+  .songMetadata {
     margin-top: calc(var(--spacing) * 0.5);
   }
-  .style4 {
+  .pageDescription {
     margin-top: var(--spacing);
   }
-  .style2 {
+  .pageHeadingRow {
     margin-bottom: calc(var(--spacing) * 5);
   }
-  .style9,
-.style10 {
+  .songTitle,
+.songMetadata {
     display: block;
   }
-  .style2,
-.style7 {
+  .pageHeadingRow,
+.songLink {
     display: flex;
   }
-  .style6 {
+  .songList {
     display: grid;
   }
-  .style0 {
+  .pageShell {
     min-height: 100vh;
   }
-  .style1 {
+  .pageContent {
     max-width: var(--container-3xl);
   }
-  .style8 {
+  .songDetails {
     min-width: 0px;
   }
-  .style5,
-.style11 {
+  .songCount,
+.viewSongLabel {
     flex-shrink: 0;
   }
-  .style2 {
+  .pageHeadingRow {
     align-items: baseline;
   }
-  .style7 {
+  .songLink {
     align-items: center;
   }
-  .style2,
-.style7 {
+  .pageHeadingRow,
+.songLink {
     justify-content: space-between;
   }
-  .style6 {
+  .songList {
     gap: calc(var(--spacing) * 2);
   }
-  .style2,
-.style7 {
+  .pageHeadingRow,
+.songLink {
     gap: calc(var(--spacing) * 4);
   }
-  .style7 {
+  .songLink {
     border-radius: var(--ui-radius);
   }
-  .style7 {
+  .songLink {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style7 {
+  .songLink {
     border-color: var(--line);
   }
-  .style7 {
+  .songLink {
     background-color: var(--paper);
   }
-  .style1,
-.style7 {
+  .pageContent,
+.songLink {
     padding-inline: calc(var(--spacing) * 4);
   }
-  .style7 {
+  .songLink {
     padding-block: calc(var(--spacing) * 3);
   }
-  .style1 {
+  .pageContent {
     padding-block: calc(var(--spacing) * 8);
   }
-  .style3 {
+  .pageTitle {
     font-size: var(--text-2xl);
     line-height: var(--component-leading, var(--text-2xl--line-height));
   }
-  .style4 {
+  .pageDescription {
     font-size: var(--text-sm);
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
-  .style5,
-.style10,
-.style11 {
+  .songCount,
+.songMetadata,
+.viewSongLabel {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
-  .style3 {
+  .pageTitle {
     --component-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
-  .style9,
-.style11 {
+  .songTitle,
+.viewSongLabel {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .style11 {
+  .viewSongLabel {
     color: var(--accent-deep);
   }
-  .style4,
-.style5,
-.style10 {
+  .pageDescription,
+.songCount,
+.songMetadata {
     color: var(--muted-soft);
   }
-  .style9 {
+  .songTitle {
     color: var(--ink);
   }
   @media (hover: hover) {
-    .style7:hover {
+    .songLink:hover {
       border-color: var(--line-strong);
     }
   }
-  .style7:focus-visible {
+  .songLink:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style7:focus-visible {
+  .songLink:focus-visible {
     outline-offset: 2px;
   }
-  .style7:focus-visible {
+  .songLink:focus-visible {
     outline-color: var(--accent);
   }
   @media (width < 720px) {
-    .style1 {
+    .pageContent {
       padding-block: calc(var(--spacing) * 5);
     }
   }

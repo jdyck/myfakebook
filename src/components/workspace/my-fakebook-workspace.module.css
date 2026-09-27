@@ -1,35 +1,35 @@
 /* Component styles. */
 @layer components {
-  .style4,
-.style5 {
+  .settingsBannerTitle,
+.settingsBannerDescription {
     margin: 0px;
   }
   .workspaceGrid {
     margin-inline: auto;
   }
-  .style5 {
+  .settingsBannerDescription {
     margin-top: var(--spacing);
   }
-  .style2,
-.style3 {
+  .setListReturnLink,
+.setListSettingsBanner {
     margin-bottom: calc(var(--spacing) * 4);
   }
-  .style3 {
+  .setListSettingsBanner {
     display: flex;
   }
   .workspaceGrid {
     display: grid;
   }
-  .style2 {
+  .setListReturnLink {
     display: inline-block;
   }
   .workspaceGrid {
     min-height: calc(100vh - 58px);
   }
-  .style0 {
+  .appShell {
     min-height: 100vh;
   }
-  .style1 {
+  .workspaceMain {
     min-width: 0px;
   }
   .workspaceGridWithSidebar {
@@ -38,80 +38,80 @@
   .workspaceGridWithoutSidebar {
     grid-template-columns: minmax(0,1fr);
   }
-  .style3 {
+  .setListSettingsBanner {
     flex-wrap: wrap;
   }
-  .style3 {
+  .setListSettingsBanner {
     align-items: center;
   }
-  .style3 {
+  .setListSettingsBanner {
     justify-content: space-between;
   }
-  .style3 {
+  .setListSettingsBanner {
     gap: calc(var(--spacing) * 3);
   }
-  .style6 {
+  .editorAndPreview {
     gap: calc(var(--spacing) * 4);
   }
-  .style3 {
+  .setListSettingsBanner {
     border-radius: calc(var(--ui-radius) + 4px);
   }
-  .style3 {
+  .setListSettingsBanner {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style3 {
+  .setListSettingsBanner {
     border-color: var(--line);
   }
-  .style3 {
+  .setListSettingsBanner {
     background-color: var(--paper);
   }
-  .style1 {
+  .workspaceMain {
     padding: calc(var(--spacing) * 4);
   }
-  .style3 {
+  .setListSettingsBanner {
     padding-inline: calc(var(--spacing) * 4);
   }
-  .style3 {
+  .setListSettingsBanner {
     padding-block: calc(var(--spacing) * 3);
   }
-  .style4 {
+  .settingsBannerTitle {
     font-size: var(--text-sm);
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
-  .style2,
-.style5 {
+  .setListReturnLink,
+.settingsBannerDescription {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
-  .style2,
-.style4 {
+  .setListReturnLink,
+.settingsBannerTitle {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .style2 {
+  .setListReturnLink {
     color: var(--accent-deep);
   }
-  .style5 {
+  .settingsBannerDescription {
     color: var(--muted-soft);
   }
   @media (hover: hover) {
-    .style2:hover {
+    .setListReturnLink:hover {
       text-decoration-line: underline;
     }
   }
   @media (width < 1080px) {
-    .style1 {
+    .workspaceMain {
       padding-inline: calc(var(--spacing) * 5.5);
     }
   }
   @media (width < 1080px) {
-    .style1 {
+    .workspaceMain {
       padding-top: calc(var(--spacing) * 7);
     }
   }
   @media (width < 1080px) {
-    .style1 {
+    .workspaceMain {
       padding-bottom: calc(var(--spacing) * 9);
     }
   }
@@ -121,22 +121,22 @@
     }
   }
   @media (width < 720px) {
-    .style1 {
+    .workspaceMain {
       padding-inline: calc(var(--spacing) * 3.5);
     }
   }
   @media (width < 720px) {
-    .style1 {
+    .workspaceMain {
       padding-top: calc(var(--spacing) * 5.5);
     }
   }
   @media (width < 720px) {
-    .style1 {
+    .workspaceMain {
       padding-bottom: calc(var(--spacing) * 7);
     }
   }
   @media (width >= 80rem) {
-    .style6 {
+    .editorAndPreview {
       display: flex;
     }
   }

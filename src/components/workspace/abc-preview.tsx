@@ -432,40 +432,40 @@ export function AbcPreview({
   return (
     <>
       <div
-        className={componentStyles.style0}
+        className={componentStyles.leadSheetPreview}
         aria-label="Rendered lead sheet"
       >
         <div>
           <div
             ref={targetRef}
-            className={`${componentStyles.style1} abcjs-preview ${
+            className={`${componentStyles.notationCanvas} abcjs-preview ${
               [
                 !showChords && "abc-preview-hide-chords",
                 !showLyrics && "abc-preview-hide-lyrics",
               ]
                 .filter(Boolean)
                 .join(" ")
-            } ${error ? componentStyles.style2 : ""}`}
+            } ${error ? componentStyles.notationErrorState : ""}`}
           />
         </div>
         {error && (
-          <div className={componentStyles.style3}>
+          <div className={componentStyles.playbackErrorPanel}>
             <div>
               {error}
-              <code className={componentStyles.style4}>
+              <code className={componentStyles.syntaxHelpExample}>
                 Check the ABC header and note syntax.
               </code>
             </div>
           </div>
         )}
       </div>
-      <div className={componentStyles.style5}>
-        <div className={componentStyles.style6}>
-          <label className={componentStyles.style7}>
+      <div className={componentStyles.playbackControls}>
+        <div className={componentStyles.playbackFieldGroup}>
+          <label className={componentStyles.playbackFieldLabel}>
             Parts
             <select
               aria-label="Playback parts"
-              className={componentStyles.style8}
+              className={componentStyles.playbackSelect}
               value={playbackPart}
               onChange={(event) => setPlaybackPart(event.target.value as PlaybackPart)}
             >
@@ -474,11 +474,11 @@ export function AbcPreview({
               <option value="both">Melody + chords</option>
             </select>
           </label>
-          <label className={componentStyles.style7}>
+          <label className={componentStyles.playbackFieldLabel}>
             Start measure
             <select
               aria-label="Playback start measure"
-              className={componentStyles.style8}
+              className={componentStyles.playbackSelect}
               value={startMeasure}
               onChange={(event) => {
                 clearSelectedNote();
@@ -497,26 +497,26 @@ export function AbcPreview({
           </label>
           <button
             aria-label={isPlaying ? "Stop playback" : isPaused ? "Resume playback" : "Play lead sheet"}
-            className={componentStyles.style9}
+            className={componentStyles.playbackButton}
             disabled={Boolean(error) || isLoading}
             type="button"
             onClick={togglePlayback}
           >
             {isLoading ? (
-              <LoaderCircle className={componentStyles.style10} size={14} strokeWidth={2} />
+              <LoaderCircle className={componentStyles.loadingSpinner} size={14} strokeWidth={2} />
             ) : isPlaying ? (
               <Square size={12} fill="currentColor" strokeWidth={1.8} />
             ) : (
               <Play size={13} fill="currentColor" strokeWidth={1.8} />
             )}
           </button>
-          <span className={componentStyles.style11}>
+          <span className={componentStyles.playbackStatus}>
             {isPlaying ? "Playing" : isPaused ? "Paused" : "Play preview"}
           </span>
         </div>
       </div>
       {(saveAction || publishAction) && (
-        <div className={componentStyles.style12}>
+        <div className={componentStyles.songActions}>
           {saveAction}
           {publishAction}
         </div>

@@ -1,195 +1,195 @@
 /* Component styles. */
 @layer components {
-  .style10 {
+  .setListMetadata {
     margin-top: calc(var(--spacing) * 0.5);
   }
-  .style7,
-.style11 {
+  .recentSetListList,
+.allSetListsLink {
     margin-top: calc(var(--spacing) * 2);
   }
-  .style3 {
+  .recentSetListsSection {
     margin-top: calc(var(--spacing) * 6);
   }
-  .style8,
-.style9,
-.style10,
-.style11 {
+  .recentSetListLink,
+.setListName,
+.setListMetadata,
+.allSetListsLink {
     display: block;
   }
-  .style1,
-.style7 {
+  .libraryHeadingBar,
+.recentSetListList {
     display: grid;
   }
-  .style0,
-.style8 {
+  .librarySidebar,
+.recentSetListLink {
     min-width: 0px;
   }
-  .style1 {
+  .libraryHeadingBar {
     gap: var(--spacing);
   }
-  .style7 {
+  .recentSetListList {
     gap: 3px;
   }
-  .style9 {
+  .setListName {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .style8 {
+  .recentSetListLink {
     border-radius: 8px;
   }
-  .style11 {
+  .allSetListsLink {
     border-radius: var(--ui-radius);
   }
-  .style11 {
+  .allSetListsLink {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style0 {
+  .librarySidebar {
     border-right-style: var(--component-border-style);
     border-right-width: 1px;
   }
-  .style0 {
+  .librarySidebar {
     border-color: var(--line);
   }
-  .style11 {
+  .allSetListsLink {
     border-color: var(--line);
   }
-  .style11 {
+  .allSetListsLink {
     background-color: var(--paper);
   }
-  .style8 {
+  .recentSetListLink {
     padding: calc(var(--spacing) * 2);
   }
-  .style1,
-.style4,
-.style5 {
+  .libraryHeadingBar,
+.sectionHeading,
+.setListsMessage {
     padding-inline: calc(var(--spacing) * 2);
   }
-  .style11 {
+  .allSetListsLink {
     padding-inline: calc(var(--spacing) * 3);
   }
-  .style0 {
+  .librarySidebar {
     padding-inline: calc(var(--spacing) * 3.75);
   }
-  .style11 {
+  .allSetListsLink {
     padding-block: calc(var(--spacing) * 2);
   }
-  .style5 {
+  .setListsMessage {
     padding-block: calc(var(--spacing) * 3.5);
   }
-  .style0 {
+  .librarySidebar {
     padding-block: calc(var(--spacing) * 6.25);
   }
-  .style11 {
+  .allSetListsLink {
     text-align: center;
   }
-  .style4,
-.style5,
-.style10,
-.style11 {
+  .sectionHeading,
+.setListsMessage,
+.setListMetadata,
+.allSetListsLink {
     font-size: 10px;
   }
-  .style9 {
+  .setListName {
     font-size: 11px;
   }
-  .style2 {
+  .libraryTitle {
     font-size: 13px;
   }
-  .style5 {
+  .setListsMessage {
     --component-leading: 1.5;
     line-height: 1.5;
   }
-  .style9 {
+  .setListName {
     --component-font-weight: 620;
     font-weight: 620;
   }
-  .style6,
-.style11 {
+  .signInLink,
+.allSetListsLink {
     --component-font-weight: 650;
     font-weight: 650;
   }
-  .style2,
-.style4 {
+  .libraryTitle,
+.sectionHeading {
     --component-font-weight: 680;
     font-weight: 680;
   }
-  .style4 {
+  .sectionHeading {
     --component-tracking: 0.08em;
     letter-spacing: 0.08em;
   }
-  .style6,
-.style11 {
+  .signInLink,
+.allSetListsLink {
     color: var(--accent-deep);
   }
-  .style9 {
+  .setListName {
     color: var(--ink);
   }
-  .style4,
-.style5,
-.style10 {
+  .sectionHeading,
+.setListsMessage,
+.setListMetadata {
     color: var(--muted-soft);
   }
-  .style2 {
+  .libraryTitle {
     color: var(--ink);
   }
-  .style4 {
+  .sectionHeading {
     text-transform: uppercase;
   }
-  .style6,
-.style8,
-.style11 {
+  .signInLink,
+.recentSetListLink,
+.allSetListsLink {
     text-decoration-line: none;
   }
-  .style8 {
+  .recentSetListLink {
     transition-property: background-color;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style11 {
+  .allSetListsLink {
     transition-property: border-color,background-color;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style8 {
+  .recentSetListLink {
     --component-duration: 160ms;
     transition-duration: 160ms;
   }
-  .style8 {
+  .recentSetListLink {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
   @media (hover: hover) {
-    .style11:hover {
+    .allSetListsLink:hover {
       border-color: var(--line-strong);
     }
   }
   @media (hover: hover) {
-    .style8:hover,
-.style11:hover {
+    .recentSetListLink:hover,
+.allSetListsLink:hover {
       background-color: var(--paper-soft);
     }
   }
   @media (hover: hover) {
-    .style6:hover {
+    .signInLink:hover {
       text-decoration-line: underline;
     }
   }
-  .style8:focus-visible,
-.style11:focus-visible {
+  .recentSetListLink:focus-visible,
+.allSetListsLink:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style8:focus-visible,
-.style11:focus-visible {
+  .recentSetListLink:focus-visible,
+.allSetListsLink:focus-visible {
     outline-offset: 2px;
   }
-  .style8:focus-visible,
-.style11:focus-visible {
+  .recentSetListLink:focus-visible,
+.allSetListsLink:focus-visible {
     outline-color: var(--accent);
   }
   @media (width < 720px) {
-    .style0 {
+    .librarySidebar {
       display: none;
     }
   }

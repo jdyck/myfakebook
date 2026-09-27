@@ -1,43 +1,43 @@
 /* Component styles. */
 @layer components {
-  .style1 {
+  .pageBody {
     margin: 0px;
   }
-  .style1 {
+  .pageBody {
     min-height: 100vh;
   }
-  .style0,
-.style1 {
+  .fontVariables,
+.pageBody {
     background-color: var(--canvas);
   }
-  .style1 {
+  .pageBody {
     font-family: var(--font-inter);
   }
-  .style1 {
+  .pageBody {
     color: var(--ink);
   }
-  .style1 ::selection {
+  .pageBody ::selection {
     background-color: #d9d6ff;
   }
-  .style1::selection {
+  .pageBody::selection {
     background-color: #d9d6ff;
   }
-  .style1 ::selection {
+  .pageBody ::selection {
     color: #27235e;
   }
-  .style1::selection {
+  .pageBody::selection {
     color: #27235e;
   }
-  .style1:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+  .pageBody:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
     background-color: #4a4387;
   }
-  .style1:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+  .pageBody:where([data-theme="dark"], [data-theme="dark"] *)::selection {
     background-color: #4a4387;
   }
-  .style1:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+  .pageBody:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
     color: var(--color-white);
   }
-  .style1:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+  .pageBody:where([data-theme="dark"], [data-theme="dark"] *)::selection {
     color: var(--color-white);
   }
 }

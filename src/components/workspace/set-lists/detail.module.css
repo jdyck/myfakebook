@@ -1,10 +1,10 @@
 /* Component styles. */
 @layer components {
-  .style31,
-.style62 {
+  .dropIndicator,
+.dragPreview {
     pointer-events: none;
   }
-  .style44 {
+  .visuallyHidden {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -15,396 +15,396 @@
     white-space: nowrap;
     border-width: 0;
   }
-  .style31 {
+  .dropIndicator {
     position: absolute;
   }
-  .style62 {
+  .dragPreview {
     position: fixed;
   }
-  .style26 {
+  .orderedSongItem {
     position: relative;
   }
-  .style32 {
+  .dropIndicatorBefore {
     top: calc(5px * -1);
   }
-  .style31 {
+  .dropIndicator {
     right: calc(var(--spacing) * 2);
   }
-  .style33 {
+  .dropIndicatorAfter {
     bottom: calc(5px * -1);
   }
-  .style31 {
+  .dropIndicator {
     left: calc(var(--spacing) * 2);
   }
-  .style31 {
+  .dropIndicator {
     z-index: 20;
   }
-  .style62 {
+  .dragPreview {
     z-index: 100;
   }
-  .style19 {
+  .noAvailableSongsMessage {
     margin: 0px;
   }
-  .style3,
-.style7,
-.style47,
-.style58 {
+  .notFoundSection,
+.setListWorkspace,
+.selectedSongLayout,
+.selectedSongEmptyState {
     margin-inline: auto;
   }
-  .style39 {
+  .unavailableBadge {
     margin-top: calc(var(--spacing) * 0.5);
   }
-  .style12 {
+  .setListSongCount {
     margin-top: var(--spacing);
   }
-  .style25,
-.style60 {
+  .orderedSongList,
+.emptyStateDescription {
     margin-top: calc(var(--spacing) * 2);
   }
-  .style61 {
+  .emptyStateBrowseLink {
     margin-top: calc(var(--spacing) * 3);
   }
-  .style9,
-.style14 {
+  .setListSidebarHeader,
+.renameSetListForm {
     margin-top: calc(var(--spacing) * 4);
   }
-  .style18,
-.style21 {
+  .addSongForm,
+.setListSongsSection {
     margin-top: calc(var(--spacing) * 5);
   }
-  .style3 {
+  .notFoundSection {
     margin-top: calc(var(--spacing) * 8);
   }
-  .style58 {
+  .selectedSongEmptyState {
     margin-top: calc(var(--spacing) * 12);
   }
-  .style49 {
+  .selectedSongPosition {
     margin-bottom: var(--spacing);
   }
-  .style46 {
+  .actionStatusMessage {
     margin-bottom: calc(var(--spacing) * 3);
   }
-  .style48,
-.style52 {
+  .selectedSongContent,
+.selectedSongDisplaySettings {
     margin-bottom: calc(var(--spacing) * 4);
   }
-  .style38,
-.style39 {
+  .songName,
+.unavailableBadge {
     display: block;
   }
-  .style9,
-.style22,
-.style34,
-.style36,
-.style40,
-.style47,
-.style48,
-.style52,
-.style53,
-.style57,
-.style62 {
+  .setListSidebarHeader,
+.songsSectionHeader,
+.songItemDragControls,
+.songSelectionButton,
+.songItemActions,
+.selectedSongLayout,
+.selectedSongContent,
+.selectedSongDisplaySettings,
+.transposeFieldLabel,
+.selectedSongPreview,
+.dragPreview {
     display: flex;
   }
-  .style7,
-.style14,
-.style18,
-.style25,
-.style35,
-.style37,
-.style41,
-.style42 {
+  .setListWorkspace,
+.renameSetListForm,
+.addSongForm,
+.orderedSongList,
+.dragHandleButton,
+.songPositionNumber,
+.moveSongButton,
+.removeSongButton {
     display: grid;
   }
-  .style13,
-.style55 {
+  .deleteSetListButton,
+.displayToggleLabel {
     display: inline-flex;
   }
-  .style56 {
+  .displayToggleCheckbox {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
   }
-  .style37 {
+  .songPositionNumber {
     width: calc(var(--spacing) * 6);
     height: calc(var(--spacing) * 6);
   }
-  .style41,
-.style42 {
+  .moveSongButton,
+.removeSongButton {
     width: calc(var(--spacing) * 8);
     height: calc(var(--spacing) * 8);
   }
-  .style35 {
+  .dragHandleButton {
     width: calc(var(--spacing) * 9);
     height: calc(var(--spacing) * 9);
   }
-  .style62 {
+  .dragPreview {
     height: calc(var(--spacing) * 10);
   }
-  .style31 {
+  .dropIndicator {
     height: 3px;
   }
-  .style57 {
+  .selectedSongPreview {
     min-height: 620px;
   }
-  .style1,
-.style7 {
+  .pageContent,
+.setListWorkspace {
     min-height: calc(100vh - 58px);
   }
-  .style47 {
+  .selectedSongLayout {
     min-height: calc(100vh - 106px);
   }
-  .style0 {
+  .pageShell {
     min-height: 100vh;
   }
-  .style16 {
+  .formField {
     width: 100%;
   }
-  .style3 {
+  .notFoundSection {
     max-width: var(--container-3xl);
   }
-  .style47 {
+  .selectedSongLayout {
     max-width: var(--container-5xl);
   }
-  .style7 {
+  .setListWorkspace {
     max-width: 1600px;
   }
-  .style58 {
+  .selectedSongEmptyState {
     max-width: var(--container-xl);
   }
-  .style8,
-.style10,
-.style36,
-.style45,
-.style64 {
+  .setListSidebar,
+.titleAndDetails,
+.songSelectionButton,
+.selectedSongSection,
+.dragPreviewSongName {
     min-width: 0px;
   }
-  .style36,
-.style57,
-.style64 {
+  .songSelectionButton,
+.selectedSongPreview,
+.dragPreviewSongName {
     flex: 1;
   }
-  .style13,
-.style35,
-.style37,
-.style40,
-.style51,
-.style63,
-.style65 {
+  .deleteSetListButton,
+.dragHandleButton,
+.songPositionNumber,
+.songItemActions,
+.openSongWorkspaceLink,
+.dragPreviewIcon,
+.dragPreviewHint {
     flex-shrink: 0;
   }
-  .style35 {
+  .dragHandleButton {
     cursor: grab;
   }
-  .style35 {
+  .dragHandleButton {
     touch-action: none;
   }
-  .style7 {
+  .setListWorkspace {
     grid-template-columns: 300px minmax(0,1fr);
   }
-  .style47,
-.style57 {
+  .selectedSongLayout,
+.selectedSongPreview {
     flex-direction: column;
   }
-  .style48,
-.style52 {
+  .selectedSongContent,
+.selectedSongDisplaySettings {
     flex-wrap: wrap;
   }
-  .style35,
-.style37,
-.style41,
-.style42 {
+  .dragHandleButton,
+.songPositionNumber,
+.moveSongButton,
+.removeSongButton {
     place-items: center;
   }
-  .style13,
-.style22,
-.style34,
-.style36,
-.style40,
-.style52,
-.style53,
-.style55,
-.style62 {
+  .deleteSetListButton,
+.songsSectionHeader,
+.songItemDragControls,
+.songSelectionButton,
+.songItemActions,
+.selectedSongDisplaySettings,
+.transposeFieldLabel,
+.displayToggleLabel,
+.dragPreview {
     align-items: center;
   }
-  .style9,
-.style48 {
+  .setListSidebarHeader,
+.selectedSongContent {
     align-items: flex-start;
   }
-  .style9,
-.style22,
-.style48 {
+  .setListSidebarHeader,
+.songsSectionHeader,
+.selectedSongContent {
     justify-content: space-between;
   }
-  .style34 {
+  .songItemDragControls {
     gap: var(--spacing);
   }
-  .style13,
-.style25,
-.style55 {
+  .deleteSetListButton,
+.orderedSongList,
+.displayToggleLabel {
     gap: calc(var(--spacing) * 1.5);
   }
-  .style9,
-.style14,
-.style18,
-.style22,
-.style36,
-.style53,
-.style62 {
+  .setListSidebarHeader,
+.renameSetListForm,
+.addSongForm,
+.songsSectionHeader,
+.songSelectionButton,
+.transposeFieldLabel,
+.dragPreview {
     gap: calc(var(--spacing) * 2);
   }
-  .style48 {
+  .selectedSongContent {
     gap: calc(var(--spacing) * 3);
   }
-  .style52 {
+  .selectedSongDisplaySettings {
     column-gap: calc(var(--spacing) * 5);
   }
-  .style52 {
+  .selectedSongDisplaySettings {
     row-gap: calc(var(--spacing) * 2);
   }
-  .style17 {
+  .saveSetListNameButton {
     justify-self: flex-start;
   }
-  .style38,
-.style64 {
+  .songName,
+.dragPreviewSongName {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .style62 {
+  .dragPreview {
     overflow: hidden;
   }
-  .style31 {
+  .dropIndicator {
     border-radius: calc(infinity * 1px);
   }
   .sharedField,
 .sharedButton,
 .sharedPrimaryButton,
-.style26,
-.style35,
-.style62 {
+.orderedSongItem,
+.dragHandleButton,
+.dragPreview {
     border-radius: var(--ui-radius);
   }
-  .style36,
-.style37 {
+  .songSelectionButton,
+.songPositionNumber {
     border-radius: calc(var(--ui-radius) - 2px);
   }
-  .style3,
-.style52,
-.style57,
-.style58 {
+  .notFoundSection,
+.selectedSongDisplaySettings,
+.selectedSongPreview,
+.selectedSongEmptyState {
     border-radius: calc(var(--ui-radius) + 4px);
   }
   .sharedField,
 .sharedButton,
-.style3,
-.style26,
-.style35,
-.style52,
-.style57,
-.style58 {
+.notFoundSection,
+.orderedSongItem,
+.dragHandleButton,
+.selectedSongDisplaySettings,
+.selectedSongPreview,
+.selectedSongEmptyState {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style62 {
+  .dragPreview {
     border-style: var(--component-border-style);
     border-width: 2px;
   }
-  .style7 {
+  .setListWorkspace {
     border-inline-style: var(--component-border-style);
     border-inline-width: 1px;
   }
-  .style18,
-.style21 {
+  .addSongForm,
+.setListSongsSection {
     border-top-style: var(--component-border-style);
     border-top-width: 1px;
   }
-  .style8 {
+  .setListSidebar {
     border-right-style: var(--component-border-style);
     border-right-width: 1px;
   }
-  .style29,
-.style58 {
+  .draggedSongItem,
+.selectedSongEmptyState {
     --component-border-style: dashed;
     border-style: dashed;
   }
-  .style27,
-.style29,
-.style62 {
+  .selectedSongItem,
+.draggedSongItem,
+.dragPreview {
     border-color: var(--accent);
   }
-  .style35 {
+  .dragHandleButton {
     border-color: var(--accent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--accent) 30%, transparent);
     }
   }
   .sharedButton,
-.style3,
-.style7,
-.style8,
-.style18,
-.style21,
-.style28,
-.style52,
-.style57 {
+.notFoundSection,
+.setListWorkspace,
+.setListSidebar,
+.addSongForm,
+.setListSongsSection,
+.unselectedSongItem,
+.selectedSongDisplaySettings,
+.selectedSongPreview {
     border-color: var(--line);
   }
   .sharedField,
-.style58 {
+.selectedSongEmptyState {
     border-color: var(--line-strong);
   }
   .sharedPrimaryButton,
-.style31 {
+.dropIndicator {
     background-color: var(--accent);
   }
-  .style27,
-.style29,
-.style30,
-.style35 {
+  .selectedSongItem,
+.draggedSongItem,
+.dropTargetSongItem,
+.dragHandleButton {
     background-color: var(--accent-soft);
   }
-  .style0 {
+  .pageShell {
     background-color: var(--canvas);
   }
   .sharedField,
 .sharedButton,
-.style3,
-.style7,
-.style26,
-.style52,
-.style57,
-.style62 {
+.notFoundSection,
+.setListWorkspace,
+.orderedSongItem,
+.selectedSongDisplaySettings,
+.selectedSongPreview,
+.dragPreview {
     background-color: var(--paper);
   }
-  .style8,
-.style37,
-.style58 {
+  .setListSidebar,
+.songPositionNumber,
+.selectedSongEmptyState {
     background-color: var(--paper-soft);
   }
-  .style35,
-.style41,
-.style42 {
+  .dragHandleButton,
+.moveSongButton,
+.removeSongButton {
     padding: 0px;
   }
-  .style26 {
+  .orderedSongItem {
     padding: var(--spacing);
   }
-  .style57 {
+  .selectedSongPreview {
     padding: calc(var(--spacing) * 4);
   }
-  .style3 {
+  .notFoundSection {
     padding: calc(var(--spacing) * 5);
   }
-  .style22,
-.style43 {
+  .songsSectionHeader,
+.emptySongListMessage {
     padding-inline: var(--spacing);
   }
-  .style36 {
+  .songSelectionButton {
     padding-inline: calc(var(--spacing) * 1.5);
   }
-  .style54 {
+  .transposeSelect {
     padding-inline: calc(var(--spacing) * 2);
   }
-  .style62 {
+  .dragPreview {
     padding-inline: calc(var(--spacing) * 2.5);
   }
   .sharedField,
@@ -412,209 +412,209 @@
 .sharedPrimaryButton {
     padding-inline: calc(var(--spacing) * 3);
   }
-  .style8,
-.style52 {
+  .setListSidebar,
+.selectedSongDisplaySettings {
     padding-inline: calc(var(--spacing) * 4);
   }
-  .style58 {
+  .selectedSongEmptyState {
     padding-inline: calc(var(--spacing) * 5);
   }
-  .style2,
-.style45 {
+  .loadingStatus,
+.selectedSongSection {
     padding-inline: calc(var(--spacing) * 6);
   }
-  .style54 {
+  .transposeSelect {
     padding-block: var(--spacing);
   }
   .sharedField,
 .sharedButton,
 .sharedPrimaryButton,
-.style36 {
+.songSelectionButton {
     padding-block: calc(var(--spacing) * 2);
   }
-  .style43,
-.style52 {
+  .emptySongListMessage,
+.selectedSongDisplaySettings {
     padding-block: calc(var(--spacing) * 3);
   }
-  .style8 {
+  .setListSidebar {
     padding-block: calc(var(--spacing) * 5);
   }
-  .style45 {
+  .selectedSongSection {
     padding-block: calc(var(--spacing) * 6);
   }
-  .style2,
-.style58 {
+  .loadingStatus,
+.selectedSongEmptyState {
     padding-block: calc(var(--spacing) * 8);
   }
-  .style18,
-.style21 {
+  .addSongForm,
+.setListSongsSection {
     padding-top: calc(var(--spacing) * 4);
   }
-  .style58 {
+  .selectedSongEmptyState {
     text-align: center;
   }
-  .style36 {
+  .songSelectionButton {
     text-align: left;
   }
-  .style50 {
+  .selectedSongTitle {
     font-size: var(--text-2xl);
     line-height: var(--component-leading, var(--text-2xl--line-height));
   }
-  .style11,
-.style59 {
+  .setListTitle,
+.emptyStateTitle {
     font-size: var(--text-lg);
     line-height: var(--component-leading, var(--text-lg--line-height));
   }
   .sharedField,
-.style6,
-.style60 {
+.notFoundDescription,
+.emptyStateDescription {
     font-size: var(--text-sm);
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
-  .style5 {
+  .notFoundTitle {
     font-size: var(--text-xl);
     line-height: var(--component-leading, var(--text-xl--line-height));
   }
   .sharedButton,
 .sharedPrimaryButton,
-.style4,
-.style12,
-.style38,
-.style43,
-.style46,
-.style51,
-.style53,
-.style54,
-.style55,
-.style61,
-.style62 {
+.backToSetListsLink,
+.setListSongCount,
+.songName,
+.emptySongListMessage,
+.actionStatusMessage,
+.openSongWorkspaceLink,
+.transposeFieldLabel,
+.transposeSelect,
+.displayToggleLabel,
+.emptyStateBrowseLink,
+.dragPreview {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
-  .style24,
-.style39,
-.style65 {
+  .reorderHint,
+.unavailableBadge,
+.dragPreviewHint {
     font-size: 9px;
   }
-  .style15,
-.style19,
-.style23,
-.style37,
-.style49 {
+  .formFieldLabel,
+.noAvailableSongsMessage,
+.songsSectionTitle,
+.songPositionNumber,
+.selectedSongPosition {
     font-size: 10px;
   }
-  .style19 {
+  .noAvailableSongsMessage {
     --component-leading: var(--leading-relaxed);
     line-height: var(--leading-relaxed);
   }
-  .style11 {
+  .setListTitle {
     --component-leading: var(--leading-tight);
     line-height: var(--leading-tight);
   }
-  .style5,
-.style11,
-.style23,
-.style49,
-.style50,
-.style59 {
+  .notFoundTitle,
+.setListTitle,
+.songsSectionTitle,
+.selectedSongPosition,
+.selectedSongTitle,
+.emptyStateTitle {
     --component-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
-  .style65 {
+  .dragPreviewHint {
     --component-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
   }
   .sharedButton,
 .sharedPrimaryButton,
-.style4,
-.style15,
-.style37,
-.style38,
-.style51,
-.style62 {
+.backToSetListsLink,
+.formFieldLabel,
+.songPositionNumber,
+.songName,
+.openSongWorkspaceLink,
+.dragPreview {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .style23,
-.style49 {
+  .songsSectionTitle,
+.selectedSongPosition {
     --component-tracking: 0.08em;
     letter-spacing: 0.08em;
   }
-  .style11 {
+  .setListTitle {
     overflow-wrap: break-word;
   }
-  .style4,
-.style20,
-.style35,
-.style37,
-.style51,
-.style63 {
+  .backToSetListsLink,
+.browsePublicSongsLink,
+.dragHandleButton,
+.songPositionNumber,
+.openSongWorkspaceLink,
+.dragPreviewIcon {
     color: var(--accent-deep);
   }
-  .style15,
-.style46,
-.style53,
-.style55 {
+  .formFieldLabel,
+.actionStatusMessage,
+.transposeFieldLabel,
+.displayToggleLabel {
     color: var(--muted);
   }
-  .style6,
-.style12,
-.style19,
-.style23,
-.style24,
-.style39,
-.style43,
-.style49,
-.style60,
-.style61,
-.style65 {
+  .notFoundDescription,
+.setListSongCount,
+.noAvailableSongsMessage,
+.songsSectionTitle,
+.reorderHint,
+.unavailableBadge,
+.emptySongListMessage,
+.selectedSongPosition,
+.emptyStateDescription,
+.emptyStateBrowseLink,
+.dragPreviewHint {
     color: var(--muted-soft);
   }
-  .style13,
-.style42 {
+  .deleteSetListButton,
+.removeSongButton {
     color: var(--ui-destructive);
   }
   .sharedField,
 .sharedButton,
-.style38,
-.style62 {
+.songName,
+.dragPreview {
     color: var(--ink);
   }
   .sharedPrimaryButton {
     color: var(--color-white);
   }
-  .style23,
-.style49 {
+  .songsSectionTitle,
+.selectedSongPosition {
     text-transform: uppercase;
   }
-  .style20 {
+  .browsePublicSongsLink {
     text-decoration-line: underline;
   }
-  .style56 {
+  .displayToggleCheckbox {
     accent-color: var(--accent);
   }
-  .style29 {
+  .draggedSongItem {
     opacity: 45%;
   }
-  .style31 {
+  .dropIndicator {
     --component-shadow: 0 0 0 2px var(--component-shadow-color, var(--paper));
     box-shadow: var(--component-inset-shadow), var(--component-inset-ring-shadow), var(--component-ring-offset-shadow), var(--component-ring-shadow), var(--component-shadow);
   }
-  .style62 {
+  .dragPreview {
     --component-shadow: 0 20px 25px -5px var(--component-shadow-color, rgb(0 0 0 / 0.1)), 0 8px 10px -6px var(--component-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--component-inset-shadow), var(--component-inset-ring-shadow), var(--component-ring-offset-shadow), var(--component-ring-shadow), var(--component-shadow);
   }
-  .style26 {
+  .orderedSongItem {
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --component-gradient-from, --component-gradient-via, --component-gradient-to;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style35 {
+  .dragHandleButton {
     -webkit-user-select: none;
     user-select: none;
   }
   @media (hover: hover) {
-    .style35:hover {
+    .dragHandleButton:hover {
       border-color: var(--accent);
     }
   }
@@ -629,89 +629,89 @@
     }
   }
   @media (hover: hover) {
-    .style4:hover,
-.style51:hover {
+    .backToSetListsLink:hover,
+.openSongWorkspaceLink:hover {
       text-decoration-line: underline;
     }
   }
   .sharedField:focus-visible,
 .sharedButton:focus-visible,
 .sharedPrimaryButton:focus-visible,
-.style35:focus-visible,
-.style36:focus-visible {
+.dragHandleButton:focus-visible,
+.songSelectionButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style36:focus-visible {
+  .songSelectionButton:focus-visible {
     outline-offset: 1px;
   }
   .sharedField:focus-visible,
 .sharedButton:focus-visible,
 .sharedPrimaryButton:focus-visible,
-.style35:focus-visible {
+.dragHandleButton:focus-visible {
     outline-offset: 2px;
   }
   .sharedField:focus-visible,
 .sharedButton:focus-visible,
 .sharedPrimaryButton:focus-visible,
-.style35:focus-visible,
-.style36:focus-visible {
+.dragHandleButton:focus-visible,
+.songSelectionButton:focus-visible {
     outline-color: var(--accent);
   }
-  .style35:active {
+  .dragHandleButton:active {
     cursor: grabbing;
   }
   .sharedButton:disabled,
 .sharedPrimaryButton:disabled,
-.style36:disabled {
+.songSelectionButton:disabled {
     cursor: not-allowed;
   }
   .sharedButton:disabled,
 .sharedPrimaryButton:disabled {
     opacity: 50%;
   }
-  .style36:disabled {
+  .songSelectionButton:disabled {
     opacity: 55%;
   }
   @media (width < 800px) {
-    .style7 {
+    .setListWorkspace {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
   }
   @media (width < 800px) {
-    .style8 {
+    .setListSidebar {
       border-right-style: var(--component-border-style);
       border-right-width: 0px;
     }
   }
   @media (width < 800px) {
-    .style8 {
+    .setListSidebar {
       border-bottom-style: var(--component-border-style);
       border-bottom-width: 1px;
     }
   }
   @media (width < 800px) {
-    .style8 {
+    .setListSidebar {
       padding-block: calc(var(--spacing) * 4);
     }
   }
   @media (width < 720px) {
-    .style57 {
+    .selectedSongPreview {
       min-height: 500px;
     }
   }
   @media (width < 720px) {
-    .style57 {
+    .selectedSongPreview {
       padding: calc(var(--spacing) * 3);
     }
   }
   @media (width < 720px) {
-    .style45 {
+    .selectedSongSection {
       padding-inline: calc(var(--spacing) * 3.5);
     }
   }
   @media (width < 720px) {
-    .style45 {
+    .selectedSongSection {
       padding-block: calc(var(--spacing) * 4);
     }
   }

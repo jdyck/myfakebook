@@ -9,7 +9,7 @@ export function AuthControls({ configured }: { configured: boolean }) {
   if (!configured) {
     return (
       <Link
-        className={componentStyles.style0}
+        className={componentStyles.signInLink}
         href="/sign-in"
       >
         <LogIn size={13} strokeWidth={1.8} />
@@ -23,7 +23,7 @@ export function AuthControls({ configured }: { configured: boolean }) {
       <Show when="signed-out">
         <SignInButton mode="modal">
           <button
-            className={componentStyles.style1}
+            className={componentStyles.signInButton}
             type="button"
           >
             Sign in
@@ -31,7 +31,7 @@ export function AuthControls({ configured }: { configured: boolean }) {
         </SignInButton>
         <SignUpButton mode="modal">
           <button
-            className={componentStyles.style2}
+            className={componentStyles.createAccountButton}
             type="button"
           >
             <UserRound size={13} strokeWidth={1.8} />

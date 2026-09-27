@@ -1,248 +1,248 @@
 /* Component styles. */
 @layer components {
-  .style5 {
+  .editorInstructions {
     margin: 0px;
   }
-  .style2,
-.style7 {
+  .unsupportedSourceTextarea,
+.rowEditorGrid {
     margin: calc(var(--spacing) * 3.5);
   }
-  .style1,
-.style4 {
+  .unsupportedFormatMessage,
+.editorInstructionsRow {
     margin-inline: calc(var(--spacing) * 3.5);
   }
-  .style1,
-.style4 {
+  .unsupportedFormatMessage,
+.editorInstructionsRow {
     margin-top: calc(var(--spacing) * 3);
   }
-  .style1,
-.style4 {
+  .unsupportedFormatMessage,
+.editorInstructionsRow {
     margin-bottom: 0px;
   }
-  .style9 {
+  .rowLabel {
     display: block;
   }
-  .style0,
-.style3,
-.style4 {
+  .unsupportedEditorPanel,
+.easyEditorPanel,
+.editorInstructionsRow {
     display: flex;
   }
-  .style7 {
+  .rowEditorGrid {
     display: grid;
   }
-  .style9 {
+  .rowLabel {
     height: 21px;
   }
-  .style10 {
+  .rowTextarea {
     height: 100%;
   }
-  .style0,
-.style3 {
+  .unsupportedEditorPanel,
+.easyEditorPanel {
     min-height: 0px;
   }
-  .style2 {
+  .unsupportedSourceTextarea {
     min-height: 480px;
   }
-  .style7,
-.style10 {
+  .rowEditorGrid,
+.rowTextarea {
     min-height: 515px;
   }
-  .style10 {
+  .rowTextarea {
     width: 100%;
   }
-  .style0,
-.style2,
-.style3,
-.style7 {
+  .unsupportedEditorPanel,
+.unsupportedSourceTextarea,
+.easyEditorPanel,
+.rowEditorGrid {
     flex: 1;
   }
-  .style2,
-.style10 {
+  .unsupportedSourceTextarea,
+.rowTextarea {
     resize: none;
   }
-  .style7 {
+  .rowEditorGrid {
     grid-template-columns: 42px minmax(0,1fr);
   }
-  .style0,
-.style3 {
+  .unsupportedEditorPanel,
+.easyEditorPanel {
     flex-direction: column;
   }
-  .style4 {
+  .editorInstructionsRow {
     flex-wrap: wrap;
   }
-  .style4 {
+  .editorInstructionsRow {
     align-items: center;
   }
-  .style4 {
+  .editorInstructionsRow {
     justify-content: space-between;
   }
-  .style4 {
+  .editorInstructionsRow {
     gap: calc(var(--spacing) * 2);
   }
-  .style10 {
+  .rowTextarea {
     overflow: auto;
   }
-  .style3,
-.style7,
-.style8 {
+  .easyEditorPanel,
+.rowEditorGrid,
+.rowLabelGutter {
     overflow: hidden;
   }
-  .style1,
-.style2,
-.style7 {
+  .unsupportedFormatMessage,
+.unsupportedSourceTextarea,
+.rowEditorGrid {
     border-radius: 8px;
   }
-  .style1,
-.style2,
-.style7 {
+  .unsupportedFormatMessage,
+.unsupportedSourceTextarea,
+.rowEditorGrid {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style10 {
+  .rowTextarea {
     border-style: var(--component-border-style);
     border-width: 0px;
   }
-  .style8 {
+  .rowLabelGutter {
     border-right-style: var(--component-border-style);
     border-right-width: 1px;
   }
-  .style1,
-.style2,
-.style7,
-.style8 {
+  .unsupportedFormatMessage,
+.unsupportedSourceTextarea,
+.rowEditorGrid,
+.rowLabelGutter {
     border-color: var(--line);
   }
-  .style8 {
+  .rowLabelGutter {
     background-color: var(--editor-gutter);
   }
-  .style1,
-.style2,
-.style7 {
+  .unsupportedFormatMessage,
+.unsupportedSourceTextarea,
+.rowEditorGrid {
     background-color: var(--paper-soft);
   }
-  .style10 {
+  .rowTextarea {
     background-color: transparent;
   }
-  .style1 {
+  .unsupportedFormatMessage {
     padding-inline: calc(var(--spacing) * 3);
   }
-  .style2,
-.style10 {
+  .unsupportedSourceTextarea,
+.rowTextarea {
     padding-inline: calc(var(--spacing) * 4);
   }
-  .style1 {
+  .unsupportedFormatMessage {
     padding-block: calc(var(--spacing) * 2);
   }
-  .style2,
-.style10 {
+  .unsupportedSourceTextarea,
+.rowTextarea {
     padding-block: calc(var(--spacing) * 3.5);
   }
-  .style8 {
+  .rowLabelGutter {
     padding-top: calc(var(--spacing) * 3.5);
   }
-  .style8 {
+  .rowLabelGutter {
     padding-right: 7px;
   }
-  .style8 {
+  .rowLabelGutter {
     padding-bottom: 17px;
   }
-  .style8 {
+  .rowLabelGutter {
     padding-left: 0px;
   }
-  .style8 {
+  .rowLabelGutter {
     text-align: right;
   }
-  .style2,
-.style8,
-.style10 {
+  .unsupportedSourceTextarea,
+.rowLabelGutter,
+.rowTextarea {
     font-family: var(--font-inconsolata);
   }
-  .style5,
-.style6,
-.style8 {
+  .editorInstructions,
+.rowValidationMessage,
+.rowLabelGutter {
     font-size: 10px;
   }
-  .style2,
-.style10 {
+  .unsupportedSourceTextarea,
+.rowTextarea {
     font-size: 11.5px;
   }
-  .style1 {
+  .unsupportedFormatMessage {
     font-size: 11px;
   }
-  .style1,
-.style5 {
+  .unsupportedFormatMessage,
+.editorInstructions {
     --component-leading: calc(var(--spacing) * 5);
     line-height: calc(var(--spacing) * 5);
   }
-  .style2,
-.style8,
-.style9,
-.style10 {
+  .unsupportedSourceTextarea,
+.rowLabelGutter,
+.rowLabel,
+.rowTextarea {
     --component-leading: 21px;
     line-height: 21px;
   }
-  .style10 {
+  .rowTextarea {
     white-space: pre;
   }
-  .style10 {
+  .rowTextarea {
     tab-size: 2;
   }
-  .style6 {
+  .rowValidationMessage {
     color: var(--amber);
   }
-  .style2,
-.style10 {
+  .unsupportedSourceTextarea,
+.rowTextarea {
     color: var(--ink);
   }
-  .style1 {
+  .unsupportedFormatMessage {
     color: var(--muted);
   }
-  .style5,
-.style8 {
+  .editorInstructions,
+.rowLabelGutter {
     color: var(--muted-soft);
   }
-  .style10 {
+  .rowTextarea {
     outline-style: var(--component-outline-style);
     outline-width: 0px;
   }
-  .style2 {
+  .unsupportedSourceTextarea {
     --component-outline-style: none;
     outline-style: none;
   }
-  .style8 {
+  .rowLabelGutter {
     -webkit-user-select: none;
     user-select: none;
   }
-  .style10 ::selection {
+  .rowTextarea ::selection {
     background-color: #ddd9ff;
   }
-  .style10::selection {
+  .rowTextarea::selection {
     background-color: #ddd9ff;
   }
-  .style2:focus {
+  .unsupportedSourceTextarea:focus {
     border-color: var(--accent);
   }
   @media (width < 720px) {
-    .style2,
-.style7 {
+    .unsupportedSourceTextarea,
+.rowEditorGrid {
       margin: calc(var(--spacing) * 3);
     }
   }
   @media (width < 720px) {
-    .style4 {
+    .editorInstructionsRow {
       margin-inline: calc(var(--spacing) * 3);
     }
   }
-  .style10:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
     background-color: #4a4387;
   }
-  .style10:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
     background-color: #4a4387;
   }
-  .style10:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
     color: var(--color-white);
   }
-  .style10:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
     color: var(--color-white);
   }
 }

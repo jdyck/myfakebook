@@ -44,8 +44,8 @@ export function PublicLibraryBackedWorkspace({
 
   if (publishedSongDocs === undefined) {
     return (
-      <main className={componentStyles.style0}>
-        <p className={componentStyles.style1} role="status">
+      <main className={componentStyles.loadingPage}>
+        <p className={componentStyles.loadingStatus} role="status">
           Loading Public Library…
         </p>
       </main>
@@ -73,10 +73,10 @@ export function PublicLibraryBackedWorkspace({
 
   if (initialPublicSongId && !initialSong) {
     return (
-      <main className={componentStyles.style2}>
-        <div className={componentStyles.style3}>
-          <h1 className={componentStyles.style4}>Song not found</h1>
-          <Link className={componentStyles.style5} href="/songs">Browse songs</Link>
+      <main className={componentStyles.notFoundPage}>
+        <div className={componentStyles.notFoundContent}>
+          <h1 className={componentStyles.notFoundTitle}>Song not found</h1>
+          <Link className={componentStyles.browseSongsLink} href="/songs">Browse songs</Link>
         </div>
       </main>
     );

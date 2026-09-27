@@ -30,37 +30,37 @@ export function PublicSongsListBacked({ clerkConfigured }: {
 export function PublicSongsList({ clerkConfigured, songs }: PublicSongsListProps) {
 
   return (
-    <div className={componentStyles.style0}>
+    <div className={componentStyles.pageShell}>
       <Header clerkConfigured={clerkConfigured} />
-      <main className={componentStyles.style1}>
-        <div className={componentStyles.style2}>
+      <main className={componentStyles.pageContent}>
+        <div className={componentStyles.pageHeadingRow}>
           <div>
-            <h1 id="songs-heading" className={componentStyles.style3}>Songs</h1>
-            <p className={componentStyles.style4}>Songs available to everyone.</p>
+            <h1 id="songs-heading" className={componentStyles.pageTitle}>Songs</h1>
+            <p className={componentStyles.pageDescription}>Songs available to everyone.</p>
           </div>
-          {songs && <span className={componentStyles.style5}>{songs.length} song{songs.length === 1 ? "" : "s"}</span>}
+          {songs && <span className={componentStyles.songCount}>{songs.length} song{songs.length === 1 ? "" : "s"}</span>}
         </div>
         {!songs ? (
           <p role="status">Loading songs…</p>
         ) : songs.length === 0 ? (
           <p>No published songs yet.</p>
         ) : (
-          <ul className={componentStyles.style6}>
+          <ul className={componentStyles.songList}>
             {songs.map((song) => (
               <li key={song.id}>
                 <Link
-                  className={componentStyles.style7}
+                  className={componentStyles.songLink}
                   href={`/songs/${encodeURIComponent(song.id)}`}
                 >
-                  <span className={componentStyles.style8}>
-                    <span className={componentStyles.style9}>{song.title}</span>
+                  <span className={componentStyles.songDetails}>
+                    <span className={componentStyles.songTitle}>{song.title}</span>
                     {(song.writers || song.rhythm) && (
-                      <span className={componentStyles.style10}>
+                      <span className={componentStyles.songMetadata}>
                         {[song.writers, song.rhythm].filter(Boolean).join(" · ")}
                       </span>
                     )}
                   </span>
-                  <span className={componentStyles.style11}>View</span>
+                  <span className={componentStyles.viewSongLabel}>View</span>
                 </Link>
               </li>
             ))}

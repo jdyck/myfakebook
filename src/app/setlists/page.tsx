@@ -13,11 +13,11 @@ export default async function SetListsPage() {
   if (convexConfigured) return <SetListsIndex />;
 
   return (
-    <div className={componentStyles.style0}>
+    <div className={componentStyles.pageShell}>
       <Header clerkConfigured />
-      <main className={componentStyles.style1}>
-        <h1 className={componentStyles.style2}>Set lists</h1>
-        <p className={componentStyles.style3}>Connect Convex to create and save set lists.</p>
+      <main className={componentStyles.pageContent}>
+        <h1 className={componentStyles.pageTitle}>Set lists</h1>
+        <p className={componentStyles.pageDescription}>Connect Convex to create and save set lists.</p>
       </main>
     </div>
   );

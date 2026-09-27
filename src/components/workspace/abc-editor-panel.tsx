@@ -16,25 +16,25 @@ function EditorSurface({ abc, lineCount, onChange }: EditorSurfaceProps) {
 
   return (
     <div
-      className={componentStyles.style0}
+      className={componentStyles.sourceEditorPanel}
       role="tabpanel"
       id="abc-source-panel"
       aria-labelledby="abc-source-tab"
     >
       <div
-        className={componentStyles.style1}
+        className={componentStyles.lineNumberGutter}
         ref={lineNumbersRef}
         aria-hidden="true"
       >
         {Array.from({ length: lineCount }, (_, index) => (
-          <span className={componentStyles.style2} key={index}>
+          <span className={componentStyles.lineNumber} key={index}>
             {index + 1}
           </span>
         ))}
       </div>
       <textarea
         aria-label="ABC notation source"
-        className={componentStyles.style3}
+        className={componentStyles.sourceTextarea}
         spellCheck={false}
         value={abc}
         onChange={(event) => onChange(event.target.value)}
@@ -75,18 +75,18 @@ export function AbcEditorPanel({
 
   return (
     <section
-      className={componentStyles.style4}
+      className={componentStyles.abcEditorPanel}
       aria-label="ABC editor"
     >
-      <div className={componentStyles.style5}>
-        <div className={componentStyles.style6}>
-          <FileMusic className={componentStyles.style7} size={15} strokeWidth={1.8} />
-          <div className={componentStyles.style8} role="tablist" aria-label="ABC editor mode">
+      <div className={componentStyles.editorToolbar}>
+        <div className={componentStyles.editorModeControls}>
+          <FileMusic className={componentStyles.fileTypeIcon} size={15} strokeWidth={1.8} />
+          <div className={componentStyles.editorModeTabs} role="tablist" aria-label="ABC editor mode">
             <button
               aria-label="ABC source"
               aria-controls="abc-source-panel"
               aria-selected={activeTab === "source"}
-              className={`${componentStyles.style9} ${activeTab === "source" ? componentStyles.style10 : componentStyles.style11}`}
+              className={`${componentStyles.editorModeTab} ${activeTab === "source" ? componentStyles.activeEditorModeTab : componentStyles.inactiveEditorModeTab}`}
               id="abc-source-tab"
               role="tab"
               tabIndex={activeTab === "source" ? 0 : -1}
@@ -100,7 +100,7 @@ export function AbcEditorPanel({
               aria-label="Easy editor"
               aria-controls="abc-easy-panel"
               aria-selected={activeTab === "easy"}
-              className={`${componentStyles.style9} ${activeTab === "easy" ? componentStyles.style10 : componentStyles.style11}`}
+              className={`${componentStyles.editorModeTab} ${activeTab === "easy" ? componentStyles.activeEditorModeTab : componentStyles.inactiveEditorModeTab}`}
               id="abc-easy-tab"
               role="tab"
               tabIndex={activeTab === "easy" ? 0 : -1}
@@ -111,13 +111,13 @@ export function AbcEditorPanel({
               Easy
             </button>
           </div>
-          <span className={componentStyles.style12}>
+          <span className={componentStyles.fileTypeBadge}>
             .abc
           </span>
         </div>
-        <div className={componentStyles.style13}>
+        <div className={componentStyles.editorActions}>
           <button
-            className={componentStyles.style14}
+            className={componentStyles.editorActionButton}
             type="button"
             onClick={onFormat}
           >
@@ -125,7 +125,7 @@ export function AbcEditorPanel({
             Format
           </button>
           <button
-            className={componentStyles.style14}
+            className={componentStyles.editorActionButton}
             type="button"
             onClick={onCopy}
           >
@@ -135,29 +135,29 @@ export function AbcEditorPanel({
         </div>
       </div>
 
-      <div className={componentStyles.style15}>
-        <div className={activeTab === "source" ? componentStyles.style15 : componentStyles.style16}>
+      <div className={componentStyles.editorPane}>
+        <div className={activeTab === "source" ? componentStyles.editorPane : componentStyles.hiddenEditorPane}>
           <EditorSurface abc={abc} lineCount={lineCount} onChange={onChange} />
         </div>
-        <div className={activeTab === "easy" ? componentStyles.style15 : componentStyles.style16}>
+        <div className={activeTab === "easy" ? componentStyles.editorPane : componentStyles.hiddenEditorPane}>
           <AbcRowEditor abc={abc} onChange={onChange} />
         </div>
       </div>
 
-      <div className={componentStyles.style17}>
-        <div className={componentStyles.style18}>
+      <div className={componentStyles.editorStatusBar}>
+        <div className={componentStyles.statusGroup}>
           <span>{sourceLength} chars</span>
           <span>{lineCount} lines</span>
         </div>
-        <div className={componentStyles.style18}>
-          <span className={`${componentStyles.style19} ${isConvertible ? componentStyles.style20 : componentStyles.style21}`}>
+        <div className={componentStyles.statusGroup}>
+          <span className={`${componentStyles.statusLabel} ${isConvertible ? componentStyles.conversionReadyStatus : componentStyles.conversionWarningStatus}`}>
             <span
-              className={`${componentStyles.style22} ${isConvertible ? componentStyles.style23 : componentStyles.style24}`}
+              className={`${componentStyles.statusDot} ${isConvertible ? componentStyles.readyStatusDot : componentStyles.warningStatusDot}`}
             />
             {isConvertible ? "Ready to export" : "Check source"}
           </span>
-          <span className={componentStyles.style19}>
-            <span className={componentStyles.style25} />
+          <span className={componentStyles.statusLabel}>
+            <span className={componentStyles.saveStatusDot} />
             {saveStatus}
           </span>
         </div>

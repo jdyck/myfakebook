@@ -17,16 +17,16 @@ type PreviewPanelProps = {
 export function PreviewPanel({ abc, displaySettings, saveAction, publishAction }: PreviewPanelProps) {
   return (
     <section
-      className={componentStyles.style0}
+      className={componentStyles.previewPanel}
       aria-label="Lead sheet preview"
     >
-      <div className={componentStyles.style1}>
-        <div className={componentStyles.style2}>
-          <Music2 className={componentStyles.style3} size={15} strokeWidth={1.8} />
+      <div className={componentStyles.previewHeader}>
+        <div className={componentStyles.previewHeading}>
+          <Music2 className={componentStyles.previewIcon} size={15} strokeWidth={1.8} />
           Preview
         </div>
       </div>
-      <div className={componentStyles.style4}>
+      <div className={componentStyles.previewContent}>
         <AbcPreview
           abc={abc}
           key={abc}

@@ -1,6 +1,6 @@
 /* Component styles. */
 @layer components {
-  .style1 {
+  .displaySettingsLegend {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -11,97 +11,97 @@
     white-space: nowrap;
     border-width: 0;
   }
-  .style0,
-.style2 {
+  .displaySettings,
+.transposeFieldLabel {
     display: flex;
   }
-  .style4 {
+  .displayToggleLabel {
     display: inline-flex;
   }
-  .style5 {
+  .displayToggleCheckbox {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
   }
-  .style0 {
+  .displaySettings {
     flex-wrap: wrap;
   }
-  .style0,
-.style2,
-.style4 {
+  .displaySettings,
+.transposeFieldLabel,
+.displayToggleLabel {
     align-items: center;
   }
-  .style0 {
+  .displaySettings {
     justify-content: flex-end;
   }
-  .style4 {
+  .displayToggleLabel {
     gap: var(--spacing);
   }
-  .style2 {
+  .transposeFieldLabel {
     gap: calc(var(--spacing) * 1.5);
   }
-  .style0 {
+  .displaySettings {
     gap: calc(var(--spacing) * 2);
   }
-  .style3 {
+  .transposeSelect {
     border-radius: 6px;
   }
-  .style3 {
+  .transposeSelect {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style0 {
+  .displaySettings {
     border-style: var(--component-border-style);
     border-width: 0px;
   }
-  .style3 {
+  .transposeSelect {
     border-color: var(--line-strong);
   }
-  .style3 {
+  .transposeSelect {
     background-color: var(--paper);
   }
-  .style0 {
+  .displaySettings {
     padding: 0px;
   }
-  .style3 {
+  .transposeSelect {
     padding-inline: calc(var(--spacing) * 1.5);
   }
-  .style3 {
+  .transposeSelect {
     padding-block: var(--spacing);
   }
-  .style2,
-.style3,
-.style4 {
+  .transposeFieldLabel,
+.transposeSelect,
+.displayToggleLabel {
     font-size: 10px;
   }
-  .style2,
-.style4 {
+  .transposeFieldLabel,
+.displayToggleLabel {
     --component-font-weight: 650;
     font-weight: 650;
   }
-  .style2 {
+  .transposeFieldLabel {
     color: var(--muted);
   }
-  .style4 {
+  .displayToggleLabel {
     color: var(--muted);
   }
-  .style3 {
+  .transposeSelect {
     color: var(--ink);
   }
-  .style5 {
+  .displayToggleCheckbox {
     accent-color: var(--accent);
   }
-  .style3:focus-visible {
+  .transposeSelect:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style3:focus-visible {
+  .transposeSelect:focus-visible {
     outline-offset: 2px;
   }
-  .style3:focus-visible {
+  .transposeSelect:focus-visible {
     outline-color: var(--accent);
   }
   @media (width < 720px) {
-    .style0 {
+    .displaySettings {
       justify-content: flex-start;
     }
   }

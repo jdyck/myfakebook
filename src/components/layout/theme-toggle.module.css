@@ -1,82 +1,82 @@
 /* Component styles. */
 @layer components {
-  .style1 {
+  .moonIcon {
     display: block;
   }
-  .style0 {
+  .themeToggleButton {
     display: grid;
   }
-  .style2 {
+  .sunIcon {
     display: none;
   }
-  .style0 {
+  .themeToggleButton {
     width: calc(var(--spacing) * 8);
     height: calc(var(--spacing) * 8);
   }
-  .style0 {
+  .themeToggleButton {
     cursor: pointer;
   }
-  .style0 {
+  .themeToggleButton {
     place-items: center;
   }
-  .style0 {
+  .themeToggleButton {
     border-radius: 8px;
   }
-  .style0 {
+  .themeToggleButton {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style0 {
+  .themeToggleButton {
     border-color: var(--line-strong);
   }
-  .style0 {
+  .themeToggleButton {
     background-color: transparent;
   }
-  .style0 {
+  .themeToggleButton {
     color: var(--muted);
   }
-  .style0 {
+  .themeToggleButton {
     transition-property: border-color,background-color,color;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style0 {
+  .themeToggleButton {
     --component-duration: 160ms;
     transition-duration: 160ms;
   }
-  .style0 {
+  .themeToggleButton {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
   @media (hover: hover) {
-    .style0:hover {
+    .themeToggleButton:hover {
       border-color: var(--accent);
     }
   }
   @media (hover: hover) {
-    .style0:hover {
+    .themeToggleButton:hover {
       background-color: var(--accent-soft);
     }
   }
   @media (hover: hover) {
-    .style0:hover {
+    .themeToggleButton:hover {
       color: var(--accent-deep);
     }
   }
-  .style0:focus-visible {
+  .themeToggleButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style0:focus-visible {
+  .themeToggleButton:focus-visible {
     outline-offset: 2px;
   }
-  .style0:focus-visible {
+  .themeToggleButton:focus-visible {
     outline-color: var(--accent);
   }
-  .style2:where([data-theme="dark"], [data-theme="dark"] *) {
+  .sunIcon:where([data-theme="dark"], [data-theme="dark"] *) {
     display: block;
   }
-  .style1:where([data-theme="dark"], [data-theme="dark"] *) {
+  .moonIcon:where([data-theme="dark"], [data-theme="dark"] *) {
     display: none;
   }
 }

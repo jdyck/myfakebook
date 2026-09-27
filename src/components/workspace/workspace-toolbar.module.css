@@ -1,142 +1,142 @@
 /* Component styles. */
 @layer components {
-  .style2 {
+  .songTitleHeading {
     margin: 0px;
   }
-  .style4 {
+  .songMetadataList {
     margin-top: calc(var(--spacing) * 2);
   }
-  .style7 {
+  .feedbackStatus {
     margin-top: calc(var(--spacing) * 2.5);
   }
-  .style7 {
+  .feedbackStatus {
     margin-bottom: 0px;
   }
-  .style0 {
+  .workspaceToolbar {
     margin-bottom: calc(var(--spacing) * 5);
   }
-  .style3 {
+  .songTitleInput {
     display: block;
   }
-  .style0,
-.style4 {
+  .workspaceToolbar,
+.songMetadataList {
     display: flex;
   }
-  .style6 {
+  .metadataSeparator {
     width: calc(var(--spacing) * 0.75);
     height: calc(var(--spacing) * 0.75);
   }
-  .style3 {
+  .songTitleInput {
     width: 100%;
   }
-  .style3 {
+  .songTitleInput {
     max-width: calc(var(--spacing) * 130);
   }
-  .style1 {
+  .songMetadataBlock {
     min-width: 0px;
   }
-  .style1 {
+  .songMetadataBlock {
     flex: 1;
   }
-  .style4 {
+  .songMetadataList {
     flex-wrap: wrap;
   }
-  .style4 {
+  .songMetadataList {
     align-items: center;
   }
-  .style0 {
+  .workspaceToolbar {
     align-items: flex-start;
   }
-  .style0 {
+  .workspaceToolbar {
     justify-content: space-between;
   }
-  .style4 {
+  .songMetadataList {
     gap: calc(var(--spacing) * 2.5);
   }
-  .style0 {
+  .workspaceToolbar {
     gap: calc(var(--spacing) * 6);
   }
-  .style6 {
+  .metadataSeparator {
     border-radius: calc(infinity * 1px);
   }
-  .style3 {
+  .songTitleInput {
     border-style: var(--component-border-style);
     border-width: 0px;
   }
-  .style3 {
+  .songTitleInput {
     border-bottom-style: var(--component-border-style);
     border-bottom-width: 1px;
   }
-  .style3 {
+  .songTitleInput {
     border-bottom-color: transparent;
   }
-  .style6 {
+  .metadataSeparator {
     background-color: var(--line-strong);
   }
-  .style3 {
+  .songTitleInput {
     background-color: transparent;
   }
-  .style4 {
+  .songMetadataList {
     font-size: 10px;
   }
-  .style7 {
+  .feedbackStatus {
     font-size: 11px;
   }
-  .style3 {
+  .songTitleInput {
     font-size: clamp(24px, 3vw, 32px);
   }
-  .style3 {
+  .songTitleInput {
     --component-leading: 1.05;
     line-height: 1.05;
   }
-  .style5 {
+  .songSourceBadge {
     --component-font-weight: 650;
     font-weight: 650;
   }
-  .style3 {
+  .songTitleInput {
     --component-font-weight: 740;
     font-weight: 740;
   }
-  .style3 {
+  .songTitleInput {
     --component-tracking: -0.055em;
     letter-spacing: -0.055em;
   }
-  .style5 {
+  .songSourceBadge {
     color: var(--accent-deep);
   }
-  .style7 {
+  .feedbackStatus {
     color: var(--muted);
   }
-  .style4 {
+  .songMetadataList {
     color: var(--muted-soft);
   }
-  .style3 {
+  .songTitleInput {
     color: var(--ink);
   }
-  .style3 {
+  .songTitleInput {
     outline-style: var(--component-outline-style);
     outline-width: 0px;
   }
-  .style3 {
+  .songTitleInput {
     transition-property: border-color;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style3 {
+  .songTitleInput {
     --component-duration: 160ms;
     transition-duration: 160ms;
   }
-  .style3 {
+  .songTitleInput {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
   @media (hover: hover) {
-    .style3:hover {
+    .songTitleInput:hover {
       border-bottom-color: var(--accent);
     }
   }
   @media (width < 720px) {
-    .style0 {
+    .workspaceToolbar {
       display: block;
     }
   }

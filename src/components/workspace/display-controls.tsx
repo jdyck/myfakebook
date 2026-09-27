@@ -12,14 +12,14 @@ export function DisplayControls({ settings, onChange }: DisplayControlsProps) {
   return (
     <fieldset
       aria-label="Display controls"
-      className={componentStyles.style0}
+      className={componentStyles.displaySettings}
     >
-      <legend className={componentStyles.style1}>Display controls</legend>
-      <label className={componentStyles.style2}>
+      <legend className={componentStyles.displaySettingsLegend}>Display controls</legend>
+      <label className={componentStyles.transposeFieldLabel}>
         Transpose
         <select
           aria-label="Song transposition"
-          className={componentStyles.style3}
+          className={componentStyles.transposeSelect}
           value={settings.transposition}
           onChange={(event) => onChange({ transposition: Number(event.target.value) })}
         >
@@ -34,11 +34,11 @@ export function DisplayControls({ settings, onChange }: DisplayControlsProps) {
         ["showChords", "Show chords"],
         ["showLyrics", "Show lyrics"],
       ] as const).map(([setting, label]) => (
-        <label className={componentStyles.style4} key={setting}>
+        <label className={componentStyles.displayToggleLabel} key={setting}>
           <input
             aria-label={label}
             checked={settings[setting]}
-            className={componentStyles.style5}
+            className={componentStyles.displayToggleCheckbox}
             type="checkbox"
             onChange={(event) => onChange({ [setting]: event.target.checked })}
           />

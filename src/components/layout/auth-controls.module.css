@@ -1,148 +1,148 @@
 /* Component styles. */
 @layer components {
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     display: inline-flex;
   }
-  .style0 {
+  .signInLink {
     min-height: calc(var(--spacing) * 8);
   }
-  .style1,
-.style2 {
+  .signInButton,
+.createAccountButton {
     min-height: calc(var(--spacing) * 8.5);
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     cursor: pointer;
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     align-items: center;
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     justify-content: center;
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     gap: calc(var(--spacing) * 1.75);
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     border-radius: 8px;
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style0,
-.style2 {
+  .signInLink,
+.createAccountButton {
     border-color: var(--line-strong);
   }
-  .style1 {
+  .signInButton {
     border-color: transparent;
   }
-  .style2 {
+  .createAccountButton {
     background-color: var(--paper);
   }
-  .style1 {
+  .signInButton {
     background-color: transparent;
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     padding-inline: calc(var(--spacing) * 2.75);
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     font-size: 11px;
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     --component-font-weight: 650;
     font-weight: 650;
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     color: var(--muted);
   }
-  .style0 {
+  .signInLink {
     text-decoration-line: none;
   }
-  .style1 {
+  .signInButton {
     transition-property: background-color,color,opacity;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style2 {
+  .createAccountButton {
     transition-property: border-color,color,opacity;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style0 {
+  .signInLink {
     transition-property: border-color,color;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     --component-duration: 160ms;
     transition-duration: 160ms;
   }
-  .style0,
-.style1,
-.style2 {
+  .signInLink,
+.signInButton,
+.createAccountButton {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
   @media (hover: hover) {
-    .style0:hover,
-.style2:hover {
+    .signInLink:hover,
+.createAccountButton:hover {
       border-color: var(--accent);
     }
   }
   @media (hover: hover) {
-    .style1:hover {
+    .signInButton:hover {
       background-color: var(--paper-soft);
     }
   }
   @media (hover: hover) {
-    .style0:hover,
-.style1:hover,
-.style2:hover {
+    .signInLink:hover,
+.signInButton:hover,
+.createAccountButton:hover {
       color: var(--ink);
     }
   }
-  .style0:focus-visible,
-.style1:focus-visible,
-.style2:focus-visible {
+  .signInLink:focus-visible,
+.signInButton:focus-visible,
+.createAccountButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style0:focus-visible,
-.style1:focus-visible,
-.style2:focus-visible {
+  .signInLink:focus-visible,
+.signInButton:focus-visible,
+.createAccountButton:focus-visible {
     outline-offset: 2px;
   }
-  .style0:focus-visible,
-.style1:focus-visible,
-.style2:focus-visible {
+  .signInLink:focus-visible,
+.signInButton:focus-visible,
+.createAccountButton:focus-visible {
     outline-color: var(--accent);
   }
-  .style1:disabled,
-.style2:disabled {
+  .signInButton:disabled,
+.createAccountButton:disabled {
     opacity: 0.55;
   }
 }

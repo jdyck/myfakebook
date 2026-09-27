@@ -322,7 +322,7 @@ export function MyFakebookWorkspace({
   }
 
   return (
-    <div className={componentStyles.style0}>
+    <div className={componentStyles.appShell}>
       <Header clerkConfigured={clerkConfigured} />
 
       <div
@@ -343,9 +343,9 @@ export function MyFakebookWorkspace({
           title={songTitle}
         />
 
-        <main className={componentStyles.style1}>
+        <main className={componentStyles.workspaceMain}>
           {setListReturn && (
-            <Link className={componentStyles.style2} href={setListReturn.href}>
+            <Link className={componentStyles.setListReturnLink} href={setListReturn.href}>
               ← Back to {setListReturn.name}
             </Link>
           )}
@@ -364,10 +364,10 @@ export function MyFakebookWorkspace({
           />
 
           {persistenceEnabled && setListReturn && (currentSong?.id === setListReturn.songId || selectedPublicSongId === setListReturn.songId) && (
-            <div className={componentStyles.style3}>
+            <div className={componentStyles.setListSettingsBanner}>
               <div>
-                <p className={componentStyles.style4}>Performance settings for {setListReturn.name}</p>
-                <p className={componentStyles.style5}>Save the current transpose and visibility choices to this set-list item.</p>
+                <p className={componentStyles.settingsBannerTitle}>Performance settings for {setListReturn.name}</p>
+                <p className={componentStyles.settingsBannerDescription}>Save the current transpose and visibility choices to this set-list item.</p>
               </div>
               <SaveSetListDisplaySettingsButton
                 displaySettings={displaySettings}
@@ -378,7 +378,7 @@ export function MyFakebookWorkspace({
             </div>
           )}
 
-          <div className={componentStyles.style6}>
+          <div className={componentStyles.editorAndPreview}>
             <AbcEditorPanel
               abc={abc}
               copied={copied}

@@ -1,236 +1,236 @@
 /* Component styles. */
 @layer components {
-  .style0 {
+  .leadSheetPreview {
     position: relative;
   }
-  .style12 {
+  .songActions {
     margin-top: calc(var(--spacing) * 2);
   }
-  .style5 {
+  .playbackControls {
     margin-top: calc(var(--spacing) * 3);
   }
-  .style4 {
+  .syntaxHelpExample {
     margin-top: 7px;
   }
-  .style4 {
+  .syntaxHelpExample {
     display: block;
   }
-  .style5,
-.style6,
-.style7,
-.style12 {
+  .playbackControls,
+.playbackFieldGroup,
+.playbackFieldLabel,
+.songActions {
     display: flex;
   }
-  .style3,
-.style9 {
+  .playbackErrorPanel,
+.playbackButton {
     display: grid;
   }
-  .style2 {
+  .notationErrorState {
     display: none;
   }
-  .style9 {
+  .playbackButton {
     width: 31px;
     height: 31px;
   }
-  .style3 {
+  .playbackErrorPanel {
     min-height: 320px;
   }
-  .style0 {
+  .leadSheetPreview {
     min-height: 480px;
   }
-  .style1 {
+  .notationCanvas {
     min-width: calc(var(--spacing) * 125);
   }
-  .style0 {
+  .leadSheetPreview {
     flex: 1;
   }
-  .style10 {
+  .loadingSpinner {
     animation: var(--animate-spin);
   }
-  .style9 {
+  .playbackButton {
     cursor: pointer;
   }
-  .style0 {
+  .leadSheetPreview {
     scrollbar-color: #d1d1cb transparent;
   }
-  .style6,
-.style12 {
+  .playbackFieldGroup,
+.songActions {
     flex-wrap: wrap;
   }
-  .style3,
-.style9 {
+  .playbackErrorPanel,
+.playbackButton {
     place-items: center;
   }
-  .style5,
-.style6,
-.style7,
-.style12 {
+  .playbackControls,
+.playbackFieldGroup,
+.playbackFieldLabel,
+.songActions {
     align-items: center;
   }
-  .style7 {
+  .playbackFieldLabel {
     gap: calc(var(--spacing) * 1.5);
   }
-  .style12 {
+  .songActions {
     gap: calc(var(--spacing) * 2);
   }
-  .style6 {
+  .playbackFieldGroup {
     gap: calc(var(--spacing) * 3);
   }
-  .style0 {
+  .leadSheetPreview {
     overflow: auto;
   }
-  .style8 {
+  .playbackSelect {
     border-radius: 6px;
   }
-  .style9 {
+  .playbackButton {
     border-radius: 7px;
   }
-  .style0 {
+  .leadSheetPreview {
     border-radius: 8px;
   }
-  .style0,
-.style8,
-.style9 {
+  .leadSheetPreview,
+.playbackSelect,
+.playbackButton {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style5 {
+  .playbackControls {
     border-top-style: var(--component-border-style);
     border-top-width: 1px;
   }
-  .style0,
-.style5 {
+  .leadSheetPreview,
+.playbackControls {
     border-color: var(--line);
   }
-  .style8,
-.style9 {
+  .playbackSelect,
+.playbackButton {
     border-color: var(--line-strong);
   }
-  .style0 {
+  .leadSheetPreview {
     background-color: #fffefb;
   }
-  .style8,
-.style9 {
+  .playbackSelect,
+.playbackButton {
     background-color: var(--paper);
   }
-  .style3 {
+  .playbackErrorPanel {
     padding: 30px;
   }
-  .style8 {
+  .playbackSelect {
     padding-inline: calc(var(--spacing) * 1.5);
   }
-  .style1 {
+  .notationCanvas {
     padding-inline: calc(var(--spacing) * 2);
   }
-  .style0 {
+  .leadSheetPreview {
     padding-inline: calc(var(--spacing) * 3.5);
   }
-  .style8 {
+  .playbackSelect {
     padding-block: var(--spacing);
   }
-  .style0 {
+  .leadSheetPreview {
     padding-block: 18px;
   }
-  .style1 {
+  .notationCanvas {
     padding-top: calc(var(--spacing) * 2.5);
   }
-  .style5 {
+  .playbackControls {
     padding-top: calc(var(--spacing) * 3);
   }
-  .style1 {
+  .notationCanvas {
     padding-bottom: calc(var(--spacing) * 3.5);
   }
-  .style3 {
+  .playbackErrorPanel {
     text-align: center;
   }
-  .style4 {
+  .syntaxHelpExample {
     font-family: var(--font-inter);
   }
-  .style4,
-.style7,
-.style8,
-.style11 {
+  .syntaxHelpExample,
+.playbackFieldLabel,
+.playbackSelect,
+.playbackStatus {
     font-size: 10px;
   }
-  .style3 {
+  .playbackErrorPanel {
     font-size: 11px;
   }
-  .style3 {
+  .playbackErrorPanel {
     --component-leading: 1.6;
     line-height: 1.6;
   }
-  .style7,
-.style11 {
+  .playbackFieldLabel,
+.playbackStatus {
     --component-font-weight: 650;
     font-weight: 650;
   }
-  .style9 {
+  .playbackButton {
     color: var(--accent);
   }
-  .style3 {
+  .playbackErrorPanel {
     color: var(--amber);
   }
-  .style8 {
+  .playbackSelect {
     color: var(--ink);
   }
-  .style7,
-.style11 {
+  .playbackFieldLabel,
+.playbackStatus {
     color: var(--muted);
   }
-  .style4 {
+  .syntaxHelpExample {
     color: var(--muted-soft);
   }
-  .style9 {
+  .playbackButton {
     transition-property: border-color,background-color;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style9 {
+  .playbackButton {
     --component-duration: 160ms;
     transition-duration: 160ms;
   }
-  .style9 {
+  .playbackButton {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
   @media (hover: hover) {
-    .style9:hover {
+    .playbackButton:hover {
       border-color: var(--accent);
     }
   }
   @media (hover: hover) {
-    .style9:hover {
+    .playbackButton:hover {
       background-color: var(--accent-soft);
     }
   }
-  .style8:focus-visible,
-.style9:focus-visible {
+  .playbackSelect:focus-visible,
+.playbackButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style8:focus-visible,
-.style9:focus-visible {
+  .playbackSelect:focus-visible,
+.playbackButton:focus-visible {
     outline-offset: 2px;
   }
-  .style8:focus-visible,
-.style9:focus-visible {
+  .playbackSelect:focus-visible,
+.playbackButton:focus-visible {
     outline-color: var(--accent);
   }
-  .style9:disabled {
+  .playbackButton:disabled {
     cursor: not-allowed;
   }
   @media (width < 720px) {
-    .style0 {
+    .leadSheetPreview {
       min-height: 390px;
     }
   }
-  .style0:where([data-theme="dark"], [data-theme="dark"] *) {
+  .leadSheetPreview:where([data-theme="dark"], [data-theme="dark"] *) {
     background-color: #f7f4e9;
   }
-  .style1 svg {
+  .notationCanvas svg {
     overflow: visible;
   }
-  .style1 svg {
+  .notationCanvas svg {
     color: #252631;
   }
 }

@@ -31,8 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`${inter.variable} ${inconsolata.variable} ${componentStyles.style0}`} lang="en">
-      <body className={componentStyles.style1}>
+    <html className={`${inter.variable} ${inconsolata.variable} ${componentStyles.fontVariables}`} lang="en">
+      <body className={componentStyles.pageBody}>
         <AppProviders>{children}</AppProviders>
         <Analytics />
       </body>

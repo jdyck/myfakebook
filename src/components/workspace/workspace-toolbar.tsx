@@ -41,39 +41,39 @@ export function WorkspaceToolbar({
   const tempoLabel = abc.match(/^Q:.*?=\s*(\d+)/m)?.[1] || abc.match(/^Q:\s*(\d+)/m)?.[1] || "";
 
   return (
-    <div className={componentStyles.style0}>
-      <div className={componentStyles.style1}>
-        <h1 className={componentStyles.style2}>
+    <div className={componentStyles.workspaceToolbar}>
+      <div className={componentStyles.songMetadataBlock}>
+        <h1 className={componentStyles.songTitleHeading}>
           <input
             aria-label="Lead sheet title"
-            className={componentStyles.style3}
+            className={componentStyles.songTitleInput}
             value={title}
             onChange={(event) => onTitleChange(event.target.value)}
           />
         </h1>
-        <div className={componentStyles.style4}>
-          <span className={componentStyles.style5}>{sourceLabel}</span>
-          <span className={componentStyles.style6} />
+        <div className={componentStyles.songMetadataList}>
+          <span className={componentStyles.songSourceBadge}>{sourceLabel}</span>
+          <span className={componentStyles.metadataSeparator} />
           {composerLabel && (
             <>
               <span>{composerLabel}</span>
-              <span className={componentStyles.style6} />
+              <span className={componentStyles.metadataSeparator} />
             </>
           )}
           {rhythmLabel && (
             <>
               <span>{rhythmLabel}</span>
-              <span className={componentStyles.style6} />
+              <span className={componentStyles.metadataSeparator} />
             </>
           )}
           <span>{keyLabel}</span>
-          <span className={componentStyles.style6} />
+          <span className={componentStyles.metadataSeparator} />
           <span>{meterLabel}</span>
-          <span className={componentStyles.style6} />
+          <span className={componentStyles.metadataSeparator} />
           <span>{tempoLabel ? `${tempoLabel} BPM` : "Tempo not set"}</span>
         </div>
         {feedback && (
-          <p className={componentStyles.style7} role="status">
+          <p className={componentStyles.feedbackStatus} role="status">
             {feedback}
           </p>
         )}

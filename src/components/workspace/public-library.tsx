@@ -13,43 +13,43 @@ export function PublicLibrary({ songs, selectedSongId, onOpenSong }: PublicLibra
   return (
     <section
       aria-labelledby="songs-heading"
-      className={componentStyles.style0}
+      className={componentStyles.songLibrarySection}
     >
-      <div className={componentStyles.style1}>
+      <div className={componentStyles.sectionHeader}>
         <div>
-          <h2 id="songs-heading" className={componentStyles.style2}>
+          <h2 id="songs-heading" className={componentStyles.sectionTitle}>
             Songs
           </h2>
-          <p className={componentStyles.style3}>
+          <p className={componentStyles.sectionDescription}>
             Songs available to everyone.
           </p>
         </div>
-        <span className={componentStyles.style4}>
+        <span className={componentStyles.songCount}>
           {songs.length} song{songs.length === 1 ? "" : "s"}
         </span>
       </div>
-      <div className={componentStyles.style5}>
+      <div className={componentStyles.songList}>
         {songs.map((song) => {
           const isSelected = selectedSongId === song.id;
           return (
             <button
               aria-pressed={isSelected}
-              className={`${componentStyles.style6} ${
+              className={`${componentStyles.songChoiceButton} ${
                 isSelected
-                  ? componentStyles.style7
-                  : componentStyles.style8
+                  ? componentStyles.selectedSongButton
+                  : componentStyles.unselectedSongButton
               }`}
               key={song.id}
               type="button"
               onClick={() => onOpenSong(song)}
             >
-              <span className={componentStyles.style9}>
-                <span className={componentStyles.style10}>{song.title}</span>
-                <span className={componentStyles.style11}>
+              <span className={componentStyles.songDetails}>
+                <span className={componentStyles.songTitle}>{song.title}</span>
+                <span className={componentStyles.songMetadata}>
                   {song.writers} · {song.rhythm}
                 </span>
               </span>
-              <span className={componentStyles.style12}>
+              <span className={componentStyles.songActionLabel}>
                 {isSelected ? "Open" : "View"}
               </span>
             </button>

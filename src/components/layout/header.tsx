@@ -14,27 +14,27 @@ type HeaderProps = {
 
 export function Header({ clerkConfigured }: HeaderProps) {
   return (
-    <header className={componentStyles.style0}>
-      <div className={componentStyles.style1}>
-        <div className={componentStyles.style2} aria-hidden="true">
+    <header className={componentStyles.siteHeader}>
+      <div className={componentStyles.brandIdentity}>
+        <div className={componentStyles.brandIcon} aria-hidden="true">
           <Music2 size={17} strokeWidth={2.2} />
         </div>
-        <span className={componentStyles.style3}>MyFakebook</span>
+        <span className={componentStyles.brandName}>MyFakebook</span>
       </div>
-      <div className={componentStyles.style4}>
-        <nav aria-label="Main navigation" className={componentStyles.style5}>
-          <Link className={componentStyles.style6} href="/songs">
+      <div className={componentStyles.headerTools}>
+        <nav aria-label="Main navigation" className={componentStyles.primaryNavigation}>
+          <Link className={componentStyles.navigationLink} href="/songs">
             Songs
           </Link>
-          <Link className={componentStyles.style6} href="/new">
+          <Link className={componentStyles.navigationLink} href="/new">
             New
           </Link>
           {clerkConfigured && (
             <Show when="signed-in">
-              <Link className={componentStyles.style6} href="/mylibrary">
+              <Link className={componentStyles.navigationLink} href="/mylibrary">
                 My Library
               </Link>
-              <Link className={componentStyles.style6} href="/setlists">
+              <Link className={componentStyles.navigationLink} href="/setlists">
                 Set lists
               </Link>
             </Show>

@@ -15,9 +15,9 @@ export function WorkspaceActions({ exporting, onNew, onExport, onFileImport }: W
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className={componentStyles.style0}>
+    <div className={componentStyles.workspaceActionGroup}>
       <button
-        className={componentStyles.style1}
+        className={componentStyles.secondaryActionButton}
         type="button"
         onClick={onNew}
       >
@@ -25,7 +25,7 @@ export function WorkspaceActions({ exporting, onNew, onExport, onFileImport }: W
         New
       </button>
       <button
-        className={componentStyles.style1}
+        className={componentStyles.secondaryActionButton}
         type="button"
         onClick={() => fileInputRef.current?.click()}
       >
@@ -33,7 +33,7 @@ export function WorkspaceActions({ exporting, onNew, onExport, onFileImport }: W
         Import
       </button>
       <button
-        className={componentStyles.style2}
+        className={componentStyles.exportButton}
         disabled={exporting}
         type="button"
         onClick={onExport}

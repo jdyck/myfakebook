@@ -1,582 +1,582 @@
 /* Component styles. */
 @layer components {
-  .style17,
-.style18,
-.style22,
-.style28,
-.style29 {
+  .setListDialogTitle,
+.dialogSongTitle,
+.setListOptionList,
+.emptyStateTitle,
+.emptyStateDescription {
     margin: 0px;
   }
-  .style14 {
+  .setListDialog {
     margin: auto;
   }
-  .style9,
-.style25 {
+  .songPublicationDetails,
+.setListOptionMetadata {
     margin-top: calc(var(--spacing) * 0.5);
   }
-  .style18,
-.style29 {
+  .dialogSongTitle,
+.emptyStateDescription {
     margin-top: var(--spacing);
   }
-  .style3,
-.style10 {
+  .recentSongList,
+.myLibraryLink {
     margin-top: calc(var(--spacing) * 2);
   }
-  .style30,
-.style31 {
+  .createSetListLink,
+.dialogErrorMessage {
     margin-top: calc(var(--spacing) * 3);
   }
-  .style0 {
+  .recentSongsSection {
     margin-top: 17px;
   }
-  .style31 {
+  .dialogErrorMessage {
     margin-bottom: var(--spacing);
   }
-  .style8,
-.style9,
-.style10,
-.style24,
-.style25 {
+  .songTitle,
+.songPublicationDetails,
+.myLibraryLink,
+.setListOptionName,
+.setListOptionMetadata {
     display: block;
   }
-  .style4,
-.style5,
-.style15,
-.style16,
-.style23 {
+  .recentSongItem,
+.recentSongLink,
+.setListDialogContent,
+.setListDialogHeader,
+.setListOptionButton {
     display: flex;
   }
-  .style3,
-.style6,
-.style19,
-.style22 {
+  .recentSongList,
+.recentSongIcon,
+.closeDialogButton,
+.setListOptionList {
     display: grid;
   }
-  .style30 {
+  .createSetListLink {
     display: inline-block;
   }
-  .style12,
-.style13,
-.style33 {
+  .removeSongButton,
+.songLibraryActionButton,
+.publicationButton {
     display: inline-flex;
   }
-  .style6 {
+  .recentSongIcon {
     width: calc(var(--spacing) * 6);
     height: calc(var(--spacing) * 6);
   }
-  .style19 {
+  .closeDialogButton {
     width: calc(var(--spacing) * 8);
     height: calc(var(--spacing) * 8);
   }
-  .style20 {
+  .setListDialogBody {
     max-height: 65vh;
   }
-  .style14,
-.style15 {
+  .setListDialog,
+.setListDialogContent {
     max-height: calc(100dvh - 2rem);
   }
-  .style12,
-.style33 {
+  .removeSongButton,
+.publicationButton {
     min-height: 31px;
   }
-  .style13 {
+  .songLibraryActionButton {
     min-height: 32px;
   }
-  .style14 {
+  .setListDialog {
     width: min(28rem, calc(100% - 2rem));
   }
-  .style23 {
+  .setListOptionButton {
     width: 100%;
   }
-  .style5,
-.style7 {
+  .recentSongLink,
+.songDetails {
     min-width: 0px;
   }
-  .style5 {
+  .recentSongLink {
     flex: 1;
   }
-  .style6,
-.style19,
-.style26 {
+  .recentSongIcon,
+.closeDialogButton,
+.setListOptionActionLabel {
     flex-shrink: 0;
   }
-  .style5,
-.style12,
-.style13,
-.style33 {
+  .recentSongLink,
+.removeSongButton,
+.songLibraryActionButton,
+.publicationButton {
     cursor: pointer;
   }
-  .style22 {
+  .setListOptionList {
     list-style-type: none;
   }
-  .style15 {
+  .setListDialogContent {
     flex-direction: column;
   }
-  .style6,
-.style19 {
+  .recentSongIcon,
+.closeDialogButton {
     place-items: center;
   }
-  .style4,
-.style5,
-.style12,
-.style13,
-.style23,
-.style33 {
+  .recentSongItem,
+.recentSongLink,
+.removeSongButton,
+.songLibraryActionButton,
+.setListOptionButton,
+.publicationButton {
     align-items: center;
   }
-  .style16 {
+  .setListDialogHeader {
     align-items: flex-start;
   }
-  .style16,
-.style23 {
+  .setListDialogHeader,
+.setListOptionButton {
     justify-content: space-between;
   }
-  .style12,
-.style13,
-.style33 {
+  .removeSongButton,
+.songLibraryActionButton,
+.publicationButton {
     justify-content: center;
   }
-  .style4 {
+  .recentSongItem {
     gap: var(--spacing);
   }
-  .style12 {
+  .removeSongButton {
     gap: calc(var(--spacing) * 1.5);
   }
-  .style22 {
+  .setListOptionList {
     gap: calc(var(--spacing) * 2);
   }
-  .style23 {
+  .setListOptionButton {
     gap: calc(var(--spacing) * 3);
   }
-  .style16 {
+  .setListDialogHeader {
     gap: calc(var(--spacing) * 4);
   }
-  .style3 {
+  .recentSongList {
     gap: 3px;
   }
-  .style5 {
+  .recentSongLink {
     gap: 9px;
   }
-  .style8,
-.style18,
-.style24 {
+  .songTitle,
+.dialogSongTitle,
+.setListOptionName {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .style15 {
+  .setListDialogContent {
     overflow: hidden;
   }
-  .style14 {
+  .setListDialog {
     overflow: visible;
   }
-  .style20 {
+  .setListDialogBody {
     overflow-y: auto;
   }
-  .style6 {
+  .recentSongIcon {
     border-radius: 6px;
   }
-  .style12,
-.style13,
-.style33 {
+  .removeSongButton,
+.songLibraryActionButton,
+.publicationButton {
     border-radius: 7px;
   }
-  .style5 {
+  .recentSongLink {
     border-radius: 8px;
   }
-  .style10,
-.style19,
-.style23,
-.style32 {
+  .myLibraryLink,
+.closeDialogButton,
+.setListOptionButton,
+.saveSetListSettingsButton {
     border-radius: var(--ui-radius);
   }
-  .style15 {
+  .setListDialogContent {
     border-radius: calc(var(--ui-radius) + 4px);
   }
-  .style6,
-.style10,
-.style12,
-.style13,
-.style15,
-.style19,
-.style23,
-.style33 {
+  .recentSongIcon,
+.myLibraryLink,
+.removeSongButton,
+.songLibraryActionButton,
+.setListDialogContent,
+.closeDialogButton,
+.setListOptionButton,
+.publicationButton {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style5,
-.style14 {
+  .recentSongLink,
+.setListDialog {
     border-style: var(--component-border-style);
     border-width: 0px;
   }
-  .style16 {
+  .setListDialogHeader {
     border-bottom-style: var(--component-border-style);
     border-bottom-width: 1px;
   }
-  .style15,
-.style16,
-.style19,
-.style23 {
+  .setListDialogContent,
+.setListDialogHeader,
+.closeDialogButton,
+.setListOptionButton {
     border-color: var(--line);
   }
-  .style13 {
+  .songLibraryActionButton {
     border-color: var(--accent);
   }
-  .style6 {
+  .recentSongIcon {
     border-color: var(--accent-soft);
   }
-  .style10 {
+  .myLibraryLink {
     border-color: var(--line);
   }
-  .style12,
-.style33 {
+  .removeSongButton,
+.publicationButton {
     border-color: var(--line-strong);
   }
-  .style32 {
+  .saveSetListSettingsButton {
     background-color: var(--accent);
   }
-  .style15,
-.style23 {
+  .setListDialogContent,
+.setListOptionButton {
     background-color: var(--paper);
   }
-  .style13 {
+  .songLibraryActionButton {
     background-color: var(--accent);
   }
-  .style6 {
+  .recentSongIcon {
     background-color: var(--accent-soft);
   }
-  .style10,
-.style12,
-.style33 {
+  .myLibraryLink,
+.removeSongButton,
+.publicationButton {
     background-color: var(--paper);
   }
-  .style5,
-.style14 {
+  .recentSongLink,
+.setListDialog {
     background-color: transparent;
   }
-  .style14,
-.style22 {
+  .setListDialog,
+.setListOptionList {
     padding: 0px;
   }
-  .style5,
-.style21 {
+  .recentSongLink,
+.setListLoadingMessage {
     padding: calc(var(--spacing) * 2);
   }
-  .style20 {
+  .setListDialogBody {
     padding: calc(var(--spacing) * 3);
   }
-  .style16 {
+  .setListDialogHeader {
     padding: calc(var(--spacing) * 4);
   }
-  .style1,
-.style2,
-.style27,
-.style31 {
+  .sectionHeading,
+.recentSongsMessage,
+.emptySetListsState,
+.dialogErrorMessage {
     padding-inline: calc(var(--spacing) * 2);
   }
-  .style12,
-.style13,
-.style33 {
+  .removeSongButton,
+.songLibraryActionButton,
+.publicationButton {
     padding-inline: calc(var(--spacing) * 2.5);
   }
-  .style10,
-.style23,
-.style32 {
+  .myLibraryLink,
+.setListOptionButton,
+.saveSetListSettingsButton {
     padding-inline: calc(var(--spacing) * 3);
   }
-  .style10,
-.style32 {
+  .myLibraryLink,
+.saveSetListSettingsButton {
     padding-block: calc(var(--spacing) * 2);
   }
-  .style23 {
+  .setListOptionButton {
     padding-block: calc(var(--spacing) * 2.5);
   }
-  .style2 {
+  .recentSongsMessage {
     padding-block: calc(var(--spacing) * 3.5);
   }
-  .style27 {
+  .emptySetListsState {
     padding-block: calc(var(--spacing) * 5);
   }
-  .style10,
-.style27 {
+  .myLibraryLink,
+.emptySetListsState {
     text-align: center;
   }
-  .style5,
-.style23 {
+  .recentSongLink,
+.setListOptionButton {
     text-align: left;
   }
-  .style17 {
+  .setListDialogTitle {
     font-size: var(--text-base);
     line-height: var(--component-leading, var(--text-base--line-height));
   }
-  .style18,
-.style21,
-.style24,
-.style29,
-.style30,
-.style31 {
+  .dialogSongTitle,
+.setListLoadingMessage,
+.setListOptionName,
+.emptyStateDescription,
+.createSetListLink,
+.dialogErrorMessage {
     font-size: var(--text-sm);
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
-  .style25,
-.style26,
-.style32 {
+  .setListOptionMetadata,
+.setListOptionActionLabel,
+.saveSetListSettingsButton {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
-  .style1,
-.style2,
-.style9,
-.style10,
-.style12,
-.style13,
-.style33 {
+  .sectionHeading,
+.recentSongsMessage,
+.songPublicationDetails,
+.myLibraryLink,
+.removeSongButton,
+.songLibraryActionButton,
+.publicationButton {
     font-size: 10px;
   }
-  .style8 {
+  .songTitle {
     font-size: 11px;
   }
-  .style6 {
+  .recentSongIcon {
     font-size: 13px;
   }
-  .style2 {
+  .recentSongsMessage {
     --component-leading: 1.5;
     line-height: 1.5;
   }
-  .style8 {
+  .songTitle {
     --component-font-weight: 620;
     font-weight: 620;
   }
-  .style10,
-.style11,
-.style12,
-.style33 {
+  .myLibraryLink,
+.signInLink,
+.removeSongButton,
+.publicationButton {
     --component-font-weight: 650;
     font-weight: 650;
   }
-  .style1,
-.style13 {
+  .sectionHeading,
+.songLibraryActionButton {
     --component-font-weight: 680;
     font-weight: 680;
   }
-  .style17 {
+  .setListDialogTitle {
     --component-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
-  .style24,
-.style26,
-.style28,
-.style30,
-.style32 {
+  .setListOptionName,
+.setListOptionActionLabel,
+.emptyStateTitle,
+.createSetListLink,
+.saveSetListSettingsButton {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .style1 {
+  .sectionHeading {
     --component-tracking: 0.08em;
     letter-spacing: 0.08em;
   }
-  .style26,
-.style30 {
+  .setListOptionActionLabel,
+.createSetListLink {
     color: var(--accent-deep);
   }
-  .style19 {
+  .closeDialogButton {
     color: var(--muted);
   }
-  .style18,
-.style21,
-.style25,
-.style29 {
+  .dialogSongTitle,
+.setListLoadingMessage,
+.setListOptionMetadata,
+.emptyStateDescription {
     color: var(--muted-soft);
   }
-  .style31 {
+  .dialogErrorMessage {
     color: var(--ui-destructive);
   }
-  .style6,
-.style10,
-.style11 {
+  .recentSongIcon,
+.myLibraryLink,
+.signInLink {
     color: var(--accent-deep);
   }
-  .style8 {
+  .songTitle {
     color: var(--ink);
   }
-  .style12,
-.style33 {
+  .removeSongButton,
+.publicationButton {
     color: var(--muted);
   }
-  .style1,
-.style2,
-.style9 {
+  .sectionHeading,
+.recentSongsMessage,
+.songPublicationDetails {
     color: var(--muted-soft);
   }
-  .style14,
-.style24 {
+  .setListDialog,
+.setListOptionName {
     color: var(--ink);
   }
-  .style13,
-.style32 {
+  .songLibraryActionButton,
+.saveSetListSettingsButton {
     color: var(--color-white);
   }
-  .style1 {
+  .sectionHeading {
     text-transform: uppercase;
   }
-  .style5,
-.style10,
-.style11 {
+  .recentSongLink,
+.myLibraryLink,
+.signInLink {
     text-decoration-line: none;
   }
-  .style30 {
+  .createSetListLink {
     text-decoration-line: underline;
   }
-  .style15 {
+  .setListDialogContent {
     --component-shadow: 0 25px 50px -12px var(--component-shadow-color, rgb(0 0 0 / 0.25));
     box-shadow: var(--component-inset-shadow), var(--component-inset-ring-shadow), var(--component-ring-offset-shadow), var(--component-ring-shadow), var(--component-shadow);
   }
-  .style13 {
+  .songLibraryActionButton {
     transition-property: background-color,border-color,opacity;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style5 {
+  .recentSongLink {
     transition-property: background-color;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style10 {
+  .myLibraryLink {
     transition-property: border-color,background-color;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style12,
-.style33 {
+  .removeSongButton,
+.publicationButton {
     transition-property: border-color,color,opacity;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style5,
-.style12,
-.style13,
-.style33 {
+  .recentSongLink,
+.removeSongButton,
+.songLibraryActionButton,
+.publicationButton {
     --component-duration: 160ms;
     transition-duration: 160ms;
   }
-  .style5,
-.style12,
-.style13,
-.style33 {
+  .recentSongLink,
+.removeSongButton,
+.songLibraryActionButton,
+.publicationButton {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
-  .style14::backdrop {
+  .setListDialog::backdrop {
     background-color: color-mix(in srgb, #000 50%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-black) 50%, transparent);
     }
   }
   @media (hover: hover) {
-    .style23:hover {
+    .setListOptionButton:hover {
       border-color: var(--line-strong);
     }
   }
   @media (hover: hover) {
-    .style12:hover,
-.style33:hover {
+    .removeSongButton:hover,
+.publicationButton:hover {
       border-color: var(--accent);
     }
   }
   @media (hover: hover) {
-    .style13:hover {
+    .songLibraryActionButton:hover {
       border-color: var(--accent-deep);
     }
   }
   @media (hover: hover) {
-    .style10:hover {
+    .myLibraryLink:hover {
       border-color: var(--line-strong);
     }
   }
   @media (hover: hover) {
-    .style32:hover {
+    .saveSetListSettingsButton:hover {
       background-color: var(--accent-deep);
     }
   }
   @media (hover: hover) {
-    .style19:hover {
+    .closeDialogButton:hover {
       background-color: var(--paper-soft);
     }
   }
   @media (hover: hover) {
-    .style13:hover {
+    .songLibraryActionButton:hover {
       background-color: var(--accent-deep);
     }
   }
   @media (hover: hover) {
-    .style5:hover,
-.style10:hover {
+    .recentSongLink:hover,
+.myLibraryLink:hover {
       background-color: var(--paper-soft);
     }
   }
   @media (hover: hover) {
-    .style12:hover,
-.style33:hover {
+    .removeSongButton:hover,
+.publicationButton:hover {
       color: var(--ink);
     }
   }
   @media (hover: hover) {
-    .style11:hover {
+    .signInLink:hover {
       text-decoration-line: underline;
     }
   }
-  .style5:focus-visible,
-.style10:focus-visible,
-.style11:focus-visible,
-.style12:focus-visible,
-.style13:focus-visible,
-.style19:focus-visible,
-.style23:focus-visible,
-.style32:focus-visible,
-.style33:focus-visible {
+  .recentSongLink:focus-visible,
+.myLibraryLink:focus-visible,
+.signInLink:focus-visible,
+.removeSongButton:focus-visible,
+.songLibraryActionButton:focus-visible,
+.closeDialogButton:focus-visible,
+.setListOptionButton:focus-visible,
+.saveSetListSettingsButton:focus-visible,
+.publicationButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style5:focus-visible,
-.style10:focus-visible,
-.style11:focus-visible,
-.style12:focus-visible,
-.style13:focus-visible,
-.style19:focus-visible,
-.style23:focus-visible,
-.style32:focus-visible,
-.style33:focus-visible {
+  .recentSongLink:focus-visible,
+.myLibraryLink:focus-visible,
+.signInLink:focus-visible,
+.removeSongButton:focus-visible,
+.songLibraryActionButton:focus-visible,
+.closeDialogButton:focus-visible,
+.setListOptionButton:focus-visible,
+.saveSetListSettingsButton:focus-visible,
+.publicationButton:focus-visible {
     outline-offset: 2px;
   }
-  .style19:focus-visible,
-.style23:focus-visible,
-.style32:focus-visible {
+  .closeDialogButton:focus-visible,
+.setListOptionButton:focus-visible,
+.saveSetListSettingsButton:focus-visible {
     outline-color: var(--accent);
   }
-  .style5:focus-visible,
-.style10:focus-visible,
-.style11:focus-visible,
-.style12:focus-visible,
-.style13:focus-visible,
-.style33:focus-visible {
+  .recentSongLink:focus-visible,
+.myLibraryLink:focus-visible,
+.signInLink:focus-visible,
+.removeSongButton:focus-visible,
+.songLibraryActionButton:focus-visible,
+.publicationButton:focus-visible {
     outline-color: var(--accent);
   }
-  .style12:disabled,
-.style13:disabled,
-.style23:disabled,
-.style32:disabled,
-.style33:disabled {
+  .removeSongButton:disabled,
+.songLibraryActionButton:disabled,
+.setListOptionButton:disabled,
+.saveSetListSettingsButton:disabled,
+.publicationButton:disabled {
     cursor: not-allowed;
   }
-  .style32:disabled {
+  .saveSetListSettingsButton:disabled {
     opacity: 50%;
   }
-  .style23:disabled {
+  .setListOptionButton:disabled {
     opacity: 60%;
   }
-  .style12:disabled,
-.style13:disabled,
-.style33:disabled {
+  .removeSongButton:disabled,
+.songLibraryActionButton:disabled,
+.publicationButton:disabled {
     opacity: 0.55;
   }
 }

@@ -172,22 +172,22 @@ function ConnectedMyLibrarySongs({
   }, [isAuthenticated, isLoading, isPublicSong]);
 
   return (
-    <section className={componentStyles.style0} aria-labelledby="recent-songs-heading">
-      <h2 className={componentStyles.style1} id="recent-songs-heading">
+    <section className={componentStyles.recentSongsSection} aria-labelledby="recent-songs-heading">
+      <h2 className={componentStyles.sectionHeading} id="recent-songs-heading">
         Recently viewed songs
       </h2>
       <Authenticated>
         {songs === undefined ? (
-          <p className={componentStyles.style2} role="status">
+          <p className={componentStyles.recentSongsMessage} role="status">
             Loading your songs…
           </p>
         ) : recentSongs.length ? (
-          <div className={componentStyles.style3} aria-label="Recently viewed songs">
+          <div className={componentStyles.recentSongList} aria-label="Recently viewed songs">
             {recentSongs.map((song) => (
-              <div className={componentStyles.style4} key={song._id}>
+              <div className={componentStyles.recentSongItem} key={song._id}>
                 <Link
                   aria-current={currentSong?.id === song._id ? "page" : undefined}
-                  className={componentStyles.style5}
+                  className={componentStyles.recentSongLink}
                   href={`/mylibrary/${encodeURIComponent(song._id)}`}
                   onClick={() => {
                     const loadedSong = { id: song._id, title: song.title, abc: song.abc, publicationState: song.publicationState };
@@ -197,12 +197,12 @@ function ConnectedMyLibrarySongs({
                     statusRef.current("Loaded from My Library");
                   }}
                 >
-                  <span className={componentStyles.style6}>
+                  <span className={componentStyles.recentSongIcon}>
                     ♪
                   </span>
-                  <span className={componentStyles.style7}>
-                    <span className={componentStyles.style8}>{song.title}</span>
-                    <span className={componentStyles.style9}>
+                  <span className={componentStyles.songDetails}>
+                    <span className={componentStyles.songTitle}>{song.title}</span>
+                    <span className={componentStyles.songPublicationDetails}>
                       {song.publicationState === "published" ? "Published · " : "Private · "}
                       {new Date(song.updatedAt).toLocaleDateString()}
                     </span>
@@ -212,21 +212,21 @@ function ConnectedMyLibrarySongs({
             ))}
           </div>
         ) : (
-          <div className={componentStyles.style2}>
+          <div className={componentStyles.recentSongsMessage}>
             Songs you open will appear here.
           </div>
         )}
         <Link
-          className={componentStyles.style10}
+          className={componentStyles.myLibraryLink}
           href="/mylibrary"
         >
           All my songs
         </Link>
       </Authenticated>
       <Unauthenticated>
-        <div className={componentStyles.style2}>
+        <div className={componentStyles.recentSongsMessage}>
           <Link
-            className={componentStyles.style11}
+            className={componentStyles.signInLink}
             href="/sign-in"
           >
             Sign in
@@ -284,7 +284,7 @@ function ConnectedRemoveSongButton({
   return (
     <button
       aria-label={`Remove ${song.title} from My Library`}
-      className={componentStyles.style12}
+      className={componentStyles.removeSongButton}
       disabled={removing}
       type="button"
       onClick={() => void handleRemove()}
@@ -373,7 +373,7 @@ function ConnectedSaveToMyLibraryButton({
 
   return (
     <button
-      className={componentStyles.style13}
+      className={componentStyles.songLibraryActionButton}
       disabled={savingCopy}
       type="button"
       onClick={() => void handleSaveToMyLibrary()}
@@ -443,7 +443,7 @@ function ConnectedSaveToSetListButton({
     <>
       <button
         aria-haspopup="dialog"
-        className={componentStyles.style13}
+        className={componentStyles.songLibraryActionButton}
         disabled={savingSetListId !== null}
         type="button"
         onClick={() => {
@@ -455,50 +455,50 @@ function ConnectedSaveToSetListButton({
       </button>
       <dialog
         aria-labelledby={`add-to-set-list-title-${song.id}`}
-        className={componentStyles.style14}
+        className={componentStyles.setListDialog}
         onClick={(event) => {
           if (event.target === event.currentTarget) closeDialog();
         }}
         onClose={() => setIsOpen(false)}
         ref={dialogRef}
       >
-        <section className={componentStyles.style15}>
-          <header className={componentStyles.style16}>
-            <div className={componentStyles.style7}>
-              <h2 className={componentStyles.style17} id={`add-to-set-list-title-${song.id}`}>Add to a set list</h2>
-              <p className={componentStyles.style18} title={song.title}>{song.title}</p>
+        <section className={componentStyles.setListDialogContent}>
+          <header className={componentStyles.setListDialogHeader}>
+            <div className={componentStyles.songDetails}>
+              <h2 className={componentStyles.setListDialogTitle} id={`add-to-set-list-title-${song.id}`}>Add to a set list</h2>
+              <p className={componentStyles.dialogSongTitle} title={song.title}>{song.title}</p>
             </div>
             <button
               aria-label="Close"
               autoFocus
-              className={componentStyles.style19}
+              className={componentStyles.closeDialogButton}
               onClick={closeDialog}
               type="button"
             >
               <X aria-hidden="true" size={15} />
             </button>
           </header>
-          <div className={componentStyles.style20}>
+          <div className={componentStyles.setListDialogBody}>
             {setLists === undefined ? (
-              <p className={componentStyles.style21} role="status">Loading your set lists…</p>
+              <p className={componentStyles.setListLoadingMessage} role="status">Loading your set lists…</p>
             ) : setLists.length ? (
-              <ul className={componentStyles.style22}>
+              <ul className={componentStyles.setListOptionList}>
                 {setLists.map((setList) => {
                   const alreadyAdded = setList.songIds.some((songId) => String(songId) === String(song.id));
                   const isSavingThisList = savingSetListId === setList._id;
                   return (
                     <li key={setList._id}>
                       <button
-                        className={componentStyles.style23}
+                        className={componentStyles.setListOptionButton}
                         disabled={alreadyAdded || savingSetListId !== null}
                         onClick={() => void handleAddToSetList(setList._id, setList.name)}
                         type="button"
                       >
-                        <span className={componentStyles.style7}>
-                          <span className={componentStyles.style24}>{setList.name}</span>
-                          <span className={componentStyles.style25}>{setList.itemCount} song{setList.itemCount === 1 ? "" : "s"} · Updated {new Date(setList.updatedAt).toLocaleDateString()}</span>
+                        <span className={componentStyles.songDetails}>
+                          <span className={componentStyles.setListOptionName}>{setList.name}</span>
+                          <span className={componentStyles.setListOptionMetadata}>{setList.itemCount} song{setList.itemCount === 1 ? "" : "s"} · Updated {new Date(setList.updatedAt).toLocaleDateString()}</span>
                         </span>
-                        <span className={componentStyles.style26}>
+                        <span className={componentStyles.setListOptionActionLabel}>
                           {isSavingThisList ? "Adding…" : alreadyAdded ? "Already added" : "Add song"}
                         </span>
                       </button>
@@ -507,13 +507,13 @@ function ConnectedSaveToSetListButton({
                 })}
               </ul>
             ) : (
-              <div className={componentStyles.style27}>
-                <p className={componentStyles.style28}>No set lists yet</p>
-                <p className={componentStyles.style29}>Create a set list before adding this song.</p>
-                <Link className={componentStyles.style30} href="/setlists">Create a set list</Link>
+              <div className={componentStyles.emptySetListsState}>
+                <p className={componentStyles.emptyStateTitle}>No set lists yet</p>
+                <p className={componentStyles.emptyStateDescription}>Create a set list before adding this song.</p>
+                <Link className={componentStyles.createSetListLink} href="/setlists">Create a set list</Link>
               </div>
             )}
-            {error && <p className={componentStyles.style31} role="alert">{error}</p>}
+            {error && <p className={componentStyles.dialogErrorMessage} role="alert">{error}</p>}
           </div>
         </section>
       </dialog>
@@ -563,7 +563,7 @@ function ConnectedSaveSetListDisplaySettingsButton({
 
   return (
     <button
-      className={componentStyles.style32}
+      className={componentStyles.saveSetListSettingsButton}
       disabled={saving}
       onClick={() => void handleSave()}
       type="button"
@@ -623,7 +623,7 @@ function ConnectedAdminPublicationButton({
   return (
     <button
       aria-label={`${isPublished ? "Unpublish" : "Publish"} ${song.title}`}
-      className={componentStyles.style33}
+      className={componentStyles.publicationButton}
       disabled={changing}
       type="button"
       onClick={() => void handleChange()}
@@ -678,7 +678,7 @@ function ConnectedAdminUnpublishPublicSongButton({
   return (
     <button
       aria-label="Unpublish public song"
-      className={componentStyles.style33}
+      className={componentStyles.publicationButton}
       disabled={changing}
       type="button"
       onClick={() => void handleUnpublish()}

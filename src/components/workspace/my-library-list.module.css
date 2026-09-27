@@ -1,160 +1,160 @@
 /* Component styles. */
 @layer components {
-  .style1 {
+  .pageContent {
     margin-inline: auto;
   }
-  .style12 {
+  .songMetadata {
     margin-top: calc(var(--spacing) * 0.5);
   }
-  .style4 {
+  .pageDescription {
     margin-top: var(--spacing);
   }
-  .style2 {
+  .pageHeadingRow {
     margin-bottom: calc(var(--spacing) * 5);
   }
-  .style11,
-.style12 {
+  .songTitle,
+.songMetadata {
     display: block;
   }
-  .style2,
-.style5,
-.style9 {
+  .pageHeadingRow,
+.headingActions,
+.songLink {
     display: flex;
   }
-  .style8 {
+  .songList {
     display: grid;
   }
-  .style0 {
+  .pageShell {
     min-height: 100vh;
   }
-  .style1 {
+  .pageContent {
     max-width: var(--container-3xl);
   }
-  .style10 {
+  .songDetails {
     min-width: 0px;
   }
-  .style6,
-.style13 {
+  .songCount,
+.openSongLabel {
     flex-shrink: 0;
   }
-  .style2 {
+  .pageHeadingRow {
     align-items: baseline;
   }
-  .style5,
-.style9 {
+  .headingActions,
+.songLink {
     align-items: center;
   }
-  .style2,
-.style9 {
+  .pageHeadingRow,
+.songLink {
     justify-content: space-between;
   }
-  .style8 {
+  .songList {
     gap: calc(var(--spacing) * 2);
   }
-  .style5 {
+  .headingActions {
     gap: calc(var(--spacing) * 3);
   }
-  .style2,
-.style9 {
+  .pageHeadingRow,
+.songLink {
     gap: calc(var(--spacing) * 4);
   }
-  .style7,
-.style9 {
+  .newSongLink,
+.songLink {
     border-radius: var(--ui-radius);
   }
-  .style9 {
+  .songLink {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style9 {
+  .songLink {
     border-color: var(--line);
   }
-  .style7 {
+  .newSongLink {
     background-color: var(--accent);
   }
-  .style9 {
+  .songLink {
     background-color: var(--paper);
   }
-  .style7 {
+  .newSongLink {
     padding-inline: calc(var(--spacing) * 3);
   }
-  .style1,
-.style9 {
+  .pageContent,
+.songLink {
     padding-inline: calc(var(--spacing) * 4);
   }
-  .style7 {
+  .newSongLink {
     padding-block: calc(var(--spacing) * 2);
   }
-  .style9 {
+  .songLink {
     padding-block: calc(var(--spacing) * 3);
   }
-  .style1 {
+  .pageContent {
     padding-block: calc(var(--spacing) * 8);
   }
-  .style3 {
+  .pageTitle {
     font-size: var(--text-2xl);
     line-height: var(--component-leading, var(--text-2xl--line-height));
   }
-  .style4,
-.style14 {
+  .pageDescription,
+.emptyLibraryMessage {
     font-size: var(--text-sm);
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
-  .style6,
-.style7,
-.style12,
-.style13 {
+  .songCount,
+.newSongLink,
+.songMetadata,
+.openSongLabel {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
-  .style3 {
+  .pageTitle {
     --component-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
-  .style7,
-.style11,
-.style13 {
+  .newSongLink,
+.songTitle,
+.openSongLabel {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .style13,
-.style15 {
+  .openSongLabel,
+.createSongLink {
     color: var(--accent-deep);
   }
-  .style14 {
+  .emptyLibraryMessage {
     color: var(--muted);
   }
-  .style4,
-.style6,
-.style12 {
+  .pageDescription,
+.songCount,
+.songMetadata {
     color: var(--muted-soft);
   }
-  .style11 {
+  .songTitle {
     color: var(--ink);
   }
-  .style7 {
+  .newSongLink {
     color: var(--color-white);
   }
-  .style15 {
+  .createSongLink {
     text-decoration-line: underline;
   }
   @media (hover: hover) {
-    .style9:hover {
+    .songLink:hover {
       border-color: var(--line-strong);
     }
   }
-  .style9:focus-visible {
+  .songLink:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style9:focus-visible {
+  .songLink:focus-visible {
     outline-offset: 2px;
   }
-  .style9:focus-visible {
+  .songLink:focus-visible {
     outline-color: var(--accent);
   }
   @media (width < 720px) {
-    .style1 {
+    .pageContent {
       padding-block: calc(var(--spacing) * 5);
     }
   }

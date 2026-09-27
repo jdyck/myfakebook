@@ -141,13 +141,13 @@ function emptyLyricsPartAtLine(document: ReturnType<typeof parseAbcRows>, lineIn
   return null;
 }
 
-function melodyWithoutLyricsAtLine(document: ReturnType<typeof parseAbcRows>, lineIndex: number) {
+function musicAtMelodyLine(document: ReturnType<typeof parseAbcRows>, lineIndex: number) {
   const musicParts = document.parts.filter((part): part is AbcRowMusicPart => part.kind === "music");
   let firstLine = 0;
 
   for (const [partIndex, music] of musicParts.entries()) {
     const lyricCount = document.parts.filter((part) => part.kind === "lyrics" && part.targetId === music.id).length;
-    if (lineIndex === firstLine + 1 && lyricCount === 0) return music;
+    if (lineIndex === firstLine + 1) return music;
     firstLine += 2 + lyricCount + (partIndex < musicParts.length - 1 ? 1 : 0);
   }
 
@@ -233,7 +233,9 @@ export function AbcRowEditor({ abc, onChange }: AbcRowEditorProps) {
     setDocument(nextDocument);
     setRowsAreValid(true);
 
-    const nextRowText = isLyricsRow(nextDocument, selection.start.lineIndex)
+    const line = value.split("\n")[selection.start.lineIndex] ?? "";
+    const caretFollowsWhitespace = selection.start.column > 0 && /\s/.test(line[selection.start.column - 1] ?? "");
+    const nextRowText = isLyricsRow(nextDocument, selection.start.lineIndex) && !caretFollowsWhitespace
       ? formatAbcRows(nextDocument)
       : value;
     pendingSelectionRef.current = nextRowText === value ? null : selection;
@@ -305,14 +307,28 @@ export function AbcRowEditor({ abc, onChange }: AbcRowEditorProps) {
     }
 
     if (event.key !== "Enter" || caret !== lineEnd) return;
-    const music = melodyWithoutLyricsAtLine(documentRef.current, lineIndex);
+    const music = musicAtMelodyLine(documentRef.current, lineIndex);
     if (!music) return;
 
     event.preventDefault();
+    const lyricParts = documentRef.current.parts.filter(
+      (part): part is AbcRowLyricsPart => part.kind === "lyrics" && part.targetId === music.id,
+    );
+    const emptyLyricIndex = lyricParts.findIndex((lyrics) => lyrics.tokens.every((token) => !token.trim()));
+    if (emptyLyricIndex !== -1) {
+      const lyricLineIndex = lineIndex + 1 + emptyLyricIndex;
+      const lyricLineStart = rowText
+        .split("\n")
+        .slice(0, lyricLineIndex)
+        .reduce((offset, line) => offset + line.length + 1, 0);
+      textarea.setSelectionRange(lyricLineStart, lyricLineStart);
+      return;
+    }
+
     const nextDocument = addBlankLyricsPart(documentRef.current, music.id);
     const nextRowText = formatAbcRows(nextDocument);
     const lyricRowAnchor: CaretAnchor = {
-      lineIndex: lineIndex + 1,
+      lineIndex: lineIndex + lyricParts.length + 1,
       tokenIndex: null,
       tokenOffset: 0,
       column: 0,
@@ -332,13 +348,13 @@ export function AbcRowEditor({ abc, onChange }: AbcRowEditorProps) {
 
   if (!document.supported) {
     return (
-      <div className={componentStyles.style0} role="tabpanel" id="abc-easy-panel" aria-labelledby="abc-easy-tab">
-        <p className={componentStyles.style1}>
+      <div className={componentStyles.unsupportedEditorPanel} role="tabpanel" id="abc-easy-panel" aria-labelledby="abc-easy-tab">
+        <p className={componentStyles.unsupportedFormatMessage}>
           {document.reason} The source editor is still available in the Source tab.
         </p>
         <textarea
           aria-label="Easy ABC notation editor"
-          className={componentStyles.style2}
+          className={componentStyles.unsupportedSourceTextarea}
           spellCheck={false}
           value={abc}
           onChange={(event) => onChange(event.target.value)}
@@ -352,39 +368,39 @@ export function AbcRowEditor({ abc, onChange }: AbcRowEditorProps) {
     const lyricCount = document.parts.filter((part) => part.kind === "lyrics" && part.targetId === music.id).length;
     return [
       ...(phraseIndex > 0 ? [""] : []),
-      "Ch",
-      "Mel",
-      ...Array.from({ length: lyricCount }, (_, index) => index === 0 ? "Ly" : `Ly${index + 1}`),
+      "C",
+      "M",
+      ...Array.from({ length: lyricCount }, (_, index) => index === 0 ? "L" : `L${index + 1}`),
     ];
   });
 
   return (
-    <div className={componentStyles.style3} role="tabpanel" id="abc-easy-panel" aria-labelledby="abc-easy-tab">
-      <div className={componentStyles.style4}>
-        <p className={componentStyles.style5}>
+    <div className={componentStyles.easyEditorPanel} role="tabpanel" id="abc-easy-panel" aria-labelledby="abc-easy-tab">
+      <div className={componentStyles.editorInstructionsRow}>
+        <p className={componentStyles.editorInstructions}>
           Move through the rows with your arrow keys. Leave pickup chord cells blank; chords align to notes and lyrics align by syllable. Leave one blank line between phrases.
         </p>
         {!rowsAreValid && (
-          <span className={componentStyles.style6} role="status">
+          <span className={componentStyles.rowValidationMessage} role="status">
             Keep the chord and melody rows on separate lines to sync changes.
           </span>
         )}
       </div>
-      <div className={componentStyles.style7}>
+      <div className={componentStyles.rowEditorGrid}>
         <div
-          className={componentStyles.style8}
+          className={componentStyles.rowLabelGutter}
           ref={gutterRef}
           aria-hidden="true"
         >
           {gutterLabels.map((label, index) => (
-            <span className={componentStyles.style9} key={index}>
+            <span className={componentStyles.rowLabel} key={index}>
               {label}
             </span>
           ))}
         </div>
         <textarea
           aria-label="Easy chord, melody, and lyric editor"
-          className={componentStyles.style10}
+          className={componentStyles.rowTextarea}
           ref={textareaRef}
           spellCheck={false}
           value={rowText}

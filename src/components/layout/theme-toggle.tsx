@@ -42,13 +42,13 @@ export function ThemeToggle() {
   return (
     <button
       aria-label="Toggle light and dark mode"
-      className={componentStyles.style0}
+      className={componentStyles.themeToggleButton}
       title="Toggle light and dark mode"
       type="button"
       onClick={toggleTheme}
     >
-      <Moon className={componentStyles.style1} aria-hidden="true" size={15} strokeWidth={1.8} />
-      <Sun className={componentStyles.style2} aria-hidden="true" size={15} strokeWidth={1.8} />
+      <Moon className={componentStyles.moonIcon} aria-hidden="true" size={15} strokeWidth={1.8} />
+      <Sun className={componentStyles.sunIcon} aria-hidden="true" size={15} strokeWidth={1.8} />
     </button>
   );
 }

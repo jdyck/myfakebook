@@ -1,51 +1,51 @@
 /* Component styles. */
 @layer components {
-  .style5 {
+  .browseSongsLink {
     margin-top: calc(var(--spacing) * 3);
   }
-  .style0,
-.style2 {
+  .loadingPage,
+.notFoundPage {
     display: grid;
   }
-  .style5 {
+  .browseSongsLink {
     display: inline-block;
   }
-  .style0,
-.style2 {
+  .loadingPage,
+.notFoundPage {
     min-height: 100vh;
   }
-  .style0,
-.style2 {
+  .loadingPage,
+.notFoundPage {
     place-items: center;
   }
-  .style0 {
+  .loadingPage {
     background-color: var(--canvas);
   }
-  .style0,
-.style2 {
+  .loadingPage,
+.notFoundPage {
     padding-inline: calc(var(--spacing) * 6);
   }
-  .style3 {
+  .notFoundContent {
     text-align: center;
   }
-  .style4 {
+  .notFoundTitle {
     font-size: var(--text-xl);
     line-height: var(--component-leading, var(--text-xl--line-height));
   }
-  .style1 {
+  .loadingStatus {
     font-size: 11px;
   }
-  .style4 {
+  .notFoundTitle {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .style5 {
+  .browseSongsLink {
     color: var(--accent-deep);
   }
-  .style1 {
+  .loadingStatus {
     color: var(--muted);
   }
-  .style5 {
+  .browseSongsLink {
     text-decoration-line: underline;
   }
 }

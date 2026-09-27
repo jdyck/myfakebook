@@ -1,41 +1,41 @@
 /* Component styles. */
 @layer components {
-  .style4 {
+  .backToLibraryLink {
     margin-top: calc(var(--spacing) * 3);
   }
-  .style0,
-.style1 {
+  .loadingPage,
+.notFoundPage {
     display: grid;
   }
-  .style4 {
+  .backToLibraryLink {
     display: inline-block;
   }
-  .style0,
-.style1 {
+  .loadingPage,
+.notFoundPage {
     min-height: 100vh;
   }
-  .style0,
-.style1 {
+  .loadingPage,
+.notFoundPage {
     place-items: center;
   }
-  .style1 {
+  .notFoundPage {
     padding-inline: calc(var(--spacing) * 6);
   }
-  .style2 {
+  .notFoundContent {
     text-align: center;
   }
-  .style3 {
+  .notFoundTitle {
     font-size: var(--text-xl);
     line-height: var(--component-leading, var(--text-xl--line-height));
   }
-  .style3 {
+  .notFoundTitle {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .style4 {
+  .backToLibraryLink {
     color: var(--accent-deep);
   }
-  .style4 {
+  .backToLibraryLink {
     text-decoration-line: underline;
   }
 }

@@ -23,16 +23,16 @@ export function PrivateSongBackedWorkspace({
   const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
 
   if (isLoading || (isAuthenticated && (songs === undefined || (validSetListId && setList === undefined)))) {
-    return <main className={componentStyles.style0} role="status">Loading song…</main>;
+    return <main className={componentStyles.loadingPage} role="status">Loading song…</main>;
   }
 
   const song = songs?.find((candidate) => candidate._id === id);
   if (!song) {
     return (
-      <main className={componentStyles.style1}>
-        <div className={componentStyles.style2}>
-          <h1 className={componentStyles.style3}>Song not found</h1>
-          <Link className={componentStyles.style4} href="/mylibrary">Back to My Library</Link>
+      <main className={componentStyles.notFoundPage}>
+        <div className={componentStyles.notFoundContent}>
+          <h1 className={componentStyles.notFoundTitle}>Song not found</h1>
+          <Link className={componentStyles.backToLibraryLink} href="/mylibrary">Back to My Library</Link>
         </div>
       </main>
     );

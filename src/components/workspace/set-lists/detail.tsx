@@ -203,40 +203,40 @@ export function SetListDetail({ id }: SetListDetailProps) {
   }
 
   return (
-    <div className={componentStyles.style0}>
+    <div className={componentStyles.pageShell}>
       <Header clerkConfigured />
-      <main className={componentStyles.style1}>
+      <main className={componentStyles.pageContent}>
         {loading ? (
-          <p className={componentStyles.style2} role="status">Loading set list…</p>
+          <p className={componentStyles.loadingStatus} role="status">Loading set list…</p>
         ) : !setList ? (
-          <section className={componentStyles.style3}>
-            <Link className={componentStyles.style4} href="/setlists">← All set lists</Link>
-            <h1 className={componentStyles.style5}>Set list not found</h1>
-            <p className={componentStyles.style6}>This set list may have been removed, or it may belong to another user.</p>
+          <section className={componentStyles.notFoundSection}>
+            <Link className={componentStyles.backToSetListsLink} href="/setlists">← All set lists</Link>
+            <h1 className={componentStyles.notFoundTitle}>Set list not found</h1>
+            <p className={componentStyles.notFoundDescription}>This set list may have been removed, or it may belong to another user.</p>
           </section>
         ) : (
-          <div className={componentStyles.style7}>
-            <aside className={componentStyles.style8}>
-              <Link className={componentStyles.style4} href="/setlists">← All set lists</Link>
-              <div className={componentStyles.style9}>
-                <div className={componentStyles.style10}>
-                  <h1 className={componentStyles.style11}>{setList.name}</h1>
-                  <p className={componentStyles.style12}>{setList.items.length} song{setList.items.length === 1 ? "" : "s"} in performance order</p>
+          <div className={componentStyles.setListWorkspace}>
+            <aside className={componentStyles.setListSidebar}>
+              <Link className={componentStyles.backToSetListsLink} href="/setlists">← All set lists</Link>
+              <div className={componentStyles.setListSidebarHeader}>
+                <div className={componentStyles.titleAndDetails}>
+                  <h1 className={componentStyles.setListTitle}>{setList.name}</h1>
+                  <p className={componentStyles.setListSongCount}>{setList.items.length} song{setList.items.length === 1 ? "" : "s"} in performance order</p>
                 </div>
-                <button className={`${componentStyles.sharedButton} ${componentStyles.style13}`} disabled={saving} onClick={() => void handleDeleteSetList()} type="button">
+                <button className={`${componentStyles.sharedButton} ${componentStyles.deleteSetListButton}`} disabled={saving} onClick={() => void handleDeleteSetList()} type="button">
                   <Trash2 aria-hidden="true" size={13} /> Delete
                 </button>
               </div>
 
-              <form className={componentStyles.style14} onSubmit={(event) => void handleRename(event)}>
-                <label className={componentStyles.style15} htmlFor="set-list-name">Set list name</label>
-                <input className={`${componentStyles.sharedField} ${componentStyles.style16}`} id="set-list-name" maxLength={80} required value={name} onChange={(event) => setNameOverride(event.target.value)} />
-                <button className={`${componentStyles.sharedButton} ${componentStyles.style17}`} disabled={saving || name.trim() === setList.name} type="submit">Save name</button>
+              <form className={componentStyles.renameSetListForm} onSubmit={(event) => void handleRename(event)}>
+                <label className={componentStyles.formFieldLabel} htmlFor="set-list-name">Set list name</label>
+                <input className={`${componentStyles.sharedField} ${componentStyles.formField}`} id="set-list-name" maxLength={80} required value={name} onChange={(event) => setNameOverride(event.target.value)} />
+                <button className={`${componentStyles.sharedButton} ${componentStyles.saveSetListNameButton}`} disabled={saving || name.trim() === setList.name} type="submit">Save name</button>
               </form>
 
-              <form className={componentStyles.style18} onSubmit={(event) => void handleAddSong(event)}>
-                <label className={componentStyles.style15} htmlFor="set-list-song">Add a song</label>
-                <select className={`${componentStyles.sharedField} ${componentStyles.style16}`} id="set-list-song" value={selectedSongId} onChange={(event) => setSelectedSongId(event.target.value)}>
+              <form className={componentStyles.addSongForm} onSubmit={(event) => void handleAddSong(event)}>
+                <label className={componentStyles.formFieldLabel} htmlFor="set-list-song">Add a song</label>
+                <select className={`${componentStyles.sharedField} ${componentStyles.formField}`} id="set-list-song" value={selectedSongId} onChange={(event) => setSelectedSongId(event.target.value)}>
                   <option value="">Choose a song…</option>
                   {availableSongs?.map((song) => {
                     const selectionKey = song.songId;
@@ -246,36 +246,36 @@ export function SetListDetail({ id }: SetListDetailProps) {
                   })}
                 </select>
                 <button className={componentStyles.sharedPrimaryButton} disabled={saving || !selectedSongId || !availableSongs?.some((song) => song.songId === selectedSongId && !setList.items.some((item) => item.songId === song.songId))} type="submit">Add song</button>
-                {availableSongs?.length === 0 && <p className={componentStyles.style19}>There are no songs to add yet. Create one or <Link className={componentStyles.style20} href="/songs">browse public songs</Link>.</p>}
+                {availableSongs?.length === 0 && <p className={componentStyles.noAvailableSongsMessage}>There are no songs to add yet. Create one or <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.</p>}
               </form>
 
-              <section className={componentStyles.style21} aria-labelledby="set-list-songs-heading">
-                <div className={componentStyles.style22}>
-                  <h2 className={componentStyles.style23} id="set-list-songs-heading">Songs</h2>
-                  <span className={componentStyles.style24}>Drag grip to reorder</span>
+              <section className={componentStyles.setListSongsSection} aria-labelledby="set-list-songs-heading">
+                <div className={componentStyles.songsSectionHeader}>
+                  <h2 className={componentStyles.songsSectionTitle} id="set-list-songs-heading">Songs</h2>
+                  <span className={componentStyles.reorderHint}>Drag grip to reorder</span>
                 </div>
                 {setList.items.length ? (
-                  <ol className={componentStyles.style25} aria-label={`${setList.name} songs`}>
+                  <ol className={componentStyles.orderedSongList} aria-label={`${setList.name} songs`}>
                     {setList.items.map((item, index) => {
                       const isSelected = selectedItem?._id === item._id;
                       const isDragged = draggedItemId === item._id;
                       const isDropTarget = dropTarget?.itemId === item._id;
                       return (
                         <li
-                          className={`${componentStyles.style26} ${isSelected ? componentStyles.style27 : componentStyles.style28} ${isDragged ? componentStyles.style29 : ""} ${isDropTarget ? componentStyles.style30 : ""}`}
+                          className={`${componentStyles.orderedSongItem} ${isSelected ? componentStyles.selectedSongItem : componentStyles.unselectedSongItem} ${isDragged ? componentStyles.draggedSongItem : ""} ${isDropTarget ? componentStyles.dropTargetSongItem : ""}`}
                           data-set-list-item={item._id}
                           key={item._id}
                         >
                           {isDropTarget && (
                             <span
                               aria-hidden="true"
-                              className={`${componentStyles.style31} ${dropTarget.position === "before" ? componentStyles.style32 : componentStyles.style33}`}
+                              className={`${componentStyles.dropIndicator} ${dropTarget.position === "before" ? componentStyles.dropIndicatorBefore : componentStyles.dropIndicatorAfter}`}
                             />
                           )}
-                          <div className={componentStyles.style34}>
+                          <div className={componentStyles.songItemDragControls}>
                             <button
                               aria-label={`Drag ${item.title} to reorder; use the move up and move down buttons for keyboard reordering`}
-                              className={componentStyles.style35}
+                              className={componentStyles.dragHandleButton}
                               disabled={saving}
                               onPointerCancel={(event) => {
                                 if (pointerDrag.current?.pointerId !== event.pointerId) return;
@@ -334,21 +334,21 @@ export function SetListDetail({ id }: SetListDetailProps) {
                             </button>
                             <button
                               aria-pressed={isSelected}
-                              className={componentStyles.style36}
+                              className={componentStyles.songSelectionButton}
                               disabled={!item.canOpen || saving}
                               onClick={() => setSelectedItemId(item._id)}
                               type="button"
                             >
-                              <span className={componentStyles.style37}>{index + 1}</span>
-                              <span className={componentStyles.style10}>
-                                <span className={componentStyles.style38}>{item.title}</span>
-                                {!item.canOpen && <span className={componentStyles.style39}>Unavailable</span>}
+                              <span className={componentStyles.songPositionNumber}>{index + 1}</span>
+                              <span className={componentStyles.titleAndDetails}>
+                                <span className={componentStyles.songName}>{item.title}</span>
+                                {!item.canOpen && <span className={componentStyles.unavailableBadge}>Unavailable</span>}
                               </span>
                             </button>
-                            <div className={componentStyles.style40}>
-                              <button aria-label={`Move ${item.title} up`} className={`${componentStyles.sharedButton} ${componentStyles.style41}`} disabled={saving || index === 0} onClick={() => void handleMove(index, -1)} type="button"><ArrowUp aria-hidden="true" size={14} /></button>
-                              <button aria-label={`Move ${item.title} down`} className={`${componentStyles.sharedButton} ${componentStyles.style41}`} disabled={saving || index === setList.items.length - 1} onClick={() => void handleMove(index, 1)} type="button"><ArrowDown aria-hidden="true" size={14} /></button>
-                              <button aria-label={`Remove ${item.title} from set list`} className={`${componentStyles.sharedButton} ${componentStyles.style42}`} disabled={saving} onClick={() => validId && void runChange(() => removeItem({ setListId: validId, itemId: item._id }), `${item.title} removed from set list`)} type="button"><Trash2 aria-hidden="true" size={14} /></button>
+                            <div className={componentStyles.songItemActions}>
+                              <button aria-label={`Move ${item.title} up`} className={`${componentStyles.sharedButton} ${componentStyles.moveSongButton}`} disabled={saving || index === 0} onClick={() => void handleMove(index, -1)} type="button"><ArrowUp aria-hidden="true" size={14} /></button>
+                              <button aria-label={`Move ${item.title} down`} className={`${componentStyles.sharedButton} ${componentStyles.moveSongButton}`} disabled={saving || index === setList.items.length - 1} onClick={() => void handleMove(index, 1)} type="button"><ArrowDown aria-hidden="true" size={14} /></button>
+                              <button aria-label={`Remove ${item.title} from set list`} className={`${componentStyles.sharedButton} ${componentStyles.removeSongButton}`} disabled={saving} onClick={() => validId && void runChange(() => removeItem({ setListId: validId, itemId: item._id }), `${item.title} removed from set list`)} type="button"><Trash2 aria-hidden="true" size={14} /></button>
                             </div>
                           </div>
                         </li>
@@ -356,9 +356,9 @@ export function SetListDetail({ id }: SetListDetailProps) {
                     })}
                   </ol>
                 ) : (
-                  <p className={componentStyles.style43}>Add a song to start your set.</p>
+                  <p className={componentStyles.emptySongListMessage}>Add a song to start your set.</p>
                 )}
-                <p className={componentStyles.style44} aria-live="polite" aria-atomic="true">
+                <p className={componentStyles.visuallyHidden} aria-live="polite" aria-atomic="true">
                   {draggedItemId && setList.items.find((item) => item._id === draggedItemId)
                     ? dropTarget
                       ? `${setList.items.find((item) => item._id === draggedItemId)?.title} will move ${dropTarget.position} ${setList.items.find((item) => item._id === dropTarget.itemId)?.title}.`
@@ -368,28 +368,28 @@ export function SetListDetail({ id }: SetListDetailProps) {
               </section>
             </aside>
 
-            <section className={componentStyles.style45} aria-label="Selected song">
-              {status && <p className={componentStyles.style46} role="status">{status}</p>}
+            <section className={componentStyles.selectedSongSection} aria-label="Selected song">
+              {status && <p className={componentStyles.actionStatusMessage} role="status">{status}</p>}
               {selectedItem ? selectedItem.canOpen && selectedItem.abc ? (
-                <div className={componentStyles.style47}>
-                  <div className={componentStyles.style48}>
-                    <div className={componentStyles.style10}>
-                      <p className={componentStyles.style49}>Song {selectedItemIndex + 1} of {setList.items.length} · {setList.name}</p>
-                      <h2 className={componentStyles.style50}>{selectedItem.title}</h2>
+                <div className={componentStyles.selectedSongLayout}>
+                  <div className={componentStyles.selectedSongContent}>
+                    <div className={componentStyles.titleAndDetails}>
+                      <p className={componentStyles.selectedSongPosition}>Song {selectedItemIndex + 1} of {setList.items.length} · {setList.name}</p>
+                      <h2 className={componentStyles.selectedSongTitle}>{selectedItem.title}</h2>
                     </div>
                     <Link
-                      className={componentStyles.style51}
+                      className={componentStyles.openSongWorkspaceLink}
                       href={`/${selectedItem.isOwned ? "mylibrary" : "songs"}/${encodeURIComponent(selectedItem.songId)}?setListId=${encodeURIComponent(setList._id)}&setListItemId=${encodeURIComponent(selectedItem._id)}`}
                     >
                       Open song workspace
                     </Link>
                   </div>
 
-                  <fieldset className={componentStyles.style52} aria-label={`${selectedItem.title} display settings`}>
-                    <legend className={componentStyles.style44}>Display settings for {selectedItem.title}</legend>
-                    <label className={componentStyles.style53}>
+                  <fieldset className={componentStyles.selectedSongDisplaySettings} aria-label={`${selectedItem.title} display settings`}>
+                    <legend className={componentStyles.visuallyHidden}>Display settings for {selectedItem.title}</legend>
+                    <label className={componentStyles.transposeFieldLabel}>
                       Transpose
-                      <select aria-label={`Transpose ${selectedItem.title}`} className={`${componentStyles.sharedField} ${componentStyles.style54}`} value={selectedSettings.transposition} onChange={(event) => void handleDisplayChange(selectedItem._id, { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }, { transposition: Number(event.target.value) })}>
+                      <select aria-label={`Transpose ${selectedItem.title}`} className={`${componentStyles.sharedField} ${componentStyles.transposeSelect}`} value={selectedSettings.transposition} onChange={(event) => void handleDisplayChange(selectedItem._id, { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }, { transposition: Number(event.target.value) })}>
                         {Array.from({ length: 25 }, (_, step) => step - 12).map((step) => <option key={step} value={step}>{step > 0 ? `+${step}` : step}</option>)}
                       </select>
                     </label>
@@ -397,14 +397,14 @@ export function SetListDetail({ id }: SetListDetailProps) {
                       ["showChords", "Show chords"],
                       ["showLyrics", "Show lyrics"],
                     ] as const).map(([key, label]) => (
-                      <label className={componentStyles.style55} key={key}>
-                        <input aria-label={`${label} for ${selectedItem.title}`} checked={selectedSettings[key]} className={componentStyles.style56} type="checkbox" onChange={(event) => void handleDisplayChange(selectedItem._id, { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }, { [key]: event.target.checked })} />
+                      <label className={componentStyles.displayToggleLabel} key={key}>
+                        <input aria-label={`${label} for ${selectedItem.title}`} checked={selectedSettings[key]} className={componentStyles.displayToggleCheckbox} type="checkbox" onChange={(event) => void handleDisplayChange(selectedItem._id, { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }, { [key]: event.target.checked })} />
                         {label.replace("Show ", "")}
                       </label>
                     ))}
                   </fieldset>
 
-                  <div className={componentStyles.style57}>
+                  <div className={componentStyles.selectedSongPreview}>
                     <AbcPreview
                       abc={selectedItem.abc}
                       key={selectedItem._id}
@@ -415,15 +415,15 @@ export function SetListDetail({ id }: SetListDetailProps) {
                   </div>
                 </div>
               ) : (
-                <div className={componentStyles.style58}>
-                  <h2 className={componentStyles.style59}>Song unavailable</h2>
-                  <p className={componentStyles.style60}>{selectedItem.title} is no longer available to open.</p>
+                <div className={componentStyles.selectedSongEmptyState}>
+                  <h2 className={componentStyles.emptyStateTitle}>Song unavailable</h2>
+                  <p className={componentStyles.emptyStateDescription}>{selectedItem.title} is no longer available to open.</p>
                 </div>
               ) : (
-                <div className={componentStyles.style58}>
-                  <h2 className={componentStyles.style59}>This set list is empty</h2>
-                  <p className={componentStyles.style60}>Choose one of your songs or a public song in the sidebar to start arranging your performance.</p>
-                  <p className={componentStyles.style61}>You can also <Link className={componentStyles.style20} href="/songs">browse public songs</Link>.</p>
+                <div className={componentStyles.selectedSongEmptyState}>
+                  <h2 className={componentStyles.emptyStateTitle}>This set list is empty</h2>
+                  <p className={componentStyles.emptyStateDescription}>Choose one of your songs or a public song in the sidebar to start arranging your performance.</p>
+                  <p className={componentStyles.emptyStateBrowseLink}>You can also <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.</p>
                 </div>
               )}
             </section>
@@ -433,12 +433,12 @@ export function SetListDetail({ id }: SetListDetailProps) {
       {dragPreview && (
         <div
           aria-hidden="true"
-          className={componentStyles.style62}
+          className={componentStyles.dragPreview}
           style={{ left: dragPreview.left, top: dragPreview.top, width: dragPreview.width }}
         >
-          <GripVertical className={componentStyles.style63} aria-hidden="true" size={16} />
-          <span className={componentStyles.style64}>{dragPreview.title}</span>
-          <span className={componentStyles.style65}>Release to place</span>
+          <GripVertical className={componentStyles.dragPreviewIcon} aria-hidden="true" size={16} />
+          <span className={componentStyles.dragPreviewSongName}>{dragPreview.title}</span>
+          <span className={componentStyles.dragPreviewHint}>Release to place</span>
         </div>
       )}
     </div>

@@ -1,154 +1,154 @@
 /* Component styles. */
 @layer components {
-  .style0 {
+  .workspaceActionGroup {
     display: flex;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     display: inline-flex;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     min-height: 34px;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     cursor: pointer;
   }
-  .style0 {
+  .workspaceActionGroup {
     flex-wrap: wrap;
   }
-  .style0,
-.style1,
-.style2 {
+  .workspaceActionGroup,
+.secondaryActionButton,
+.exportButton {
     align-items: center;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     justify-content: center;
   }
-  .style0 {
+  .workspaceActionGroup {
     justify-content: flex-end;
   }
-  .style0,
-.style1,
-.style2 {
+  .workspaceActionGroup,
+.secondaryActionButton,
+.exportButton {
     gap: 7px;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     border-radius: 8px;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
-  .style2 {
+  .exportButton {
     border-color: var(--accent);
   }
-  .style1 {
+  .secondaryActionButton {
     border-color: var(--line-strong);
   }
-  .style2 {
+  .exportButton {
     background-color: var(--accent);
   }
-  .style1 {
+  .secondaryActionButton {
     background-color: var(--paper);
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     padding-inline: 11px;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     font-size: 11px;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     --component-font-weight: 650;
     font-weight: 650;
   }
-  .style1 {
+  .secondaryActionButton {
     color: var(--muted);
   }
-  .style2 {
+  .exportButton {
     color: var(--color-white);
   }
-  .style2 {
+  .exportButton {
     transition-property: border-color,background-color,opacity;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style1 {
+  .secondaryActionButton {
     transition-property: border-color,color,opacity;
     transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
     transition-duration: var(--component-duration, var(--default-transition-duration));
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     --component-duration: 160ms;
     transition-duration: 160ms;
   }
-  .style1,
-.style2 {
+  .secondaryActionButton,
+.exportButton {
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
   @media (hover: hover) {
-    .style1:hover {
+    .secondaryActionButton:hover {
       border-color: var(--accent);
     }
   }
   @media (hover: hover) {
-    .style2:hover {
+    .exportButton:hover {
       border-color: var(--accent-deep);
     }
   }
   @media (hover: hover) {
-    .style2:hover {
+    .exportButton:hover {
       background-color: var(--accent-deep);
     }
   }
   @media (hover: hover) {
-    .style1:hover {
+    .secondaryActionButton:hover {
       color: var(--ink);
     }
   }
-  .style1:focus-visible,
-.style2:focus-visible {
+  .secondaryActionButton:focus-visible,
+.exportButton:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
   }
-  .style1:focus-visible,
-.style2:focus-visible {
+  .secondaryActionButton:focus-visible,
+.exportButton:focus-visible {
     outline-offset: 2px;
   }
-  .style1:focus-visible,
-.style2:focus-visible {
+  .secondaryActionButton:focus-visible,
+.exportButton:focus-visible {
     outline-color: var(--accent);
   }
-  .style1:disabled,
-.style2:disabled {
+  .secondaryActionButton:disabled,
+.exportButton:disabled {
     cursor: not-allowed;
   }
-  .style1:disabled,
-.style2:disabled {
+  .secondaryActionButton:disabled,
+.exportButton:disabled {
     opacity: 0.55;
   }
   @media (width < 720px) {
-    .style0 {
+    .workspaceActionGroup {
       margin-top: calc(var(--spacing) * 4);
     }
   }
   @media (width < 720px) {
-    .style1,
-.style2 {
+    .secondaryActionButton,
+.exportButton {
       flex: 1;
     }
   }
   @media (width < 720px) {
-    .style0 {
+    .workspaceActionGroup {
       justify-content: stretch;
     }
   }
