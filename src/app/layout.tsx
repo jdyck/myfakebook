@@ -1,9 +1,23 @@
 import type { Metadata } from "next";
+import { Inconsolata, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
-import { AppProviders } from "@/components/layout/app-providers";
+import { AppProviders } from "@/components/app-shell/app-providers";
 
 import "./globals.css";
+import componentStyles from "./layout.module.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const inconsolata = Inconsolata({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-inconsolata",
+});
 
 export const metadata: Metadata = {
   title: "MyFakebook — Online lead sheets",
@@ -16,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className="bg-background" lang="en">
-      <body className="m-0 min-h-screen bg-background font-sans text-foreground selection:bg-[#d9d6ff] selection:text-[#27235e] dark:selection:bg-[#4a4387] dark:selection:text-white">
+    <html className={`${inter.variable} ${inconsolata.variable} ${componentStyles.fontVariables}`} lang="en">
+      <body className={componentStyles.pageBody}>
         <AppProviders>{children}</AppProviders>
         <Analytics />
       </body>

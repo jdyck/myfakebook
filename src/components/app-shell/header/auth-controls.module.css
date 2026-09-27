@@ -1,0 +1,106 @@
+/* Component styles. */
+@layer components {
+  .signInLink,
+  .signInButton,
+  .createAccountButton {
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--spacing) * 1.75);
+    border-radius: 8px;
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    padding-inline: calc(var(--spacing) * 2.75);
+    font-size: 11px;
+    --component-font-weight: 650;
+    font-weight: 650;
+    color: var(--muted);
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+
+  .signInLink {
+    min-height: calc(var(--spacing) * 8);
+    text-decoration-line: none;
+    transition-property: border-color, color;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+  }
+
+  .signInButton,
+  .createAccountButton {
+    min-height: calc(var(--spacing) * 8.5);
+  }
+
+  .signInLink,
+  .createAccountButton {
+    border-color: var(--line-strong);
+  }
+
+  .signInButton {
+    border-color: transparent;
+    background-color: transparent;
+    transition-property: background-color, color, opacity;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+  }
+
+  .createAccountButton {
+    background-color: var(--paper);
+    transition-property: border-color, color, opacity;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+  }
+
+  @media (hover: hover) {
+    .signInLink:hover,
+    .createAccountButton:hover {
+      border-color: var(--accent);
+    }
+
+    .signInButton:hover {
+      background-color: var(--paper-soft);
+    }
+
+    .signInLink:hover,
+    .signInButton:hover,
+    .createAccountButton:hover {
+      color: var(--ink);
+    }
+  }
+
+  .signInLink:focus-visible,
+  .signInButton:focus-visible,
+  .createAccountButton:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  .signInButton:disabled,
+  .createAccountButton:disabled {
+    opacity: 0.55;
+  }
+}

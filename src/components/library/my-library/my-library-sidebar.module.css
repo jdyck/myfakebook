@@ -1,0 +1,180 @@
+/* Component styles. */
+@layer components {
+  .setListMetadata {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
+
+  .recentSetListList,
+  .allSetListsLink {
+    margin-top: calc(var(--spacing) * 2);
+  }
+
+  .recentSetListsSection {
+    margin-top: calc(var(--spacing) * 6);
+  }
+
+  .recentSetListLink,
+  .setListName,
+  .setListMetadata,
+  .allSetListsLink {
+    display: block;
+  }
+
+  .libraryHeadingBar,
+  .recentSetListList {
+    display: grid;
+  }
+
+  .librarySidebar,
+  .recentSetListLink {
+    min-width: 0px;
+  }
+
+  .libraryHeadingBar {
+    gap: var(--spacing);
+  }
+
+  .recentSetListList {
+    gap: 3px;
+  }
+
+  .setListName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    --component-font-weight: 620;
+    font-weight: 620;
+    color: var(--ink);
+  }
+
+  .recentSetListLink {
+    border-radius: 8px;
+    padding: calc(var(--spacing) * 2);
+    transition-property: background-color;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+
+  .allSetListsLink {
+    border-radius: var(--ui-radius);
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    border-color: var(--line);
+    background-color: var(--paper);
+    padding-inline: calc(var(--spacing) * 3);
+    padding-block: calc(var(--spacing) * 2);
+    text-align: center;
+    transition-property: border-color, background-color;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+  }
+
+  .librarySidebar {
+    border-right-style: var(--component-border-style);
+    border-right-width: 1px;
+    border-color: var(--line);
+    padding-inline: calc(var(--spacing) * 3.75);
+    padding-block: calc(var(--spacing) * 6.25);
+  }
+
+  .libraryHeadingBar,
+  .sectionHeading,
+  .setListsMessage {
+    padding-inline: calc(var(--spacing) * 2);
+  }
+
+  .setListsMessage {
+    padding-block: calc(var(--spacing) * 3.5);
+    --component-leading: 1.5;
+    line-height: 1.5;
+  }
+
+  .sectionHeading,
+  .setListsMessage,
+  .setListMetadata,
+  .allSetListsLink {
+    font-size: 10px;
+  }
+
+  .libraryTitle {
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .signInLink,
+  .allSetListsLink {
+    --component-font-weight: 650;
+    font-weight: 650;
+    color: var(--accent-deep);
+  }
+
+  .libraryTitle,
+  .sectionHeading {
+    --component-font-weight: 680;
+    font-weight: 680;
+  }
+
+  .sectionHeading {
+    --component-tracking: 0.08em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .sectionHeading,
+  .setListsMessage,
+  .setListMetadata {
+    color: var(--muted-soft);
+  }
+
+  .signInLink,
+  .recentSetListLink,
+  .allSetListsLink {
+    text-decoration-line: none;
+  }
+
+  @media (hover: hover) {
+    .allSetListsLink:hover {
+      border-color: var(--line-strong);
+    }
+
+    .recentSetListLink:hover,
+    .allSetListsLink:hover {
+      background-color: var(--paper-soft);
+    }
+
+    .signInLink:hover {
+      text-decoration-line: underline;
+    }
+  }
+
+  .recentSetListLink:focus-visible,
+  .allSetListsLink:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  @media (width < 720px) {
+    .librarySidebar {
+      display: none;
+    }
+  }
+}

@@ -9,6 +9,7 @@ function readDisplaySettings(value: unknown): SongDisplaySettings {
   return {
     showChords: typeof candidate.showChords === "boolean" ? candidate.showChords : true,
     showLyrics: typeof candidate.showLyrics === "boolean" ? candidate.showLyrics : true,
+    showFirstLineClefOnly: typeof candidate.showFirstLineClefOnly === "boolean" ? candidate.showFirstLineClefOnly : false,
     transposition: typeof candidate.transposition === "number" && Number.isInteger(candidate.transposition)
       ? Math.max(-24, Math.min(24, candidate.transposition))
       : 0,

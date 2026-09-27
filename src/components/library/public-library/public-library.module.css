@@ -1,0 +1,147 @@
+/* Component styles. */
+@layer components {
+  .sectionTitle,
+  .sectionDescription {
+    margin: 0px;
+  }
+
+  .songMetadata {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
+
+  .sectionDescription {
+    margin-top: var(--spacing);
+  }
+
+  .sectionHeader {
+    margin-bottom: calc(var(--spacing) * 2.5);
+    align-items: baseline;
+  }
+
+  .songLibrarySection {
+    margin-bottom: calc(var(--spacing) * 5);
+    border-radius: 11px;
+    background-color: var(--paper);
+    padding-inline: calc(var(--spacing) * 4);
+    padding-block: calc(var(--spacing) * 3.5);
+  }
+
+  .songTitle,
+  .songMetadata {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sectionHeader,
+  .songChoiceButton {
+    display: flex;
+    justify-content: space-between;
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .songList {
+    display: grid;
+    gap: calc(var(--spacing) * 1.5);
+  }
+
+  .songChoiceButton {
+    width: 100%;
+    align-items: center;
+    border-radius: 8px;
+    padding-inline: calc(var(--spacing) * 3);
+    padding-block: calc(var(--spacing) * 2);
+    text-align: left;
+    transition-property: border-color, background-color;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+
+  .songDetails {
+    min-width: 0px;
+  }
+
+  .songActionLabel {
+    flex-shrink: 0;
+    --component-font-weight: 650;
+    font-weight: 650;
+    color: var(--accent-deep);
+  }
+
+  .songLibrarySection,
+  .songChoiceButton {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+  }
+
+  .selectedSongButton {
+    border-color: var(--accent);
+    background-color: var(--accent-soft);
+  }
+
+  .songLibrarySection,
+  .unselectedSongButton {
+    border-color: var(--line);
+  }
+
+  .unselectedSongButton {
+    background-color: var(--paper-soft);
+  }
+
+  .songCount {
+    font-size: 9px;
+  }
+
+  .sectionDescription,
+  .songMetadata,
+  .songActionLabel {
+    font-size: 10px;
+  }
+
+  .songTitle {
+    font-size: 11px;
+    --component-font-weight: 680;
+    font-weight: 680;
+  }
+
+  .sectionTitle {
+    font-size: 12px;
+    --component-font-weight: 720;
+    font-weight: 720;
+  }
+
+  .sectionDescription,
+  .songCount,
+  .songMetadata {
+    color: var(--muted-soft);
+  }
+
+  .sectionTitle,
+  .songTitle {
+    color: var(--ink);
+  }
+
+  @media (hover: hover) {
+    .unselectedSongButton:hover {
+      border-color: var(--line-strong);
+    }
+  }
+
+  .songChoiceButton:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+}

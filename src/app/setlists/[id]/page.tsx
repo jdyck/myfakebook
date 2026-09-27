@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { SetListDetail } from "@/components/workspace/set-lists";
+import { SetListDetail } from "@/components/set-lists";
 
 export default async function SetListPage({ params }: { params: Promise<{ id: string }> }) {
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !(await auth()).userId) return redirect("/songs");

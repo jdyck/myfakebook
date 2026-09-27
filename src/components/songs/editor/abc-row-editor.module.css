@@ -1,0 +1,197 @@
+/* Component styles. */
+@layer components {
+  .editorInstructions {
+    margin: 0px;
+  }
+
+  .unsupportedSourceTextarea,
+  .rowEditorGrid {
+    margin: calc(var(--spacing) * 3.5);
+  }
+
+  .unsupportedFormatMessage,
+  .editorInstructionsRow {
+    margin-inline: calc(var(--spacing) * 3.5);
+    margin-top: calc(var(--spacing) * 3);
+    margin-bottom: 0px;
+  }
+
+  .rowLabel {
+    display: block;
+    height: 21px;
+  }
+
+  .unsupportedEditorPanel,
+  .easyEditorPanel,
+  .editorInstructionsRow {
+    display: flex;
+  }
+
+  .rowEditorGrid {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .rowTextarea {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    border-style: var(--component-border-style);
+    border-width: 0px;
+    background-color: transparent;
+    white-space: pre;
+    tab-size: 2;
+    outline-style: var(--component-outline-style);
+    outline-width: 0px;
+  }
+
+  .unsupportedEditorPanel,
+  .easyEditorPanel {
+    min-height: 0px;
+    flex-direction: column;
+  }
+
+  .unsupportedSourceTextarea {
+    min-height: 480px;
+    --component-outline-style: none;
+    outline-style: none;
+  }
+
+  .rowEditorGrid,
+  .rowTextarea {
+    min-height: 515px;
+  }
+
+  .unsupportedEditorPanel,
+  .unsupportedSourceTextarea,
+  .easyEditorPanel,
+  .rowEditorGrid {
+    flex: 1;
+  }
+
+  .unsupportedSourceTextarea,
+  .rowTextarea {
+    resize: none;
+    padding-inline: calc(var(--spacing) * 4);
+    padding-block: calc(var(--spacing) * 3.5);
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+
+  .editorInstructionsRow {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--spacing) * 2);
+  }
+
+  .easyEditorPanel,
+  .rowEditorGrid,
+  .rowLabelGutter {
+    overflow: hidden;
+  }
+
+  .unsupportedFormatMessage,
+  .unsupportedSourceTextarea,
+  .rowEditorGrid {
+    border-radius: 8px;
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    background-color: var(--paper-soft);
+  }
+
+  .rowLabelGutter {
+    border-right-style: var(--component-border-style);
+    border-right-width: 1px;
+    background-color: var(--editor-gutter);
+    padding-top: calc(var(--spacing) * 3.5);
+    padding-right: 7px;
+    padding-bottom: 17px;
+    padding-left: 0px;
+    text-align: right;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .unsupportedFormatMessage,
+  .unsupportedSourceTextarea,
+  .rowEditorGrid,
+  .rowLabelGutter {
+    border-color: var(--line);
+  }
+
+  .unsupportedFormatMessage {
+    padding-inline: calc(var(--spacing) * 3);
+    padding-block: calc(var(--spacing) * 2);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .unsupportedSourceTextarea,
+  .rowLabelGutter,
+  .rowTextarea {
+    font-family: var(--font-inconsolata);
+  }
+
+  .editorInstructions,
+  .rowValidationMessage,
+  .rowLabelGutter {
+    font-size: 10px;
+  }
+
+  .unsupportedFormatMessage,
+  .editorInstructions {
+    --component-leading: calc(var(--spacing) * 5);
+    line-height: calc(var(--spacing) * 5);
+  }
+
+  .unsupportedSourceTextarea,
+  .rowLabelGutter,
+  .rowLabel,
+  .rowTextarea {
+    --component-leading: 21px;
+    line-height: 21px;
+  }
+
+  .rowValidationMessage {
+    color: var(--amber);
+  }
+
+  .editorInstructions,
+  .rowLabelGutter {
+    color: var(--muted-soft);
+  }
+
+  .rowTextarea ::selection {
+    background-color: #ddd9ff;
+  }
+
+  .rowTextarea::selection {
+    background-color: #ddd9ff;
+  }
+
+  .unsupportedSourceTextarea:focus {
+    border-color: var(--accent);
+  }
+
+  @media (width < 720px) {
+    .unsupportedSourceTextarea,
+    .rowEditorGrid {
+      margin: calc(var(--spacing) * 3);
+    }
+
+    .editorInstructionsRow {
+      margin-inline: calc(var(--spacing) * 3);
+    }
+  }
+
+  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
+    background-color: #4a4387;
+    color: var(--color-white);
+  }
+
+  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+    background-color: #4a4387;
+    color: var(--color-white);
+  }
+}

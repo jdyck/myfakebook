@@ -1,4 +1,4 @@
-import { PublicLibraryBackedWorkspace } from "@/components/workspace/public-library-backed-workspace";
+import { PublicLibraryBackedWorkspace } from "@/components/songs/workspace/public-library-backed-workspace";
 import { notFound } from "next/navigation";
 
 export default async function SongPage({

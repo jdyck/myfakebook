@@ -1,0 +1,98 @@
+"use client";
+
+import { useConvexAuth, useQuery } from "convex/react";
+import Link from "next/link";
+
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
+import { MyFakebookWorkspace } from "@/components/songs/workspace/my-fakebook-workspace";
+import type { LoadedSong } from "@/components/songs/types";
+import type { SongDisplaySettings } from "@/lib/abc-display";
+import componentStyles from "./public-library-backed-workspace.module.css";
+
+type PublicLibraryBackedWorkspaceProps = {
+  clerkConfigured: boolean;
+  persistenceEnabled: boolean;
+  initialPublicSongId?: string;
+  initialPrivateSong?: LoadedSong;
+  initialDisplaySettings?: SongDisplaySettings;
+  setListId?: string;
+  setListItemId?: string;
+  setListReturn?: {
+    href: string;
+    name: string;
+    setListId: Id<"setLists">;
+    itemId: Id<"setListItems">;
+    songId: Id<"songs">;
+  };
+};
+
+export function PublicLibraryBackedWorkspace({
+  clerkConfigured,
+  persistenceEnabled,
+  initialPublicSongId,
+  initialPrivateSong,
+  initialDisplaySettings,
+  setListId,
+  setListItemId,
+  setListReturn,
+}: PublicLibraryBackedWorkspaceProps) {
+  const { isAuthenticated } = useConvexAuth();
+  const publishedSongDocs = useQuery(api.songs.listPublicSongs);
+  const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
+  const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
+
+  if (publishedSongDocs === undefined) {
+    return (
+      <main className={componentStyles.loadingPage}>
+        <p className={componentStyles.loadingStatus} role="status">
+          Loading Public Library…
+        </p>
+      </main>
+    );
+  }
+
+  const publishedSongs = publishedSongDocs.map((song) => ({
+    id: song.id,
+    catalogId: "catalogId" in song ? song.catalogId : undefined,
+    title: song.title,
+    writers: song.writers,
+    rhythm: song.rhythm,
+    abc: song.abc,
+  }));
+  const initialSong = publishedSongs.find((song) => song.id === initialPublicSongId || song.catalogId === initialPublicSongId);
+  const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === initialSong?.id);
+  const resolvedSetListReturn = setListReturn ?? (setList && setListItem && validSetListId ? {
+    href: `/setlists/${encodeURIComponent(setList._id)}`,
+    name: setList.name,
+    setListId: validSetListId,
+    itemId: setListItem._id,
+    songId: setListItem.songId,
+  } : undefined);
+  const resolvedDisplaySettings = initialDisplaySettings ?? setListItem?.displaySettings;
+
+  if (initialPublicSongId && !initialSong) {
+    return (
+      <main className={componentStyles.notFoundPage}>
+        <div className={componentStyles.notFoundContent}>
+          <h1 className={componentStyles.notFoundTitle}>Song not found</h1>
+          <Link className={componentStyles.browseSongsLink} href="/songs">Browse songs</Link>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <MyFakebookWorkspace
+      key={`${initialPrivateSong?.id ?? initialSong?.id ?? "default"}:${JSON.stringify(resolvedDisplaySettings ?? null)}:${resolvedSetListReturn?.href ?? ""}`}
+      publicLibraryIsPersisted={publishedSongs.length > 0}
+      clerkConfigured={clerkConfigured}
+      persistenceEnabled={persistenceEnabled}
+      publishedSongs={publishedSongs}
+      initialPublicSongId={initialSong?.id}
+      initialPrivateSong={initialPrivateSong}
+      initialDisplaySettings={resolvedDisplaySettings}
+      setListReturn={resolvedSetListReturn}
+    />
+  );
+}

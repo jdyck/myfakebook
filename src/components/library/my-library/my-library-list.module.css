@@ -1,0 +1,160 @@
+/* Component styles. */
+@layer components {
+  .pageContent {
+    margin-inline: auto;
+    max-width: var(--container-3xl);
+    padding-block: calc(var(--spacing) * 8);
+  }
+
+  .songMetadata {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
+
+  .pageDescription {
+    margin-top: var(--spacing);
+  }
+
+  .pageHeadingRow {
+    margin-bottom: calc(var(--spacing) * 5);
+    align-items: baseline;
+  }
+
+  .songTitle,
+  .songMetadata {
+    display: block;
+  }
+
+  .pageHeadingRow,
+  .headingActions,
+  .songLink {
+    display: flex;
+  }
+
+  .songList {
+    display: grid;
+    gap: calc(var(--spacing) * 2);
+  }
+
+  .pageShell {
+    min-height: 100vh;
+  }
+
+  .songDetails {
+    min-width: 0px;
+  }
+
+  .songCount,
+  .openSongLabel {
+    flex-shrink: 0;
+  }
+
+  .headingActions,
+  .songLink {
+    align-items: center;
+  }
+
+  .pageHeadingRow,
+  .songLink {
+    justify-content: space-between;
+    gap: calc(var(--spacing) * 4);
+  }
+
+  .headingActions {
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .newSongLink,
+  .songLink {
+    border-radius: var(--ui-radius);
+  }
+
+  .songLink {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    border-color: var(--line);
+    background-color: var(--paper);
+    padding-block: calc(var(--spacing) * 3);
+  }
+
+  .newSongLink {
+    background-color: var(--accent);
+    padding-inline: calc(var(--spacing) * 3);
+    padding-block: calc(var(--spacing) * 2);
+    color: var(--color-white);
+  }
+
+  .pageContent,
+  .songLink {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+
+  .pageTitle {
+    font-size: var(--text-2xl);
+    line-height: var(--component-leading, var(--text-2xl--line-height));
+    --component-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .pageDescription,
+  .emptyLibraryMessage {
+    font-size: var(--text-sm);
+    line-height: var(--component-leading, var(--text-sm--line-height));
+  }
+
+  .songCount,
+  .newSongLink,
+  .songMetadata,
+  .openSongLabel {
+    font-size: var(--text-xs);
+    line-height: var(--component-leading, var(--text-xs--line-height));
+  }
+
+  .newSongLink,
+  .songTitle,
+  .openSongLabel {
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .openSongLabel,
+  .createSongLink {
+    color: var(--accent-deep);
+  }
+
+  .emptyLibraryMessage {
+    color: var(--muted);
+  }
+
+  .pageDescription,
+  .songCount,
+  .songMetadata {
+    color: var(--muted-soft);
+  }
+
+  .songTitle {
+    color: var(--ink);
+  }
+
+  .createSongLink {
+    text-decoration-line: underline;
+  }
+
+  @media (hover: hover) {
+    .songLink:hover {
+      border-color: var(--line-strong);
+    }
+  }
+
+  .songLink:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  @media (width < 720px) {
+    .pageContent {
+      padding-block: calc(var(--spacing) * 5);
+    }
+  }
+}

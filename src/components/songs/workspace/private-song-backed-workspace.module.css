@@ -1,0 +1,31 @@
+/* Component styles. */
+@layer components {
+  .backToLibraryLink {
+    margin-top: calc(var(--spacing) * 3);
+    display: inline-block;
+    color: var(--accent-deep);
+    text-decoration-line: underline;
+  }
+
+  .loadingPage,
+  .notFoundPage {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+  }
+
+  .notFoundPage {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+
+  .notFoundContent {
+    text-align: center;
+  }
+
+  .notFoundTitle {
+    font-size: var(--text-xl);
+    line-height: var(--component-leading, var(--text-xl--line-height));
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+}

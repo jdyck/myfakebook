@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { MyLibraryListBacked, MyLibraryList } from "@/components/workspace/my-library-list";
+import { MyLibraryListBacked, MyLibraryList } from "@/components/library/my-library/my-library-list";
 
 export default async function MyLibraryPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);

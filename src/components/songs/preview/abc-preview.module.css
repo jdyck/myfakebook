@@ -1,0 +1,185 @@
+/* Component styles. */
+@layer components {
+  .leadSheetPreview {
+    position: relative;
+    min-height: 480px;
+    flex: 1;
+    scrollbar-color: #d1d1cb transparent;
+    overflow: auto;
+    border-radius: 8px;
+    background-color: #fffefb;
+    padding-inline: calc(var(--spacing) * 3.5);
+    padding-block: 18px;
+  }
+
+  .songActions {
+    margin-top: calc(var(--spacing) * 2);
+    gap: calc(var(--spacing) * 2);
+  }
+
+  .playbackControls {
+    margin-top: calc(var(--spacing) * 3);
+    border-top-style: var(--component-border-style);
+    border-top-width: 1px;
+    padding-top: calc(var(--spacing) * 3);
+  }
+
+  .syntaxHelpExample {
+    margin-top: 7px;
+    display: block;
+    font-family: var(--font-inter);
+    color: var(--muted-soft);
+  }
+
+  .playbackControls,
+  .playbackFieldGroup,
+  .playbackFieldLabel,
+  .songActions {
+    display: flex;
+    align-items: center;
+  }
+
+  .playbackErrorPanel,
+  .playbackButton {
+    display: grid;
+    place-items: center;
+  }
+
+  .notationErrorState {
+    display: none;
+  }
+
+  .playbackButton {
+    width: 31px;
+    height: 31px;
+    cursor: pointer;
+    border-radius: 7px;
+    color: var(--accent);
+    transition-property: border-color, background-color;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+
+  .playbackErrorPanel {
+    min-height: 320px;
+    padding: 30px;
+    text-align: center;
+    font-size: 11px;
+    --component-leading: 1.6;
+    line-height: 1.6;
+    color: var(--amber);
+  }
+
+  .notationCanvas {
+    min-width: calc(var(--spacing) * 125);
+    padding-inline: calc(var(--spacing) * 2);
+    padding-top: calc(var(--spacing) * 2.5);
+    padding-bottom: calc(var(--spacing) * 3.5);
+  }
+
+  .loadingSpinner {
+    animation: var(--animate-spin);
+  }
+
+  .playbackFieldGroup,
+  .songActions {
+    flex-wrap: wrap;
+  }
+
+  .playbackFieldLabel {
+    gap: calc(var(--spacing) * 1.5);
+  }
+
+  .playbackFieldGroup {
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .playbackSelect {
+    border-radius: 6px;
+    padding-inline: calc(var(--spacing) * 1.5);
+    padding-block: var(--spacing);
+    color: var(--ink);
+  }
+
+  .leadSheetPreview,
+  .playbackSelect,
+  .playbackButton {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+  }
+
+  .leadSheetPreview,
+  .playbackControls {
+    border-color: var(--line);
+  }
+
+  .playbackSelect,
+  .playbackButton {
+    border-color: var(--line-strong);
+    background-color: var(--paper);
+  }
+
+  .syntaxHelpExample,
+  .playbackFieldLabel,
+  .playbackSelect,
+  .playbackStatus {
+    font-size: 10px;
+  }
+
+  .playbackFieldLabel,
+  .playbackStatus {
+    --component-font-weight: 650;
+    font-weight: 650;
+    color: var(--muted);
+  }
+
+  @media (hover: hover) {
+    .playbackButton:hover {
+      border-color: var(--accent);
+      background-color: var(--accent-soft);
+    }
+  }
+
+  .playbackSelect:focus-visible,
+  .playbackButton:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  .playbackButton:disabled {
+    cursor: not-allowed;
+  }
+
+  @media (width < 720px) {
+    .leadSheetPreview {
+      min-height: 390px;
+    }
+  }
+
+  .leadSheetPreview:where([data-theme="dark"], [data-theme="dark"] *) {
+    background-color: #999999;
+  }
+
+  .notationCanvas svg {
+    overflow: visible;
+    color: #252631;
+  }
+
+  .leadSheetPreview:where([data-theme="dark"], [data-theme="dark"] *)
+    .notationCanvas
+    svg {
+    color: #000000;
+  }
+}

@@ -1,4 +1,4 @@
-import { PublicSongsList, PublicSongsListBacked } from "@/components/workspace/public-songs-list";
+import { PublicSongsList, PublicSongsListBacked } from "@/components/library/public-library/public-songs-list";
 
 export default function SongsPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);

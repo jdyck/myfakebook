@@ -1,0 +1,138 @@
+/* Component styles. */
+@layer components {
+  .workspaceActionGroup {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .secondaryActionButton,
+  .exportButton {
+    display: inline-flex;
+    min-height: 34px;
+    cursor: pointer;
+    justify-content: center;
+    border-radius: 8px;
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    padding-inline: 11px;
+    font-size: 11px;
+    --component-font-weight: 650;
+    font-weight: 650;
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+
+  .workspaceActionGroup,
+  .secondaryActionButton,
+  .exportButton {
+    align-items: center;
+    gap: 7px;
+  }
+
+  .exportButton {
+    border-color: var(--accent);
+    background-color: var(--accent);
+    color: var(--color-white);
+    transition-property: border-color, background-color, opacity;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+  }
+
+  .secondaryActionButton {
+    border-color: var(--line-strong);
+    background-color: var(--paper);
+    color: var(--muted);
+    transition-property: border-color, color, opacity;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+  }
+
+  .exportMenuPopup {
+    min-width: 140px;
+    padding: 4px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background-color: var(--paper);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+    color: var(--ink);
+  }
+
+  .exportMenuItem {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .exportMenuItem[data-highlighted] {
+    background-color: var(--accent-soft);
+    color: var(--accent-deep);
+    outline: none;
+  }
+
+  .exportMenuItem:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  @media (hover: hover) {
+    .secondaryActionButton:hover {
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+
+    .exportButton:hover {
+      border-color: var(--accent-deep);
+      background-color: var(--accent-deep);
+    }
+  }
+
+  .secondaryActionButton:focus-visible,
+  .exportButton:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  .secondaryActionButton:disabled,
+  .exportButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  @media (width < 720px) {
+    .workspaceActionGroup {
+      margin-top: calc(var(--spacing) * 4);
+      justify-content: stretch;
+    }
+
+    .secondaryActionButton,
+    .exportButton {
+      flex: 1;
+    }
+  }
+}

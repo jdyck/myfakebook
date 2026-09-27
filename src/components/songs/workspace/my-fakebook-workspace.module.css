@@ -1,0 +1,113 @@
+/* Component styles. */
+@layer components {
+  .settingsBannerTitle,
+  .settingsBannerDescription {
+    margin: 0px;
+  }
+
+  .workspaceGrid {
+    margin-inline: auto;
+    display: grid;
+    min-height: calc(100vh - 58px);
+  }
+
+  .settingsBannerDescription {
+    margin-top: var(--spacing);
+    color: var(--muted-soft);
+  }
+
+  .setListReturnLink,
+  .setListSettingsBanner {
+    margin-bottom: calc(var(--spacing) * 4);
+  }
+
+  .setListSettingsBanner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--spacing) * 3);
+    border-radius: calc(var(--ui-radius) + 4px);
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    border-color: var(--line);
+    background-color: var(--paper);
+    padding-inline: calc(var(--spacing) * 4);
+    padding-block: calc(var(--spacing) * 3);
+  }
+
+  .setListReturnLink {
+    display: inline-block;
+    color: var(--accent-deep);
+  }
+
+  .appShell {
+    min-height: 100vh;
+  }
+
+  .workspaceMain {
+    min-width: 0px;
+    padding: calc(var(--spacing) * 4);
+  }
+
+  .workspaceGridWithSidebar {
+    grid-template-columns: 208px minmax(0, 1fr);
+  }
+
+  .workspaceGridWithoutSidebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .editorAndPreview {
+    gap: calc(var(--spacing) * 4);
+  }
+
+  .settingsBannerTitle {
+    font-size: var(--text-sm);
+    line-height: var(--component-leading, var(--text-sm--line-height));
+  }
+
+  .setListReturnLink,
+  .settingsBannerDescription {
+    font-size: var(--text-xs);
+    line-height: var(--component-leading, var(--text-xs--line-height));
+  }
+
+  .setListReturnLink,
+  .settingsBannerTitle {
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  @media (hover: hover) {
+    .setListReturnLink:hover {
+      text-decoration-line: underline;
+    }
+  }
+
+  @media (width < 1080px) {
+    .workspaceMain {
+      padding-inline: calc(var(--spacing) * 5.5);
+      padding-top: calc(var(--spacing) * 7);
+      padding-bottom: calc(var(--spacing) * 9);
+    }
+  }
+
+  @media (width < 720px) {
+    .workspaceGrid {
+      display: block;
+    }
+
+    .workspaceMain {
+      padding-inline: calc(var(--spacing) * 3.5);
+      padding-top: calc(var(--spacing) * 5.5);
+      padding-bottom: calc(var(--spacing) * 7);
+    }
+  }
+
+  @media (width >= 80rem) {
+    .editorAndPreview {
+      display: flex;
+    }
+  }
+}

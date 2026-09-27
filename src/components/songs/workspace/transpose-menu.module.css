@@ -1,0 +1,92 @@
+@layer components {
+  .trigger {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    cursor: pointer;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding-inline: 11px;
+    background-color: var(--accent);
+    color: var(--color-white);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    line-height: inherit;
+    transition-property: border-color, background-color, opacity;
+    transition-duration: 160ms;
+    transition-timing-function: var(--ease-in-out);
+    white-space: nowrap;
+  }
+
+  .trigger:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  .popup {
+    width: max-content;
+    min-width: 180px;
+    max-height: min(24rem, calc(100dvh - 2rem));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background-color: var(--paper);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+    color: var(--ink);
+  }
+
+  .item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: calc(var(--spacing) * 1.5);
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .item[data-highlighted] {
+    background-color: var(--accent-soft);
+    color: var(--accent-deep);
+    outline: none;
+  }
+
+  @media (hover: hover) {
+    .trigger:hover {
+      border-color: var(--accent-deep);
+      background-color: var(--accent-deep);
+    }
+  }
+
+  .item[data-checked] {
+    font-weight: 650;
+  }
+
+  .indicator {
+    display: inline-flex;
+    width: 14px;
+    height: 14px;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-deep);
+  }
+
+  .indicator[data-unchecked] {
+    visibility: hidden;
+  }
+}

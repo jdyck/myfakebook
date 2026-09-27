@@ -1,0 +1,379 @@
+/* Component styles. */
+@layer components {
+  .sourceEditorPanel {
+    margin: calc(var(--spacing) * 3.5);
+    display: grid;
+    min-height: 515px;
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .lineNumber {
+    display: block;
+    height: 21px;
+  }
+
+  .abcEditorPanel,
+  .editorToolbar,
+  .editorModeControls,
+  .editorModeTabs,
+  .editorActions,
+  .editorPane,
+  .editorStatusBar,
+  .statusGroup,
+  .statusLabel {
+    display: flex;
+  }
+
+  .hiddenEditorPane {
+    display: none;
+  }
+
+  .editorActionButton {
+    display: inline-flex;
+    min-height: 34px;
+    justify-content: center;
+    gap: 7px;
+    border-color: transparent;
+    padding-inline: 11px;
+    transition-property: background-color, color, opacity;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+    --component-duration: 160ms;
+    transition-duration: 160ms;
+    --component-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+
+  .statusDot {
+    width: calc(var(--spacing) * 1.5);
+    height: calc(var(--spacing) * 1.5);
+  }
+
+  .saveStatusDot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .editorPane {
+    min-height: 0px;
+  }
+
+  .editorToolbar {
+    min-height: calc(var(--spacing) * 12);
+    border-bottom-style: var(--component-border-style);
+    border-bottom-width: 1px;
+    padding-block: calc(var(--spacing) * 1.5);
+  }
+
+  .editorModeTab {
+    min-height: 30px;
+    border-radius: 6px;
+    padding-inline: calc(var(--spacing) * 2.5);
+    transition-property:
+      color, background-color, border-color, outline-color,
+      text-decoration-color, fill, stroke, --component-gradient-from,
+      --component-gradient-via, --component-gradient-to;
+    transition-timing-function: var(
+      --component-ease,
+      var(--default-transition-timing-function)
+    );
+    transition-duration: var(
+      --component-duration,
+      var(--default-transition-duration)
+    );
+  }
+
+  .editorStatusBar {
+    min-height: 46px;
+  }
+
+  .sourceTextarea {
+    min-height: 510px;
+    width: 100%;
+    resize: none;
+    border-style: var(--component-border-style);
+    border-width: 0px;
+    padding-inline: calc(var(--spacing) * 4);
+    white-space: pre;
+    tab-size: 2;
+    outline-style: var(--component-outline-style);
+    outline-width: 0px;
+  }
+
+  .editorModeControls,
+  .editorModeTabs {
+    min-width: 0px;
+  }
+
+  .sourceEditorPanel,
+  .abcEditorPanel,
+  .editorPane {
+    flex: 1;
+  }
+
+  .fileTypeIcon,
+  .fileTypeBadge,
+  .statusDot,
+  .saveStatusDot {
+    flex-shrink: 0;
+  }
+
+  .editorModeTab,
+  .editorActionButton {
+    cursor: pointer;
+    font-size: 11px;
+    --component-font-weight: 650;
+    font-weight: 650;
+  }
+
+  .abcEditorPanel,
+  .editorPane {
+    flex-direction: column;
+  }
+
+  .editorToolbar,
+  .statusGroup {
+    flex-wrap: wrap;
+  }
+
+  .editorToolbar,
+  .editorModeControls,
+  .editorModeTabs,
+  .editorActions,
+  .editorActionButton,
+  .editorStatusBar,
+  .statusGroup,
+  .statusLabel {
+    align-items: center;
+  }
+
+  .editorToolbar,
+  .editorStatusBar {
+    justify-content: space-between;
+    padding-inline: calc(var(--spacing) * 3.5);
+  }
+
+  .editorModeTabs {
+    gap: var(--spacing);
+    padding: var(--spacing);
+  }
+
+  .editorToolbar,
+  .statusLabel {
+    gap: calc(var(--spacing) * 1.5);
+  }
+
+  .editorModeControls,
+  .editorActions {
+    gap: calc(var(--spacing) * 2);
+  }
+
+  .editorStatusBar,
+  .statusGroup {
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .sourceEditorPanel,
+  .lineNumberGutter,
+  .abcEditorPanel {
+    overflow: hidden;
+  }
+
+  .fileTypeBadge {
+    border-radius: 4px;
+    padding-inline: calc(var(--spacing) * 1.5);
+    padding-block: var(--spacing);
+    --component-font-weight: 600;
+    font-weight: 600;
+    --component-tracking: 0.03em;
+    letter-spacing: 0.03em;
+  }
+
+  .sourceEditorPanel,
+  .editorModeTabs,
+  .editorActionButton {
+    border-radius: 8px;
+  }
+
+  .abcEditorPanel {
+    border-radius: 11px;
+    border-color: var(--line);
+    background-color: var(--paper);
+  }
+
+  .statusDot,
+  .saveStatusDot {
+    border-radius: calc(infinity * 1px);
+  }
+
+  .sourceEditorPanel,
+  .abcEditorPanel,
+  .editorActionButton {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+  }
+
+  .lineNumberGutter {
+    border-right-style: var(--component-border-style);
+    border-right-width: 1px;
+    background-color: var(--editor-gutter);
+    padding-right: 9px;
+    padding-left: 0px;
+    text-align: right;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .sourceEditorPanel,
+  .lineNumberGutter,
+  .editorToolbar {
+    border-color: var(--line);
+  }
+
+  .warningStatusDot {
+    background-color: var(--amber);
+  }
+
+  .readyStatusDot,
+  .saveStatusDot {
+    background-color: var(--green);
+  }
+
+  .activeEditorModeTab {
+    background-color: var(--paper);
+    --component-shadow:
+      0 1px 3px 0 var(--component-shadow-color, rgb(0 0 0 / 0.1)),
+      0 1px 2px -1px var(--component-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow:
+      var(--component-inset-shadow), var(--component-inset-ring-shadow),
+      var(--component-ring-offset-shadow), var(--component-ring-shadow),
+      var(--component-shadow);
+  }
+
+  .sourceEditorPanel,
+  .editorModeTabs,
+  .fileTypeBadge {
+    background-color: var(--paper-soft);
+  }
+
+  .sourceTextarea,
+  .editorActionButton {
+    background-color: transparent;
+  }
+
+  .lineNumberGutter,
+  .sourceTextarea {
+    padding-top: calc(var(--spacing) * 3.5);
+    padding-bottom: 17px;
+    font-family: var(--font-inconsolata);
+    font-size: 11.5px;
+  }
+
+  .fileTypeBadge,
+  .statusGroup {
+    font-size: 9px;
+  }
+
+  .lineNumberGutter,
+  .lineNumber,
+  .sourceTextarea {
+    --component-leading: 21px;
+    line-height: 21px;
+  }
+
+  .fileTypeIcon {
+    color: var(--accent);
+  }
+
+  .conversionWarningStatus {
+    color: var(--amber);
+  }
+
+  .conversionReadyStatus {
+    color: var(--green);
+  }
+
+  .sourceTextarea,
+  .activeEditorModeTab {
+    color: var(--ink);
+  }
+
+  .inactiveEditorModeTab,
+  .editorActionButton {
+    color: var(--muted);
+  }
+
+  .lineNumberGutter,
+  .fileTypeBadge,
+  .statusGroup {
+    color: var(--muted-soft);
+  }
+
+  .sourceTextarea ::selection {
+    background-color: #ddd9ff;
+  }
+
+  .sourceTextarea::selection {
+    background-color: #ddd9ff;
+  }
+
+  @media (hover: hover) {
+    .editorActionButton:hover {
+      background-color: var(--paper-soft);
+    }
+
+    .inactiveEditorModeTab:hover,
+    .editorActionButton:hover {
+      color: var(--ink);
+    }
+  }
+
+  .editorModeTab:focus-visible,
+  .editorActionButton:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  .editorActionButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  @media (width < 720px) {
+    .sourceEditorPanel {
+      margin: calc(var(--spacing) * 3);
+    }
+
+    .editorStatusBar {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: calc(var(--spacing) * 1.5);
+      padding-block: 9px;
+    }
+
+    .editorToolbar,
+    .editorStatusBar {
+      padding-inline: calc(var(--spacing) * 3);
+    }
+  }
+
+  .sourceTextarea:where([data-theme="dark"], [data-theme="dark"] *)
+    ::selection {
+    background-color: #4a4387;
+    color: var(--color-white);
+  }
+
+  .sourceTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
+    background-color: #4a4387;
+    color: var(--color-white);
+  }
+}

@@ -1,0 +1,185 @@
+/* Component styles. */
+@layer components {
+  .displaySettingsLegend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .displaySettings,
+  .transposeFieldLabel {
+    display: flex;
+  }
+
+  .displayControls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: calc(var(--spacing) * 2);
+  }
+
+  .displayToggleLabel {
+    display: inline-flex;
+    gap: var(--spacing);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  .displayToggleCheckbox {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
+    accent-color: var(--accent);
+  }
+
+  .displaySettings {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: calc(var(--spacing) * 2);
+    border-style: var(--component-border-style);
+    border-width: 0px;
+    padding: 0px;
+  }
+
+  .optionsList {
+    display: grid;
+    gap: calc(var(--spacing) * 3);
+    border: 0;
+    padding: 0;
+  }
+
+  .displaySettings,
+  .transposeFieldLabel,
+  .displayToggleLabel {
+    align-items: center;
+  }
+
+  .transposeFieldLabel {
+    gap: calc(var(--spacing) * 1.5);
+    color: var(--muted);
+  }
+
+  .transposeSelect {
+    border-radius: 6px;
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    border-color: var(--line-strong);
+    background-color: var(--paper);
+    padding-inline: calc(var(--spacing) * 1.5);
+    padding-block: var(--spacing);
+    color: var(--ink);
+  }
+
+  .transposeFieldLabel,
+  .transposeSelect {
+    font-size: 10px;
+  }
+
+  .transposeFieldLabel {
+    --component-font-weight: 650;
+    font-weight: 650;
+  }
+
+  .viewOptionsButton,
+  .closeOptionsButton {
+    display: inline-flex;
+    min-height: 34px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding-inline: calc(var(--spacing) * 3);
+    background-color: var(--paper);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 650;
+    transition-property: border-color, color, background-color;
+    transition-duration: 160ms;
+    transition-timing-function: var(--ease-in-out);
+  }
+
+  .optionsDialog {
+    width: min(24rem, calc(100% - 2rem));
+    margin: auto;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background-color: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 16px 48px rgb(0 0 0 / 18%);
+  }
+
+  .optionsDialogContent {
+    padding: calc(var(--spacing) * 5);
+  }
+
+  .optionsDialogHeader,
+  .optionsDialogFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .optionsDialogTitle {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .optionsLegend {
+    margin-bottom: calc(var(--spacing) * 3);
+    color: var(--muted-soft);
+    font-size: 11px;
+    font-weight: 650;
+  }
+
+  .optionsDialogFooter {
+    justify-content: flex-end;
+    margin-top: calc(var(--spacing) * 5);
+  }
+
+  .optionsDialog::backdrop {
+    background-color: rgb(0 0 0 / 50%);
+  }
+
+  @media (hover: hover) {
+    .viewOptionsButton:hover,
+    .closeOptionsButton:hover {
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+  }
+
+  .viewOptionsButton:focus-visible,
+  .closeOptionsButton:focus-visible,
+  .displayToggleCheckbox:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  .transposeSelect:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+
+  @media (width < 720px) {
+    .displayControls {
+      justify-content: flex-start;
+      margin-top: calc(var(--spacing) * 3);
+    }
+
+    .displaySettings {
+      justify-content: flex-start;
+    }
+  }
+}
