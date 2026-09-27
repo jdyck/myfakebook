@@ -2,8 +2,8 @@
 
 import type { ChangeEventHandler } from "react";
 
-import { DisplayControls } from "@/components/workspace/display-controls";
-import { WorkspaceActions } from "@/components/workspace/workspace-actions";
+import { DisplayControls } from "@/components/songs/workspace/display-controls";
+import { WorkspaceActions } from "@/components/songs/workspace/workspace-actions";
 import type { SongDisplaySettings } from "@/lib/abc-display";
 import componentStyles from "./workspace-toolbar.module.css";
 

@@ -4,8 +4,8 @@ import { Show } from "@clerk/nextjs";
 import { Music2 } from "lucide-react";
 import Link from "next/link";
 
-import { AuthControls } from "@/components/layout/auth-controls";
-import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { AuthControls } from "@/components/app-shell/header/auth-controls";
+import { ThemeToggle } from "@/components/app-shell/header/theme-toggle";
 import componentStyles from "./header.module.css";
 
 type HeaderProps = {

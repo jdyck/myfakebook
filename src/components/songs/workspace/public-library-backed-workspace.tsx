@@ -3,10 +3,10 @@
 import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
 
-import { api } from "../../../convex/_generated/api";
-import type { Id } from "../../../convex/_generated/dataModel";
-import { MyFakebookWorkspace } from "@/components/workspace/my-fakebook-workspace";
-import type { LoadedSong } from "@/components/workspace/song-persistence";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
+import { MyFakebookWorkspace } from "@/components/songs/workspace/my-fakebook-workspace";
+import type { LoadedSong } from "@/components/songs/types";
 import type { SongDisplaySettings } from "@/lib/abc-display";
 import componentStyles from "./public-library-backed-workspace.module.css";
 

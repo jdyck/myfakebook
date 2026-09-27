@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { Header } from "@/components/layout/header";
-import { SetListsIndex } from "@/components/workspace/set-lists";
+import { Header } from "@/components/app-shell/header/header";
+import { SetListsIndex } from "@/components/set-lists";
 import componentStyles from "./page.module.css";
 
 export default async function SetListsPage() {

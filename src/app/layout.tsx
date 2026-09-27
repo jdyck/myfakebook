@@ -3,7 +3,7 @@ import { Inconsolata, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "@fontsource/bravura/400.css";
 
-import { AppProviders } from "@/components/layout/app-providers";
+import { AppProviders } from "@/components/app-shell/app-providers";
 
 import "./globals.css";
 import componentStyles from "./layout.module.css";

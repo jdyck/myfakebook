@@ -6,12 +6,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowDown, ArrowUp, GripVertical, Trash2 } from "lucide-react";
 
-import { api } from "../../../../convex/_generated/api";
-import type { Id } from "../../../../convex/_generated/dataModel";
-import { Header } from "@/components/layout/header";
-import { AbcPreview } from "@/components/workspace/abc-preview";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
+import { Header } from "@/components/app-shell/header/header";
+import { AbcPreview } from "@/components/songs/preview/abc-preview";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
-import componentStyles from "./detail.module.css";
+import componentStyles from "./set-list-detail.module.css";
 
 
 function getDropTargetAtPoint(clientX: number, clientY: number) {

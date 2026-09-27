@@ -7,10 +7,10 @@ const { auth, redirect } = vi.hoisted(() => ({
 
 vi.mock("@clerk/nextjs/server", () => ({ auth }));
 vi.mock("next/navigation", () => ({ redirect }));
-vi.mock("@/components/workspace/my-fakebook-workspace", () => ({
+vi.mock("@/components/songs/workspace/my-fakebook-workspace", () => ({
   MyFakebookWorkspace: () => null,
 }));
-vi.mock("@/components/workspace/public-library-backed-workspace", () => ({
+vi.mock("@/components/songs/workspace/public-library-backed-workspace", () => ({
   PublicLibraryBackedWorkspace: () => null,
 }));
 

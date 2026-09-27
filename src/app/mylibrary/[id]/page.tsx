@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { PrivateSongBackedWorkspace } from "@/components/workspace/private-song-backed-workspace";
+import { PrivateSongBackedWorkspace } from "@/components/songs/workspace/private-song-backed-workspace";
 
 export default async function MyLibrarySongPage({
   params,

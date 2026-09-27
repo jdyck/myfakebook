@@ -4,13 +4,13 @@ const { auth, redirect } = vi.hoisted(() => ({ auth: vi.fn(), redirect: vi.fn() 
 
 vi.mock("@clerk/nextjs/server", () => ({ auth }));
 vi.mock("next/navigation", () => ({ redirect }));
-vi.mock("@/components/workspace/my-library-list", () => ({
+vi.mock("@/components/library/my-library/my-library-list", () => ({
   MyLibraryListBacked: () => null,
   MyLibraryList: () => null,
 }));
 
 import MyLibraryPage from "./page";
-import { MyLibraryListBacked } from "@/components/workspace/my-library-list";
+import { MyLibraryListBacked } from "@/components/library/my-library/my-library-list";
 
 describe("My Library page", () => {
   beforeEach(() => {

@@ -2,22 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore, type ChangeEvent } from "react";
 import Link from "next/link";
-import { AbcEditorPanel } from "@/components/workspace/abc-editor-panel";
-import {
-  AdminPublicationButton,
-  AdminUnpublishPublicSongButton,
-  RemoveSongButton,
-  SaveToSetListButton,
-  SaveSetListDisplaySettingsButton,
-  SaveToMyLibraryButton,
-  type LoadedSong,
-  type SetListSong,
-} from "@/components/workspace/song-persistence";
-import { Header } from "@/components/layout/header";
-import { PreviewPanel } from "@/components/workspace/preview-panel";
-import { PrivateLibrarySidebar } from "@/components/workspace/private-library-sidebar";
-import { WorkspaceToolbar } from "@/components/workspace/workspace-toolbar";
-import type { Id } from "../../../convex/_generated/dataModel";
+import { AbcEditorPanel } from "@/components/songs/editor/abc-editor-panel";
+import { RemoveSongButton, SaveToMyLibraryButton } from "@/components/library/my-library/actions";
+import { AdminPublicationButton, AdminUnpublishPublicSongButton } from "@/components/library/public-library/publication-actions";
+import { SaveToSetListButton, SaveSetListDisplaySettingsButton } from "@/components/set-lists/actions";
+import type { LoadedSong, SetListSong } from "@/components/songs/types";
+import { Header } from "@/components/app-shell/header/header";
+import { PreviewPanel } from "@/components/songs/preview/preview-panel";
+import { MyLibrarySidebar } from "@/components/library/my-library/my-library-sidebar";
+import { WorkspaceToolbar } from "@/components/songs/workspace/workspace-toolbar";
+import type { Id } from "../../../../convex/_generated/dataModel";
 import { abcToMusicXml, DEFAULT_ABC } from "@/lib/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
 import type { PublicSong } from "@/lib/public-library";
@@ -330,7 +324,7 @@ export function MyFakebookWorkspace({
           persistenceEnabled ? componentStyles.workspaceGridWithSidebar : componentStyles.workspaceGridWithoutSidebar
         }`}
       >
-        <PrivateLibrarySidebar
+        <MyLibrarySidebar
           abc={abc}
           currentSong={currentSong}
           enabled={persistenceEnabled}

@@ -2,7 +2,7 @@
 
 import { Check, Copy, FileMusic, Settings2 } from "lucide-react";
 import { useRef, useState, type KeyboardEvent } from "react";
-import { AbcRowEditor } from "@/components/workspace/abc-row-editor";
+import { AbcRowEditor } from "@/components/songs/editor/abc-row-editor";
 import componentStyles from "./abc-editor-panel.module.css";
 
 type EditorSurfaceProps = {

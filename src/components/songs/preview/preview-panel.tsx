@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { Music2 } from "lucide-react";
 
-import { AbcPreview } from "@/components/workspace/abc-preview";
+import { AbcPreview } from "@/components/songs/preview/abc-preview";
 import type { SongDisplaySettings } from "@/lib/abc-display";
 import componentStyles from "./preview-panel.module.css";
 

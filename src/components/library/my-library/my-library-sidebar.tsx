@@ -1,15 +1,13 @@
 "use client";
 
-import {
-  MyLibrarySongs,
-  type LoadedSong,
-} from "@/components/workspace/song-persistence";
+import { RecentMyLibrarySongs } from "@/components/library/my-library/recent-songs";
+import type { LoadedSong } from "@/components/songs/types";
 import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
-import { api } from "../../../convex/_generated/api";
-import componentStyles from "./private-library-sidebar.module.css";
+import { api } from "../../../../convex/_generated/api";
+import componentStyles from "./my-library-sidebar.module.css";
 
-type PrivateLibrarySidebarProps = {
+type MyLibrarySidebarProps = {
   enabled: boolean;
   abc: string;
   title: string;
@@ -22,7 +20,7 @@ type PrivateLibrarySidebarProps = {
   onStatus: (status: string) => void;
 };
 
-export function PrivateLibrarySidebar({
+export function MyLibrarySidebar({
   enabled,
   abc,
   title,
@@ -33,7 +31,7 @@ export function PrivateLibrarySidebar({
   onMySongsChange,
   onLoad,
   onStatus,
-}: PrivateLibrarySidebarProps) {
+}: MyLibrarySidebarProps) {
   if (!enabled) return null;
 
   return (
@@ -44,7 +42,7 @@ export function PrivateLibrarySidebar({
       <div className={componentStyles.libraryHeadingBar}>
         <span className={componentStyles.libraryTitle}>My Library</span>
       </div>
-      <MyLibrarySongs
+      <RecentMyLibrarySongs
         abc={abc}
         enabled={enabled}
         isPublicSong={isPublicSong}

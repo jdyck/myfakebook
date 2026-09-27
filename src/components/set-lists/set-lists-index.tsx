@@ -5,9 +5,9 @@ import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { api } from "../../../../convex/_generated/api";
-import { Header } from "@/components/layout/header";
-import componentStyles from "./index.module.css";
+import { api } from "../../../convex/_generated/api";
+import { Header } from "@/components/app-shell/header/header";
+import componentStyles from "./set-lists-index.module.css";
 
 
 export function SetListsIndex() {

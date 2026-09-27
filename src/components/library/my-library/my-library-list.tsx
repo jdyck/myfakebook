@@ -3,9 +3,9 @@
 import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
 
-import { api } from "../../../convex/_generated/api";
-import type { Id } from "../../../convex/_generated/dataModel";
-import { Header } from "@/components/layout/header";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
+import { Header } from "@/components/app-shell/header/header";
 import componentStyles from "./my-library-list.module.css";
 
 type LibrarySong = {

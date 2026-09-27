@@ -3,9 +3,9 @@
 import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
 
-import { api } from "../../../convex/_generated/api";
-import type { Id } from "../../../convex/_generated/dataModel";
-import { PublicLibraryBackedWorkspace } from "@/components/workspace/public-library-backed-workspace";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
+import { PublicLibraryBackedWorkspace } from "@/components/songs/workspace/public-library-backed-workspace";
 import componentStyles from "./private-song-backed-workspace.module.css";
 
 export function PrivateSongBackedWorkspace({

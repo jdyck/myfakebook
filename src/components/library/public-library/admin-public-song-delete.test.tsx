@@ -4,7 +4,7 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, expect, it, vi } from "vitest";
 
-import type { Id } from "../../../convex/_generated/dataModel";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 const mocks = vi.hoisted(() => ({
   unpublish: vi.fn(),
@@ -15,7 +15,7 @@ vi.mock("convex/react", () => ({ useMutation: () => mocks.unpublish }));
 vi.mock("@clerk/nextjs", () => ({ useUser: () => ({ user: { publicMetadata: { role: "admin" } } }) }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mocks.push }) }));
 
-import { AdminUnpublishPublicSongButton } from "./song-persistence";
+import { AdminUnpublishPublicSongButton } from "./publication-actions";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 

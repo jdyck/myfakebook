@@ -1,10 +1,10 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@/components/layout/header", () => ({ Header: () => null }));
+vi.mock("@/components/app-shell/header/header", () => ({ Header: () => null }));
 
 import { MyLibraryList } from "./my-library-list";
-import type { Id } from "../../../convex/_generated/dataModel";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 describe("My Library list", () => {
   it("links each saved song to its own page", () => {

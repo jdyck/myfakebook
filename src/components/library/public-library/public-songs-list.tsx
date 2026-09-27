@@ -3,8 +3,8 @@
 import { useQuery } from "convex/react";
 import Link from "next/link";
 
-import { api } from "../../../convex/_generated/api";
-import { Header } from "@/components/layout/header";
+import { api } from "../../../../convex/_generated/api";
+import { Header } from "@/components/app-shell/header/header";
 import type { PublicSong } from "@/lib/public-library";
 import componentStyles from "./public-songs-list.module.css";
 
