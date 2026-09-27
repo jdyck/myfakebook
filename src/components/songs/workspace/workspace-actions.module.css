@@ -53,6 +53,38 @@
   .exportButton {
     background-color: var(--accent);
   }
+  .exportMenuPopup {
+    min-width: 140px;
+    padding: 4px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background-color: var(--paper);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+    color: var(--ink);
+  }
+  .exportMenuItem {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+  }
+  .exportMenuItem[data-highlighted] {
+    background-color: var(--accent-soft);
+    color: var(--accent-deep);
+    outline: none;
+  }
+  .exportMenuItem:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
   .secondaryActionButton {
     background-color: var(--paper);
   }
@@ -143,7 +175,7 @@
   }
   @media (width < 720px) {
     .secondaryActionButton,
-.exportButton {
+    .exportButton {
       flex: 1;
     }
   }

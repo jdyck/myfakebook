@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ChangeEvent } from "react";
 import Link from "next/link";
 import { AbcEditorPanel } from "@/components/songs/editor/abc-editor-panel";
 import { RemoveSongButton, SaveToMyLibraryButton } from "@/components/library/my-library/actions";
@@ -14,6 +14,7 @@ import { WorkspaceToolbar } from "@/components/songs/workspace/workspace-toolbar
 import type { Id } from "../../../../convex/_generated/dataModel";
 import { abcToMusicXml, DEFAULT_ABC } from "@/lib/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
+import { svgToLetterPage, svgToPdf, svgToPng } from "@/lib/svg-pdf";
 import type { PublicSong } from "@/lib/public-library";
 import componentStyles from "./my-fakebook-workspace.module.css";
 
@@ -130,7 +131,7 @@ export function MyFakebookWorkspace({
   const initialPublicSong = publishedSongs.find((song) => song.id === initialPublicSongId) ?? publishedSongs[0];
   const initialPrivateSongId = initialPrivateSong?.id;
   const [abc, setAbc] = useState(initialPrivateSong?.abc ?? initialPublicSong?.abc ?? DEFAULT_ABC);
-  const [title, setTitle] = useState(initialPrivateSong?.title ?? initialPublicSong?.title ?? "Midnight Walk");
+  const [title, setTitle] = useState(initialPrivateSong?.title ?? initialPublicSong?.title ?? "Untitled");
   const [sourceLabel, setSourceLabel] = useState(initialPrivateSong ? (initialPrivateSong.publicationState === "published" ? "Published song" : "Private song") : initialPublicSong ? "Public song" : "New song");
   const [isPublicSong, setIsPublicSong] = useState(!initialPrivateSong && Boolean(initialPublicSong));
   const [selectedPublicSongId, setSelectedPublicSongId] = useState<string | null>(initialPrivateSong ? null : initialPublicSong?.id ?? null);
@@ -142,6 +143,7 @@ export function MyFakebookWorkspace({
   const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS);
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
   const [mySongs, setMySongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
+  const renderedSvgRef = useRef<SVGSVGElement | null>(null);
   const recentPrivateSongSnapshotValue = useSyncExternalStore(
     subscribeToRecentPrivateSongs,
     getRecentPrivateSongSnapshot,
@@ -202,6 +204,37 @@ export function MyFakebookWorkspace({
   }, [initialPrivateSongId]);
 
   const handleStatus = useCallback((status: string) => setSaveStatus(status), []);
+  const handleRenderedSvg = useCallback((svg: SVGSVGElement | null) => {
+    renderedSvgRef.current = svg;
+  }, []);
+
+  function createExportSvg() {
+    const renderedSvg = renderedSvgRef.current;
+    if (!renderedSvg) return null;
+
+    const svg = renderedSvg.cloneNode(true) as SVGSVGElement;
+    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    svg.querySelectorAll(".abcjs-note-playing, .abcjs-note-start-selected").forEach((element) => {
+      element.classList.remove("abcjs-note-playing", "abcjs-note-start-selected");
+    });
+    if (!displaySettings.showChords) svg.querySelectorAll(".abcjs-chord").forEach((element) => element.remove());
+    if (!displaySettings.showLyrics) svg.querySelectorAll(".abcjs-lyric").forEach((element) => element.remove());
+
+    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+    style.textContent = `
+      text:not(.abcjs-chord), text:not(.abcjs-chord) tspan { font-family: Inter, Arial, sans-serif; }
+      .abcjs-title, .abcjs-title tspan { font-weight: 700; }
+      .abcjs-lyric, .abcjs-lyric tspan { font-weight: 300; }
+      .abcjs-chord, .abcjs-chord tspan {
+        font-family: "Bravura Chord Symbols", Inter, Arial, sans-serif;
+        letter-spacing: -0.04em;
+      }
+    `;
+    svg.insertBefore(style, svg.firstChild);
+
+    return svg;
+  }
 
   function updateTitle(value: string) {
     setSourceLabel(isPublicSong ? "Public song edit" : "New song");
@@ -214,7 +247,7 @@ export function MyFakebookWorkspace({
   }
 
   function handleNewSong() {
-    setTitle("Midnight Walk");
+    setTitle("Untitled");
     setAbc(DEFAULT_ABC);
     setSourceLabel("New song");
     setIsPublicSong(false);
@@ -315,6 +348,83 @@ export function MyFakebookWorkspace({
     }
   }
 
+  function handleExportSvg() {
+    const svg = createExportSvg();
+    if (!svg) {
+      setFeedback("The lead sheet preview is not ready for SVG export");
+      return;
+    }
+
+    try {
+      const letterPage = svgToLetterPage(svg);
+      const blob = new Blob([new XMLSerializer().serializeToString(letterPage)], { type: "image/svg+xml;charset=utf-8" });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.svg`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+      setFeedback("SVG downloaded");
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "SVG export failed");
+    }
+  }
+
+  async function handleExportPng() {
+    const svg = createExportSvg();
+    if (!svg) {
+      setFeedback("The lead sheet preview is not ready for PNG export");
+      return;
+    }
+
+    setExporting(true);
+    setFeedback(null);
+    try {
+      const png = await svgToPng(svg);
+      const downloadUrl = window.URL.createObjectURL(png);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.png`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
+      setFeedback("PNG downloaded");
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "PNG export failed");
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function handleExportPdf() {
+    const svg = createExportSvg();
+    if (!svg) {
+      setFeedback("The lead sheet preview is not ready for PDF export");
+      return;
+    }
+
+    setExporting(true);
+    try {
+      const pdf = await svgToPdf(svg);
+      const downloadUrl = window.URL.createObjectURL(pdf);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
+      setFeedback("PDF downloaded");
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "PDF export failed");
+    } finally {
+      setExporting(false);
+    }
+  }
+
   return (
     <div className={componentStyles.appShell}>
       <Header clerkConfigured={clerkConfigured} />
@@ -350,6 +460,9 @@ export function MyFakebookWorkspace({
             feedback={feedback}
             onDisplaySettingsChange={updateDisplaySettings}
             onExport={handleExport}
+            onExportSvg={handleExportSvg}
+            onExportPng={handleExportPng}
+            onExportPdf={handleExportPdf}
             onFileImport={handleFileImport}
             onNew={handleNewSong}
             onTitleChange={updateTitle}
@@ -388,6 +501,7 @@ export function MyFakebookWorkspace({
             <PreviewPanel
               abc={abc}
               displaySettings={displaySettings}
+              onRenderedSvg={handleRenderedSvg}
               saveAction={
                 <>
                   {persistenceEnabled && isPublicSong && (

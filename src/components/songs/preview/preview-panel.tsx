@@ -12,9 +12,10 @@ type PreviewPanelProps = {
   displaySettings: SongDisplaySettings;
   saveAction: ReactNode;
   publishAction: ReactNode;
+  onRenderedSvg: (svg: SVGSVGElement | null) => void;
 };
 
-export function PreviewPanel({ abc, displaySettings, saveAction, publishAction }: PreviewPanelProps) {
+export function PreviewPanel({ abc, displaySettings, saveAction, publishAction, onRenderedSvg }: PreviewPanelProps) {
   return (
     <section
       className={componentStyles.previewPanel}
@@ -35,6 +36,7 @@ export function PreviewPanel({ abc, displaySettings, saveAction, publishAction }
           transposition={displaySettings.transposition}
           saveAction={saveAction}
           publishAction={publishAction}
+          onRenderedSvg={onRenderedSvg}
         />
       </div>
     </section>

@@ -18,6 +18,9 @@ type WorkspaceToolbarProps = {
   onDisplaySettingsChange: (patch: Partial<SongDisplaySettings>) => void;
   onNew: () => void;
   onExport: () => void;
+  onExportSvg: () => void;
+  onExportPng: () => void;
+  onExportPdf: () => void;
   onFileImport: ChangeEventHandler<HTMLInputElement>;
 };
 
@@ -32,6 +35,9 @@ export function WorkspaceToolbar({
   onDisplaySettingsChange,
   onNew,
   onExport,
+  onExportSvg,
+  onExportPng,
+  onExportPdf,
   onFileImport,
 }: WorkspaceToolbarProps) {
   const composerLabel = abc.match(/^C:\s*(.*)$/m)?.[1]?.trim();
@@ -82,6 +88,9 @@ export function WorkspaceToolbar({
       <WorkspaceActions
         exporting={exporting}
         onExport={onExport}
+        onExportSvg={onExportSvg}
+        onExportPng={onExportPng}
+        onExportPdf={onExportPdf}
         onFileImport={onFileImport}
         onNew={onNew}
       />

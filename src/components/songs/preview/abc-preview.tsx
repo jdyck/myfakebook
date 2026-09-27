@@ -210,6 +210,7 @@ export function AbcPreview({
   selectedChordVariant = null,
   saveAction,
   publishAction,
+  onRenderedSvg,
 }: {
   abc: string;
   showChords?: boolean;
@@ -218,6 +219,7 @@ export function AbcPreview({
   selectedChordVariant?: SelectedChordVariant | null;
   saveAction?: ReactNode;
   publishAction?: ReactNode;
+  onRenderedSvg?: (svg: SVGSVGElement | null) => void;
 }) {
   const targetRef = useRef<HTMLDivElement>(null);
   const tuneRef = useRef<ABCJS.TuneObject | null>(null);
@@ -283,6 +285,7 @@ export function AbcPreview({
     };
 
     if (!targetRef.current || !renderedAbc.trim()) {
+      onRenderedSvg?.(null);
       scheduleError("Add ABC notation to see the staff preview.");
       return () => {
         if (errorTimeout) window.clearTimeout(errorTimeout);
@@ -327,12 +330,14 @@ export function AbcPreview({
       centerLyricsUnderNoteheads(targetRef.current);
       offsetChordLabels(targetRef.current, CHORD_LABEL_Y_OFFSET);
       raiseBravuraChordGlyphs(targetRef.current);
+      onRenderedSvg?.(targetRef.current.querySelector("svg"));
       tuneRef.current = rendered[0];
       timingRef.current = new ABCJS.TimingCallbacks(tuneRef.current, {
         eventCallback: handleTimingEvent,
       });
     } catch (renderError) {
       tuneRef.current = null;
+      onRenderedSvg?.(null);
       scheduleError(renderError instanceof Error ? renderError.message : "ABC could not be rendered.");
     }
 
@@ -343,6 +348,7 @@ export function AbcPreview({
       synthRef.current = null;
       timingRef.current = null;
       tuneRef.current = null;
+      onRenderedSvg?.(null);
       clearSelectedNote();
       clearPlaybackHighlight();
     };
@@ -350,6 +356,7 @@ export function AbcPreview({
     clearPlaybackHighlight,
     clearSelectedNote,
     handleTimingEvent,
+    onRenderedSvg,
     renderedAbc,
     selectedVariantKey,
     showChords,
