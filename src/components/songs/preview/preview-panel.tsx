@@ -152,6 +152,7 @@ export function PreviewPanel({ abc, displaySettings, saveAction, publishAction, 
           key={abc}
           showChords={displaySettings.showChords}
           showLyrics={displaySettings.showLyrics}
+          showFirstLineClefOnly={displaySettings.showFirstLineClefOnly ?? false}
           transposition={displaySettings.transposition}
           saveAction={saveAction}
           publishAction={publishAction}

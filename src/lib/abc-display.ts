@@ -4,12 +4,14 @@ export type SongDisplaySettings = {
   transposition: number;
   showChords: boolean;
   showLyrics: boolean;
+  showFirstLineClefOnly?: boolean;
 };
 
 export const DEFAULT_DISPLAY_SETTINGS: SongDisplaySettings = {
   transposition: 0,
   showChords: true,
   showLyrics: true,
+  showFirstLineClefOnly: false,
 };
 
 export type TranspositionChoice = {

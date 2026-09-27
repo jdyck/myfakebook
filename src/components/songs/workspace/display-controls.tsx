@@ -58,10 +58,11 @@ export function DisplayControls({ abc, settings, onChange }: DisplayControlsProp
             {([
               ["showChords", "Show chords"],
               ["showLyrics", "Show lyrics"],
+              ["showFirstLineClefOnly", "Show first line clef only"],
             ] as const).map(([setting, label]) => (
               <label className={componentStyles.displayToggleLabel} key={setting}>
                 <input
-                  checked={settings[setting]}
+                  checked={settings[setting] ?? false}
                   className={componentStyles.displayToggleCheckbox}
                   type="checkbox"
                   onChange={(event) => onChange({ [setting]: event.target.checked })}

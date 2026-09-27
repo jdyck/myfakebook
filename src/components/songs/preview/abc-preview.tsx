@@ -132,6 +132,35 @@ function centerLyricsUnderNoteheads(container: HTMLElement) {
   }
 }
 
+function addSystemStartBarlines(container: HTMLElement) {
+  const wrappers = container.querySelectorAll<SVGGElement>(
+    ".abcjs-staff-wrapper:not(.abcjs-l0)",
+  );
+
+  for (const wrapper of wrappers) {
+    const staffs = wrapper.querySelectorAll<SVGGElement>(".abcjs-staff");
+
+    for (const staff of staffs) {
+      let bounds: DOMRect | SVGRect;
+      try {
+        bounds = staff.getBBox();
+      } catch {
+        continue;
+      }
+      if (bounds.width <= 0 || bounds.height <= 0) continue;
+
+      const barline = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      const x = bounds.x;
+      barline.setAttribute("class", "abcjs-system-start-barline");
+      barline.setAttribute("d", `M ${x} ${bounds.y} L ${x} ${bounds.y + bounds.height}`);
+      barline.setAttribute("fill", "none");
+      barline.setAttribute("stroke", "#252631");
+      barline.setAttribute("stroke-width", "1.2");
+      staff.appendChild(barline);
+    }
+  }
+}
+
 function countMeasures(abc: string) {
   try {
     return Math.max(1, ABCJS.extractMeasures(abc)[0]?.measures.length ?? 1);
@@ -206,6 +235,7 @@ export function AbcPreview({
   abc,
   showChords = true,
   showLyrics = true,
+  showFirstLineClefOnly = false,
   transposition = 0,
   selectedChordVariant = null,
   saveAction,
@@ -215,6 +245,7 @@ export function AbcPreview({
   abc: string;
   showChords?: boolean;
   showLyrics?: boolean;
+  showFirstLineClefOnly?: boolean;
   transposition?: number;
   selectedChordVariant?: SelectedChordVariant | null;
   saveAction?: ReactNode;
@@ -237,6 +268,7 @@ export function AbcPreview({
   const renderedAbc = prepareAbcForDisplay(applyChordVariant(abc, selectedChordVariant), {
     showChords,
     showLyrics,
+    showFirstLineClefOnly,
     transposition: 0,
   });
   const measureCount = countMeasures(renderedAbc);
@@ -303,6 +335,7 @@ export function AbcPreview({
         paddingtop: 5,
         responsive: "resize",
         scale: 1.06,
+        initialClef: showFirstLineClefOnly,
         selectTypes: ["note"],
         staffwidth: 720,
         visualTranspose: transposition,
@@ -327,6 +360,14 @@ export function AbcPreview({
           setStartMeasure(measure);
         },
       });
+      if (showFirstLineClefOnly) {
+        targetRef.current
+          .querySelectorAll<SVGGElement>(
+            ".abcjs-staff-wrapper:not(.abcjs-l0) .abcjs-clef, .abcjs-staff-wrapper:not(.abcjs-l0) .abcjs-key-signature",
+          )
+          .forEach((element) => element.remove());
+        addSystemStartBarlines(targetRef.current);
+      }
       centerLyricsUnderNoteheads(targetRef.current);
       offsetChordLabels(targetRef.current, CHORD_LABEL_Y_OFFSET);
       raiseBravuraChordGlyphs(targetRef.current);
@@ -359,6 +400,7 @@ export function AbcPreview({
     onRenderedSvg,
     renderedAbc,
     selectedVariantKey,
+    showFirstLineClefOnly,
     showChords,
     showLyrics,
     transposition,

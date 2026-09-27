@@ -140,7 +140,11 @@ export function MyFakebookWorkspace({
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS);
+  const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(() => ({
+    ...DEFAULT_DISPLAY_SETTINGS,
+    ...initialDisplaySettings,
+    showFirstLineClefOnly: initialDisplaySettings?.showFirstLineClefOnly ?? false,
+  }));
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
   const [mySongs, setMySongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
   const renderedSvgRef = useRef<SVGSVGElement | null>(null);
