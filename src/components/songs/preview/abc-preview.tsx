@@ -36,9 +36,9 @@ type SelectedChordVariant = {
 
 type PlaybackPart = "melody" | "chords" | "both";
 
-const BRAVURA_BASELINE_SHIFT = "0.3em";
-const BRAVURA_BOUNDARY_SPACING = "0.09em";
-const CHORD_LABEL_Y_OFFSET = 50; // SVG user units; positive values move chord labels down.
+const BRAVURA_BASELINE_SHIFT = "35%";
+const BRAVURA_BOUNDARY_SPACING = ".25%";
+const CHORD_LABEL_Y_OFFSET = 10; // SVG user units; positive values move chord labels down.
 
 function isBravuraSymbol(codePoint: number) {
   return (

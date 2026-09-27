@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inconsolata, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import "@fontsource/bravura/400.css";
 
 import { AppProviders } from "@/components/app-shell/app-providers";
 
