@@ -1,10 +1,15 @@
 /* Component styles. */
 @layer components {
   .previewPanel,
-.previewHeader,
+  .previewHeader,
 .previewHeading,
 .previewContent {
     display: flex;
+  }
+  .fullscreenButton,
+.closeFullscreenButton,
+.fullscreenCanvas {
+    display: grid;
   }
   .previewHeader {
     min-height: calc(var(--spacing) * 12);
@@ -31,6 +36,11 @@
   }
   .previewHeading {
     gap: calc(var(--spacing) * 2);
+  }
+  .fullscreenButton,
+.closeFullscreenButton,
+.fullscreenCanvas {
+    place-items: center;
   }
   .previewHeader {
     gap: calc(var(--spacing) * 3);
@@ -63,6 +73,96 @@
   }
   .previewHeader {
     padding-inline: calc(var(--spacing) * 3.5);
+  }
+  .fullscreenButton {
+    width: 32px;
+    height: 32px;
+  }
+  .closeFullscreenButton {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+  }
+  .fullscreenOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    padding: 68px 20px 20px;
+  }
+  .fullscreenCanvas {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+  .fullscreenPage {
+    display: grid;
+    place-items: center;
+    padding: calc(var(--spacing) * 3.5);
+    background-color: #fffefb;
+  }
+  .fullscreenSvg {
+    max-width: 100%;
+    max-height: 100%;
+    overflow: visible;
+  }
+  .fullscreenOverlay {
+    background-color: #111318;
+  }
+  .fullscreenButton {
+    border-radius: 7px;
+  }
+  .closeFullscreenButton {
+    border-radius: 50%;
+  }
+  .fullscreenButton,
+.closeFullscreenButton {
+    border-style: var(--component-border-style);
+    border-width: 1px;
+    cursor: pointer;
+  }
+  .fullscreenButton {
+    border-color: var(--line-strong);
+    background-color: var(--paper);
+    color: var(--muted);
+  }
+  .closeFullscreenButton {
+    border-color: rgb(255 255 255 / 24%);
+    background-color: rgb(255 255 255 / 10%);
+    color: #fff;
+  }
+  .fullscreenButton,
+.closeFullscreenButton {
+    transition-property: border-color, background-color, color;
+    transition-timing-function: var(--component-ease, var(--default-transition-timing-function));
+    transition-duration: 160ms;
+  }
+  @media (hover: hover) {
+    .fullscreenButton:hover {
+      border-color: var(--accent);
+      background-color: var(--accent-soft);
+      color: var(--accent);
+    }
+  }
+  @media (hover: hover) {
+    .closeFullscreenButton:hover {
+      border-color: rgb(255 255 255 / 55%);
+      background-color: rgb(255 255 255 / 20%);
+    }
+  }
+  .fullscreenButton:focus-visible,
+.closeFullscreenButton:focus-visible {
+    outline-style: var(--component-outline-style);
+    outline-width: 2px;
+    outline-offset: 2px;
+    outline-color: var(--accent);
+  }
+  .fullscreenButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
   }
   .previewHeading {
     font-size: 12px;

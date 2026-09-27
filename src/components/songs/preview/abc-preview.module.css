@@ -225,12 +225,15 @@
     }
   }
   .leadSheetPreview:where([data-theme="dark"], [data-theme="dark"] *) {
-    background-color: #f7f4e9;
+    background-color: #999999;
   }
   .notationCanvas svg {
     overflow: visible;
   }
   .notationCanvas svg {
     color: #252631;
+  }
+  .leadSheetPreview:where([data-theme="dark"], [data-theme="dark"] *) .notationCanvas svg {
+    color: #000000;
   }
 }
