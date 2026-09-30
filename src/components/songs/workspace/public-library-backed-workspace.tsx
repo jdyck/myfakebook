@@ -8,6 +8,7 @@ import type { Id } from "../../../../convex/_generated/dataModel";
 import { MyFakebookWorkspace } from "@/components/songs/workspace/my-fakebook-workspace";
 import type { LoadedSong } from "@/components/songs/types";
 import type { SongDisplaySettings } from "@/lib/abc-display";
+import { usePublicSongs } from "@/components/library/public-library/use-public-songs";
 import componentStyles from "./public-library-backed-workspace.module.css";
 
 type PublicLibraryBackedWorkspaceProps = {
@@ -38,11 +39,11 @@ export function PublicLibraryBackedWorkspace({
   setListReturn,
 }: PublicLibraryBackedWorkspaceProps) {
   const { isAuthenticated } = useConvexAuth();
-  const publishedSongDocs = useQuery(api.songs.listPublicSongs);
+  const { songs: publishedSongs, loading: publicSongsLoading } = usePublicSongs();
   const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
   const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
 
-  if (publishedSongDocs === undefined) {
+  if (publicSongsLoading || !publishedSongs) {
     return (
       <main className={componentStyles.loadingPage}>
         <p className={componentStyles.loadingStatus} role="status">
@@ -52,14 +53,6 @@ export function PublicLibraryBackedWorkspace({
     );
   }
 
-  const publishedSongs = publishedSongDocs.map((song) => ({
-    id: song.id,
-    catalogId: "catalogId" in song ? song.catalogId : undefined,
-    title: song.title,
-    writers: song.writers,
-    rhythm: song.rhythm,
-    abc: song.abc,
-  }));
   const initialSong = publishedSongs.find((song) => song.id === initialPublicSongId || song.catalogId === initialPublicSongId);
   const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === initialSong?.id);
   const resolvedSetListReturn = setListReturn ?? (setList && setListItem && validSetListId ? {

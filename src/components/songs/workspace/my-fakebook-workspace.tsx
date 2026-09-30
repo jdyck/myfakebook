@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import Link from "next/link";
 import { AbcEditorPanel } from "@/components/songs/editor/abc-editor-panel";
 import { RemoveSongButton, SaveToMyLibraryButton } from "@/components/library/my-library/actions";
-import { AdminPublicationButton, AdminUnpublishPublicSongButton } from "@/components/library/public-library/publication-actions";
+import { AdminPublicationButton, AdminPublicSongPublicationMenu } from "@/components/library/public-library/publication-actions";
 import { SaveToSetListButton, SaveSetListDisplaySettingsButton } from "@/components/set-lists/actions";
 import type { LoadedSong, SetListSong } from "@/components/songs/types";
 import { Header } from "@/components/app-shell/header/header";
@@ -143,7 +143,8 @@ export function MyFakebookWorkspace({
   const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(() => ({
     ...DEFAULT_DISPLAY_SETTINGS,
     ...initialDisplaySettings,
-    showFirstLineClefOnly: initialDisplaySettings?.showFirstLineClefOnly ?? false,
+    showParts: initialDisplaySettings?.showParts ?? true,
+    showFirstLineClefOnly: initialDisplaySettings?.showFirstLineClefOnly ?? true,
   }));
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
   const [mySongs, setMySongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
@@ -184,7 +185,7 @@ export function MyFakebookWorkspace({
     ? publishedSongs.find((song) => song.id === selectedPublicSongId)
     : undefined;
   const setListSong: SetListSong | null = isPublicSong
-    ? publicLibraryIsPersisted && selectedPublicSong
+    ? publicLibraryIsPersisted && selectedPublicSong && (selectedPublicSong.publicationTerritory ?? "worldwide") === "worldwide"
       ? { id: selectedPublicSong.id as Id<"songs">, title: songTitle }
       : null
     : currentSong
@@ -352,6 +353,23 @@ export function MyFakebookWorkspace({
     }
   }
 
+  function handleExportAbc() {
+    try {
+      const blob = new Blob([abc], { type: "text/vnd.abc;charset=utf-8" });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.abc`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+      setFeedback("ABC downloaded");
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "ABC export failed");
+    }
+  }
+
   function handleExportSvg() {
     const svg = createExportSvg();
     if (!svg) {
@@ -464,6 +482,7 @@ export function MyFakebookWorkspace({
             feedback={feedback}
             onDisplaySettingsChange={updateDisplaySettings}
             onExport={handleExport}
+            onExportAbc={handleExportAbc}
             onExportSvg={handleExportSvg}
             onExportPng={handleExportPng}
             onExportPdf={handleExportPdf}
@@ -533,9 +552,15 @@ export function MyFakebookWorkspace({
               }
               publishAction={
                 persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId ? (
-                  <AdminUnpublishPublicSongButton
-                    songId={selectedPublicSongId as Id<"songs">}
+                  <AdminPublicSongPublicationMenu
                     enabled={persistenceEnabled}
+                    song={selectedPublicSong ? {
+                      id: selectedPublicSong.id as Id<"songs">,
+                      title: selectedPublicSong.title,
+                      abc: selectedPublicSong.abc,
+                      publicationState: "published",
+                      publicationTerritory: selectedPublicSong.publicationTerritory ?? "worldwide",
+                    } : null}
                     onStatus={handleStatus}
                   />
                 ) : persistenceEnabled && !isPublicSong && currentSong ? (

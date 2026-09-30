@@ -18,6 +18,7 @@ type WorkspaceToolbarProps = {
   onDisplaySettingsChange: (patch: Partial<SongDisplaySettings>) => void;
   onNew: () => void;
   onExport: () => void;
+  onExportAbc: () => void;
   onExportSvg: () => void;
   onExportPng: () => void;
   onExportPdf: () => void;
@@ -35,6 +36,7 @@ export function WorkspaceToolbar({
   onDisplaySettingsChange,
   onNew,
   onExport,
+  onExportAbc,
   onExportSvg,
   onExportPng,
   onExportPdf,
@@ -88,6 +90,7 @@ export function WorkspaceToolbar({
       <WorkspaceActions
         exporting={exporting}
         onExport={onExport}
+        onExportAbc={onExportAbc}
         onExportSvg={onExportSvg}
         onExportPng={onExportPng}
         onExportPdf={onExportPdf}

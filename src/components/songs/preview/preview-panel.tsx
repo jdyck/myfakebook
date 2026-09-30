@@ -99,7 +99,13 @@ export function PreviewPanel({ abc, displaySettings, saveAction, publishAction, 
       window.removeEventListener("resize", fitScoreToScreen);
       availableCanvas.replaceChildren();
     };
-  }, [isFullscreen, renderedSvg]);
+  }, [
+    displaySettings.showChords,
+    displaySettings.showLyrics,
+    displaySettings.showParts,
+    isFullscreen,
+    renderedSvg,
+  ]);
 
   useEffect(() => {
     if (!isFullscreen) return;
@@ -152,7 +158,8 @@ export function PreviewPanel({ abc, displaySettings, saveAction, publishAction, 
           key={abc}
           showChords={displaySettings.showChords}
           showLyrics={displaySettings.showLyrics}
-          showFirstLineClefOnly={displaySettings.showFirstLineClefOnly ?? false}
+          showParts={displaySettings.showParts ?? true}
+          showFirstLineClefOnly={displaySettings.showFirstLineClefOnly ?? true}
           transposition={displaySettings.transposition}
           saveAction={saveAction}
           publishAction={publishAction}

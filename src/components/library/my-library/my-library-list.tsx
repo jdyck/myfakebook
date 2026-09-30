@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
+import { publicationStatusForSong } from "@/components/songs/types";
 import { Header } from "@/components/app-shell/header/header";
 import componentStyles from "./my-library-list.module.css";
 
@@ -13,12 +14,19 @@ type LibrarySong = {
   title: string;
   updatedAt: number;
   publicationState: "private" | "published";
+  publicationTerritory?: "US" | "worldwide";
 };
 
 export function MyLibraryListBacked() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const savedSongs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
-  const songs = savedSongs?.map((song) => ({ id: song._id, title: song.title, updatedAt: song.updatedAt, publicationState: song.publicationState }));
+  const songs = savedSongs?.map((song) => ({
+    id: song._id,
+    title: song.title,
+    updatedAt: song.updatedAt,
+    publicationState: song.publicationState,
+    publicationTerritory: song.publicationTerritory,
+  }));
   return <MyLibraryList songs={songs} loading={isLoading || (isAuthenticated && !savedSongs)} />;
 }
 
@@ -49,7 +57,9 @@ export function MyLibraryList({ songs, loading = false }: { songs: readonly Libr
                 >
                   <span className={componentStyles.songDetails}>
                     <span className={componentStyles.songTitle}>{song.title}</span>
-                    <span className={componentStyles.songMetadata}>{song.publicationState === "published" ? "Published" : "Private"} · Updated {new Date(song.updatedAt).toLocaleDateString()}</span>
+                    <span className={componentStyles.songMetadata}>
+                      {publicationStatusForSong(song)} · Updated {new Date(song.updatedAt).toLocaleDateString()}
+                    </span>
                   </span>
                   <span className={componentStyles.openSongLabel}>Open</span>
                 </Link>

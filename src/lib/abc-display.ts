@@ -4,6 +4,7 @@ export type SongDisplaySettings = {
   transposition: number;
   showChords: boolean;
   showLyrics: boolean;
+  showParts?: boolean;
   showFirstLineClefOnly?: boolean;
 };
 
@@ -11,7 +12,8 @@ export const DEFAULT_DISPLAY_SETTINGS: SongDisplaySettings = {
   transposition: 0,
   showChords: true,
   showLyrics: true,
-  showFirstLineClefOnly: false,
+  showParts: true,
+  showFirstLineClefOnly: true,
 };
 
 export type TranspositionChoice = {
@@ -90,8 +92,19 @@ function normalizeChordAccidentals(abc: string) {
     .join("\n");
 }
 
+function removePartMarkers(abc: string) {
+  return abc
+    .split("\n")
+    .flatMap((line) => {
+      if (/^\s*P\s*:/i.test(line)) return [];
+      return [line.replace(/\[P\s*:[^\]]*\]/gi, "")];
+    })
+    .join("\n");
+}
+
 export function prepareAbcForDisplay(abc: string, settings: SongDisplaySettings) {
   let prepared = prepareVisibilitySource(abc, settings);
+  if (settings.showParts === false) prepared = removePartMarkers(prepared);
   if (settings.transposition) {
     const tunes = ABCJS.parseOnly(prepared);
     prepared = ABCJS.strTranspose(prepared, tunes, settings.transposition);

@@ -1,4 +1,4 @@
-import type { Doc, Id } from "./_generated/dataModel";
+import type { Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 
 export type SongId = Id<"songs">;
@@ -68,16 +68,22 @@ export async function setPublicationState(
   ctx: MutationCtx,
   id: SongId,
   ownerId: string,
-  state: Doc<"songs">["publicationState"],
+  publication: "none" | "US" | "worldwide",
 ) {
   const song = await ctx.db.get("songs", id);
   if (!song || song.ownerId !== ownerId) throw new Error("Song not found");
-  if (song.publicationState === state) return id;
-  if (state === "published" && !song.abc.trim()) throw new Error("ABC content is required");
+  const publicationState = publication === "none" ? "private" : "published";
+  const publicationTerritory = publication === "none" ? undefined : publication;
+  const currentPublication = song.publicationState === "private"
+    ? "none"
+    : song.publicationTerritory ?? "worldwide";
+  if (currentPublication === publication) return id;
+  if (publication !== "none" && !song.abc.trim()) throw new Error("ABC content is required");
   const now = Date.now();
   await ctx.db.patch("songs", id, {
-    publicationState: state,
-    publishedAt: state === "published" ? now : undefined,
+    publicationState,
+    publicationTerritory,
+    publishedAt: publication === "none" ? undefined : song.publishedAt ?? now,
     updatedAt: now,
   });
   return id;

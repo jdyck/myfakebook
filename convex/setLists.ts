@@ -1,9 +1,13 @@
 import { v } from "convex/values";
 
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query, type MutationCtx } from "./_generated/server";
 import { requireOwner } from "./auth";
 import { songDisplaySettingsValidator } from "./validators";
+
+function isWorldwidePublicSong(song: Doc<"songs"> | null) {
+  return song?.publicationState === "published" && (song.publicationTerritory ?? "worldwide") === "worldwide";
+}
 
 async function ownedSetList(
   ctx: MutationCtx,
@@ -67,7 +71,8 @@ export const listAvailableSongs = query({
         .query("songs")
         .withIndex("by_publication_updatedAt", (index) => index.eq("publicationState", "published"))
         .order("desc")
-        .collect(),
+        .collect()
+        .then((songs) => songs.filter(isWorldwidePublicSong)),
     ]);
 
     const available = new Map<string, {
@@ -81,7 +86,7 @@ export const listAvailableSongs = query({
       available.set(song._id, {
         songId: song._id,
         title: song.title,
-        isPublic: song.publicationState === "published",
+        isPublic: isWorldwidePublicSong(song),
         updatedAt: song.updatedAt,
       });
     }
@@ -116,7 +121,7 @@ export const get = query({
       ...setList,
       items: items.map((item, index) => {
         const song = songs[index];
-        const canOpen = Boolean(song && (song.ownerId === ownerId || song.publicationState === "published"));
+        const canOpen = Boolean(song && (song.ownerId === ownerId || isWorldwidePublicSong(song)));
         return {
           _id: item._id,
           songId: item.songId,
@@ -181,7 +186,7 @@ export const addSong = mutation({
     await ownedSetList(ctx, args.setListId, ownerId);
 
     const song = await ctx.db.get("songs", args.songId);
-    if (!song || (song.ownerId !== ownerId && song.publicationState !== "published")) {
+    if (!song || (song.ownerId !== ownerId && !isWorldwidePublicSong(song))) {
       throw new Error("Song is not available to add");
     }
     const songId = song._id;
@@ -200,7 +205,7 @@ export const addSong = mutation({
       setListId: args.setListId,
       songId,
       position: (items[0]?.position ?? -1) + 1,
-      displaySettings: { transposition: 0, showChords: true, showLyrics: true, showFirstLineClefOnly: false },
+      displaySettings: { transposition: 0, showChords: true, showLyrics: true, showParts: true, showFirstLineClefOnly: true },
     });
     await ctx.db.patch("setLists", args.setListId, { updatedAt: now });
     return itemId;

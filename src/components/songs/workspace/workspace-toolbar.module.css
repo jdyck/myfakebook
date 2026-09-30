@@ -41,9 +41,9 @@
     --component-leading: 1.05;
     line-height: 1.25;
     --component-font-weight: 740;
-    font-weight: 740;
+    font-weight: 600;
     --component-tracking: -0.055em;
-    letter-spacing: -0.055em;
+    letter-spacing: -0.0125em;
     color: var(--ink);
     outline-style: var(--component-outline-style);
     outline-width: 0px;

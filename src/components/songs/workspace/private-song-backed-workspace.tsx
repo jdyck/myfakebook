@@ -45,7 +45,13 @@ export function PrivateSongBackedWorkspace({
       clerkConfigured
       persistenceEnabled
       initialDisplaySettings={setListItem?.displaySettings}
-      initialPrivateSong={{ id: song._id, title: song.title, abc: song.abc, publicationState: song.publicationState }}
+      initialPrivateSong={{
+        id: song._id,
+        title: song.title,
+        abc: song.abc,
+        publicationState: song.publicationState,
+        publicationTerritory: song.publicationTerritory,
+      }}
       setListReturn={setList && setListItem ? {
         href: `/setlists/${encodeURIComponent(setList._id)}`,
         name: setList.name,

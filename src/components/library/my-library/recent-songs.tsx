@@ -5,7 +5,7 @@ import { Authenticated, Unauthenticated, useConvexAuth, useMutation, useQuery } 
 import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
-import type { LoadedSong, SongId } from "@/components/songs/types";
+import { publicationStatusForSong, type LoadedSong, type SongId } from "@/components/songs/types";
 import componentStyles from "@/components/shared/song-actions.module.css";
 
 type RecentMyLibrarySongsProps = {
@@ -76,12 +76,13 @@ function ConnectedRecentMyLibrarySongs({
       title: song.title,
       abc: song.abc,
       publicationState: song.publicationState,
+      publicationTerritory: song.publicationTerritory,
     }));
     const songsChanged =
       nextSongs.length !== mySongsRef.current.length ||
       nextSongs.some((song, index) => {
         const previous = mySongsRef.current[index];
-        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc || previous.publicationState !== song.publicationState;
+        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc || previous.publicationState !== song.publicationState || previous.publicationTerritory !== song.publicationTerritory;
       });
     if (!songsChanged) return;
     mySongsRef.current = nextSongs;
@@ -95,7 +96,13 @@ function ConnectedRecentMyLibrarySongs({
       const existingSong = songs.find((song) => song.title === title && song.abc === abc);
       songId.current = existingSong?._id;
       if (existingSong) {
-        onCurrentSongChange({ id: existingSong._id, title: existingSong.title, abc: existingSong.abc, publicationState: existingSong.publicationState });
+        onCurrentSongChange({
+          id: existingSong._id,
+          title: existingSong.title,
+          abc: existingSong.abc,
+          publicationState: existingSong.publicationState,
+          publicationTerritory: existingSong.publicationTerritory,
+        });
       }
     }
   }, [abc, isPublicSong, onCurrentSongChange, persistenceReady, songs, title]);
@@ -132,7 +139,13 @@ function ConnectedRecentMyLibrarySongs({
         if (!active) return;
         songId.current = savedId;
         const existingSong = songsRef.current?.find((song) => song._id === savedId);
-        onCurrentSongChange({ id: savedId, title, abc, publicationState: currentSongRef.current?.publicationState ?? existingSong?.publicationState ?? "private" });
+        onCurrentSongChange({
+          id: savedId,
+          title,
+          abc,
+          publicationState: currentSongRef.current?.publicationState ?? existingSong?.publicationState ?? "private",
+          publicationTerritory: currentSongRef.current?.publicationTerritory ?? existingSong?.publicationTerritory,
+        });
         statusRef.current("Saved to My Library");
       } catch {
         if (active) statusRef.current("Couldn’t sync");
@@ -175,7 +188,13 @@ function ConnectedRecentMyLibrarySongs({
                   className={componentStyles.recentSongLink}
                   href={`/mylibrary/${encodeURIComponent(song._id)}`}
                   onClick={() => {
-                    const loadedSong = { id: song._id, title: song.title, abc: song.abc, publicationState: song.publicationState };
+                    const loadedSong = {
+                      id: song._id,
+                      title: song.title,
+                      abc: song.abc,
+                      publicationState: song.publicationState,
+                      publicationTerritory: song.publicationTerritory,
+                    };
                     songId.current = song._id;
                     onCurrentSongChange(loadedSong);
                     onLoad(loadedSong);
@@ -186,8 +205,7 @@ function ConnectedRecentMyLibrarySongs({
                   <span className={componentStyles.songDetails}>
                     <span className={componentStyles.songTitle}>{song.title}</span>
                     <span className={componentStyles.songPublicationDetails}>
-                      {song.publicationState === "published" ? "Published · " : "Private · "}
-                      {new Date(song.updatedAt).toLocaleDateString()}
+                      {publicationStatusForSong(song)} · {new Date(song.updatedAt).toLocaleDateString()}
                     </span>
                   </span>
                 </Link>

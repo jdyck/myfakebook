@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { isAdmin, requireAdmin, requireOwner, requireUser } from "./auth";
 import { listMine, listPublished, removeSong, saveSong, setPublicationState } from "./songStore";
 
@@ -13,17 +13,40 @@ export const listPublicSongs = query({
   args: {},
   handler: async (ctx) => {
     const songs = await listPublished(ctx);
-    return songs.map((song) => ({
+    return songs.filter((song) => (song.publicationTerritory ?? "worldwide") === "worldwide").map((song) => ({
       id: song._id,
       ...(song.catalogId
         ? { catalogId: song.catalogId }
         : {}),
+      publicationTerritory: song.publicationTerritory ?? "worldwide",
       title: song.title,
       writers: song.writers,
       rhythm: song.rhythm,
       abc: song.abc,
       updatedAt: song.updatedAt,
     }));
+  },
+});
+
+export const listPublicSongsForCountry = internalQuery({
+  args: { country: v.union(v.literal("US"), v.literal("other")) },
+  handler: async (ctx, { country }) => {
+    const songs = await listPublished(ctx);
+    return songs
+      .filter((song) => {
+        const territory = song.publicationTerritory ?? "worldwide";
+        return territory === "worldwide" || (territory === "US" && country === "US");
+      })
+      .map((song) => ({
+        id: song._id,
+        ...(song.catalogId ? { catalogId: song.catalogId } : {}),
+        publicationTerritory: song.publicationTerritory ?? "worldwide",
+        title: song.title,
+        writers: song.writers,
+        rhythm: song.rhythm,
+        abc: song.abc,
+        updatedAt: song.updatedAt,
+      }));
   },
 });
 
@@ -50,7 +73,18 @@ export const publish = mutation({
   args: { id: v.id("songs") },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
-    return setPublicationState(ctx, args.id, identity.subject, "published");
+    return setPublicationState(ctx, args.id, identity.subject, "worldwide");
+  },
+});
+
+export const setPublication = mutation({
+  args: {
+    id: v.id("songs"),
+    publication: v.union(v.literal("none"), v.literal("US"), v.literal("worldwide")),
+  },
+  handler: async (ctx, args) => {
+    const identity = await requireAdmin(ctx);
+    return setPublicationState(ctx, args.id, identity.subject, args.publication);
   },
 });
 
@@ -58,7 +92,7 @@ export const unpublish = mutation({
   args: { id: v.id("songs") },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
-    return setPublicationState(ctx, args.id, identity.subject, "private");
+    return setPublicationState(ctx, args.id, identity.subject, "none");
   },
 });
 
@@ -113,6 +147,7 @@ export const ensureCatalogSongs = mutation({
           writers: catalogSong.writers,
           rhythm: catalogSong.rhythm,
           publicationState: "published",
+          publicationTerritory: "worldwide",
           publishedAt: matchingPublishedSong.publishedAt ?? now,
           catalogId: catalogSong.id,
           updatedAt: now,
@@ -125,6 +160,7 @@ export const ensureCatalogSongs = mutation({
           rhythm: catalogSong.rhythm,
           abc: catalogSong.abc,
           publicationState: "published",
+          publicationTerritory: "worldwide",
           publishedAt: now,
           catalogId: catalogSong.id,
           updatedAt: now,

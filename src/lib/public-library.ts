@@ -1,6 +1,7 @@
 export type PublicSong = {
   id: string;
   catalogId?: string;
+  publicationTerritory?: "US" | "worldwide";
   title: string;
   writers: string;
   rhythm: string;

@@ -235,7 +235,8 @@ export function AbcPreview({
   abc,
   showChords = true,
   showLyrics = true,
-  showFirstLineClefOnly = false,
+  showParts = true,
+  showFirstLineClefOnly = true,
   transposition = 0,
   selectedChordVariant = null,
   saveAction,
@@ -245,6 +246,7 @@ export function AbcPreview({
   abc: string;
   showChords?: boolean;
   showLyrics?: boolean;
+  showParts?: boolean;
   showFirstLineClefOnly?: boolean;
   transposition?: number;
   selectedChordVariant?: SelectedChordVariant | null;
@@ -268,6 +270,7 @@ export function AbcPreview({
   const renderedAbc = prepareAbcForDisplay(applyChordVariant(abc, selectedChordVariant), {
     showChords,
     showLyrics,
+    showParts,
     showFirstLineClefOnly,
     transposition: 0,
   });
@@ -329,6 +332,7 @@ export function AbcPreview({
       const rendered = ABCJS.renderAbc(targetRef.current, renderedAbc, {
         add_classes: true,
         foregroundColor: "#252631",
+        format: { partsbox: true },
         paddingbottom: 4,
         paddingleft: 2,
         paddingright: 2,

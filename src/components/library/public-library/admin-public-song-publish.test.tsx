@@ -8,7 +8,7 @@ import type { Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
 
 const mocks = vi.hoisted(() => ({
-  publish: vi.fn(),
+  setPublication: vi.fn(),
   useMutation: vi.fn(),
 }));
 
@@ -20,7 +20,7 @@ import { AdminPublicationButton } from "./publication-actions";
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 afterEach(() => {
-  mocks.publish.mockReset();
+  mocks.setPublication.mockReset();
   mocks.useMutation.mockReset();
 });
 
@@ -28,8 +28,8 @@ it("publishes an admin's song without changing its ID", async () => {
   const songId = "song-id" as Id<"songs">;
   const onChanged = vi.fn();
   const onStatus = vi.fn();
-  mocks.publish.mockResolvedValue(songId);
-  mocks.useMutation.mockReturnValue(mocks.publish);
+  mocks.setPublication.mockResolvedValue(songId);
+  mocks.useMutation.mockReturnValue(mocks.setPublication);
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
@@ -47,13 +47,20 @@ it("publishes an admin's song without changing its ID", async () => {
     });
 
     await act(async () => {
-      container.querySelector<HTMLButtonElement>('button[aria-label="Publish Autumn Song"]')?.click();
+      container.querySelector<HTMLButtonElement>('button[aria-label="Published: None"]')?.click();
+      Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
+        .find((item) => item.textContent?.includes("U.S."))
+        ?.click();
     });
 
-    expect(mocks.publish).toHaveBeenCalledExactlyOnceWith({ id: songId });
-    expect(mocks.useMutation).toHaveBeenCalledWith(api.songs.publish);
-    expect(onChanged).toHaveBeenCalledWith(expect.objectContaining({ id: songId, publicationState: "published" }));
-    expect(onStatus).toHaveBeenLastCalledWith("Published to Public Library");
+    expect(mocks.setPublication).toHaveBeenCalledExactlyOnceWith({ id: songId, publication: "US" });
+    expect(mocks.useMutation).toHaveBeenCalledWith(api.songs.setPublication);
+    expect(onChanged).toHaveBeenCalledWith(expect.objectContaining({
+      id: songId,
+      publicationState: "published",
+      publicationTerritory: "US",
+    }));
+    expect(onStatus).toHaveBeenLastCalledWith("Published U.S.");
   } finally {
     await act(async () => root.unmount());
     container.remove();
