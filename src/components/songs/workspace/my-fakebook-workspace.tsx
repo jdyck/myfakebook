@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import Link from "next/link";
 import { AbcEditorPanel } from "@/components/songs/editor/abc-editor-panel";
 import { RemoveSongButton, SaveToMyLibraryButton } from "@/components/library/my-library/actions";
-import { AdminPublicationButton, AdminUnpublishPublicSongButton } from "@/components/library/public-library/publication-actions";
+import { AdminPublicationButton, AdminPublicSongPublicationMenu } from "@/components/library/public-library/publication-actions";
 import { SaveToSetListButton, SaveSetListDisplaySettingsButton } from "@/components/set-lists/actions";
 import type { LoadedSong, SetListSong } from "@/components/songs/types";
 import { Header } from "@/components/app-shell/header/header";
@@ -184,7 +184,7 @@ export function MyFakebookWorkspace({
     ? publishedSongs.find((song) => song.id === selectedPublicSongId)
     : undefined;
   const setListSong: SetListSong | null = isPublicSong
-    ? publicLibraryIsPersisted && selectedPublicSong
+    ? publicLibraryIsPersisted && selectedPublicSong && (selectedPublicSong.publicationTerritory ?? "worldwide") === "worldwide"
       ? { id: selectedPublicSong.id as Id<"songs">, title: songTitle }
       : null
     : currentSong
@@ -551,9 +551,15 @@ export function MyFakebookWorkspace({
               }
               publishAction={
                 persistenceEnabled && isPublicSong && publicLibraryIsPersisted && selectedPublicSongId ? (
-                  <AdminUnpublishPublicSongButton
-                    songId={selectedPublicSongId as Id<"songs">}
+                  <AdminPublicSongPublicationMenu
                     enabled={persistenceEnabled}
+                    song={selectedPublicSong ? {
+                      id: selectedPublicSong.id as Id<"songs">,
+                      title: selectedPublicSong.title,
+                      abc: selectedPublicSong.abc,
+                      publicationState: "published",
+                      publicationTerritory: selectedPublicSong.publicationTerritory ?? "worldwide",
+                    } : null}
                     onStatus={handleStatus}
                   />
                 ) : persistenceEnabled && !isPublicSong && currentSong ? (

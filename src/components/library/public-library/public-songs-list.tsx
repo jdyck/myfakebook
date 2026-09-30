@@ -1,11 +1,10 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import Link from "next/link";
 
-import { api } from "../../../../convex/_generated/api";
 import { Header } from "@/components/app-shell/header/header";
 import type { PublicSong } from "@/lib/public-library";
+import { usePublicSongs } from "./use-public-songs";
 import componentStyles from "./public-songs-list.module.css";
 
 type PublicSongsListProps = {
@@ -16,15 +15,8 @@ type PublicSongsListProps = {
 export function PublicSongsListBacked({ clerkConfigured }: {
   clerkConfigured: boolean;
 }) {
-  const publishedSongs = useQuery(api.songs.listPublicSongs);
-  const songs = publishedSongs?.map((song) => ({
-    id: song.id,
-    title: song.title,
-    writers: song.writers,
-    rhythm: song.rhythm,
-    abc: song.abc,
-  }));
-  return <PublicSongsList clerkConfigured={clerkConfigured} songs={songs} />;
+  const { songs, loading } = usePublicSongs();
+  return <PublicSongsList clerkConfigured={clerkConfigured} songs={loading ? undefined : songs} />;
 }
 
 export function PublicSongsList({ clerkConfigured, songs }: PublicSongsListProps) {
@@ -36,7 +28,7 @@ export function PublicSongsList({ clerkConfigured, songs }: PublicSongsListProps
         <div className={componentStyles.pageHeadingRow}>
           <div>
             <h1 id="songs-heading" className={componentStyles.pageTitle}>Songs</h1>
-            <p className={componentStyles.pageDescription}>Songs available to everyone.</p>
+            <p className={componentStyles.pageDescription}>Songs available in your region.</p>
           </div>
           {songs && <span className={componentStyles.songCount}>{songs.length} song{songs.length === 1 ? "" : "s"}</span>}
         </div>

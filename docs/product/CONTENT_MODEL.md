@@ -34,14 +34,17 @@ Song notation is stored as ABC.
 
 ### Ownership and publication
 
-Every saved song has one owner and one publication state. Publishing changes the visibility of that record; it does not copy the song into a second table or assign it a second identity.
+Every saved song has one owner and one publication setting. Publishing changes the visibility of that record; it does not copy the song into a second table or assign it a second identity. Publication can be off, limited to the U.S., or worldwide.
 
 | Song state | Owner | Who can edit the stored song | Where it appears |
 |---|---|---|---|
-| Private | User | Owning user | The owner’s My Library |
-| Published | Admin-owned user record | Owning admin | The owner’s My Library and the public library |
+| None | User | Owning user | The owner’s My Library |
+| U.S. | Admin-owned user record | Owning admin | The owner’s My Library and the U.S. public catalog |
+| Worldwide | Admin-owned user record | Owning admin | The owner’s My Library and the public catalog worldwide |
 
-The owner’s My Library lists both private and published songs with a state badge. The public library lists only published songs. Publishing and unpublishing require the admin role and update the existing record. The regular save mutation cannot set publication state. Editing a published song updates its public version immediately.
+The owner’s My Library lists songs with their publication setting. The public catalog includes worldwide songs everywhere and U.S. songs for U.S. visitors. Changing publication settings requires the admin role and updates the existing record. The regular save mutation cannot set publication settings. Editing a published song updates its public version immediately.
+
+The regional catalog reads Vercel’s request country and calls a protected Convex HTTP action. Set the same server-only `PUBLIC_CATALOG_ACCESS_KEY` in Vercel and the Convex deployment. If either value is missing, the app falls back to the worldwide catalog.
 
 Opening another owner’s public song for experimentation changes only the editor’s working copy. A signed-in user who saves that copy creates a separate song record owned by that user.
 
@@ -111,7 +114,7 @@ ABC is the portable song format; a collection is a ZIP containing ABC files. Imp
 ## Important invariants
 
 - Each persisted song has one owner and one record, regardless of publication state.
-- Only an admin can publish or unpublish a song; those changes preserve its record ID and owner.
+- Only an admin can change a song’s publication setting; those changes preserve its record ID and owner.
 - Editing a published song updates the public version immediately.
 - A user cannot modify another owner’s stored song.
 - Saving another owner’s public song creates an independent song owned by the user.

@@ -11,6 +11,7 @@ export default defineSchema({
     rhythm: v.string(),
     abc: v.string(),
     publicationState: v.union(v.literal("private"), v.literal("published")),
+    publicationTerritory: v.optional(v.union(v.literal("US"), v.literal("worldwide"))),
     updatedAt: v.number(),
     publishedAt: v.optional(v.number()),
     catalogId: v.optional(v.string()),

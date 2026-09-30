@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { Menu } from "@base-ui/react/menu";
 import { useMutation } from "convex/react";
+import { Check, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { api } from "../../../../convex/_generated/api";
-import type { LoadedSong, SongId } from "@/components/songs/types";
-import componentStyles from "@/components/shared/song-actions.module.css";
+import { publicationLabel, publicationValueForSong, type LoadedSong, type PublicationValue } from "@/components/songs/types";
+import menuStyles from "./publication-menu.module.css";
 
 export function AdminPublicationButton({
   enabled,
@@ -34,92 +36,89 @@ function ConnectedAdminPublicationButton({
   onStatus: (status: string) => void;
 }) {
   const { user } = useUser();
-  const publish = useMutation(api.songs.publish);
-  const unpublish = useMutation(api.songs.unpublish);
+  const setPublication = useMutation(api.songs.setPublication);
   const [changing, setChanging] = useState(false);
   const isAdmin = user?.publicMetadata?.role === "admin";
-  const isPublished = song.publicationState === "published";
+  const publication = publicationValueForSong(song);
 
   if (!isAdmin) return null;
 
-  async function handleChange() {
+  async function handleChange(nextPublication: PublicationValue) {
+    if (nextPublication === publication) return;
     setChanging(true);
-    onStatus(isPublished ? "Unpublishing…" : "Publishing…");
+    onStatus(nextPublication === "none" ? "Unpublishing…" : "Publishing…");
     try {
-      await (isPublished ? unpublish : publish)({ id: song.id });
-      onChanged({ ...song, publicationState: isPublished ? "private" : "published" });
-      onStatus(isPublished ? "Song is private" : "Published to Public Library");
+      await setPublication({ id: song.id, publication: nextPublication });
+      onChanged({
+        ...song,
+        publicationState: nextPublication === "none" ? "private" : "published",
+        publicationTerritory: nextPublication === "none" ? undefined : nextPublication,
+      });
+      onStatus(nextPublication === "none" ? "Song is private" : `Published ${publicationLabel(nextPublication)}`);
     } catch {
-      onStatus(isPublished ? "Couldn’t unpublish" : "Couldn’t publish");
+      onStatus("Couldn’t update publication");
     } finally {
       setChanging(false);
     }
   }
 
   return (
-    <button
-      aria-label={`${isPublished ? "Unpublish" : "Publish"} ${song.title}`}
-      className={componentStyles.publicationButton}
-      disabled={changing}
-      type="button"
-      onClick={() => void handleChange()}
-    >
-      {changing ? (isPublished ? "Unpublishing…" : "Publishing…") : isPublished ? "Unpublish" : "Publish"}
-    </button>
+    <Menu.Root>
+      <Menu.Trigger
+        aria-label={`Published: ${publicationLabel(publication)}`}
+        className={menuStyles.trigger}
+        disabled={changing}
+      >
+        Published
+        <ChevronDown aria-hidden="true" size={13} strokeWidth={2} />
+      </Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner align="end" sideOffset={6}>
+          <Menu.Popup className={menuStyles.popup}>
+            <Menu.RadioGroup
+              value={publication}
+              onValueChange={(value) => {
+                if (typeof value === "string") void handleChange(value as PublicationValue);
+              }}
+            >
+              {(["none", "US", "worldwide"] as const).map((value) => (
+                <Menu.RadioItem
+                  className={menuStyles.item}
+                  closeOnClick
+                  disabled={changing}
+                  key={value}
+                  value={value}
+                >
+                  <Menu.RadioItemIndicator className={menuStyles.indicator} keepMounted>
+                    <Check aria-hidden="true" size={13} strokeWidth={2} />
+                  </Menu.RadioItemIndicator>
+                  <span>{publicationLabel(value)}</span>
+                </Menu.RadioItem>
+              ))}
+            </Menu.RadioGroup>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
   );
 }
 
-export function AdminUnpublishPublicSongButton({
+export function AdminPublicSongPublicationMenu({
   enabled,
-  songId,
+  song,
   onStatus,
 }: {
   enabled: boolean;
-  songId: SongId | null;
+  song: LoadedSong | null;
   onStatus: (status: string) => void;
 }) {
-  if (!enabled || !songId) return null;
-  return <ConnectedAdminUnpublishPublicSongButton songId={songId} onStatus={onStatus} />;
-}
-
-function ConnectedAdminUnpublishPublicSongButton({
-  songId,
-  onStatus,
-}: {
-  songId: SongId;
-  onStatus: (status: string) => void;
-}) {
-  const { user } = useUser();
   const router = useRouter();
-  const unpublish = useMutation(api.songs.unpublish);
-  const [changing, setChanging] = useState(false);
-  const isAdmin = user?.publicMetadata?.role === "admin";
-
-  if (!isAdmin) return null;
-
-  async function handleUnpublish() {
-    setChanging(true);
-    onStatus("Unpublishing…");
-    try {
-      await unpublish({ id: songId });
-      onStatus("Song is private");
-      router.push(`/mylibrary/${encodeURIComponent(songId)}`);
-    } catch {
-      onStatus("Couldn’t unpublish");
-    } finally {
-      setChanging(false);
-    }
-  }
-
+  if (!enabled || !song) return null;
   return (
-    <button
-      aria-label="Unpublish public song"
-      className={componentStyles.publicationButton}
-      disabled={changing}
-      type="button"
-      onClick={() => void handleUnpublish()}
-    >
-      {changing ? "Unpublishing…" : "Unpublish"}
-    </button>
+    <ConnectedAdminPublicationButton
+      onChanged={(changedSong) => router.push(`/mylibrary/${encodeURIComponent(changedSong.id)}`)}
+      onStatus={onStatus}
+      song={song}
+    />
   );
 }

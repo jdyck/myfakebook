@@ -132,7 +132,13 @@ function ConnectedSaveToMyLibraryButton({
         abc,
       });
       const savedSong = songs?.find((song) => song._id === savedId);
-      onCurrentSongChange({ id: savedId, title, abc, publicationState: savedSong?.publicationState ?? "private" });
+      onCurrentSongChange({
+        id: savedId,
+        title,
+        abc,
+        publicationState: savedSong?.publicationState ?? "private",
+        publicationTerritory: savedSong?.publicationTerritory,
+      });
       onSavedToMyLibrary();
       onStatus("Saved to My Library");
     } catch {

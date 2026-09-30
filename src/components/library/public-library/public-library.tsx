@@ -21,7 +21,7 @@ export function PublicLibrary({ songs, selectedSongId, onOpenSong }: PublicLibra
             Songs
           </h2>
           <p className={componentStyles.sectionDescription}>
-            Songs available to everyone.
+            Songs available in your region.
           </p>
         </div>
         <span className={componentStyles.songCount}>

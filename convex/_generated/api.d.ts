@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as http from "../http.js";
 import type * as setLists from "../setLists.js";
 import type * as songStore from "../songStore.js";
 import type * as songs from "../songs.js";
@@ -22,6 +23,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  http: typeof http;
   setLists: typeof setLists;
   songStore: typeof songStore;
   songs: typeof songs;
