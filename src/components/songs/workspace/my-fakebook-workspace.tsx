@@ -352,6 +352,23 @@ export function MyFakebookWorkspace({
     }
   }
 
+  function handleExportAbc() {
+    try {
+      const blob = new Blob([abc], { type: "text/vnd.abc;charset=utf-8" });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.abc`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+      setFeedback("ABC downloaded");
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "ABC export failed");
+    }
+  }
+
   function handleExportSvg() {
     const svg = createExportSvg();
     if (!svg) {
@@ -464,6 +481,7 @@ export function MyFakebookWorkspace({
             feedback={feedback}
             onDisplaySettingsChange={updateDisplaySettings}
             onExport={handleExport}
+            onExportAbc={handleExportAbc}
             onExportSvg={handleExportSvg}
             onExportPng={handleExportPng}
             onExportPdf={handleExportPdf}

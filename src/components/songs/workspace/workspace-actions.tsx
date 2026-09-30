@@ -9,13 +9,14 @@ type WorkspaceActionsProps = {
   exporting: boolean;
   onNew: () => void;
   onExport: () => void;
+  onExportAbc: () => void;
   onExportSvg: () => void;
   onExportPng: () => void;
   onExportPdf: () => void;
   onFileImport: ChangeEventHandler<HTMLInputElement>;
 };
 
-export function WorkspaceActions({ exporting, onNew, onExport, onExportSvg, onExportPng, onExportPdf, onFileImport }: WorkspaceActionsProps) {
+export function WorkspaceActions({ exporting, onNew, onExport, onExportAbc, onExportSvg, onExportPng, onExportPdf, onFileImport }: WorkspaceActionsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -47,6 +48,9 @@ export function WorkspaceActions({ exporting, onNew, onExport, onExportSvg, onEx
             <Menu.Popup className={componentStyles.exportMenuPopup}>
               <Menu.Item className={componentStyles.exportMenuItem} disabled={exporting} onClick={onExport}>
                 MusicXML
+              </Menu.Item>
+              <Menu.Item className={componentStyles.exportMenuItem} disabled={exporting} onClick={onExportAbc}>
+                ABC
               </Menu.Item>
               <Menu.Item className={componentStyles.exportMenuItem} disabled={exporting} onClick={onExportSvg}>
                 SVG
