@@ -143,7 +143,8 @@ export function MyFakebookWorkspace({
   const [displaySettings, setDisplaySettings] = useState<SongDisplaySettings>(() => ({
     ...DEFAULT_DISPLAY_SETTINGS,
     ...initialDisplaySettings,
-    showFirstLineClefOnly: initialDisplaySettings?.showFirstLineClefOnly ?? false,
+    showParts: initialDisplaySettings?.showParts ?? true,
+    showFirstLineClefOnly: initialDisplaySettings?.showFirstLineClefOnly ?? true,
   }));
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
   const [mySongs, setMySongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);

@@ -205,7 +205,7 @@ export const addSong = mutation({
       setListId: args.setListId,
       songId,
       position: (items[0]?.position ?? -1) + 1,
-      displaySettings: { transposition: 0, showChords: true, showLyrics: true, showFirstLineClefOnly: false },
+      displaySettings: { transposition: 0, showChords: true, showLyrics: true, showParts: true, showFirstLineClefOnly: true },
     });
     await ctx.db.patch("setLists", args.setListId, { updatedAt: now });
     return itemId;

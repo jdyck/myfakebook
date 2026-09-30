@@ -56,13 +56,14 @@ export function DisplayControls({ abc, settings, onChange }: DisplayControlsProp
           <fieldset aria-label="Show on score" className={componentStyles.optionsList}>
             <legend className={componentStyles.optionsLegend}>Show on score</legend>
             {([
-              ["showChords", "Show chords"],
-              ["showLyrics", "Show lyrics"],
-              ["showFirstLineClefOnly", "Show first line clef only"],
-            ] as const).map(([setting, label]) => (
+              ["showChords", "Show chords", settings.showChords],
+              ["showLyrics", "Show lyrics", settings.showLyrics],
+              ["showParts", "Show parts", settings.showParts ?? true],
+              ["showFirstLineClefOnly", "Only show clef and key on the first line", settings.showFirstLineClefOnly ?? true],
+            ] as const).map(([setting, label, checked]) => (
               <label className={componentStyles.displayToggleLabel} key={setting}>
                 <input
-                  checked={settings[setting] ?? false}
+                  checked={checked}
                   className={componentStyles.displayToggleCheckbox}
                   type="checkbox"
                   onChange={(event) => onChange({ [setting]: event.target.checked })}

@@ -377,9 +377,6 @@ export function AbcRowEditor({ abc, onChange }: AbcRowEditorProps) {
   return (
     <div className={componentStyles.easyEditorPanel} role="tabpanel" id="abc-easy-panel" aria-labelledby="abc-easy-tab">
       <div className={componentStyles.editorInstructionsRow}>
-        <p className={componentStyles.editorInstructions}>
-          Move through the rows with your arrow keys. Leave pickup chord cells blank; chords align to notes and lyrics align by syllable. Leave one blank line between phrases.
-        </p>
         {!rowsAreValid && (
           <span className={componentStyles.rowValidationMessage} role="status">
             Keep the chord and melody rows on separate lines to sync changes.

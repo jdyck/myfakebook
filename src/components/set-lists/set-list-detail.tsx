@@ -413,7 +413,8 @@ export function SetListDetail({ id }: SetListDetailProps) {
                       key={selectedItem._id}
                       showChords={selectedSettings.showChords}
                       showLyrics={selectedSettings.showLyrics}
-                      showFirstLineClefOnly={selectedSettings.showFirstLineClefOnly ?? false}
+                      showParts={selectedSettings.showParts ?? true}
+                      showFirstLineClefOnly={selectedSettings.showFirstLineClefOnly ?? true}
                       transposition={selectedSettings.transposition}
                     />
                   </div>
