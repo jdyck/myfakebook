@@ -196,7 +196,7 @@ function ConnectedSaveSetListDisplaySettingsButton({
       onClick={() => void handleSave()}
       type="button"
     >
-      {saving ? "Saving…" : "Save set-list settings"}
+      {saving ? "Saving…" : "Save settings"}
     </button>
   );
 }

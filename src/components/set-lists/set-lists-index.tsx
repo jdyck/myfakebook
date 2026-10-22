@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 
 import { api } from "../../../convex/_generated/api";
 import { Header } from "@/components/app-shell/header/header";
+import { Button } from "@/components/ui/button";
+import { TextField } from "@/components/ui/text-field";
 import componentStyles from "./set-lists-index.module.css";
 
 
@@ -49,8 +51,8 @@ export function SetListsIndex() {
 
         <form className={componentStyles.createSetListForm} onSubmit={(event) => void handleCreate(event)}>
           <label className={componentStyles.formFieldLabel} htmlFor="new-set-list-name">Set list name</label>
-          <input
-            className={`${componentStyles.sharedField} ${componentStyles.setListNameInput}`}
+          <TextField
+            className={componentStyles.setListNameInput}
             id="new-set-list-name"
             maxLength={80}
             placeholder="For example, Friday at the Blue Note"
@@ -58,7 +60,7 @@ export function SetListsIndex() {
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
-          <button className={componentStyles.sharedPrimaryButton} disabled={saving} type="submit">{saving ? "Creating…" : "Create set list"}</button>
+          <Button disabled={saving} size="regular" type="submit" variant="primary">{saving ? "Creating…" : "Create set list"}</Button>
         </form>
         {status && <p className={componentStyles.formErrorMessage} role="alert">{status}</p>}
 

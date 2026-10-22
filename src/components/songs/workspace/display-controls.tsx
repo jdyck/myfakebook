@@ -2,6 +2,7 @@
 
 import { useId, useRef } from "react";
 import type { SongDisplaySettings } from "@/lib/abc-display";
+import { Button } from "@/components/ui/button";
 import { TransposeMenu } from "@/components/songs/workspace/transpose-menu";
 import componentStyles from "./display-controls.module.css";
 
@@ -29,17 +30,18 @@ export function DisplayControls({ abc, settings, onChange }: DisplayControlsProp
         </div>
       </fieldset>
 
-      <button
+      <Button
         aria-haspopup="dialog"
-        className={componentStyles.viewOptionsButton}
+        size="compact"
         type="button"
+        variant="secondary"
         onClick={() => {
           const dialog = dialogRef.current;
           if (dialog && !dialog.open) dialog.showModal();
         }}
       >
         View options
-      </button>
+      </Button>
 
       <dialog
         aria-labelledby={titleId}
@@ -73,14 +75,15 @@ export function DisplayControls({ abc, settings, onChange }: DisplayControlsProp
             ))}
           </fieldset>
           <footer className={componentStyles.optionsDialogFooter}>
-            <button
+            <Button
               autoFocus
-              className={componentStyles.closeOptionsButton}
+              size="compact"
               type="button"
+              variant="secondary"
               onClick={() => dialogRef.current?.close()}
             >
               Done
-            </button>
+            </Button>
           </footer>
         </section>
       </dialog>

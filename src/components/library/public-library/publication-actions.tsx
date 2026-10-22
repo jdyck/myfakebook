@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Menu } from "@base-ui/react/menu";
 import { useMutation } from "convex/react";
-import { Check, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { api } from "../../../../convex/_generated/api";
 import { publicationLabel, publicationValueForSong, type LoadedSong, type PublicationValue } from "@/components/songs/types";
-import menuStyles from "./publication-menu.module.css";
+import { RadioMenu } from "@/components/ui/radio-menu";
 
 export function AdminPublicationButton({
   enabled,
@@ -63,43 +61,19 @@ function ConnectedAdminPublicationButton({
   }
 
   return (
-    <Menu.Root>
-      <Menu.Trigger
-        aria-label={`Published: ${publicationLabel(publication)}`}
-        className={menuStyles.trigger}
-        disabled={changing}
-      >
-        Published
-        <ChevronDown aria-hidden="true" size={13} strokeWidth={2} />
-      </Menu.Trigger>
-      <Menu.Portal>
-        <Menu.Positioner align="end" sideOffset={6}>
-          <Menu.Popup className={menuStyles.popup}>
-            <Menu.RadioGroup
-              value={publication}
-              onValueChange={(value) => {
-                if (typeof value === "string") void handleChange(value as PublicationValue);
-              }}
-            >
-              {(["none", "US", "worldwide"] as const).map((value) => (
-                <Menu.RadioItem
-                  className={menuStyles.item}
-                  closeOnClick
-                  disabled={changing}
-                  key={value}
-                  value={value}
-                >
-                  <Menu.RadioItemIndicator className={menuStyles.indicator} keepMounted>
-                    <Check aria-hidden="true" size={13} strokeWidth={2} />
-                  </Menu.RadioItemIndicator>
-                  <span>{publicationLabel(value)}</span>
-                </Menu.RadioItem>
-              ))}
-            </Menu.RadioGroup>
-          </Menu.Popup>
-        </Menu.Positioner>
-      </Menu.Portal>
-    </Menu.Root>
+    <RadioMenu
+      ariaLabel={`Published: ${publicationLabel(publication)}`}
+      disabled={changing}
+      onValueChange={(value) => {
+        if (typeof value === "string") void handleChange(value as PublicationValue);
+      }}
+      options={(["none", "US", "worldwide"] as const).map((value) => ({
+        value,
+        label: publicationLabel(value),
+      }))}
+      trigger={<>Published: {publicationLabel(publication)}</>}
+      value={publication}
+    />
   );
 }
 

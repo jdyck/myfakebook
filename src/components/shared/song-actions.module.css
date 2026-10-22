@@ -24,8 +24,7 @@
     margin-top: var(--spacing);
   }
 
-  .recentSongList,
-  .myLibraryLink {
+  .recentSongList {
     margin-top: calc(var(--spacing) * 2);
   }
 
@@ -45,7 +44,6 @@
 
   .songTitle,
   .songPublicationDetails,
-  .myLibraryLink,
   .setListOptionName,
   .setListOptionMetadata {
     display: block;
@@ -244,7 +242,6 @@
     white-space: nowrap;
   }
 
-  .myLibraryLink,
   .closeDialogButton,
   .setListOptionButton,
   .saveSetListSettingsButton {
@@ -252,7 +249,6 @@
   }
 
   .recentSongIcon,
-  .myLibraryLink,
   .removeSongButton,
   .songLibraryActionButton,
   .setListDialogContent,
@@ -277,19 +273,6 @@
     border-color: var(--line);
   }
 
-  .myLibraryLink {
-    border-color: var(--line);
-    transition-property: border-color, background-color;
-    transition-timing-function: var(
-      --component-ease,
-      var(--default-transition-timing-function)
-    );
-    transition-duration: var(
-      --component-duration,
-      var(--default-transition-duration)
-    );
-  }
-
   .saveSetListSettingsButton {
     background-color: var(--accent);
   }
@@ -299,7 +282,6 @@
     background-color: var(--paper);
   }
 
-  .myLibraryLink,
   .removeSongButton,
   .publicationButton {
     background-color: var(--paper);
@@ -322,13 +304,11 @@
     padding-inline: calc(var(--spacing) * 2);
   }
 
-  .myLibraryLink,
   .setListOptionButton,
   .saveSetListSettingsButton {
     padding-inline: calc(var(--spacing) * 3);
   }
 
-  .myLibraryLink,
   .saveSetListSettingsButton {
     padding-block: calc(var(--spacing) * 2);
   }
@@ -343,7 +323,6 @@
     padding-block: calc(var(--spacing) * 5);
   }
 
-  .myLibraryLink,
   .emptySetListsState {
     text-align: center;
   }
@@ -380,7 +359,6 @@
   .sectionHeading,
   .recentSongsMessage,
   .songPublicationDetails,
-  .myLibraryLink,
   .removeSongButton,
   .songLibraryActionButton,
   .publicationButton {
@@ -394,7 +372,6 @@
     color: var(--ink);
   }
 
-  .myLibraryLink,
   .signInLink,
   .removeSongButton,
   .publicationButton {
@@ -436,7 +413,6 @@
   }
 
   .recentSongIcon,
-  .myLibraryLink,
   .signInLink {
     color: var(--accent-deep);
   }
@@ -458,7 +434,6 @@
   }
 
   .recentSongLink,
-  .myLibraryLink,
   .signInLink {
     text-decoration-line: none;
   }
@@ -490,10 +465,6 @@
       background-color: var(--accent-deep);
     }
 
-    .myLibraryLink:hover {
-      border-color: var(--line-strong);
-    }
-
     .saveSetListSettingsButton:hover {
       background-color: var(--accent-deep);
     }
@@ -502,8 +473,7 @@
       background-color: var(--paper-soft);
     }
 
-    .recentSongLink:hover,
-    .myLibraryLink:hover {
+    .recentSongLink:hover {
       background-color: var(--paper-soft);
     }
 
@@ -513,7 +483,6 @@
   }
 
   .recentSongLink:focus-visible,
-  .myLibraryLink:focus-visible,
   .signInLink:focus-visible,
   .removeSongButton:focus-visible,
   .songLibraryActionButton:focus-visible,
@@ -533,7 +502,6 @@
   }
 
   .recentSongLink:focus-visible,
-  .myLibraryLink:focus-visible,
   .signInLink:focus-visible,
   .removeSongButton:focus-visible,
   .songLibraryActionButton:focus-visible,

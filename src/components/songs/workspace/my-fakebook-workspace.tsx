@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import Link from "next/link";
-import { AbcEditorPanel } from "@/components/songs/editor/abc-editor-panel";
+import { SongEditorDrawer } from "@/components/songs/editor/song-editor-drawer";
 import { RemoveSongButton, SaveToMyLibraryButton } from "@/components/library/my-library/actions";
 import { AdminPublicationButton, AdminPublicSongPublicationMenu } from "@/components/library/public-library/publication-actions";
 import { SaveToSetListButton, SaveSetListDisplaySettingsButton } from "@/components/set-lists/actions";
@@ -10,85 +10,18 @@ import type { LoadedSong, SetListSong } from "@/components/songs/types";
 import { Header } from "@/components/app-shell/header/header";
 import { PreviewPanel } from "@/components/songs/preview/preview-panel";
 import { MyLibrarySidebar } from "@/components/library/my-library/my-library-sidebar";
+import { DisplayControls } from "@/components/songs/workspace/display-controls";
 import { WorkspaceToolbar } from "@/components/songs/workspace/workspace-toolbar";
+import { useRecentPrivateSongs } from "@/components/songs/workspace/use-recent-private-songs";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import { abcToMusicXml, DEFAULT_ABC } from "@/lib/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
+import { downloadSongFile } from "@/lib/download-song-file";
 import { svgToLetterPage, svgToPdf, svgToPng } from "@/lib/svg-pdf";
 import type { PublicSong } from "@/lib/public-library";
 import componentStyles from "./my-fakebook-workspace.module.css";
 
-const RECENT_PRIVATE_SONGS_STORAGE_KEY = "myfakebook:recent-private-song-ids";
-const MAX_RECENT_PRIVATE_SONGS = 50;
-const recentPrivateSongListeners = new Set<() => void>();
-let recentPrivateSongSnapshot: string | null = null;
-
-function getRecentPrivateSongSnapshot() {
-  try {
-    recentPrivateSongSnapshot = window.localStorage.getItem(RECENT_PRIVATE_SONGS_STORAGE_KEY) ?? "[]";
-  } catch {
-    recentPrivateSongSnapshot ??= "[]";
-  }
-  return recentPrivateSongSnapshot;
-}
-
-function subscribeToRecentPrivateSongs(listener: () => void) {
-  recentPrivateSongListeners.add(listener);
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key !== RECENT_PRIVATE_SONGS_STORAGE_KEY) return;
-    recentPrivateSongSnapshot = event.newValue ?? "[]";
-    listener();
-  };
-  window.addEventListener("storage", handleStorage);
-
-  return () => {
-    recentPrivateSongListeners.delete(listener);
-    window.removeEventListener("storage", handleStorage);
-  };
-}
-
-function parseRecentPrivateSongIds(snapshot: string) {
-  try {
-    const savedIds: unknown = JSON.parse(snapshot);
-    return Array.isArray(savedIds)
-      ? savedIds.filter((songId): songId is string => typeof songId === "string").slice(-MAX_RECENT_PRIVATE_SONGS)
-      : [];
-  } catch {
-    return [];
-  }
-}
-
-function mergeRecentPrivateSongIds(...histories: (readonly string[])[]) {
-  return histories
-    .flat()
-    .reverse()
-    .filter((songId, index, allSongIds) => allSongIds.indexOf(songId) === index)
-    .reverse()
-    .slice(-MAX_RECENT_PRIVATE_SONGS);
-}
-
-function writeRecentPrivateSongIds(songIds: readonly string[]) {
-  const nextSnapshot = JSON.stringify(songIds.slice(-MAX_RECENT_PRIVATE_SONGS));
-  recentPrivateSongSnapshot = nextSnapshot;
-  try {
-    window.localStorage.setItem(RECENT_PRIVATE_SONGS_STORAGE_KEY, nextSnapshot);
-  } catch {
-    // Recent song navigation should still work when browser storage is unavailable.
-  }
-  recentPrivateSongListeners.forEach((listener) => listener());
-}
-
-function recordRecentPrivateSong(songId: string) {
-  const history = parseRecentPrivateSongIds(getRecentPrivateSongSnapshot());
-  writeRecentPrivateSongIds(mergeRecentPrivateSongIds(history.filter((id) => id !== songId), [songId]));
-}
-
-function forgetRecentPrivateSong(songId: string) {
-  const history = parseRecentPrivateSongIds(getRecentPrivateSongSnapshot());
-  writeRecentPrivateSongIds(history.filter((id) => id !== songId));
-}
-
-type MyFakebookWorkspaceProps = {
+type SongViewProps = {
   clerkConfigured: boolean;
   persistenceEnabled: boolean;
   publishedSongs: readonly PublicSong[];
@@ -96,6 +29,7 @@ type MyFakebookWorkspaceProps = {
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
   initialDisplaySettings?: SongDisplaySettings;
+  initialEditMode?: boolean;
   setListReturn?: {
     href: string;
     name: string;
@@ -118,7 +52,7 @@ function findReplacementMySong(
   return songs.find((song) => song.id !== excludedId) ?? null;
 }
 
-export function MyFakebookWorkspace({
+export function SongView({
   clerkConfigured,
   persistenceEnabled,
   publishedSongs,
@@ -126,17 +60,16 @@ export function MyFakebookWorkspace({
   initialPublicSongId,
   initialPrivateSong,
   initialDisplaySettings,
+  initialEditMode = false,
   setListReturn,
-}: MyFakebookWorkspaceProps) {
+}: SongViewProps) {
   const initialPublicSong = publishedSongs.find((song) => song.id === initialPublicSongId) ?? publishedSongs[0];
   const initialPrivateSongId = initialPrivateSong?.id;
   const [abc, setAbc] = useState(initialPrivateSong?.abc ?? initialPublicSong?.abc ?? DEFAULT_ABC);
   const [title, setTitle] = useState(initialPrivateSong?.title ?? initialPublicSong?.title ?? "Untitled");
-  const [sourceLabel, setSourceLabel] = useState(initialPrivateSong ? (initialPrivateSong.publicationState === "published" ? "Published song" : "Private song") : initialPublicSong ? "Public song" : "New song");
   const [isPublicSong, setIsPublicSong] = useState(!initialPrivateSong && Boolean(initialPublicSong));
   const [selectedPublicSongId, setSelectedPublicSongId] = useState<string | null>(initialPrivateSong ? null : initialPublicSong?.id ?? null);
   const [sourcePublicSongId, setSourcePublicSongId] = useState<string | null>(initialPrivateSong ? null : initialPublicSong?.id ?? null);
-  const [saveStatus, setSaveStatus] = useState(persistenceEnabled ? "Connecting…" : "Not saved");
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -148,26 +81,19 @@ export function MyFakebookWorkspace({
   }));
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
   const [mySongs, setMySongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
+  const [editorOpen, setEditorOpen] = useState(initialEditMode);
   const renderedSvgRef = useRef<SVGSVGElement | null>(null);
-  const recentPrivateSongSnapshotValue = useSyncExternalStore(
-    subscribeToRecentPrivateSongs,
-    getRecentPrivateSongSnapshot,
-    () => "[]",
-  );
-  const mySongHistory = useMemo(
-    () => mergeRecentPrivateSongIds(
-      parseRecentPrivateSongIds(recentPrivateSongSnapshotValue),
-      initialPrivateSongId ? [initialPrivateSongId] : [],
-    ),
-    [initialPrivateSongId, recentPrivateSongSnapshotValue],
-  );
+  const {
+    songIds: mySongHistory,
+    recordSong: recordRecentPrivateSong,
+    forgetSong: forgetRecentPrivateSong,
+  } = useRecentPrivateSongs(initialPrivateSongId);
 
   const handleCurrentSongChange = useCallback(
     (song: LoadedSong | null) => {
       setCurrentSong(song);
-      if (song && !isPublicSong) setSourceLabel(song.publicationState === "published" ? "Published song" : "Private song");
     },
-    [isPublicSong],
+    [],
   );
 
   const conversion = useMemo(() => {
@@ -179,7 +105,6 @@ export function MyFakebookWorkspace({
   }, [abc]);
 
   const lineCount = abc.split("\n").length;
-  const sourceLength = abc.length;
   const songTitle = title.trim() || "Untitled lead sheet";
   const selectedPublicSong = selectedPublicSongId
     ? publishedSongs.find((song) => song.id === selectedPublicSongId)
@@ -204,11 +129,6 @@ export function MyFakebookWorkspace({
     }
   }, []);
 
-  useEffect(() => {
-    if (initialPrivateSongId) recordRecentPrivateSong(initialPrivateSongId);
-  }, [initialPrivateSongId]);
-
-  const handleStatus = useCallback((status: string) => setSaveStatus(status), []);
   const handleRenderedSvg = useCallback((svg: SVGSVGElement | null) => {
     renderedSvgRef.current = svg;
   }, []);
@@ -242,7 +162,6 @@ export function MyFakebookWorkspace({
   }
 
   function updateTitle(value: string) {
-    setSourceLabel(isPublicSong ? "Public song edit" : "New song");
     setSelectedPublicSongId(null);
     setTitle(value);
     setAbc((current) => {
@@ -254,19 +173,18 @@ export function MyFakebookWorkspace({
   function handleNewSong() {
     setTitle("Untitled");
     setAbc(DEFAULT_ABC);
-    setSourceLabel("New song");
     setIsPublicSong(false);
     setSelectedPublicSongId(null);
     setSourcePublicSongId(null);
     setCurrentSong(null);
     setFeedback("Fresh lead sheet ready");
+    setEditorOpen(true);
   }
 
   function handleOpenPrivateSong(song: LoadedSong, feedbackMessage = `Loaded ${song.title}`) {
     setCurrentSong(song);
     setTitle(song.title);
     setAbc(song.abc);
-    setSourceLabel(song.publicationState === "published" ? "Published song" : "Private song");
     setIsPublicSong(false);
     setSelectedPublicSongId(null);
     setSourcePublicSongId(null);
@@ -275,7 +193,6 @@ export function MyFakebookWorkspace({
   }
 
   function handleFormat() {
-    setSourceLabel(isPublicSong ? "Public song edit" : "New song");
     setSelectedPublicSongId(null);
     setAbc((current) =>
       current
@@ -289,7 +206,6 @@ export function MyFakebookWorkspace({
   }
 
   function handleAbcChange(value: string) {
-    setSourceLabel(isPublicSong ? "Public song edit" : "New song");
     setSelectedPublicSongId(null);
     setAbc(value);
   }
@@ -337,14 +253,7 @@ export function MyFakebookWorkspace({
         throw new Error(error.error ?? "MusicXML export failed.");
       }
       const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = downloadUrl;
-      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.musicxml`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      window.URL.revokeObjectURL(downloadUrl);
+      downloadSongFile(blob, songTitle, "musicxml");
       setFeedback("MusicXML downloaded");
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "MusicXML export failed");
@@ -356,14 +265,7 @@ export function MyFakebookWorkspace({
   function handleExportAbc() {
     try {
       const blob = new Blob([abc], { type: "text/vnd.abc;charset=utf-8" });
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = downloadUrl;
-      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.abc`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      window.URL.revokeObjectURL(downloadUrl);
+      downloadSongFile(blob, songTitle, "abc");
       setFeedback("ABC downloaded");
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "ABC export failed");
@@ -380,14 +282,7 @@ export function MyFakebookWorkspace({
     try {
       const letterPage = svgToLetterPage(svg);
       const blob = new Blob([new XMLSerializer().serializeToString(letterPage)], { type: "image/svg+xml;charset=utf-8" });
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = downloadUrl;
-      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.svg`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      window.URL.revokeObjectURL(downloadUrl);
+      downloadSongFile(blob, songTitle, "svg");
       setFeedback("SVG downloaded");
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "SVG export failed");
@@ -405,14 +300,7 @@ export function MyFakebookWorkspace({
     setFeedback(null);
     try {
       const png = await svgToPng(svg);
-      const downloadUrl = window.URL.createObjectURL(png);
-      const anchor = document.createElement("a");
-      anchor.href = downloadUrl;
-      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.png`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
+      downloadSongFile(png, songTitle, "png", 1000);
       setFeedback("PNG downloaded");
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "PNG export failed");
@@ -431,14 +319,7 @@ export function MyFakebookWorkspace({
     setExporting(true);
     try {
       const pdf = await svgToPdf(svg);
-      const downloadUrl = window.URL.createObjectURL(pdf);
-      const anchor = document.createElement("a");
-      anchor.href = downloadUrl;
-      anchor.download = `${songTitle.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "lead-sheet"}.pdf`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
+      downloadSongFile(pdf, songTitle, "pdf", 1000);
       setFeedback("PDF downloaded");
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "PDF export failed");
@@ -461,69 +342,59 @@ export function MyFakebookWorkspace({
           currentSong={currentSong}
           enabled={persistenceEnabled}
           isPublicSong={isPublicSong}
+          onNew={handleNewSong}
+          onFileImport={handleFileImport}
           onCurrentSongChange={handleCurrentSongChange}
           onMySongsChange={setMySongs}
           onLoad={handleOpenPrivateSong}
-          onStatus={handleStatus}
+          onStatus={setFeedback}
           recentSongIds={mySongHistory}
           title={songTitle}
         />
 
-        <main className={componentStyles.workspaceMain}>
+        <main aria-label="Song view" className={componentStyles.workspaceMain}>
           {setListReturn && (
             <Link className={componentStyles.setListReturnLink} href={setListReturn.href}>
               ← Back to {setListReturn.name}
             </Link>
           )}
-          <WorkspaceToolbar
-            abc={abc}
-            displaySettings={displaySettings}
-            exporting={exporting}
-            feedback={feedback}
-            onDisplaySettingsChange={updateDisplaySettings}
-            onExport={handleExport}
-            onExportAbc={handleExportAbc}
-            onExportSvg={handleExportSvg}
-            onExportPng={handleExportPng}
-            onExportPdf={handleExportPdf}
-            onFileImport={handleFileImport}
-            onNew={handleNewSong}
-            onTitleChange={updateTitle}
-            sourceLabel={sourceLabel}
-            title={title}
-          />
-
-          {persistenceEnabled && setListReturn && (currentSong?.id === setListReturn.songId || selectedPublicSongId === setListReturn.songId) && (
-            <div className={componentStyles.setListSettingsBanner}>
-              <div>
-                <p className={componentStyles.settingsBannerTitle}>Performance settings for {setListReturn.name}</p>
-                <p className={componentStyles.settingsBannerDescription}>Save the current transpose and visibility choices to this set-list item.</p>
-              </div>
-              <SaveSetListDisplaySettingsButton
-                displaySettings={displaySettings}
-                itemId={setListReturn.itemId}
-                onStatus={setFeedback}
-                setListId={setListReturn.setListId}
-              />
-            </div>
-          )}
-
-          <div className={componentStyles.editorAndPreview}>
-            <AbcEditorPanel
-              abc={abc}
-              copied={copied}
-              isConvertible={Boolean(conversion)}
-              lineCount={lineCount}
-              onChange={handleAbcChange}
-              onCopy={handleCopy}
-              onFormat={handleFormat}
-              saveStatus={saveStatus}
-              sourceLength={sourceLength}
-            />
-
+          <div className={componentStyles.songViewContent}>
             <PreviewPanel
               abc={abc}
               displaySettings={displaySettings}
+              workspaceToolbar={
+                <WorkspaceToolbar
+                  exporting={exporting}
+                  onEdit={() => setEditorOpen(true)}
+                  onExport={handleExport}
+                  onExportAbc={handleExportAbc}
+                  onExportSvg={handleExportSvg}
+                  onExportPng={handleExportPng}
+                  onExportPdf={handleExportPdf}
+                />
+              }
+              displayControls={
+                <>
+                  <DisplayControls
+                    abc={abc}
+                    settings={displaySettings}
+                    onChange={updateDisplaySettings}
+                  />
+                  {persistenceEnabled && setListReturn && (currentSong?.id === setListReturn.songId || selectedPublicSongId === setListReturn.songId) && (
+                    <div className={componentStyles.setListSettingsAction}>
+                      <p className={componentStyles.setListSettingsDescription}>
+                        View changes are temporary. Save the current transpose and display options to keep them with this song in {setListReturn.name}.
+                      </p>
+                      <SaveSetListDisplaySettingsButton
+                        displaySettings={displaySettings}
+                        itemId={setListReturn.itemId}
+                        onStatus={setFeedback}
+                        setListId={setListReturn.setListId}
+                      />
+                    </div>
+                  )}
+                </>
+              }
               onRenderedSvg={handleRenderedSvg}
               saveAction={
                 <>
@@ -533,19 +404,18 @@ export function MyFakebookWorkspace({
                       enabled={persistenceEnabled}
                       onCurrentSongChange={handleCurrentSongChange}
                       onSavedToMyLibrary={() => {
-                        setSourceLabel("My song");
                         setIsPublicSong(false);
                         setSelectedPublicSongId(null);
                         setSourcePublicSongId(null);
                       }}
-                      onStatus={handleStatus}
+                      onStatus={setFeedback}
                       sourceSongId={sourcePublicSongId}
                       title={songTitle}
                     />
                   )}
                   <SaveToSetListButton
                     enabled={persistenceEnabled}
-                    onStatus={handleStatus}
+                    onStatus={setFeedback}
                     song={setListSong}
                   />
                 </>
@@ -561,7 +431,7 @@ export function MyFakebookWorkspace({
                       publicationState: "published",
                       publicationTerritory: selectedPublicSong.publicationTerritory ?? "worldwide",
                     } : null}
-                    onStatus={handleStatus}
+                    onStatus={setFeedback}
                   />
                 ) : persistenceEnabled && !isPublicSong && currentSong ? (
                   <>
@@ -582,21 +452,35 @@ export function MyFakebookWorkspace({
                             handleNewSong();
                           }
                         }}
-                        onStatus={handleStatus}
+                        onStatus={setFeedback}
                         song={currentSong}
                       />
                     )}
                     <AdminPublicationButton
                       enabled={persistenceEnabled}
                       onChanged={handleCurrentSongChange}
-                      onStatus={handleStatus}
+                      onStatus={setFeedback}
                       song={currentSong}
                     />
                   </>
                 ) : null
               }
             />
+
           </div>
+          <SongEditorDrawer
+            abc={abc}
+            copied={copied}
+            feedback={feedback}
+            isOpen={editorOpen}
+            lineCount={lineCount}
+            onChange={handleAbcChange}
+            onClose={() => setEditorOpen(false)}
+            onCopy={handleCopy}
+            onFormat={handleFormat}
+            onTitleChange={updateTitle}
+            title={title}
+          />
         </main>
       </div>
     </div>

@@ -28,6 +28,24 @@ export const listPublicSongs = query({
   },
 });
 
+export const listAdminPublicSongs = query({
+  args: {},
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    const songs = await listPublished(ctx);
+    return songs.map((song) => ({
+      id: song._id,
+      ...(song.catalogId ? { catalogId: song.catalogId } : {}),
+      publicationTerritory: song.publicationTerritory ?? "worldwide",
+      title: song.title,
+      writers: song.writers,
+      rhythm: song.rhythm,
+      abc: song.abc,
+      updatedAt: song.updatedAt,
+    }));
+  },
+});
+
 export const listPublicSongsForCountry = internalQuery({
   args: { country: v.union(v.literal("US"), v.literal("other")) },
   handler: async (ctx, { country }) => {

@@ -9,7 +9,7 @@
     border: 1px solid var(--accent);
     border-radius: 8px;
     padding-inline: 11px;
-    background-color: var(--accent);
+    background: var(--accent);
     color: var(--color-white);
     font-family: inherit;
     font-size: 11px;
@@ -22,24 +22,31 @@
   }
 
   .trigger:focus-visible {
-    outline-style: var(--component-outline-style);
-    outline-width: 2px;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
-    outline-color: var(--accent);
+  }
+
+  .trigger:disabled {
+    cursor: not-allowed;
+    opacity: 55%;
   }
 
   .popup {
     width: max-content;
+    min-width: 160px;
+    padding: 4px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--paper);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+    color: var(--ink);
+  }
+
+  .scrollable {
     min-width: 180px;
     max-height: min(24rem, calc(100dvh - 2rem));
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 4px;
-    border: 1px solid var(--line-strong);
-    border-radius: 8px;
-    background-color: var(--paper);
-    box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
-    color: var(--ink);
   }
 
   .item {
@@ -60,20 +67,18 @@
   }
 
   .item[data-highlighted] {
-    background-color: var(--accent-soft);
-    color: var(--accent-deep);
     outline: none;
-  }
-
-  @media (hover: hover) {
-    .trigger:hover {
-      border-color: var(--accent-deep);
-      background-color: var(--accent-deep);
-    }
+    background: var(--accent-soft);
+    color: var(--accent-deep);
   }
 
   .item[data-checked] {
     font-weight: 650;
+  }
+
+  .item:disabled {
+    cursor: not-allowed;
+    opacity: 55%;
   }
 
   .indicator {
@@ -88,5 +93,12 @@
 
   .indicator[data-unchecked] {
     visibility: hidden;
+  }
+
+  @media (hover: hover) {
+    .trigger:hover:not(:disabled) {
+      border-color: var(--accent-deep);
+      background: var(--accent-deep);
+    }
   }
 }

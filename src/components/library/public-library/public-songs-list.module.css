@@ -10,6 +10,20 @@
     margin-top: calc(var(--spacing) * 0.5);
   }
 
+  .territoryLabel {
+    display: inline-flex;
+    margin-top: calc(var(--spacing) * 1);
+    border-radius: var(--ui-radius);
+    background-color: var(--accent-soft);
+    padding-inline: calc(var(--spacing) * 1.5);
+    padding-block: calc(var(--spacing) * 0.5);
+    color: var(--accent-deep);
+    font-size: var(--text-xs);
+    line-height: var(--component-leading, var(--text-xs--line-height));
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+
   .pageDescription {
     margin-top: var(--spacing);
     font-size: var(--text-sm);

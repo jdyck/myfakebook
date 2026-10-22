@@ -51,9 +51,6 @@ function EditorSurface({ abc, lineCount, onChange }: EditorSurfaceProps) {
 type AbcEditorPanelProps = {
   abc: string;
   lineCount: number;
-  sourceLength: number;
-  isConvertible: boolean;
-  saveStatus: string;
   copied: boolean;
   onChange: (value: string) => void;
   onFormat: () => void;
@@ -63,9 +60,6 @@ type AbcEditorPanelProps = {
 export function AbcEditorPanel({
   abc,
   lineCount,
-  sourceLength,
-  isConvertible,
-  saveStatus,
   copied,
   onChange,
   onFormat,
@@ -141,25 +135,6 @@ export function AbcEditorPanel({
         </div>
         <div className={activeTab === "easy" ? componentStyles.editorPane : componentStyles.hiddenEditorPane}>
           <AbcRowEditor abc={abc} onChange={onChange} />
-        </div>
-      </div>
-
-      <div className={componentStyles.editorStatusBar}>
-        <div className={componentStyles.statusGroup}>
-          <span>{sourceLength} chars</span>
-          <span>{lineCount} lines</span>
-        </div>
-        <div className={componentStyles.statusGroup}>
-          <span className={`${componentStyles.statusLabel} ${isConvertible ? componentStyles.conversionReadyStatus : componentStyles.conversionWarningStatus}`}>
-            <span
-              className={`${componentStyles.statusDot} ${isConvertible ? componentStyles.readyStatusDot : componentStyles.warningStatusDot}`}
-            />
-            {isConvertible ? "Ready to export" : "Check source"}
-          </span>
-          <span className={componentStyles.statusLabel}>
-            <span className={componentStyles.saveStatusDot} />
-            {saveStatus}
-          </span>
         </div>
       </div>
     </section>

@@ -107,8 +107,6 @@
     white-space: nowrap;
   }
 
-  .sharedField,
-  .sharedPrimaryButton,
   .setListLink {
     border-radius: var(--ui-radius);
   }
@@ -118,7 +116,6 @@
     border-radius: calc(var(--ui-radius) + 4px);
   }
 
-  .sharedField,
   .createSetListForm,
   .setListLink,
   .emptySetListsState {
@@ -139,26 +136,13 @@
     border-color: var(--line);
   }
 
-  .sharedField,
   .emptySetListsState {
     border-color: var(--line-strong);
   }
 
-  .sharedPrimaryButton {
-    background-color: var(--accent);
-    color: var(--color-white);
-  }
-
-  .sharedField,
   .createSetListForm,
   .setListLink {
     background-color: var(--paper);
-  }
-
-  .sharedField,
-  .sharedPrimaryButton {
-    padding-inline: calc(var(--spacing) * 3);
-    padding-block: calc(var(--spacing) * 2);
   }
 
   .pageContent,
@@ -182,7 +166,6 @@
     font-weight: var(--font-weight-bold);
   }
 
-  .sharedField,
   .pageDescription,
   .formErrorMessage,
   .emptyStateDescription {
@@ -190,7 +173,6 @@
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
 
-  .sharedPrimaryButton,
   .setListCount,
   .setListMetadata,
   .openSetListLabel {
@@ -198,7 +180,6 @@
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
 
-  .sharedPrimaryButton,
   .setListName,
   .openSetListLabel,
   .emptyStateTitle {
@@ -217,7 +198,6 @@
     color: var(--muted-soft);
   }
 
-  .sharedField,
   .setListName {
     color: var(--ink);
   }
@@ -226,24 +206,13 @@
     .setListLink:hover {
       border-color: var(--line-strong);
     }
-
-    .sharedPrimaryButton:hover {
-      background-color: var(--accent-deep);
-    }
   }
 
-  .sharedField:focus-visible,
-  .sharedPrimaryButton:focus-visible,
   .setListLink:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
     outline-offset: 2px;
     outline-color: var(--accent);
-  }
-
-  .sharedPrimaryButton:disabled {
-    cursor: not-allowed;
-    opacity: 50%;
   }
 
   @media (width < 720px) {

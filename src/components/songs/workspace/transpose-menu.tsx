@@ -1,10 +1,9 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Menu } from "@base-ui/react/menu";
-import { ArrowRightLeft, Check, ChevronDown } from "lucide-react";
+import { ArrowRightLeft } from "lucide-react";
+import { RadioMenu } from "@/components/ui/radio-menu";
 import { getTranspositionChoices } from "@/lib/abc-display";
-import componentStyles from "./transpose-menu.module.css";
 
 type TransposeMenuProps = {
   abc: string;
@@ -37,39 +36,20 @@ export function TransposeMenu({ abc, ariaLabel, value, onChange }: TransposeMenu
   }, [menuOpen, value]);
 
   return (
-    <Menu.Root onOpenChange={(open) => setMenuOpen(open)}>
-      <Menu.Trigger
-        aria-label={`${ariaLabel}: ${selectedChoice ? formatChoice(selectedChoice.steps, selectedChoice.key) : value}`}
-        className={componentStyles.trigger}
-      >
-        <ArrowRightLeft aria-hidden="true" size={13} strokeWidth={2} />
-        Transpose
-        <ChevronDown aria-hidden="true" size={13} strokeWidth={2} />
-      </Menu.Trigger>
-      <Menu.Portal>
-        <Menu.Positioner align="end" sideOffset={6}>
-          <Menu.Popup className={componentStyles.popup} ref={popupRef}>
-            <Menu.RadioGroup
-              value={value}
-              onValueChange={(steps) => onChange(Number(steps))}
-            >
-              {choices.map(({ steps, key }) => (
-                <Menu.RadioItem
-                  className={componentStyles.item}
-                  closeOnClick
-                  key={steps}
-                  value={steps}
-                >
-                  <Menu.RadioItemIndicator className={componentStyles.indicator} keepMounted>
-                    <Check aria-hidden="true" size={13} strokeWidth={2} />
-                  </Menu.RadioItemIndicator>
-                  <span>{formatChoice(steps, key)}</span>
-                </Menu.RadioItem>
-              ))}
-            </Menu.RadioGroup>
-          </Menu.Popup>
-        </Menu.Positioner>
-      </Menu.Portal>
-    </Menu.Root>
+    <RadioMenu
+      ariaLabel={`${ariaLabel}: ${selectedChoice ? formatChoice(selectedChoice.steps, selectedChoice.key) : value}`}
+      onOpenChange={setMenuOpen}
+      onValueChange={(steps) => onChange(Number(steps))}
+      options={choices.map(({ steps, key }) => ({ value: steps, label: formatChoice(steps, key) }))}
+      popupRef={popupRef}
+      popupSize="scrollable"
+      trigger={(
+        <>
+          <ArrowRightLeft aria-hidden="true" size={13} strokeWidth={2} />
+          Transpose
+        </>
+      )}
+      value={value}
+    />
   );
 }

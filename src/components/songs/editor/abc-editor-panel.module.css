@@ -17,10 +17,7 @@
   .editorModeControls,
   .editorModeTabs,
   .editorActions,
-  .editorPane,
-  .editorStatusBar,
-  .statusGroup,
-  .statusLabel {
+  .editorPane {
     display: flex;
   }
 
@@ -48,16 +45,6 @@
     transition-duration: 160ms;
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
-  }
-
-  .statusDot {
-    width: calc(var(--spacing) * 1.5);
-    height: calc(var(--spacing) * 1.5);
-  }
-
-  .saveStatusDot {
-    width: 5px;
-    height: 5px;
   }
 
   .editorPane {
@@ -89,10 +76,6 @@
     );
   }
 
-  .editorStatusBar {
-    min-height: 46px;
-  }
-
   .sourceTextarea {
     min-height: 510px;
     width: 100%;
@@ -118,9 +101,7 @@
   }
 
   .fileTypeIcon,
-  .fileTypeBadge,
-  .statusDot,
-  .saveStatusDot {
+  .fileTypeBadge {
     flex-shrink: 0;
   }
 
@@ -137,8 +118,7 @@
     flex-direction: column;
   }
 
-  .editorToolbar,
-  .statusGroup {
+  .editorToolbar {
     flex-wrap: wrap;
   }
 
@@ -146,15 +126,11 @@
   .editorModeControls,
   .editorModeTabs,
   .editorActions,
-  .editorActionButton,
-  .editorStatusBar,
-  .statusGroup,
-  .statusLabel {
+  .editorActionButton {
     align-items: center;
   }
 
-  .editorToolbar,
-  .editorStatusBar {
+  .editorToolbar {
     justify-content: space-between;
     padding-inline: calc(var(--spacing) * 3.5);
   }
@@ -164,19 +140,13 @@
     padding: var(--spacing);
   }
 
-  .editorToolbar,
-  .statusLabel {
+  .editorToolbar {
     gap: calc(var(--spacing) * 1.5);
   }
 
   .editorModeControls,
   .editorActions {
     gap: calc(var(--spacing) * 2);
-  }
-
-  .editorStatusBar,
-  .statusGroup {
-    gap: calc(var(--spacing) * 3);
   }
 
   .sourceEditorPanel,
@@ -207,11 +177,6 @@
     background-color: var(--paper);
   }
 
-  .statusDot,
-  .saveStatusDot {
-    border-radius: calc(infinity * 1px);
-  }
-
   .sourceEditorPanel,
   .abcEditorPanel,
   .editorActionButton {
@@ -234,15 +199,6 @@
   .lineNumberGutter,
   .editorToolbar {
     border-color: var(--line);
-  }
-
-  .warningStatusDot {
-    background-color: var(--amber);
-  }
-
-  .readyStatusDot,
-  .saveStatusDot {
-    background-color: var(--green);
   }
 
   .activeEditorModeTab {
@@ -275,8 +231,7 @@
     font-size: 11.5px;
   }
 
-  .fileTypeBadge,
-  .statusGroup {
+  .fileTypeBadge {
     font-size: 9px;
   }
 
@@ -291,14 +246,6 @@
     color: var(--accent);
   }
 
-  .conversionWarningStatus {
-    color: var(--amber);
-  }
-
-  .conversionReadyStatus {
-    color: var(--green);
-  }
-
   .sourceTextarea,
   .activeEditorModeTab {
     color: var(--ink);
@@ -310,8 +257,7 @@
   }
 
   .lineNumberGutter,
-  .fileTypeBadge,
-  .statusGroup {
+  .fileTypeBadge {
     color: var(--muted-soft);
   }
 
@@ -352,16 +298,7 @@
       margin: calc(var(--spacing) * 3);
     }
 
-    .editorStatusBar {
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      gap: calc(var(--spacing) * 1.5);
-      padding-block: 9px;
-    }
-
-    .editorToolbar,
-    .editorStatusBar {
+    .editorToolbar {
       padding-inline: calc(var(--spacing) * 3);
     }
   }

@@ -26,9 +26,6 @@ export function Header({ clerkConfigured }: HeaderProps) {
           <Link className={componentStyles.navigationLink} href="/songs">
             Songs
           </Link>
-          <Link className={componentStyles.navigationLink} href="/new">
-            New
-          </Link>
           {clerkConfigured && (
             <Show when="signed-in">
               <Link className={componentStyles.navigationLink} href="/mylibrary">

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ChangeEventHandler } from "react";
 import { Authenticated, Unauthenticated, useConvexAuth, useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
+import { SidebarAction } from "@/components/library/my-library/sidebar-action";
 import { publicationStatusForSong, type LoadedSong, type SongId } from "@/components/songs/types";
 import componentStyles from "@/components/shared/song-actions.module.css";
 
@@ -13,6 +14,8 @@ type RecentMyLibrarySongsProps = {
   abc: string;
   isPublicSong: boolean;
   currentSong: LoadedSong | null;
+  onNew: () => void;
+  onFileImport: ChangeEventHandler<HTMLInputElement>;
   recentSongIds: readonly string[];
   onCurrentSongChange: (song: LoadedSong | null) => void;
   onMySongsChange: (songs: LoadedSong[]) => void;
@@ -33,6 +36,8 @@ function ConnectedRecentMyLibrarySongs({
   abc,
   isPublicSong,
   currentSong,
+  onNew,
+  onFileImport,
   recentSongIds,
   onCurrentSongChange,
   onMySongsChange,
@@ -172,7 +177,7 @@ function ConnectedRecentMyLibrarySongs({
   return (
     <section className={componentStyles.recentSongsSection} aria-labelledby="recent-songs-heading">
       <h2 className={componentStyles.sectionHeading} id="recent-songs-heading">
-        Recently viewed songs
+        Recent songs
       </h2>
       <Authenticated>
         {songs === undefined ? (
@@ -180,7 +185,7 @@ function ConnectedRecentMyLibrarySongs({
             Loading your songs…
           </p>
         ) : recentSongs.length ? (
-          <div className={componentStyles.recentSongList} aria-label="Recently viewed songs">
+          <div className={componentStyles.recentSongList} aria-label="Recent songs">
             {recentSongs.map((song) => (
               <div className={componentStyles.recentSongItem} key={song._id}>
                 <Link
@@ -217,12 +222,9 @@ function ConnectedRecentMyLibrarySongs({
             Songs you open will appear here.
           </div>
         )}
-        <Link
-          className={componentStyles.myLibraryLink}
-          href="/mylibrary"
-        >
-          All my songs
-        </Link>
+        <SidebarAction href="/mylibrary" label="All my songs" />
+        <SidebarAction label="New song" onClick={onNew} icon="plus" />
+        <SidebarAction label="Import" onFileImport={onFileImport} icon="upload" />
       </Authenticated>
       <Unauthenticated>
         <div className={componentStyles.recentSongsMessage}>

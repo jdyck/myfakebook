@@ -29,12 +29,15 @@ function toPublicSong(song: PublicSongQueryResult): PublicSong {
   };
 }
 
-export function usePublicSongs() {
-  const worldwideSongs = useQuery(api.songs.listPublicSongs);
+export function usePublicSongs({ isAdmin = false }: { isAdmin?: boolean } = {}) {
+  const worldwideSongs = useQuery(api.songs.listPublicSongs, isAdmin ? "skip" : {});
+  const adminSongs = useQuery(api.songs.listAdminPublicSongs, isAdmin ? {} : "skip");
   const [regionalSongs, setRegionalSongs] = useState<readonly PublicSong[] | null>(null);
   const [requestFinished, setRequestFinished] = useState(false);
 
   useEffect(() => {
+    if (isAdmin) return;
+
     let active = true;
 
     async function loadSongs() {
@@ -55,17 +58,21 @@ export function usePublicSongs() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [isAdmin]);
 
   const worldwidePublicSongs = worldwideSongs?.map(toPublicSong);
-  const songs = regionalSongs === null
-    ? worldwidePublicSongs
-    : worldwidePublicSongs
-      ? [
-          ...worldwidePublicSongs,
-          ...regionalSongs.filter((song) => song.publicationTerritory === "US"),
-        ]
-      : regionalSongs;
-  const loading = regionalSongs === null && (!requestFinished || worldwideSongs === undefined);
+  const songs = isAdmin
+    ? adminSongs?.map(toPublicSong)
+    : regionalSongs === null
+      ? worldwidePublicSongs
+      : worldwidePublicSongs
+        ? [
+            ...worldwidePublicSongs,
+            ...regionalSongs.filter((song) => song.publicationTerritory === "US"),
+          ]
+        : regionalSongs;
+  const loading = isAdmin
+    ? adminSongs === undefined
+    : regionalSongs === null && (!requestFinished || worldwideSongs === undefined);
   return { songs, loading };
 }

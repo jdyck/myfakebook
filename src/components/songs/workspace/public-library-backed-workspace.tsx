@@ -1,11 +1,12 @@
 "use client";
 
 import { useConvexAuth, useQuery } from "convex/react";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
-import { MyFakebookWorkspace } from "@/components/songs/workspace/my-fakebook-workspace";
+import { SongView } from "@/components/songs/workspace/my-fakebook-workspace";
 import type { LoadedSong } from "@/components/songs/types";
 import type { SongDisplaySettings } from "@/lib/abc-display";
 import { usePublicSongs } from "@/components/library/public-library/use-public-songs";
@@ -28,7 +29,18 @@ type PublicLibraryBackedWorkspaceProps = {
   };
 };
 
-export function PublicLibraryBackedWorkspace({
+export function PublicLibraryBackedWorkspace(props: PublicLibraryBackedWorkspaceProps) {
+  return props.clerkConfigured
+    ? <AdminAwarePublicLibraryBackedWorkspace {...props} />
+    : <ConnectedPublicLibraryBackedWorkspace {...props} isAdmin={false} />;
+}
+
+function AdminAwarePublicLibraryBackedWorkspace(props: PublicLibraryBackedWorkspaceProps) {
+  const { user } = useUser();
+  return <ConnectedPublicLibraryBackedWorkspace {...props} isAdmin={user?.publicMetadata?.role === "admin"} />;
+}
+
+function ConnectedPublicLibraryBackedWorkspace({
   clerkConfigured,
   persistenceEnabled,
   initialPublicSongId,
@@ -37,9 +49,10 @@ export function PublicLibraryBackedWorkspace({
   setListId,
   setListItemId,
   setListReturn,
-}: PublicLibraryBackedWorkspaceProps) {
+  isAdmin,
+}: PublicLibraryBackedWorkspaceProps & { isAdmin: boolean }) {
   const { isAuthenticated } = useConvexAuth();
-  const { songs: publishedSongs, loading: publicSongsLoading } = usePublicSongs();
+  const { songs: publishedSongs, loading: publicSongsLoading } = usePublicSongs({ isAdmin });
   const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
   const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
 
@@ -76,7 +89,7 @@ export function PublicLibraryBackedWorkspace({
   }
 
   return (
-    <MyFakebookWorkspace
+    <SongView
       key={`${initialPrivateSong?.id ?? initialSong?.id ?? "default"}:${JSON.stringify(resolvedDisplaySettings ?? null)}:${resolvedSetListReturn?.href ?? ""}`}
       publicLibraryIsPersisted={publishedSongs.length > 0}
       clerkConfigured={clerkConfigured}

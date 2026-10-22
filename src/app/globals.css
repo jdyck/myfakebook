@@ -351,27 +351,6 @@
   display: none !important;
 }
 
-.abcjs-preview svg text:not(.abcjs-chord),
-.abcjs-preview svg text:not(.abcjs-chord) tspan {
-  font-family: var(--font-inter) !important;
-}
-
-.abcjs-title,
-.abcjs-title tspan {
-  font-weight: 700 !important;
-}
-
-.abcjs-lyric,
-.abcjs-lyric tspan {
-  font-weight: 300 !important;
-}
-
-.abcjs-preview svg .abcjs-chord {
-  font-family: "Bravura Chord Symbols", var(--font-inter), sans-serif !important;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-
 .abcjs-note-playing,
 .abcjs-note-playing path,
 .abcjs-note-playing text,
@@ -393,4 +372,3 @@
   fill: var(--accent-deep) !important;
   stroke: var(--accent-deep) !important;
 }
-

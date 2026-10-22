@@ -1,16 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import { Combobox } from "@base-ui/react/combobox";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowUp, GripVertical, Trash2 } from "lucide-react";
+import { Check, GripVertical, Plus, Search, Trash2, X } from "lucide-react";
 
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { Header } from "@/components/app-shell/header/header";
-import { AbcPreview } from "@/components/songs/preview/abc-preview";
-import { TransposeMenu } from "@/components/songs/workspace/transpose-menu";
+import { PreviewPanel } from "@/components/songs/preview/preview-panel";
+import { DisplayControls } from "@/components/songs/workspace/display-controls";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
 import componentStyles from "./set-list-detail.module.css";
 
@@ -27,6 +28,12 @@ function getDropTargetAtPoint(clientX: number, clientY: number) {
   };
 }
 
+type AvailableSong = {
+  songId: Id<"songs">;
+  title: string;
+  isPublic: boolean;
+};
+
 type SetListDetailProps = { id: string };
 
 export function SetListDetail({ id }: SetListDetailProps) {
@@ -42,7 +49,15 @@ export function SetListDetail({ id }: SetListDetailProps) {
   const removeItem = useMutation(api.setLists.removeItem);
   const reorder = useMutation(api.setLists.reorder);
   const [nameOverride, setNameOverride] = useState<string | null>(null);
-  const [selectedSongId, setSelectedSongId] = useState("");
+  const nameDraft = useRef<string | null>(null);
+  const savedName = useRef(setList?.name ?? "");
+  const nameSaveTimeout = useRef<number | null>(null);
+  const nameSaveInFlight = useRef(false);
+  const pendingNameSave = useRef<string | null>(null);
+  const [isAddSongDialogOpen, setIsAddSongDialogOpen] = useState(false);
+  const [songSearch, setSongSearch] = useState("");
+  const [selectedSongId, setSelectedSongId] = useState<Id<"songs"> | null>(null);
+  const [addSongError, setAddSongError] = useState<string | null>(null);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [settingsByItem, setSettingsByItem] = useState<Record<string, SongDisplaySettings>>({});
   const pointerDrag = useRef<{
@@ -62,13 +77,30 @@ export function SetListDetail({ id }: SetListDetailProps) {
   const [dragPreview, setDragPreview] = useState<{ title: string; left: number; top: number; width: number } | null>(null);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const addSongDialogRef = useRef<HTMLDialogElement>(null);
+  const addSongSearchRef = useRef<HTMLInputElement>(null);
+  const highlightedSongId = useRef<Id<"songs"> | null>(null);
+  const addSongDialogId = useId();
+  const addSongTitleId = useId();
+  const addSongDescriptionId = useId();
+  const addSongSearchId = useId();
+  const savedSetListName = setList?.name ?? "";
   const name = nameOverride ?? setList?.name ?? "";
   const loading = isLoading || (isAuthenticated && ((validId !== null && setList === undefined) || availableSongs === undefined));
+  const songsToAdd = availableSongs?.filter((song) => !setList?.items.some((item) => item.songId === song.songId)) ?? [];
+  const selectedSong = songsToAdd.find((song) => song.songId === selectedSongId) ?? null;
   const selectedItem = setList?.items.find((item) => item._id === selectedItemId) ?? setList?.items[0];
-  const selectedItemIndex = selectedItem ? setList?.items.findIndex((item) => item._id === selectedItem._id) ?? -1 : -1;
   const selectedSettings = selectedItem
     ? settingsByItem[selectedItem._id] ?? { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }
     : DEFAULT_DISPLAY_SETTINGS;
+
+  useEffect(() => {
+    if (savedSetListName) savedName.current = savedSetListName;
+  }, [savedSetListName]);
+
+  useEffect(() => () => {
+    if (nameSaveTimeout.current !== null) window.clearTimeout(nameSaveTimeout.current);
+  }, []);
 
   async function runChange(action: () => Promise<unknown>, successMessage?: string, pendingMessage?: string) {
     setSaving(true);
@@ -85,20 +117,117 @@ export function SetListDetail({ id }: SetListDetailProps) {
     }
   }
 
-  async function handleRename(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function saveSetListName(value: string) {
+    if (!validId || !setList) return;
+    const nextName = value.trim();
+    if (!nextName) {
+      setStatus("Enter a set list name");
+      if (nameDraft.current === value) {
+        nameDraft.current = null;
+        setNameOverride(null);
+      }
+      return;
+    }
+    if (nextName === savedName.current) {
+      if (nameDraft.current === value) {
+        nameDraft.current = null;
+        setNameOverride(null);
+      }
+      return;
+    }
+    if (nameSaveInFlight.current) {
+      pendingNameSave.current = value;
+      return;
+    }
+
+    nameSaveInFlight.current = true;
+    const result = await runChange(
+      () => renameSetList({ id: validId, name: nextName }),
+      "Set list name saved",
+      "Saving set list name…",
+    );
+    nameSaveInFlight.current = false;
+
+    if (result !== undefined) {
+      savedName.current = nextName;
+      if (nameDraft.current === value) {
+        nameDraft.current = null;
+        setNameOverride(null);
+      }
+    } else if (nameDraft.current === value) {
+      nameDraft.current = null;
+      setNameOverride(null);
+    }
+
+    const pendingName = pendingNameSave.current;
+    pendingNameSave.current = null;
+    if (pendingName !== null) void saveSetListName(pendingName);
+  }
+
+  function handleSetListNameChange(value: string) {
+    nameDraft.current = value;
+    setNameOverride(value);
+    if (nameSaveTimeout.current !== null) window.clearTimeout(nameSaveTimeout.current);
+    nameSaveTimeout.current = window.setTimeout(() => {
+      nameSaveTimeout.current = null;
+      void saveSetListName(value);
+    }, 600);
+  }
+
+  function handleSetListNameBlur(value: string) {
+    if (nameSaveTimeout.current !== null) window.clearTimeout(nameSaveTimeout.current);
+    nameSaveTimeout.current = null;
+    void saveSetListName(value);
+  }
+
+  function openAddSongDialog() {
+    setSongSearch("");
+    setSelectedSongId(null);
+    setAddSongError(null);
+    highlightedSongId.current = null;
+    const dialog = addSongDialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
+    setIsAddSongDialogOpen(true);
+    window.requestAnimationFrame(() => addSongSearchRef.current?.focus());
+  }
+
+  function closeAddSongDialog() {
+    const dialog = addSongDialogRef.current;
+    if (dialog?.open) dialog.close();
+    setIsAddSongDialogOpen(false);
+    setSongSearch("");
+    setSelectedSongId(null);
+    setAddSongError(null);
+    highlightedSongId.current = null;
+  }
+
+  async function addSongToSetList(songId: Id<"songs">) {
     if (!validId) return;
-    await runChange(() => renameSetList({ id: validId, name }), "Set list name saved");
+    const song = availableSongs?.find((candidate) => candidate.songId === songId);
+    if (!song || setList?.items.some((item) => item.songId === song.songId)) return;
+    setAddSongError(null);
+    const itemId = await runChange(() => addSong({ setListId: validId, songId: song.songId }), `${song.title} added`);
+    if (typeof itemId !== "string") {
+      setAddSongError("Couldn’t add that song. Please try again.");
+      return;
+    }
+    setSelectedItemId(itemId);
+    closeAddSongDialog();
   }
 
   async function handleAddSong(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!validId) return;
-    const song = availableSongs?.find((candidate) => candidate.songId === selectedSongId);
-    if (!song || setList?.items.some((item) => item.songId === song.songId)) return;
-    const itemId = await runChange(() => addSong({ setListId: validId, songId: song.songId }), `${song.title} added`);
-    if (typeof itemId === "string") setSelectedItemId(itemId);
-    setSelectedSongId("");
+    if (!selectedSongId) return;
+    await addSongToSetList(selectedSongId);
+  }
+
+  function handleAddSongSearchKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key !== "Enter" || event.nativeEvent.isComposing || saving) return;
+    const songId = highlightedSongId.current;
+    if (!songId) return;
+    event.preventDefault();
+    event.stopPropagation();
+    void addSongToSetList(songId);
   }
 
   async function handleDeleteSetList() {
@@ -115,7 +244,10 @@ export function SetListDetail({ id }: SetListDetailProps) {
     const target = itemIndex + offset;
     if (target < 0 || target >= next.length) return;
     [next[itemIndex], next[target]] = [next[target], next[itemIndex]];
-    await runChange(() => reorder({ setListId: validId, itemIds: next.map((item) => item._id) }));
+    await runChange(
+      () => reorder({ setListId: validId, itemIds: next.map((item) => item._id) }),
+      `${next[target].title} moved to position ${target + 1}`,
+    );
   }
 
   async function handleDrop(sourceId: string, targetId: string, position: "before" | "after") {
@@ -221,39 +353,27 @@ export function SetListDetail({ id }: SetListDetailProps) {
               <Link className={componentStyles.backToSetListsLink} href="/setlists">← All set lists</Link>
               <div className={componentStyles.setListSidebarHeader}>
                 <div className={componentStyles.titleAndDetails}>
-                  <h1 className={componentStyles.setListTitle}>{setList.name}</h1>
-                  <p className={componentStyles.setListSongCount}>{setList.items.length} song{setList.items.length === 1 ? "" : "s"} in performance order</p>
+                  <h1 className={componentStyles.setListTitle}>
+                    <input
+                      aria-label="Set list name"
+                      className={componentStyles.setListTitleInput}
+                      maxLength={80}
+                      onBlur={(event) => handleSetListNameBlur(event.currentTarget.value)}
+                      onChange={(event) => handleSetListNameChange(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key !== "Enter") return;
+                        event.preventDefault();
+                        event.currentTarget.blur();
+                      }}
+                      value={name}
+                    />
+                  </h1>
                 </div>
-                <button className={`${componentStyles.sharedButton} ${componentStyles.deleteSetListButton}`} disabled={saving} onClick={() => void handleDeleteSetList()} type="button">
-                  <Trash2 aria-hidden="true" size={13} /> Delete
-                </button>
               </div>
-
-              <form className={componentStyles.renameSetListForm} onSubmit={(event) => void handleRename(event)}>
-                <label className={componentStyles.formFieldLabel} htmlFor="set-list-name">Set list name</label>
-                <input className={`${componentStyles.sharedField} ${componentStyles.formField}`} id="set-list-name" maxLength={80} required value={name} onChange={(event) => setNameOverride(event.target.value)} />
-                <button className={`${componentStyles.sharedButton} ${componentStyles.saveSetListNameButton}`} disabled={saving || name.trim() === setList.name} type="submit">Save name</button>
-              </form>
-
-              <form className={componentStyles.addSongForm} onSubmit={(event) => void handleAddSong(event)}>
-                <label className={componentStyles.formFieldLabel} htmlFor="set-list-song">Add a song</label>
-                <select className={`${componentStyles.sharedField} ${componentStyles.formField}`} id="set-list-song" value={selectedSongId} onChange={(event) => setSelectedSongId(event.target.value)}>
-                  <option value="">Choose a song…</option>
-                  {availableSongs?.map((song) => {
-                    const selectionKey = song.songId;
-                    const alreadyAdded = setList.items.some((item) => item.songId === song.songId);
-                    const label = `${song.title}${song.isPublic ? " · Public" : ""}`;
-                    return <option disabled={alreadyAdded} key={selectionKey} value={selectionKey}>{alreadyAdded ? `${label} (already added)` : label}</option>;
-                  })}
-                </select>
-                <button className={componentStyles.sharedPrimaryButton} disabled={saving || !selectedSongId || !availableSongs?.some((song) => song.songId === selectedSongId && !setList.items.some((item) => item.songId === song.songId))} type="submit">Add song</button>
-                {availableSongs?.length === 0 && <p className={componentStyles.noAvailableSongsMessage}>There are no songs to add yet. Create one or <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.</p>}
-              </form>
 
               <section className={componentStyles.setListSongsSection} aria-labelledby="set-list-songs-heading">
                 <div className={componentStyles.songsSectionHeader}>
                   <h2 className={componentStyles.songsSectionTitle} id="set-list-songs-heading">Songs</h2>
-                  <span className={componentStyles.reorderHint}>Drag grip to reorder</span>
                 </div>
                 {setList.items.length ? (
                   <ol className={componentStyles.orderedSongList} aria-label={`${setList.name} songs`}>
@@ -275,9 +395,15 @@ export function SetListDetail({ id }: SetListDetailProps) {
                           )}
                           <div className={componentStyles.songItemDragControls}>
                             <button
-                              aria-label={`Drag ${item.title} to reorder; use the move up and move down buttons for keyboard reordering`}
+                              aria-keyshortcuts="ArrowUp ArrowDown"
+                              aria-label={`Reorder ${item.title}; use the arrow keys to move`}
                               className={componentStyles.dragHandleButton}
                               disabled={saving}
+                              onKeyDown={(event) => {
+                                if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+                                event.preventDefault();
+                                void handleMove(index, event.key === "ArrowUp" ? -1 : 1);
+                              }}
                               onPointerCancel={(event) => {
                                 if (pointerDrag.current?.pointerId !== event.pointerId) return;
                                 clearPointerDrag();
@@ -347,8 +473,6 @@ export function SetListDetail({ id }: SetListDetailProps) {
                               </span>
                             </button>
                             <div className={componentStyles.songItemActions}>
-                              <button aria-label={`Move ${item.title} up`} className={`${componentStyles.sharedButton} ${componentStyles.moveSongButton}`} disabled={saving || index === 0} onClick={() => void handleMove(index, -1)} type="button"><ArrowUp aria-hidden="true" size={14} /></button>
-                              <button aria-label={`Move ${item.title} down`} className={`${componentStyles.sharedButton} ${componentStyles.moveSongButton}`} disabled={saving || index === setList.items.length - 1} onClick={() => void handleMove(index, 1)} type="button"><ArrowDown aria-hidden="true" size={14} /></button>
                               <button aria-label={`Remove ${item.title} from set list`} className={`${componentStyles.sharedButton} ${componentStyles.removeSongButton}`} disabled={saving} onClick={() => validId && void runChange(() => removeItem({ setListId: validId, itemId: item._id }), `${item.title} removed from set list`)} type="button"><Trash2 aria-hidden="true" size={14} /></button>
                             </div>
                           </div>
@@ -367,6 +491,130 @@ export function SetListDetail({ id }: SetListDetailProps) {
                     : ""}
                 </p>
               </section>
+
+              <div className={componentStyles.setListFooterActions}>
+                <button
+                  aria-controls={addSongDialogId}
+                  aria-haspopup="dialog"
+                  className={`${componentStyles.sharedPrimaryButton} ${componentStyles.addSongTrigger}`}
+                  disabled={saving}
+                  onClick={openAddSongDialog}
+                  type="button"
+                >
+                  <Plus aria-hidden="true" size={14} /> Add a song
+                </button>
+                <button className={`${componentStyles.sharedButton} ${componentStyles.deleteSetListButton}`} disabled={saving} onClick={() => void handleDeleteSetList()} type="button">
+                  <Trash2 aria-hidden="true" size={13} /> Delete
+                </button>
+              </div>
+              <dialog
+                aria-describedby={addSongDescriptionId}
+                aria-labelledby={addSongTitleId}
+                className={componentStyles.addSongDialog}
+                id={addSongDialogId}
+                onClick={(event) => {
+                  if (event.target === event.currentTarget) closeAddSongDialog();
+                }}
+                onClose={() => {
+                  setIsAddSongDialogOpen(false);
+                  setSongSearch("");
+                  setSelectedSongId(null);
+                  setAddSongError(null);
+                  highlightedSongId.current = null;
+                }}
+                ref={addSongDialogRef}
+              >
+                <section className={componentStyles.addSongDialogContent}>
+                  <header className={componentStyles.addSongDialogHeader}>
+                    <div>
+                      <h2 className={componentStyles.addSongDialogTitle} id={addSongTitleId}>Add a song</h2>
+                      <p className={componentStyles.addSongDialogDescription} id={addSongDescriptionId}>Search available songs for {setList.name}.</p>
+                    </div>
+                    <button
+                      aria-label="Close add song dialog"
+                      className={`${componentStyles.sharedButton} ${componentStyles.closeAddSongDialog}`}
+                      onClick={closeAddSongDialog}
+                      type="button"
+                    >
+                      <X aria-hidden="true" size={15} />
+                    </button>
+                  </header>
+                  <form className={componentStyles.addSongDialogForm} onSubmit={(event) => void handleAddSong(event)}>
+                    <div className={componentStyles.addSongDialogBody}>
+                      {songsToAdd.length ? (
+                        <Combobox.Root
+                          autoComplete="off"
+                          autoHighlight
+                          inline
+                          inputValue={songSearch}
+                          isItemEqualToValue={(item: AvailableSong, value: AvailableSong) => item.songId === value.songId}
+                          itemToStringLabel={(song: AvailableSong) => song.title}
+                          itemToStringValue={(song: AvailableSong) => String(song.songId)}
+                          items={songsToAdd}
+                          onInputValueChange={(value, { reason }) => {
+                            setSongSearch(value);
+                            if (reason !== "item-press") setSelectedSongId(null);
+                            setAddSongError(null);
+                            highlightedSongId.current = null;
+                          }}
+                          onItemHighlighted={(song, { reason }) => {
+                            highlightedSongId.current = reason === "keyboard" ? song?.songId ?? null : null;
+                          }}
+                          onValueChange={(song: AvailableSong | null) => {
+                            setSelectedSongId(song?.songId ?? null);
+                            setAddSongError(null);
+                          }}
+                          open={isAddSongDialogOpen}
+                          value={selectedSong}
+                        >
+                          <label className={componentStyles.addSongSearchLabel} htmlFor={addSongSearchId}>Search songs</label>
+                          <div className={componentStyles.addSongSearchBox}>
+                            <Search aria-hidden="true" className={componentStyles.addSongSearchIcon} size={15} />
+                            <Combobox.Input
+                              id={addSongSearchId}
+                              placeholder="Type a song title…"
+                              ref={addSongSearchRef}
+                              onKeyDownCapture={handleAddSongSearchKeyDown}
+                              className={componentStyles.addSongSearchInput}
+                            />
+                          </div>
+                          <Combobox.Empty>
+                            <p className={componentStyles.addSongEmptyResult}>No songs match “{songSearch}”. Try another title.</p>
+                          </Combobox.Empty>
+                          <Combobox.List className={componentStyles.addSongResultList}>
+                            {(song: AvailableSong) => (
+                              <Combobox.Item className={componentStyles.addSongResult} key={song.songId} value={song}>
+                                <span className={componentStyles.addSongResultTitle}>{song.title}</span>
+                                <span className={componentStyles.addSongResultSource}>{song.isPublic ? "Public" : "My Library"}</span>
+                                <Combobox.ItemIndicator className={componentStyles.addSongResultIndicator}>
+                                  <Check aria-hidden="true" size={15} />
+                                </Combobox.ItemIndicator>
+                              </Combobox.Item>
+                            )}
+                          </Combobox.List>
+                        </Combobox.Root>
+                      ) : (
+                        <div className={componentStyles.addSongEmptyState} role="status">
+                          {availableSongs?.length ? (
+                            "All available songs are already in this set list."
+                          ) : (
+                            <>
+                              There are no songs to add yet. Create one or <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.
+                            </>
+                          )}
+                        </div>
+                      )}
+                      {addSongError && <p className={componentStyles.addSongError} role="alert">{addSongError}</p>}
+                    </div>
+                    <footer className={componentStyles.addSongDialogActions}>
+                      <button className={componentStyles.sharedButton} onClick={closeAddSongDialog} type="button">Cancel</button>
+                      <button className={componentStyles.sharedPrimaryButton} disabled={saving || !selectedSong} type="submit">
+                        {saving ? "Adding…" : "Add song"}
+                      </button>
+                    </footer>
+                  </form>
+                </section>
+              </dialog>
             </aside>
 
             <section className={componentStyles.selectedSongSection} aria-label="Selected song">
@@ -374,10 +622,6 @@ export function SetListDetail({ id }: SetListDetailProps) {
               {selectedItem ? selectedItem.canOpen && selectedItem.abc ? (
                 <div className={componentStyles.selectedSongLayout}>
                   <div className={componentStyles.selectedSongContent}>
-                    <div className={componentStyles.titleAndDetails}>
-                      <p className={componentStyles.selectedSongPosition}>Song {selectedItemIndex + 1} of {setList.items.length} · {setList.name}</p>
-                      <h2 className={componentStyles.selectedSongTitle}>{selectedItem.title}</h2>
-                    </div>
                     <Link
                       className={componentStyles.openSongWorkspaceLink}
                       href={`/${selectedItem.isOwned ? "mylibrary" : "songs"}/${encodeURIComponent(selectedItem.songId)}?setListId=${encodeURIComponent(setList._id)}&setListItemId=${encodeURIComponent(selectedItem._id)}`}
@@ -386,38 +630,18 @@ export function SetListDetail({ id }: SetListDetailProps) {
                     </Link>
                   </div>
 
-                  <fieldset className={componentStyles.selectedSongDisplaySettings} aria-label={`${selectedItem.title} display settings`}>
-                    <legend className={componentStyles.visuallyHidden}>Display settings for {selectedItem.title}</legend>
-                    <div className={componentStyles.transposeFieldLabel}>
-                      <TransposeMenu
+                  <PreviewPanel
+                    abc={selectedItem.abc}
+                    displaySettings={selectedSettings}
+                    displayControls={
+                      <DisplayControls
                         abc={selectedItem.abc}
-                        ariaLabel={`Transpose ${selectedItem.title}`}
-                        value={selectedSettings.transposition}
-                        onChange={(transposition) => void handleDisplayChange(selectedItem._id, { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }, { transposition })}
+                        settings={selectedSettings}
+                        onChange={(patch) => void handleDisplayChange(selectedItem._id, selectedSettings, patch)}
                       />
-                    </div>
-                    {([
-                      ["showChords", "Show chords"],
-                      ["showLyrics", "Show lyrics"],
-                    ] as const).map(([key, label]) => (
-                      <label className={componentStyles.displayToggleLabel} key={key}>
-                        <input aria-label={`${label} for ${selectedItem.title}`} checked={selectedSettings[key]} className={componentStyles.displayToggleCheckbox} type="checkbox" onChange={(event) => void handleDisplayChange(selectedItem._id, { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }, { [key]: event.target.checked })} />
-                        {label.replace("Show ", "")}
-                      </label>
-                    ))}
-                  </fieldset>
-
-                  <div className={componentStyles.selectedSongPreview}>
-                    <AbcPreview
-                      abc={selectedItem.abc}
-                      key={selectedItem._id}
-                      showChords={selectedSettings.showChords}
-                      showLyrics={selectedSettings.showLyrics}
-                      showParts={selectedSettings.showParts ?? true}
-                      showFirstLineClefOnly={selectedSettings.showFirstLineClefOnly ?? true}
-                      transposition={selectedSettings.transposition}
-                    />
-                  </div>
+                    }
+                    key={selectedItem._id}
+                  />
                 </div>
               ) : (
                 <div className={componentStyles.selectedSongEmptyState}>

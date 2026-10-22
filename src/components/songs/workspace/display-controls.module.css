@@ -19,9 +19,9 @@
 
   .displayControls {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
     gap: calc(var(--spacing) * 2);
   }
 
@@ -40,8 +40,7 @@
   }
 
   .displaySettings {
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: calc(var(--spacing) * 2);
     border-style: var(--component-border-style);
     border-width: 0px;
@@ -64,46 +63,9 @@
   .transposeFieldLabel {
     gap: calc(var(--spacing) * 1.5);
     color: var(--muted);
-  }
-
-  .transposeSelect {
-    border-radius: 6px;
-    border-style: var(--component-border-style);
-    border-width: 1px;
-    border-color: var(--line-strong);
-    background-color: var(--paper);
-    padding-inline: calc(var(--spacing) * 1.5);
-    padding-block: var(--spacing);
-    color: var(--ink);
-  }
-
-  .transposeFieldLabel,
-  .transposeSelect {
     font-size: 10px;
-  }
-
-  .transposeFieldLabel {
     --component-font-weight: 650;
     font-weight: 650;
-  }
-
-  .viewOptionsButton,
-  .closeOptionsButton {
-    display: inline-flex;
-    min-height: 34px;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--line-strong);
-    border-radius: 8px;
-    padding-inline: calc(var(--spacing) * 3);
-    background-color: var(--paper);
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 650;
-    transition-property: border-color, color, background-color;
-    transition-duration: 160ms;
-    transition-timing-function: var(--ease-in-out);
   }
 
   .optionsDialog {
@@ -148,16 +110,6 @@
     background-color: rgb(0 0 0 / 50%);
   }
 
-  @media (hover: hover) {
-    .viewOptionsButton:hover,
-    .closeOptionsButton:hover {
-      border-color: var(--accent);
-      color: var(--ink);
-    }
-  }
-
-  .viewOptionsButton:focus-visible,
-  .closeOptionsButton:focus-visible,
   .displayToggleCheckbox:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
@@ -165,19 +117,7 @@
     outline-color: var(--accent);
   }
 
-  .transposeSelect:focus-visible {
-    outline-style: var(--component-outline-style);
-    outline-width: 2px;
-    outline-offset: 2px;
-    outline-color: var(--accent);
-  }
-
   @media (width < 720px) {
-    .displayControls {
-      justify-content: flex-start;
-      margin-top: calc(var(--spacing) * 3);
-    }
-
     .displaySettings {
       justify-content: flex-start;
     }

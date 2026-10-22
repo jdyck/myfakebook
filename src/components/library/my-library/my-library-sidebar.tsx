@@ -1,7 +1,9 @@
 "use client";
 
+import type { ChangeEventHandler } from "react";
 import { RecentMyLibrarySongs } from "@/components/library/my-library/recent-songs";
 import type { LoadedSong } from "@/components/songs/types";
+import { SidebarAction } from "@/components/library/my-library/sidebar-action";
 import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
 import { api } from "../../../../convex/_generated/api";
@@ -13,6 +15,8 @@ type MyLibrarySidebarProps = {
   title: string;
   isPublicSong: boolean;
   currentSong: LoadedSong | null;
+  onNew: () => void;
+  onFileImport: ChangeEventHandler<HTMLInputElement>;
   recentSongIds: readonly string[];
   onCurrentSongChange: (song: LoadedSong | null) => void;
   onMySongsChange: (songs: LoadedSong[]) => void;
@@ -26,6 +30,8 @@ export function MyLibrarySidebar({
   title,
   isPublicSong,
   currentSong,
+  onNew,
+  onFileImport,
   recentSongIds,
   onCurrentSongChange,
   onMySongsChange,
@@ -47,6 +53,8 @@ export function MyLibrarySidebar({
         enabled={enabled}
         isPublicSong={isPublicSong}
         currentSong={currentSong}
+        onNew={onNew}
+        onFileImport={onFileImport}
         recentSongIds={recentSongIds}
         onCurrentSongChange={onCurrentSongChange}
         onMySongsChange={onMySongsChange}
@@ -100,12 +108,10 @@ function RecentSetLists() {
         </p>
       )}
       {isAuthenticated && (
-        <Link
-          className={componentStyles.allSetListsLink}
-          href="/setlists"
-        >
-          All set lists
-        </Link>
+        <>
+          <SidebarAction href="/setlists" label="All set lists" />
+          <SidebarAction href="/setlists" label="New set list" icon="plus" />
+        </>
       )}
     </section>
   );
