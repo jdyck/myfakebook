@@ -35,6 +35,14 @@ The app is configured for Vercel in `vercel.json` and includes Vercel Web Analyt
 
 Convex regenerates `convex/_generated/` during development and deployment. Those files are committed because application code imports them; regenerate them rather than editing them manually.
 
+## Home screen installation (PWA)
+
+The root layout links `/manifest.webmanifest`, with standalone display, home screen icons, and Apple web app metadata. On Android, use the browser's **Install app** or **Add to Home screen** menu. On iPhone and iPad, open the app in Safari, choose **Share → Add to Home Screen**, then **Add**. The installed app opens at `/` and keeps the existing guest/signed-in redirect behavior.
+
+Installation requires HTTPS in deployment (localhost also works for local checks). Test the service worker with `npm run build` and `npm start`; registration is disabled in development to avoid interfering with hot reload. In browser developer tools, check the Application panel for the manifest, icons, and active `/sw.js` worker. Install the app, launch it from the home screen, and check that it opens without browser controls. After one online visit with the worker active, switching offline and reloading should show the offline screen; **Try again** retries the same URL.
+
+The worker caches only `/offline.html`. Song data, authenticated pages, API responses, and Next.js payloads remain network-only; installing does not enable offline editing or retain unsaved guest work. The worker uses its own versioned cache and removes only older caches with that prefix. When changing the offline screen, bump `CACHE_NAME` in `public/sw.js`. The icon source is `public/icons/icon.svg`; keep the 192px/512px PNGs, 180px Apple icon, and 512px maskable icon in sync with it, preserving the central safe area for maskable icons.
+
 ## Local-only files
 
 Keep credentials in ignored `.env.local`. Use ignored `local/` for scratch files, personal plans, and experiments. Shared setup instructions and design decisions belong in tracked `docs/` so a fresh checkout has them.
