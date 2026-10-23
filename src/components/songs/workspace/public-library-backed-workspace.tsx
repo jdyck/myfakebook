@@ -23,8 +23,8 @@ type PublicLibraryBackedWorkspaceProps = {
   setListReturn?: {
     href: string;
     name: string;
-    setListId: Id<"setLists">;
-    itemId: Id<"setListItems">;
+    setListId: Id<"binders">;
+    itemId: Id<"binderItems">;
     songId: Id<"songs">;
   };
 };
@@ -53,8 +53,8 @@ function ConnectedPublicLibraryBackedWorkspace({
 }: PublicLibraryBackedWorkspaceProps & { isAdmin: boolean }) {
   const { isAuthenticated } = useConvexAuth();
   const { songs: publishedSongs, loading: publicSongsLoading } = usePublicSongs({ isAdmin });
-  const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
-  const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
+  const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId : null;
+  const setList = useQuery(api.binders.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
 
   if (publicSongsLoading || !publishedSongs) {
     return (
@@ -67,11 +67,11 @@ function ConnectedPublicLibraryBackedWorkspace({
   }
 
   const initialSong = publishedSongs.find((song) => song.id === initialPublicSongId || song.catalogId === initialPublicSongId);
-  const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === initialSong?.id);
+  const setListItem = setList?.items.find((item) => (item._id === setListItemId || (item.legacySetListItemId !== undefined && item.legacySetListItemId === setListItemId)) && item.songId === initialSong?.id);
   const resolvedSetListReturn = setListReturn ?? (setList && setListItem && validSetListId ? {
     href: `/setlists/${encodeURIComponent(setList._id)}`,
     name: setList.name,
-    setListId: validSetListId,
+    setListId: setList._id,
     itemId: setListItem._id,
     songId: setListItem.songId,
   } : undefined);

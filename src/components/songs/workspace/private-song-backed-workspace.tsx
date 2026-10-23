@@ -4,7 +4,6 @@ import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
-import type { Id } from "../../../../convex/_generated/dataModel";
 import { PublicLibraryBackedWorkspace } from "@/components/songs/workspace/public-library-backed-workspace";
 import componentStyles from "./private-song-backed-workspace.module.css";
 
@@ -19,8 +18,8 @@ export function PrivateSongBackedWorkspace({
 }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const songs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
-  const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
-  const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
+  const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId : null;
+  const setList = useQuery(api.binders.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
 
   if (isLoading || (isAuthenticated && (songs === undefined || (validSetListId && setList === undefined)))) {
     return <main className={componentStyles.loadingPage} role="status">Loading song…</main>;
@@ -38,7 +37,7 @@ export function PrivateSongBackedWorkspace({
     );
   }
 
-  const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === song._id);
+  const setListItem = setList?.items.find((item) => (item._id === setListItemId || (item.legacySetListItemId !== undefined && item.legacySetListItemId === setListItemId)) && item.songId === song._id);
 
   return (
     <PublicLibraryBackedWorkspace

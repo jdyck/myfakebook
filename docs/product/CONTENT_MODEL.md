@@ -60,11 +60,11 @@ A variant should have:
 
 Use variants when the melody, lyrics, meter, and overall song identity remain the same and the changes are local harmonic alternatives. Use a separate song when the arrangement is materially different, such as a different meter, form, melody, or full-song treatment.
 
-### Set list
+### Binder
 
-A set list is an ordered collection of songs. Users can only see their own set lists.
+A binder is an ordered collection of songs. Users can only see their own binders.
 
-A song may be on more than one set list.
+A song may be in more than one binder.
 
 ### Display settings
 
@@ -88,7 +88,7 @@ Public library
 My Library (per owner)
 ├── Private and published song records
 ├── Chord-change variants
-└── Set-list references
+└── Binder references
 
 Editor workspace
 └── Unsaved song content (discarded on refresh)
@@ -104,7 +104,7 @@ Use one source of truth for each kind of data:
 |---|---|
 | Ownership, visibility, tags, writers, title, subtitle, publication year | Structured song metadata |
 | Notation and playable song body | ABC content on the song record |
-| Current display choices | Browser/session state, or a set-list item when intentionally saved |
+| Current display choices | Browser/session state, or a binder item when intentionally saved |
 | MusicXML, PDF, PNG, SVG, and ABC files | Generated from the current song and display settings |
 
 The database song record is the source of truth. An ABC download is a portable serialization of that record, not a second independently edited copy.
@@ -119,7 +119,7 @@ ABC is the portable song format; a collection is a ZIP containing ABC files. Imp
 - A user cannot modify another owner’s stored song.
 - Saving another owner’s public song creates an independent song owned by the user.
 - Unsaved editor content exists only in browser memory and is discarded on refresh.
-- A set list references only private songs owned by the user.
+- A binder references only private songs owned by the user.
 - A private song can contain content that the admin has never reviewed.
 - A published song must be unpublished before its owner can remove it.
 - No edit-history model is required.

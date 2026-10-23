@@ -32,11 +32,11 @@ function ConnectedSaveToSetListButton({
   onStatus: (status: string) => void;
 }) {
   const { isAuthenticated } = useConvexAuth();
-  const setLists = useQuery(api.setLists.listMine, isAuthenticated ? {} : "skip");
-  const addSong = useMutation(api.setLists.addSong);
+  const setLists = useQuery(api.binders.listMine, isAuthenticated ? {} : "skip");
+  const addSong = useMutation(api.binders.addSong);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [savingSetListId, setSavingSetListId] = useState<Id<"setLists"> | null>(null);
+  const [savingSetListId, setSavingSetListId] = useState<Id<"binders"> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -53,15 +53,15 @@ function ConnectedSaveToSetListButton({
     setIsOpen(false);
   }
 
-  async function handleAddToSetList(setListId: Id<"setLists">, setListName: string) {
+  async function handleAddToSetList(setListId: Id<"binders">, setListName: string) {
     setSavingSetListId(setListId);
     setError(null);
     try {
-      await addSong({ setListId, songId: song.id });
+      await addSong({ binderId: setListId, songId: song.id });
       onStatus(`${song.title} added to ${setListName}`);
       closeDialog();
     } catch (addError) {
-      setError(addError instanceof Error ? addError.message : "Couldn’t add song to set list");
+      setError(addError instanceof Error ? addError.message : "Couldn’t add song to binder");
     } finally {
       setSavingSetListId(null);
     }
@@ -79,7 +79,7 @@ function ConnectedSaveToSetListButton({
           setIsOpen(true);
         }}
       >
-        {savingSetListId ? "Adding…" : "Add to Set List"}
+        {savingSetListId ? "Adding…" : "Add to Binder"}
       </button>
       <dialog
         aria-labelledby={`add-to-set-list-title-${song.id}`}
@@ -93,7 +93,7 @@ function ConnectedSaveToSetListButton({
         <section className={componentStyles.setListDialogContent}>
           <header className={componentStyles.setListDialogHeader}>
             <div className={componentStyles.songDetails}>
-              <h2 className={componentStyles.setListDialogTitle} id={`add-to-set-list-title-${song.id}`}>Add to a set list</h2>
+              <h2 className={componentStyles.setListDialogTitle} id={`add-to-set-list-title-${song.id}`}>Add to a binder</h2>
               <p className={componentStyles.dialogSongTitle} title={song.title}>{song.title}</p>
             </div>
             <button
@@ -108,7 +108,7 @@ function ConnectedSaveToSetListButton({
           </header>
           <div className={componentStyles.setListDialogBody}>
             {setLists === undefined ? (
-              <p className={componentStyles.setListLoadingMessage} role="status">Loading your set lists…</p>
+              <p className={componentStyles.setListLoadingMessage} role="status">Loading your binders…</p>
             ) : setLists.length ? (
               <ul className={componentStyles.setListOptionList}>
                 {setLists.map((setList) => {
@@ -136,9 +136,9 @@ function ConnectedSaveToSetListButton({
               </ul>
             ) : (
               <div className={componentStyles.emptySetListsState}>
-                <p className={componentStyles.emptyStateTitle}>No set lists yet</p>
-                <p className={componentStyles.emptyStateDescription}>Create a set list before adding this song.</p>
-                <Link className={componentStyles.createSetListLink} href="/setlists">Create a set list</Link>
+                <p className={componentStyles.emptyStateTitle}>No binders yet</p>
+                <p className={componentStyles.emptyStateDescription}>Create a binder before adding this song.</p>
+                <Link className={componentStyles.createSetListLink} href="/setlists">Create a binder</Link>
               </div>
             )}
             {error && <p className={componentStyles.dialogErrorMessage} role="alert">{error}</p>}
@@ -155,8 +155,8 @@ export function SaveSetListDisplaySettingsButton({
   displaySettings,
   onStatus,
 }: {
-  setListId: Id<"setLists">;
-  itemId: Id<"setListItems">;
+  setListId: Id<"binders">;
+  itemId: Id<"binderItems">;
   displaySettings: SongDisplaySettings;
   onStatus: (status: string) => void;
 }) {
@@ -169,21 +169,21 @@ function ConnectedSaveSetListDisplaySettingsButton({
   displaySettings,
   onStatus,
 }: {
-  setListId: Id<"setLists">;
-  itemId: Id<"setListItems">;
+  setListId: Id<"binders">;
+  itemId: Id<"binderItems">;
   displaySettings: SongDisplaySettings;
   onStatus: (status: string) => void;
 }) {
-  const updateDisplaySettings = useMutation(api.setLists.updateDisplaySettings);
+  const updateDisplaySettings = useMutation(api.binders.updateDisplaySettings);
   const [saving, setSaving] = useState(false);
 
   async function handleSave() {
     setSaving(true);
     try {
-      await updateDisplaySettings({ setListId, itemId, displaySettings });
-      onStatus("Set-list settings saved");
+      await updateDisplaySettings({ binderId: setListId, itemId, displaySettings });
+      onStatus("Binder settings saved");
     } catch (error) {
-      onStatus(error instanceof Error ? error.message : "Couldn’t save set-list settings");
+      onStatus(error instanceof Error ? error.message : "Couldn’t save binder settings");
     } finally {
       setSaving(false);
     }

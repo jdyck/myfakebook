@@ -35,8 +35,8 @@ type SongViewProps = {
   setListReturn?: {
     href: string;
     name: string;
-    setListId: Id<"setLists">;
-    itemId: Id<"setListItems">;
+    setListId: Id<"binders">;
+    itemId: Id<"binderItems">;
     songId: Id<"songs">;
   };
 };

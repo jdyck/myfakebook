@@ -39,15 +39,16 @@ type SetListDetailProps = { id: string };
 export function SetListDetail({ id }: SetListDetailProps) {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const validId = /^[a-zA-Z0-9_-]+$/.test(id) ? id as Id<"setLists"> : null;
-  const setList = useQuery(api.setLists.get, isAuthenticated && validId ? { id: validId } : "skip");
-  const availableSongs = useQuery(api.setLists.listAvailableSongs, isAuthenticated ? {} : "skip");
-  const renameSetList = useMutation(api.setLists.rename);
-  const removeSetList = useMutation(api.setLists.remove);
-  const addSong = useMutation(api.setLists.addSong);
-  const updateDisplaySettings = useMutation(api.setLists.updateDisplaySettings);
-  const removeItem = useMutation(api.setLists.removeItem);
-  const reorder = useMutation(api.setLists.reorder);
+  const requestedId = /^[a-zA-Z0-9_-]+$/.test(id) ? id : null;
+  const setList = useQuery(api.binders.get, isAuthenticated && requestedId ? { id: requestedId } : "skip");
+  const validId = setList?._id ?? null;
+  const availableSongs = useQuery(api.binders.listAvailableSongs, isAuthenticated ? {} : "skip");
+  const renameSetList = useMutation(api.binders.rename);
+  const removeSetList = useMutation(api.binders.remove);
+  const addSong = useMutation(api.binders.addSong);
+  const updateDisplaySettings = useMutation(api.binders.updateDisplaySettings);
+  const removeItem = useMutation(api.binders.removeItem);
+  const reorder = useMutation(api.binders.reorder);
   const [nameOverride, setNameOverride] = useState<string | null>(null);
   const nameDraft = useRef<string | null>(null);
   const savedName = useRef(setList?.name ?? "");
@@ -86,7 +87,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
   const addSongSearchId = useId();
   const savedSetListName = setList?.name ?? "";
   const name = nameOverride ?? setList?.name ?? "";
-  const loading = isLoading || (isAuthenticated && ((validId !== null && setList === undefined) || availableSongs === undefined));
+  const loading = isLoading || (isAuthenticated && ((requestedId !== null && setList === undefined) || availableSongs === undefined));
   const songsToAdd = availableSongs?.filter((song) => !setList?.items.some((item) => item.songId === song.songId)) ?? [];
   const selectedSong = songsToAdd.find((song) => song.songId === selectedSongId) ?? null;
   const selectedItem = setList?.items.find((item) => item._id === selectedItemId) ?? setList?.items[0];
@@ -110,7 +111,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
       if (successMessage) setStatus(successMessage);
       return result;
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Couldn’t update set list");
+      setStatus(error instanceof Error ? error.message : "Couldn’t update binder");
       return undefined;
     } finally {
       setSaving(false);
@@ -121,7 +122,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
     if (!validId || !setList) return;
     const nextName = value.trim();
     if (!nextName) {
-      setStatus("Enter a set list name");
+      setStatus("Enter a binder name");
       if (nameDraft.current === value) {
         nameDraft.current = null;
         setNameOverride(null);
@@ -143,8 +144,8 @@ export function SetListDetail({ id }: SetListDetailProps) {
     nameSaveInFlight.current = true;
     const result = await runChange(
       () => renameSetList({ id: validId, name: nextName }),
-      "Set list name saved",
-      "Saving set list name…",
+      "Binder name saved",
+      "Saving binder name…",
     );
     nameSaveInFlight.current = false;
 
@@ -206,7 +207,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
     const song = availableSongs?.find((candidate) => candidate.songId === songId);
     if (!song || setList?.items.some((item) => item.songId === song.songId)) return;
     setAddSongError(null);
-    const itemId = await runChange(() => addSong({ setListId: validId, songId: song.songId }), `${song.title} added`);
+    const itemId = await runChange(() => addSong({ binderId: validId, songId: song.songId }), `${song.title} added`);
     if (typeof itemId !== "string") {
       setAddSongError("Couldn’t add that song. Please try again.");
       return;
@@ -231,7 +232,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
   }
 
   async function handleDeleteSetList() {
-    if (!validId || !window.confirm("Delete this set list? Its songs won’t be deleted.")) return;
+    if (!validId || !window.confirm("Delete this binder? Its songs won’t be deleted.")) return;
     await runChange(async () => {
       await removeSetList({ id: validId });
       router.push("/setlists");
@@ -245,7 +246,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
     if (target < 0 || target >= next.length) return;
     [next[itemIndex], next[target]] = [next[target], next[itemIndex]];
     await runChange(
-      () => reorder({ setListId: validId, itemIds: next.map((item) => item._id) }),
+      () => reorder({ binderId: validId, itemIds: next.map((item) => item._id) }),
       `${next[target].title} moved to position ${target + 1}`,
     );
   }
@@ -267,7 +268,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
     if (next.every((item, index) => item._id === setList.items[index]._id)) return;
 
     await runChange(
-      () => reorder({ setListId: validId, itemIds: next.map((item) => item._id) }),
+      () => reorder({ binderId: validId, itemIds: next.map((item) => item._id) }),
       `${movedItem.title} moved to position ${insertionIndex + 1}`,
       `Moving ${movedItem.title}…`,
     );
@@ -324,7 +325,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
   }
 
   async function handleDisplayChange(
-    itemId: Id<"setListItems">,
+    itemId: Id<"binderItems">,
     savedSettings: SongDisplaySettings,
     patch: Partial<SongDisplaySettings>,
   ) {
@@ -332,7 +333,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
     const current = settingsByItem[itemId] ?? savedSettings;
     const next = { ...current, ...patch };
     setSettingsByItem((settings) => ({ ...settings, [itemId]: next }));
-    await runChange(() => updateDisplaySettings({ setListId: validId, itemId, displaySettings: next }));
+    await runChange(() => updateDisplaySettings({ binderId: validId, itemId, displaySettings: next }));
   }
 
   return (
@@ -340,22 +341,22 @@ export function SetListDetail({ id }: SetListDetailProps) {
       <Header clerkConfigured />
       <main className={componentStyles.pageContent}>
         {loading ? (
-          <p className={componentStyles.loadingStatus} role="status">Loading set list…</p>
+          <p className={componentStyles.loadingStatus} role="status">Loading binder…</p>
         ) : !setList ? (
           <section className={componentStyles.notFoundSection}>
-            <Link className={componentStyles.backToSetListsLink} href="/setlists">← All set lists</Link>
-            <h1 className={componentStyles.notFoundTitle}>Set list not found</h1>
-            <p className={componentStyles.notFoundDescription}>This set list may have been removed, or it may belong to another user.</p>
+            <Link className={componentStyles.backToSetListsLink} href="/setlists">← All binders</Link>
+            <h1 className={componentStyles.notFoundTitle}>Binder not found</h1>
+            <p className={componentStyles.notFoundDescription}>This binder may have been removed, or it may belong to another user.</p>
           </section>
         ) : (
           <div className={componentStyles.setListWorkspace}>
             <aside className={componentStyles.setListSidebar}>
-              <Link className={componentStyles.backToSetListsLink} href="/setlists">← All set lists</Link>
+              <Link className={componentStyles.backToSetListsLink} href="/setlists">← All binders</Link>
               <div className={componentStyles.setListSidebarHeader}>
                 <div className={componentStyles.titleAndDetails}>
                   <h1 className={componentStyles.setListTitle}>
                     <input
-                      aria-label="Set list name"
+                      aria-label="Binder name"
                       className={componentStyles.setListTitleInput}
                       maxLength={80}
                       onBlur={(event) => handleSetListNameBlur(event.currentTarget.value)}
@@ -473,7 +474,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
                               </span>
                             </button>
                             <div className={componentStyles.songItemActions}>
-                              <button aria-label={`Remove ${item.title} from set list`} className={`${componentStyles.sharedButton} ${componentStyles.removeSongButton}`} disabled={saving} onClick={() => validId && void runChange(() => removeItem({ setListId: validId, itemId: item._id }), `${item.title} removed from set list`)} type="button"><Trash2 aria-hidden="true" size={14} /></button>
+                              <button aria-label={`Remove ${item.title} from binder`} className={`${componentStyles.sharedButton} ${componentStyles.removeSongButton}`} disabled={saving} onClick={() => validId && void runChange(() => removeItem({ binderId: validId, itemId: item._id }), `${item.title} removed from binder`)} type="button"><Trash2 aria-hidden="true" size={14} /></button>
                             </div>
                           </div>
                         </li>
@@ -596,7 +597,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
                       ) : (
                         <div className={componentStyles.addSongEmptyState} role="status">
                           {availableSongs?.length ? (
-                            "All available songs are already in this set list."
+                            "All available songs are already in this binder."
                           ) : (
                             <>
                               There are no songs to add yet. Create one or <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.
@@ -650,7 +651,7 @@ export function SetListDetail({ id }: SetListDetailProps) {
                 </div>
               ) : (
                 <div className={componentStyles.selectedSongEmptyState}>
-                  <h2 className={componentStyles.emptyStateTitle}>This set list is empty</h2>
+                  <h2 className={componentStyles.emptyStateTitle}>This binder is empty</h2>
                   <p className={componentStyles.emptyStateDescription}>Choose one of your songs or a public song in the sidebar to start arranging your performance.</p>
                   <p className={componentStyles.emptyStateBrowseLink}>You can also <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.</p>
                 </div>

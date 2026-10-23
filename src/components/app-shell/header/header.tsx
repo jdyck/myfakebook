@@ -32,7 +32,7 @@ export function Header({ clerkConfigured }: HeaderProps) {
                 My Library
               </Link>
               <Link className={componentStyles.navigationLink} href="/setlists">
-                Set lists
+                Binders
               </Link>
             </Show>
           )}

@@ -33,7 +33,7 @@ _Avoid_: Score, library chart
 A visitor who is not signed in. A guest may experiment with song content in the open workspace and download it; that unsaved work is not retained after refresh.
 _Avoid_: Anonymous user
 
-**Set list**:
+**Binder**:
 A user-owned ordered collection of private songs.
 _Avoid_: Playlist
 

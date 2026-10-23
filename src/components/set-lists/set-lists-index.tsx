@@ -15,8 +15,8 @@ import componentStyles from "./set-lists-index.module.css";
 export function SetListsIndex() {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const setLists = useQuery(api.setLists.listMine, isAuthenticated ? {} : "skip");
-  const createSetList = useMutation(api.setLists.create);
+  const setLists = useQuery(api.binders.listMine, isAuthenticated ? {} : "skip");
+  const createSetList = useMutation(api.binders.create);
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -29,7 +29,7 @@ export function SetListsIndex() {
       const id = await createSetList({ name });
       router.push(`/setlists/${encodeURIComponent(id)}`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Couldn’t create set list");
+      setStatus(error instanceof Error ? error.message : "Couldn’t create binder");
     } finally {
       setSaving(false);
     }
@@ -43,14 +43,14 @@ export function SetListsIndex() {
       <main className={componentStyles.pageContent}>
         <div className={componentStyles.pageHeadingRow}>
           <div>
-            <h1 className={componentStyles.pageTitle}>Set lists</h1>
+            <h1 className={componentStyles.pageTitle}>Binders</h1>
             <p className={componentStyles.pageDescription}>Organize songs in performance order.</p>
           </div>
-          {!loading && setLists && <span className={componentStyles.setListCount}>{setLists.length} set list{setLists.length === 1 ? "" : "s"}</span>}
+          {!loading && setLists && <span className={componentStyles.setListCount}>{setLists.length} binder{setLists.length === 1 ? "" : "s"}</span>}
         </div>
 
         <form className={componentStyles.createSetListForm} onSubmit={(event) => void handleCreate(event)}>
-          <label className={componentStyles.formFieldLabel} htmlFor="new-set-list-name">Set list name</label>
+          <label className={componentStyles.formFieldLabel} htmlFor="new-set-list-name">Binder name</label>
           <TextField
             className={componentStyles.setListNameInput}
             id="new-set-list-name"
@@ -60,12 +60,12 @@ export function SetListsIndex() {
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
-          <Button disabled={saving} size="regular" type="submit" variant="primary">{saving ? "Creating…" : "Create set list"}</Button>
+          <Button disabled={saving} size="regular" type="submit" variant="primary">{saving ? "Creating…" : "Create binder"}</Button>
         </form>
         {status && <p className={componentStyles.formErrorMessage} role="alert">{status}</p>}
 
         {loading ? (
-          <p role="status">Loading your set lists…</p>
+          <p role="status">Loading your binders…</p>
         ) : setLists?.length ? (
           <ul className={componentStyles.setListList}>
             {setLists.map((setList) => (
@@ -85,8 +85,8 @@ export function SetListsIndex() {
           </ul>
         ) : (
           <div className={componentStyles.emptySetListsState}>
-            <p className={componentStyles.emptyStateTitle}>No set lists yet</p>
-            <p className={componentStyles.emptyStateDescription}>Create a set list, then add your songs or songs from the public library.</p>
+            <p className={componentStyles.emptyStateTitle}>No binders yet</p>
+            <p className={componentStyles.emptyStateDescription}>Create a binder, then add your songs or songs from the public library.</p>
           </div>
         )}
       </main>

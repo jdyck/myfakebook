@@ -16,7 +16,7 @@ async function ownedSetList(
   ownerId: string,
 ) {
   const setList = await ctx.db.get("setLists", id);
-  if (!setList || setList.ownerId !== ownerId) throw new Error("Set list not found");
+  if (!setList || setList.ownerId !== ownerId) throw new Error("Binder not found");
   return setList;
 }
 
@@ -29,7 +29,7 @@ async function ownedSetListItem(
   await ownedSetList(ctx, setListId, ownerId);
   const item = await ctx.db.get("setListItems", itemId);
   if (!item || item.ownerId !== ownerId || item.setListId !== setListId) {
-    throw new Error("Set list item not found");
+    throw new Error("Binder item not found");
   }
   return item;
 }
@@ -146,8 +146,8 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const ownerId = await requireOwner(ctx);
     const name = args.name.trim();
-    if (!name) throw new Error("Enter a set list name");
-    if (name.length > 80) throw new Error("Set list names must be 80 characters or fewer");
+    if (!name) throw new Error("Enter a binder name");
+    if (name.length > 80) throw new Error("Binder names must be 80 characters or fewer");
     return ctx.db.insert("setLists", { ownerId, name, updatedAt: Date.now() });
   },
 });
@@ -158,8 +158,8 @@ export const rename = mutation({
     const ownerId = await requireOwner(ctx);
     const setList = await ownedSetList(ctx, args.id, ownerId);
     const name = args.name.trim();
-    if (!name) throw new Error("Enter a set list name");
-    if (name.length > 80) throw new Error("Set list names must be 80 characters or fewer");
+    if (!name) throw new Error("Enter a binder name");
+    if (name.length > 80) throw new Error("Binder names must be 80 characters or fewer");
     await ctx.db.patch("setLists", setList._id, { name, updatedAt: Date.now() });
     return setList._id;
   },
@@ -201,7 +201,7 @@ export const addSong = mutation({
       .order("desc")
       .collect();
     if (items.some((item) => item.songId === songId)) {
-      throw new Error("Song is already on this set list");
+      throw new Error("Song is already in this binder");
     }
     const now = Date.now();
     const itemId = await ctx.db.insert("setListItems", {
@@ -257,7 +257,7 @@ export const reorder = mutation({
     const itemIds = new Set(args.itemIds);
     if (itemIds.size !== items.length || args.itemIds.length !== items.length ||
       items.some((item) => item.ownerId !== ownerId || !itemIds.has(item._id))) {
-      throw new Error("Set list order is out of date");
+      throw new Error("Binder order is out of date");
     }
 
     for (const [position, itemId] of args.itemIds.entries()) {

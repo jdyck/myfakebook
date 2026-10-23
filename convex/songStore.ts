@@ -124,6 +124,18 @@ export async function removeSong(ctx: MutationCtx, id: SongId, ownerId: string) 
   const song = await ctx.db.get("songs", id);
   if (!song || song.ownerId !== ownerId) throw new Error("Song not found");
   if (song.publicationState === "published") throw new Error("Unpublish song before removing");
+  const binderItems = await ctx.db
+    .query("binderItems")
+    .withIndex("by_song", (query) => query.eq("songId", id))
+    .collect();
+  for (const item of binderItems) {
+    await ctx.db.delete("binderItems", item._id);
+    const binder = await ctx.db.get("binders", item.binderId);
+    if (binder) {
+      await ctx.db.patch("binders", binder._id, { updatedAt: Date.now() });
+    }
+  }
+  // Keep the retained migration source consistent when songs are removed.
   const setListItems = await ctx.db
     .query("setListItems")
     .withIndex("by_song", (query) => query.eq("songId", id))

@@ -76,26 +76,26 @@ export function MyLibrarySidebar({
 
 function RecentSetLists() {
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const setLists = useQuery(api.setLists.listMine, isAuthenticated ? {} : "skip");
+  const setLists = useQuery(api.binders.listMine, isAuthenticated ? {} : "skip");
 
   return (
     <section className={componentStyles.recentSetListsSection} aria-labelledby="recent-set-lists-heading">
       <h2 className={componentStyles.sectionHeading} id="recent-set-lists-heading">
-        Recent set lists
+        Recent binders
       </h2>
       {isLoading || (isAuthenticated && setLists === undefined) ? (
         <p className={componentStyles.setListsMessage} role="status">
-          Loading your set lists…
+          Loading your binders…
         </p>
       ) : !isAuthenticated ? (
         <p className={componentStyles.setListsMessage}>
           <Link className={componentStyles.signInLink} href="/sign-in">
             Sign in
           </Link>{" "}
-          to sync your set lists.
+          to sync your binders.
         </p>
       ) : setLists?.length ? (
-        <div className={componentStyles.recentSetListList} aria-label="Recent set lists">
+        <div className={componentStyles.recentSetListList} aria-label="Recent binders">
           {setLists.slice(0, 5).map((setList) => (
             <Link
               className={componentStyles.recentSetListLink}
@@ -111,13 +111,13 @@ function RecentSetLists() {
         </div>
       ) : (
         <p className={componentStyles.setListsMessage}>
-          Your set lists will appear here.
+          Your binders will appear here.
         </p>
       )}
       {isAuthenticated && (
         <>
-          <SidebarAction href="/setlists" label="All set lists" />
-          <SidebarAction href="/setlists" label="New set list" icon="plus" />
+          <SidebarAction href="/setlists" label="All binders" />
+          <SidebarAction href="/setlists" label="New binder" icon="plus" />
         </>
       )}
     </section>

@@ -82,20 +82,20 @@ test("object-only songs can be published and read through every public query", a
   expect(await t.query(internal.songs.listPublicSongsForCountry, { country: "other" })).toEqual(expected);
 });
 
-test("set lists return objects only while the viewer can access the song", async () => {
+test("binders return objects only while the viewer can access the song", async () => {
   const t = convexTest(schema, modules);
   const admin = t.withIdentity({ subject: "admin", metadata: { role: "admin" } });
   const viewer = t.withIdentity({ subject: "viewer" });
   const songId = await admin.mutation(api.songs.save, { title: "Song", content });
   await admin.mutation(api.songs.publish, { id: songId });
-  const setListId = await viewer.mutation(api.setLists.create, { name: "Set" });
-  await viewer.mutation(api.setLists.addSong, { setListId, songId });
+  const setListId = await viewer.mutation(api.binders.create, { name: "Set" });
+  await viewer.mutation(api.binders.addSong, { binderId: setListId, songId });
 
-  expect((await viewer.query(api.setLists.get, { id: setListId }))?.items).toEqual([
+  expect((await viewer.query(api.binders.get, { id: setListId }))?.items).toEqual([
     expect.objectContaining({ songId, content, canOpen: true }),
   ]);
   await admin.mutation(api.songs.unpublish, { id: songId });
-  expect((await viewer.query(api.setLists.get, { id: setListId }))?.items).toEqual([
+  expect((await viewer.query(api.binders.get, { id: setListId }))?.items).toEqual([
     expect.objectContaining({ songId, content: null, canOpen: false }),
   ]);
 });

@@ -47,6 +47,9 @@ Use `npm run vercel:dev` to run the app through the Vercel development environme
 
 Convex functions live in `convex/`. Generated files in `convex/_generated/` are intentionally committed because the app imports their types.
 
+For existing deployments, follow the [binder migration guide](docs/binder-migration.md)
+before enabling the frontend that uses the `binders` and `binderItems` tables.
+
 ## Export flow
 
 `POST /api/musicxml` accepts `{ "abc": "..." }` and returns a downloadable MusicXML 4.0 document. The converter supports common ABC 2.1 headers, key signatures, meters, tempos, notes, rests, chords, repeats, ties, broken rhythms, and inline harmony names.

@@ -16,8 +16,8 @@ export default async function SetListsPage() {
     <div className={componentStyles.pageShell}>
       <Header clerkConfigured />
       <main className={componentStyles.pageContent}>
-        <h1 className={componentStyles.pageTitle}>Set lists</h1>
-        <p className={componentStyles.pageDescription}>Connect Convex to create and save set lists.</p>
+        <h1 className={componentStyles.pageTitle}>Binders</h1>
+        <p className={componentStyles.pageDescription}>Connect Convex to create and save binders.</p>
       </main>
     </div>
   );
