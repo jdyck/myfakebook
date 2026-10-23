@@ -223,7 +223,7 @@ function readDuration(value: string, start: number, defaultLength: number) {
   }
 
   let dots = 0;
-  while (value[index] === ".") {
+  while (value[index] === "./abc") {
     dots += 1;
     index += 1;
   }

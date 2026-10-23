@@ -5,7 +5,10 @@ MyFakebook is a digital fakebook for musicians. Each saved song has one owner an
 ## Product documents
 
 - [Content model](docs/product/CONTENT_MODEL.md): song concepts, fields, ownership, relationships, storage authority, and invariants.
-- [Requirements](local/docs/product/REQUIREMENTS.md): scope, user workflows, priorities, and acceptance criteria.
+- [Architecture](docs/architecture.md): implementation map and contributor conventions.
+- [Song content](docs/song-content.md): structured content and editor formats.
+
+Personal planning notes may live under ignored `local/`; shared documentation belongs in `docs/`.
 
 ## Language
 

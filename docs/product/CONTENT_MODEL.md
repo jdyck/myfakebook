@@ -1,6 +1,6 @@
 # MyFakebook content model
 
-This document owns song concepts, fields, relationships, storage authority, and invariants. It intentionally separates product concepts from the database schema. [Requirements](../../local/docs/product/REQUIREMENTS.md) define user workflows, delivery priorities, and acceptance criteria.
+This document owns song concepts, fields, relationships, storage authority, and invariants. It intentionally separates product concepts from the database schema. The [architecture guide](../architecture.md) maps these concepts to the implementation. Some concepts below describe planned capabilities; consult `convex/schema.ts` for currently persisted fields.
 
 ## Core model
 
@@ -10,7 +10,7 @@ A song is the single persisted music-content entity. A song contains one lead-sh
 
 #### Song content
 
-Song notation is stored as ABC.
+Structured song content is the source of truth. Inline and separate-parts ABC remain compatibility and presentation formats; see [song content](../song-content.md) for precedence and conversion rules.
 
 - Title
 - Optional subtitle, such as “Jazz Changes” or “3/4 Version,” to distinguish arrangements
@@ -96,20 +96,21 @@ Editor workspace
 
 ## Storage model
 
-Most song content is stored in an ABC field. Other fields support product behavior and structured information that does not belong in ABC.
+Structured content stores measures, chord durations, melody, and lyrics. ABC fields retain portable notation and layout information; other fields support ownership, publication, and song metadata.
 
 Use one source of truth for each kind of data:
 
 | Data | Authority |
 |---|---|
 | Ownership, visibility, tags, writers, title, subtitle, publication year | Structured song metadata |
-| Notation and playable song body | ABC content on the song record |
+| Measures, melody, lyrics, and chord durations | Structured `content` on the song record; legacy ABC fallback when blank |
+| Compatible notation and layout | Inline `abc` and separate-parts `abcParts`, synchronized through source resolution |
 | Current display choices | Browser/session state, or a binder item when intentionally saved |
 | MusicXML, PDF, PNG, SVG, and ABC files | Generated from the current song and display settings |
 
 The database song record is the source of truth. An ABC download is a portable serialization of that record, not a second independently edited copy.
 
-ABC is the portable song format; a collection is a ZIP containing ABC files. Import, download, and bulk-download workflows and priorities are defined in the [requirements](../../local/docs/product/REQUIREMENTS.md#requirements).
+ABC is a portable song format. Individual exports also support MusicXML, PDF, PNG, and SVG. Collection ZIP export is a planned capability.
 
 ## Important invariants
 
@@ -119,7 +120,7 @@ ABC is the portable song format; a collection is a ZIP containing ABC files. Imp
 - A user cannot modify another owner’s stored song.
 - Saving another owner’s public song creates an independent song owned by the user.
 - Unsaved editor content exists only in browser memory and is discarded on refresh.
-- A binder references only private songs owned by the user.
+- A binder may reference the user's own songs or worldwide published songs. U.S.-only public songs cannot be added by another owner.
 - A private song can contain content that the admin has never reviewed.
 - A published song must be unpublished before its owner can remove it.
 - No edit-history model is required.

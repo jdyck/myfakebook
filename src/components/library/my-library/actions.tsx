@@ -6,8 +6,8 @@ import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { api } from "../../../../convex/_generated/api";
-import type { LoadedSong } from "@/components/songs/types";
-import type { SongContent } from "@/lib/song-content";
+import type { LoadedSong } from "@/lib/songs/types";
+import type { SongContent } from "@/lib/songs/song-content";
 import componentStyles from "@/components/shared/song-actions.module.css";
 
 export function RemoveSongButton({

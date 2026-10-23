@@ -1,4 +1,4 @@
-import type { SongContent } from "@/lib/song-content";
+import type { SongContent } from "@/lib/songs/song-content";
 import type { Id } from "../../../convex/_generated/dataModel";
 
 export type SongId = Id<"songs">;
@@ -33,4 +33,4 @@ export function publicationStatusForSong(song: Pick<LoadedSong, "publicationStat
   return value === "none" ? "Private" : `Published · ${publicationLabel(value)}`;
 }
 
-export type SetListSong = { id: Id<"songs">; title: string };
+export type BinderSong = { id: Id<"songs">; title: string };

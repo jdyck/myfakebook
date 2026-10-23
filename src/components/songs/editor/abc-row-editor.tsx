@@ -9,7 +9,7 @@ import {
   splitLyricSyllables,
   type AbcRowLyricsPart,
   type AbcRowMusicPart,
-} from "@/lib/abc-rows";
+} from "@/lib/notation/abc-rows";
 import componentStyles from "./abc-row-editor.module.css";
 
 type AbcRowEditorProps = {

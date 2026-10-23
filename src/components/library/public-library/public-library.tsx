@@ -1,6 +1,6 @@
 "use client";
 
-import type { PublicSong } from "@/lib/public-library";
+import type { PublicSong } from "@/lib/songs/public-library";
 import componentStyles from "./public-library.module.css";
 
 type PublicLibraryProps = {

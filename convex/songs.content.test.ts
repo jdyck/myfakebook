@@ -5,7 +5,7 @@ import { expect, test } from "vitest";
 
 import { api, internal } from "./_generated/api";
 import schema from "./schema";
-import { abcToSongContent, songContentToAbc, type SongContent } from "../src/lib/song-content";
+import { abcToSongContent, songContentToAbc, type SongContent } from "../src/lib/songs/song-content";
 
 const modules = import.meta.glob("./**/*.ts");
 const content: SongContent = {

@@ -1,5 +1,5 @@
-import { parseAbc } from "./abc/parser";
-import { renderMusicXml } from "./abc/musicxml";
+import { parseAbc } from "./parser";
+import { renderMusicXml } from "./musicxml";
 
 export const DEFAULT_ABC = `%abc-2.1
 X:1

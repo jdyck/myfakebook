@@ -6,8 +6,8 @@ import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
 import { SidebarAction } from "@/components/library/my-library/sidebar-action";
-import { publicationStatusForSong, type LoadedSong, type SongId } from "@/components/songs/types";
-import { sameSongContent, type SongContent } from "@/lib/song-content";
+import { publicationStatusForSong, type LoadedSong, type SongId } from "@/lib/songs/types";
+import { sameSongContent, type SongContent } from "@/lib/songs/song-content";
 import componentStyles from "@/components/shared/song-actions.module.css";
 
 type RecentMyLibrarySongsProps = {

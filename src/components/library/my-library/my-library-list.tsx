@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
-import { publicationStatusForSong } from "@/components/songs/types";
+import { publicationStatusForSong } from "@/lib/songs/types";
 import { Header } from "@/components/app-shell/header/header";
 import componentStyles from "./my-library-list.module.css";
 

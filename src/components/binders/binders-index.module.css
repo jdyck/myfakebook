@@ -21,7 +21,7 @@
     max-width: var(--container-3xl);
   }
 
-  .setListMetadata {
+  .binderMetadata {
     margin-top: calc(var(--spacing) * 0.5);
   }
 
@@ -39,22 +39,22 @@
   }
 
   .pageHeadingRow,
-  .createSetListForm {
+  .createBinderForm {
     margin-bottom: calc(var(--spacing) * 6);
   }
 
-  .setListName,
-  .setListMetadata {
+  .binderName,
+  .binderMetadata {
     display: block;
   }
 
   .pageHeadingRow,
-  .createSetListForm,
-  .setListLink {
+  .createBinderForm,
+  .binderLink {
     display: flex;
   }
 
-  .setListList {
+  .binderList {
     display: grid;
   }
 
@@ -62,26 +62,26 @@
     min-height: 100vh;
   }
 
-  .setListNameInput,
-  .setListDetails {
+  .binderNameInput,
+  .binderDetails {
     min-width: 0px;
   }
 
-  .setListNameInput {
+  .binderNameInput {
     flex: 1;
   }
 
-  .setListCount,
-  .openSetListLabel {
+  .binderCount,
+  .openBinderLabel {
     flex-shrink: 0;
   }
 
-  .createSetListForm {
+  .createBinderForm {
     flex-wrap: wrap;
     padding: calc(var(--spacing) * 4);
   }
 
-  .setListLink {
+  .binderLink {
     align-items: center;
     padding-block: calc(var(--spacing) * 3);
   }
@@ -91,39 +91,39 @@
   }
 
   .pageHeadingRow,
-  .setListLink {
+  .binderLink {
     justify-content: space-between;
     gap: calc(var(--spacing) * 4);
   }
 
-  .createSetListForm,
-  .setListList {
+  .createBinderForm,
+  .binderList {
     gap: calc(var(--spacing) * 2);
   }
 
-  .setListName {
+  .binderName {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .setListLink {
+  .binderLink {
     border-radius: var(--ui-radius);
   }
 
-  .createSetListForm,
-  .emptySetListsState {
+  .createBinderForm,
+  .emptyBindersState {
     border-radius: calc(var(--ui-radius) + 4px);
   }
 
-  .createSetListForm,
-  .setListLink,
-  .emptySetListsState {
+  .createBinderForm,
+  .binderLink,
+  .emptyBindersState {
     border-style: var(--component-border-style);
     border-width: 1px;
   }
 
-  .emptySetListsState {
+  .emptyBindersState {
     --component-border-style: dashed;
     border-style: dashed;
     background-color: var(--paper-soft);
@@ -131,31 +131,31 @@
     text-align: center;
   }
 
-  .createSetListForm,
-  .setListLink {
+  .createBinderForm,
+  .binderLink {
     border-color: var(--line);
   }
 
-  .emptySetListsState {
+  .emptyBindersState {
     border-color: var(--line-strong);
   }
 
-  .createSetListForm,
-  .setListLink {
+  .createBinderForm,
+  .binderLink {
     background-color: var(--paper);
   }
 
   .pageContent,
-  .setListLink {
+  .binderLink {
     padding-inline: calc(var(--spacing) * 4);
   }
 
   .pageContent,
-  .emptySetListsState {
+  .emptyBindersState {
     padding-block: calc(var(--spacing) * 8);
   }
 
-  .setListCount {
+  .binderCount {
     padding-top: calc(var(--spacing) * 2);
   }
 
@@ -173,42 +173,42 @@
     line-height: var(--component-leading, var(--text-sm--line-height));
   }
 
-  .setListCount,
-  .setListMetadata,
-  .openSetListLabel {
+  .binderCount,
+  .binderMetadata,
+  .openBinderLabel {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
 
-  .setListName,
-  .openSetListLabel,
+  .binderName,
+  .openBinderLabel,
   .emptyStateTitle {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
 
-  .openSetListLabel {
+  .openBinderLabel {
     color: var(--accent-deep);
   }
 
   .pageDescription,
-  .setListCount,
-  .setListMetadata,
+  .binderCount,
+  .binderMetadata,
   .emptyStateDescription {
     color: var(--muted-soft);
   }
 
-  .setListName {
+  .binderName {
     color: var(--ink);
   }
 
   @media (hover: hover) {
-    .setListLink:hover {
+    .binderLink:hover {
       border-color: var(--line-strong);
     }
   }
 
-  .setListLink:focus-visible {
+  .binderLink:focus-visible {
     outline-style: var(--component-outline-style);
     outline-width: 2px;
     outline-offset: 2px;

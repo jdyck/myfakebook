@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 
 import { Header } from "@/components/app-shell/header/header";
-import { publicationLabel } from "@/components/songs/types";
-import type { PublicSong } from "@/lib/public-library";
+import { publicationLabel } from "@/lib/songs/types";
+import type { PublicSong } from "@/lib/songs/public-library";
 import { usePublicSongs } from "./use-public-songs";
 import componentStyles from "./public-songs-list.module.css";
 

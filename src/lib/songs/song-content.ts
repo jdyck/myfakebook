@@ -1,6 +1,6 @@
-import { parseAbcRows, type AbcRowEvent } from "./abc-rows";
-import { durationSuffix, eventLengths } from "./abc-timing";
-import { toInlineAbc } from "./abc-voices";
+import { parseAbcRows, type AbcRowEvent } from "../notation/abc-rows";
+import { durationSuffix, eventLengths } from "../notation/abc-timing";
+import { toInlineAbc } from "../notation/abc-voices";
 
 export type SongMeasure = {
   /** Chord name and duration in multiples of unitLength. An empty name is a gap. */

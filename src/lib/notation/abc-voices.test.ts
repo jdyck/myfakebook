@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import ABCJS from "abcjs";
 import { toInlineAbc, toSeparateAbc } from "./abc-voices";
-import { abcToSongContent } from "./song-content";
+import { abcToSongContent } from "../songs/song-content";
 
 export const BLACKBIRD = `X:1
 T:Bye Bye Blackbird
@@ -103,7 +103,7 @@ test("empty songs and unchorded melodies support separate parts", () => {
 });
 
 test("JSON chord edits preserve the chart's sections, lyrics and ending barlines", async () => {
-  const { songContentToAbc } = await import("./song-content");
+  const { songContentToAbc } = await import("../songs/song-content");
   const inline = toInlineAbc(BLACKBIRD);
   const content = abcToSongContent(inline);
   content.measures[0].chords[0][0] = "Fmaj7";

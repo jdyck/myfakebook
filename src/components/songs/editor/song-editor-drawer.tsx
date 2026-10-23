@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { TextField } from "@/components/ui/text-field";
-import type { SongContent } from "@/lib/song-content";
+import type { SongContent } from "@/lib/songs/song-content";
 import { AbcEditorPanel } from "@/components/songs/editor/abc-editor-panel";
 import componentStyles from "./song-editor-drawer.module.css";
 

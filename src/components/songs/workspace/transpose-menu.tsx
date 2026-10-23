@@ -3,7 +3,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ArrowRightLeft } from "lucide-react";
 import { RadioMenu } from "@/components/ui/radio-menu";
-import { getTranspositionChoices } from "@/lib/abc-display";
+import { getTranspositionChoices } from "@/lib/notation/abc-display";
 
 type TransposeMenuProps = {
   abc: string;

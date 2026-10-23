@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import ABCJS from "abcjs";
 import { LoaderCircle, Play, Square } from "lucide-react";
-import { prepareAbcForDisplay } from "@/lib/abc-display";
+import { prepareAbcForDisplay } from "@/lib/notation/abc-display";
 import componentStyles from "./abc-preview.module.css";
 
 type Synth = {

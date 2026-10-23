@@ -2,9 +2,9 @@
 
 import { Check, Copy, FileMusic, Settings2 } from "lucide-react";
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { toInlineAbc, toSeparateAbc } from "@/lib/abc-voices";
-import { validateSongContent, type SongContent } from "@/lib/song-content";
-import { resolveSongSource } from "@/lib/song-source";
+import { toInlineAbc, toSeparateAbc } from "@/lib/notation/abc-voices";
+import { validateSongContent, type SongContent } from "@/lib/songs/song-content";
+import { resolveSongSource } from "@/lib/songs/song-source";
 import { AbcRowEditor } from "./abc-row-editor";
 import componentStyles from "./abc-editor-panel.module.css";
 

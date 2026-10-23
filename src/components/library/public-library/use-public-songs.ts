@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "convex/react";
 
 import { api } from "../../../../convex/_generated/api";
-import type { PublicSong } from "@/lib/public-library";
+import type { PublicSong } from "@/lib/songs/public-library";
 
 type PublicSongsResponse = { songs: PublicSong[] };
 type PublicSongQueryResult = {

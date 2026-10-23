@@ -1,7 +1,7 @@
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
-import { sameSongContent } from "../src/lib/song-content";
-import { resolveSongSource, type SongSourceInput } from "../src/lib/song-source";
+import { sameSongContent } from "../src/lib/songs/song-content";
+import { resolveSongSource, type SongSourceInput } from "../src/lib/songs/song-source";
 
 export type SongId = Id<"songs">;
 type ReadCtx = QueryCtx | MutationCtx;

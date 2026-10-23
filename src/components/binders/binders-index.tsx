@@ -9,14 +9,14 @@ import { api } from "../../../convex/_generated/api";
 import { Header } from "@/components/app-shell/header/header";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
-import componentStyles from "./set-lists-index.module.css";
+import componentStyles from "./binders-index.module.css";
 
 
-export function SetListsIndex() {
+export function BindersIndex() {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const setLists = useQuery(api.binders.listMine, isAuthenticated ? {} : "skip");
-  const createSetList = useMutation(api.binders.create);
+  const binders = useQuery(api.binders.listMine, isAuthenticated ? {} : "skip");
+  const createBinder = useMutation(api.binders.create);
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -26,7 +26,7 @@ export function SetListsIndex() {
     setSaving(true);
     setStatus(null);
     try {
-      const id = await createSetList({ name });
+      const id = await createBinder({ name });
       router.push(`/setlists/${encodeURIComponent(id)}`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Couldn’t create binder");
@@ -35,7 +35,7 @@ export function SetListsIndex() {
     }
   }
 
-  const loading = isLoading || (isAuthenticated && setLists === undefined);
+  const loading = isLoading || (isAuthenticated && binders === undefined);
 
   return (
     <div className={componentStyles.pageShell}>
@@ -46,14 +46,14 @@ export function SetListsIndex() {
             <h1 className={componentStyles.pageTitle}>Binders</h1>
             <p className={componentStyles.pageDescription}>Organize songs in performance order.</p>
           </div>
-          {!loading && setLists && <span className={componentStyles.setListCount}>{setLists.length} binder{setLists.length === 1 ? "" : "s"}</span>}
+          {!loading && binders && <span className={componentStyles.binderCount}>{binders.length} binder{binders.length === 1 ? "" : "s"}</span>}
         </div>
 
-        <form className={componentStyles.createSetListForm} onSubmit={(event) => void handleCreate(event)}>
-          <label className={componentStyles.formFieldLabel} htmlFor="new-set-list-name">Binder name</label>
+        <form className={componentStyles.createBinderForm} onSubmit={(event) => void handleCreate(event)}>
+          <label className={componentStyles.formFieldLabel} htmlFor="new-binder-name">Binder name</label>
           <TextField
-            className={componentStyles.setListNameInput}
-            id="new-set-list-name"
+            className={componentStyles.binderNameInput}
+            id="new-binder-name"
             maxLength={80}
             placeholder="For example, Friday at the Blue Note"
             required
@@ -66,25 +66,25 @@ export function SetListsIndex() {
 
         {loading ? (
           <p role="status">Loading your binders…</p>
-        ) : setLists?.length ? (
-          <ul className={componentStyles.setListList}>
-            {setLists.map((setList) => (
-              <li key={setList._id}>
+        ) : binders?.length ? (
+          <ul className={componentStyles.binderList}>
+            {binders.map((binder) => (
+              <li key={binder._id}>
                 <Link
-                  className={componentStyles.setListLink}
-                  href={`/setlists/${encodeURIComponent(setList._id)}`}
+                  className={componentStyles.binderLink}
+                  href={`/setlists/${encodeURIComponent(binder._id)}`}
                 >
-                  <span className={componentStyles.setListDetails}>
-                    <span className={componentStyles.setListName}>{setList.name}</span>
-                    <span className={componentStyles.setListMetadata}>{setList.itemCount} song{setList.itemCount === 1 ? "" : "s"} · Updated {new Date(setList.updatedAt).toLocaleDateString()}</span>
+                  <span className={componentStyles.binderDetails}>
+                    <span className={componentStyles.binderName}>{binder.name}</span>
+                    <span className={componentStyles.binderMetadata}>{binder.itemCount} song{binder.itemCount === 1 ? "" : "s"} · Updated {new Date(binder.updatedAt).toLocaleDateString()}</span>
                   </span>
-                  <span className={componentStyles.openSetListLabel}>Open</span>
+                  <span className={componentStyles.openBinderLabel}>Open</span>
                 </Link>
               </li>
             ))}
           </ul>
         ) : (
-          <div className={componentStyles.emptySetListsState}>
+          <div className={componentStyles.emptyBindersState}>
             <p className={componentStyles.emptyStateTitle}>No binders yet</p>
             <p className={componentStyles.emptyStateDescription}>Create a binder, then add your songs or songs from the public library.</p>
           </div>

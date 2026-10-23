@@ -1,4 +1,4 @@
-import { toInlineAbc, toSeparateAbc } from "./abc-voices";
+import { toInlineAbc, toSeparateAbc } from "../notation/abc-voices";
 import { abcToSongContent, sameSongContent, songContentToAbc, validateSongContent, type SongContent } from "./song-content";
 
 export type SongSource = { content: SongContent; abc: string; abcParts: string };

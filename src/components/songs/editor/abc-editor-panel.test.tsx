@@ -4,7 +4,7 @@ import { act, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, expect, test, vi } from "vitest";
 import { AbcEditorPanel } from "./abc-editor-panel";
-import { resolveSongSource } from "@/lib/song-source";
+import { resolveSongSource } from "@/lib/songs/song-source";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const initial = 'X:1\nT:Song\nM:3/4\nL:1/4\nK:F\nP:A\n"F"d2 "C7"A |\nw:Toy- land!';

@@ -6,11 +6,11 @@
     min-height: calc(100vh - 58px);
   }
 
-  .setListReturnLink {
+  .binderReturnLink {
     margin-bottom: calc(var(--spacing) * 4);
   }
 
-  .setListSettingsAction {
+  .binderSettingsAction {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -21,13 +21,13 @@
     padding-top: calc(var(--spacing) * 3);
   }
 
-  .setListSettingsDescription {
+  .binderSettingsDescription {
     margin: 0px;
     font-size: 10px;
     color: var(--muted-soft);
   }
 
-  .setListReturnLink {
+  .binderReturnLink {
     display: inline-block;
     color: var(--accent-deep);
   }
@@ -57,18 +57,18 @@
     margin-inline: auto;
   }
 
-  .setListReturnLink {
+  .binderReturnLink {
     font-size: var(--text-xs);
     line-height: var(--component-leading, var(--text-xs--line-height));
   }
 
-  .setListReturnLink {
+  .binderReturnLink {
     --component-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
 
   @media (hover: hover) {
-    .setListReturnLink:hover {
+    .binderReturnLink:hover {
       text-decoration-line: underline;
     }
   }

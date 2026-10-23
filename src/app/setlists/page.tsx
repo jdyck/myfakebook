@@ -2,15 +2,15 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { Header } from "@/components/app-shell/header/header";
-import { SetListsIndex } from "@/components/set-lists";
+import { BindersIndex } from "@/components/binders";
 import componentStyles from "./page.module.css";
 
-export default async function SetListsPage() {
+export default async function BindersPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const convexConfigured = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
 
   if (!clerkConfigured || !(await auth()).userId) return redirect("/songs");
-  if (convexConfigured) return <SetListsIndex />;
+  if (convexConfigured) return <BindersIndex />;
 
   return (
     <div className={componentStyles.pageShell}>

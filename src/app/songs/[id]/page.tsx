@@ -9,8 +9,8 @@ export default async function SongPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  const setListId = typeof query.setListId === "string" ? query.setListId : undefined;
-  const setListItemId = typeof query.setListItemId === "string" ? query.setListItemId : undefined;
+  const binderId = typeof query.setListId === "string" ? query.setListId : undefined;
+  const binderItemId = typeof query.setListItemId === "string" ? query.setListItemId : undefined;
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const convexConfigured = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
 
@@ -20,8 +20,8 @@ export default async function SongPage({
         clerkConfigured={clerkConfigured}
         persistenceEnabled={clerkConfigured}
         initialPublicSongId={id}
-        setListId={setListId}
-        setListItemId={setListItemId}
+        binderId={binderId}
+        binderItemId={binderItemId}
       />
     );
   }

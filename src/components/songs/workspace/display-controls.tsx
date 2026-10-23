@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useRef } from "react";
-import type { SongDisplaySettings } from "@/lib/abc-display";
+import type { SongDisplaySettings } from "@/lib/notation/abc-display";
 import { Button } from "@/components/ui/button";
 import { TransposeMenu } from "@/components/songs/workspace/transpose-menu";
 import componentStyles from "./display-controls.module.css";

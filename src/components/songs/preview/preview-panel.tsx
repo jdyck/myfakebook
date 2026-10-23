@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 
 import { AbcPreview } from "@/components/songs/preview/abc-preview";
 import { FullscreenPreviewContext } from "@/components/songs/preview/fullscreen-preview-context";
-import type { SongDisplaySettings } from "@/lib/abc-display";
+import type { SongDisplaySettings } from "@/lib/notation/abc-display";
 import componentStyles from "./preview-panel.module.css";
 
 type PreviewPanelProps = {

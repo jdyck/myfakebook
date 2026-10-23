@@ -6,7 +6,7 @@ import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 
 import { api } from "../../../../convex/_generated/api";
-import { publicationLabel, publicationValueForSong, type LoadedSong, type PublicationValue } from "@/components/songs/types";
+import { publicationLabel, publicationValueForSong, type LoadedSong, type PublicationValue } from "@/lib/songs/types";
 import { RadioMenu } from "@/components/ui/radio-menu";
 
 export function AdminPublicationButton({

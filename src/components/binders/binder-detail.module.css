@@ -80,7 +80,7 @@
     gap: calc(var(--spacing) * 1.5);
   }
 
-  .setListFooterActions {
+  .binderFooterActions {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -88,7 +88,7 @@
     margin-top: calc(var(--spacing) * 3);
   }
 
-  .setListTitleInput {
+  .binderTitleInput {
     display: block;
     width: 100%;
     cursor: text;
@@ -114,12 +114,12 @@
     );
   }
 
-  .setListTitleInput:focus-visible {
+  .binderTitleInput:focus-visible {
     border-bottom-color: var(--accent);
   }
 
   @media (hover: hover) {
-    .setListTitleInput:hover {
+    .binderTitleInput:hover {
       border-bottom-color: var(--accent);
     }
   }
@@ -335,7 +335,7 @@
   }
 
   .notFoundSection,
-  .setListWorkspace,
+  .binderWorkspace,
   .selectedSongLayout,
   .selectedSongEmptyState {
     margin-inline: auto;
@@ -354,11 +354,11 @@
     margin-top: calc(var(--spacing) * 3);
   }
 
-  .setListSidebarHeader {
+  .binderSidebarHeader {
     margin-top: calc(var(--spacing) * 4);
   }
 
-  .setListSongsSection {
+  .binderSongsSection {
     margin-top: calc(var(--spacing) * 5);
     border-top-style: var(--component-border-style);
     border-top-width: 1px;
@@ -393,7 +393,7 @@
     display: block;
   }
 
-  .setListSidebarHeader,
+  .binderSidebarHeader,
   .songsSectionHeader,
   .songItemDragControls,
   .songSelectionButton,
@@ -406,7 +406,7 @@
     display: flex;
   }
 
-  .setListWorkspace,
+  .binderWorkspace,
   .orderedSongList,
   .dragHandleButton,
   .songPositionNumber,
@@ -414,7 +414,7 @@
     display: grid;
   }
 
-  .deleteSetListButton,
+  .deleteBinderButton,
   .displayToggleLabel {
     display: inline-flex;
   }
@@ -449,7 +449,7 @@
   }
 
   .pageContent,
-  .setListWorkspace {
+  .binderWorkspace {
     min-height: calc(100vh - 58px);
   }
 
@@ -463,14 +463,14 @@
     background-color: var(--canvas);
   }
 
-  .setListWorkspace {
+  .binderWorkspace {
     max-width: 1600px;
     grid-template-columns: 300px minmax(0, 1fr);
     border-inline-style: var(--component-border-style);
     border-inline-width: 1px;
   }
 
-  .setListSidebar,
+  .binderSidebar,
   .titleAndDetails,
   .songSelectionButton,
   .selectedSongSection,
@@ -483,7 +483,7 @@
     flex: 1;
   }
 
-  .deleteSetListButton,
+  .deleteBinderButton,
   .dragHandleButton,
   .songPositionNumber,
   .songItemActions,
@@ -503,7 +503,7 @@
     place-items: center;
   }
 
-  .deleteSetListButton,
+  .deleteBinderButton,
   .songsSectionHeader,
   .songItemDragControls,
   .songSelectionButton,
@@ -515,12 +515,12 @@
     align-items: center;
   }
 
-  .setListSidebarHeader,
+  .binderSidebarHeader,
   .selectedSongContent {
     align-items: flex-start;
   }
 
-  .setListSidebarHeader,
+  .binderSidebarHeader,
   .songsSectionHeader,
   .selectedSongContent {
     justify-content: space-between;
@@ -530,13 +530,13 @@
     gap: var(--spacing);
   }
 
-  .deleteSetListButton,
+  .deleteBinderButton,
   .orderedSongList,
   .displayToggleLabel {
     gap: calc(var(--spacing) * 1.5);
   }
 
-  .setListSidebarHeader,
+  .binderSidebarHeader,
   .songsSectionHeader,
   .songSelectionButton,
   .transposeFieldLabel,
@@ -588,7 +588,7 @@
     border-width: 1px;
   }
 
-  .setListSidebar {
+  .binderSidebar {
     border-right-style: var(--component-border-style);
     border-right-width: 1px;
     padding-block: calc(var(--spacing) * 5);
@@ -608,9 +608,9 @@
 
   .sharedButton,
   .notFoundSection,
-  .setListWorkspace,
-  .setListSidebar,
-  .setListSongsSection,
+  .binderWorkspace,
+  .binderSidebar,
+  .binderSongsSection,
   .unselectedSongItem,
   .selectedSongDisplaySettings {
     border-color: var(--line);
@@ -633,14 +633,14 @@
 
   .sharedButton,
   .notFoundSection,
-  .setListWorkspace,
+  .binderWorkspace,
   .orderedSongItem,
   .selectedSongDisplaySettings,
   .dragPreview {
     background-color: var(--paper);
   }
 
-  .setListSidebar,
+  .binderSidebar,
   .songPositionNumber,
   .selectedSongEmptyState {
     background-color: var(--paper-soft);
@@ -671,7 +671,7 @@
     padding-inline: calc(var(--spacing) * 3);
   }
 
-  .setListSidebar,
+  .binderSidebar,
   .selectedSongDisplaySettings {
     padding-inline: calc(var(--spacing) * 4);
   }
@@ -703,7 +703,7 @@
 
 
 
-  .setListTitle,
+  .binderTitle,
   .emptyStateTitle {
     font-size: var(--text-lg);
     line-height: var(--component-leading, var(--text-lg--line-height));
@@ -722,7 +722,7 @@
 
   .sharedButton,
   .sharedPrimaryButton,
-  .backToSetListsLink,
+  .backToBindersLink,
   .songName,
   .emptySongListMessage,
   .actionStatusMessage,
@@ -746,14 +746,14 @@
     font-size: 10px;
   }
 
-  .setListTitle {
+  .binderTitle {
     --component-leading: var(--leading-tight);
     line-height: var(--leading-tight);
     overflow-wrap: break-word;
   }
 
   .notFoundTitle,
-  .setListTitle,
+  .binderTitle,
   .songsSectionTitle,
   .emptyStateTitle {
     --component-font-weight: var(--font-weight-bold);
@@ -767,7 +767,7 @@
 
   .sharedButton,
   .sharedPrimaryButton,
-  .backToSetListsLink,
+  .backToBindersLink,
   .songPositionNumber,
   .songName,
   .openSongWorkspaceLink,
@@ -782,7 +782,7 @@
     text-transform: uppercase;
   }
 
-  .backToSetListsLink,
+  .backToBindersLink,
   .browsePublicSongsLink,
   .dragHandleButton,
   .songPositionNumber,
@@ -807,7 +807,7 @@
     color: var(--muted-soft);
   }
 
-  .deleteSetListButton,
+  .deleteBinderButton,
   .removeSongButton {
     color: var(--ui-destructive);
   }
@@ -855,7 +855,7 @@
       background-color: var(--accent-deep);
     }
 
-    .backToSetListsLink:hover,
+    .backToBindersLink:hover,
     .openSongWorkspaceLink:hover {
       text-decoration-line: underline;
     }
@@ -900,11 +900,11 @@
   }
 
   @media (width < 800px) {
-    .setListWorkspace {
+    .binderWorkspace {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
 
-    .setListSidebar {
+    .binderSidebar {
       border-right-style: var(--component-border-style);
       border-right-width: 0px;
       border-bottom-style: var(--component-border-style);

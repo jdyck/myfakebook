@@ -1,4 +1,4 @@
-import { publicationLabel, type PublicationValue } from "@/components/songs/types";
+import { publicationLabel, type PublicationValue } from "@/lib/songs/types";
 import componentStyles from "./publication-badge.module.css";
 
 type PublishedTerritory = Exclude<PublicationValue, "none">;

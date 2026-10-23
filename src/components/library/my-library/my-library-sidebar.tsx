@@ -1,9 +1,9 @@
 "use client";
 
-import type { SongContent } from "@/lib/song-content";
+import type { SongContent } from "@/lib/songs/song-content";
 import type { ChangeEventHandler } from "react";
 import { RecentMyLibrarySongs } from "@/components/library/my-library/recent-songs";
-import type { LoadedSong } from "@/components/songs/types";
+import type { LoadedSong } from "@/lib/songs/types";
 import { SidebarAction } from "@/components/library/my-library/sidebar-action";
 import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
@@ -69,48 +69,48 @@ export function MyLibrarySidebar({
         onStatus={onStatus}
         title={title}
       />
-      <RecentSetLists />
+      <RecentBinders />
     </aside>
   );
 }
 
-function RecentSetLists() {
+function RecentBinders() {
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const setLists = useQuery(api.binders.listMine, isAuthenticated ? {} : "skip");
+  const binders = useQuery(api.binders.listMine, isAuthenticated ? {} : "skip");
 
   return (
-    <section className={componentStyles.recentSetListsSection} aria-labelledby="recent-set-lists-heading">
-      <h2 className={componentStyles.sectionHeading} id="recent-set-lists-heading">
+    <section className={componentStyles.recentBindersSection} aria-labelledby="recent-binders-heading">
+      <h2 className={componentStyles.sectionHeading} id="recent-binders-heading">
         Recent binders
       </h2>
-      {isLoading || (isAuthenticated && setLists === undefined) ? (
-        <p className={componentStyles.setListsMessage} role="status">
+      {isLoading || (isAuthenticated && binders === undefined) ? (
+        <p className={componentStyles.bindersMessage} role="status">
           Loading your binders…
         </p>
       ) : !isAuthenticated ? (
-        <p className={componentStyles.setListsMessage}>
+        <p className={componentStyles.bindersMessage}>
           <Link className={componentStyles.signInLink} href="/sign-in">
             Sign in
           </Link>{" "}
           to sync your binders.
         </p>
-      ) : setLists?.length ? (
-        <div className={componentStyles.recentSetListList} aria-label="Recent binders">
-          {setLists.slice(0, 5).map((setList) => (
+      ) : binders?.length ? (
+        <div className={componentStyles.recentBinderList} aria-label="Recent binders">
+          {binders.slice(0, 5).map((binder) => (
             <Link
-              className={componentStyles.recentSetListLink}
-              href={`/setlists/${encodeURIComponent(setList._id)}`}
-              key={setList._id}
+              className={componentStyles.recentBinderLink}
+              href={`/setlists/${encodeURIComponent(binder._id)}`}
+              key={binder._id}
             >
-              <span className={componentStyles.setListName}>{setList.name}</span>
-              <span className={componentStyles.setListMetadata}>
-                {setList.itemCount} song{setList.itemCount === 1 ? "" : "s"} · Updated {new Date(setList.updatedAt).toLocaleDateString()}
+              <span className={componentStyles.binderName}>{binder.name}</span>
+              <span className={componentStyles.binderMetadata}>
+                {binder.itemCount} song{binder.itemCount === 1 ? "" : "s"} · Updated {new Date(binder.updatedAt).toLocaleDateString()}
               </span>
             </Link>
           ))}
         </div>
       ) : (
-        <p className={componentStyles.setListsMessage}>
+        <p className={componentStyles.bindersMessage}>
           Your binders will appear here.
         </p>
       )}

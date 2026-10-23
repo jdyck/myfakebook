@@ -48,9 +48,13 @@ it("publishes an admin's song without changing its ID", async () => {
 
     await act(async () => {
       container.querySelector<HTMLButtonElement>('button[aria-label="Published: None"]')?.click();
-      Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
-        .find((item) => item.textContent?.includes("U.S."))
-        ?.click();
+    });
+
+    const option = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
+      .find((item) => item.textContent?.includes("U.S."));
+    expect(option).toBeDefined();
+    await act(async () => {
+      option!.click();
     });
 
     expect(mocks.setPublication).toHaveBeenCalledExactlyOnceWith({ id: songId, publication: "US" });

@@ -16,7 +16,7 @@ export default async function MyLibrarySongPage({
   if (!process.env.NEXT_PUBLIC_CONVEX_URL) return redirect("/mylibrary");
 
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  const setListId = typeof query.setListId === "string" ? query.setListId : undefined;
-  const setListItemId = typeof query.setListItemId === "string" ? query.setListItemId : undefined;
-  return <PrivateSongBackedWorkspace id={id} setListId={setListId} setListItemId={setListItemId} />;
+  const binderId = typeof query.setListId === "string" ? query.setListId : undefined;
+  const binderItemId = typeof query.setListItemId === "string" ? query.setListItemId : undefined;
+  return <PrivateSongBackedWorkspace id={id} binderId={binderId} binderItemId={binderItemId} />;
 }
