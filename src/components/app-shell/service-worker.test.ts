@@ -10,7 +10,7 @@ function createWorker() {
   const cache = { add: vi.fn().mockResolvedValue(undefined), match: vi.fn().mockResolvedValue(offline) };
   const caches = {
     open: vi.fn().mockResolvedValue(cache),
-    keys: vi.fn().mockResolvedValue(["myfakebook-offline-v0", "myfakebook-offline-v1", "other-app"]),
+    keys: vi.fn().mockResolvedValue(["myfakebook-offline-v0", "myfakebook-offline-v1", "myfakebook-offline-v2", "other-app"]),
     delete: vi.fn().mockResolvedValue(true),
   };
   const worker = {
@@ -56,7 +56,7 @@ describe("PWA service worker", () => {
     expect(request.cache).toBe("reload");
     expect(worker.skipWaiting).toHaveBeenCalledOnce();
     await lifecycle("activate");
-    expect(caches.delete.mock.calls).toEqual([["myfakebook-offline-v0"]]);
+    expect(caches.delete.mock.calls).toEqual([["myfakebook-offline-v0"], ["myfakebook-offline-v1"]]);
     expect(worker.clients.claim).toHaveBeenCalledOnce();
   });
 

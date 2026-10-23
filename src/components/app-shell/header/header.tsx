@@ -19,7 +19,7 @@ export function Header({ clerkConfigured }: HeaderProps) {
         <div className={componentStyles.brandIcon} aria-hidden="true">
           <Music2 size={17} strokeWidth={2.2} />
         </div>
-        <span className={componentStyles.brandName}>MyFakebook</span>
+        <span className={componentStyles.brandName}>MyFakeBook</span>
       </div>
       <div className={componentStyles.headerTools}>
         <nav aria-label="Main navigation" className={componentStyles.primaryNavigation}>

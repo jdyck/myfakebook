@@ -1,4 +1,4 @@
-# MyFakebook content model
+# MyFakeBook content model
 
 This document owns song concepts, fields, relationships, storage authority, and invariants. It intentionally separates product concepts from the database schema. The [architecture guide](../architecture.md) maps these concepts to the implementation. Some concepts below describe planned capabilities; consult `convex/schema.ts` for currently persisted fields.
 

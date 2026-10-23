@@ -21,12 +21,12 @@ const inconsolata = Inconsolata({
 });
 
 export const metadata: Metadata = {
-  title: "MyFakebook — Online lead sheets",
+  title: "MyFakeBook — Online lead sheets",
   description: "Write, organize, hear, and export your lead sheets online.",
-  applicationName: "MyFakebook",
+  applicationName: "MyFakeBook",
   appleWebApp: {
     capable: true,
-    title: "MyFakebook",
+    title: "MyFakeBook",
     statusBarStyle: "default",
   },
   icons: {

@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "MyFakebook",
-    short_name: "MyFakebook",
+    name: "MyFakeBook",
+    short_name: "MyFakeBook",
     description: "Write, organize, hear, and export your lead sheets online.",
     lang: "en",
     start_url: "/",

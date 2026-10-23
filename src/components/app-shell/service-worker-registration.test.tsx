@@ -52,5 +52,5 @@ it("handles registration failure without an unhandled rejection", async () => {
   register.mockRejectedValue(error);
   const log = vi.spyOn(console, "error").mockImplementation(() => {});
   await act(async () => root.render(<ServiceWorkerRegistration />));
-  expect(log).toHaveBeenCalledWith("Could not register the MyFakebook service worker.", error);
+  expect(log).toHaveBeenCalledWith("Could not register the MyFakeBook service worker.", error);
 });

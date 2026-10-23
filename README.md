@@ -1,4 +1,4 @@
-# MyFakebook
+# MyFakeBook
 
 A workspace for musicians to write, organize, play, and export lead sheets. Built with Next.js App Router, React, Clerk, Convex, and abcjs; styled with CSS Modules and global CSS.
 

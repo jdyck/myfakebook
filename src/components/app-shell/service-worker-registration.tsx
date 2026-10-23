@@ -12,7 +12,7 @@ export function ServiceWorkerRegistration() {
       scope: "/",
       updateViaCache: "none",
     }).catch((error: unknown) => {
-      console.error("Could not register the MyFakebook service worker.", error);
+      console.error("Could not register the MyFakeBook service worker.", error);
     });
   }, []);
 

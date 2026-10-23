@@ -1,6 +1,6 @@
-# MyFakebook Context
+# MyFakeBook Context
 
-MyFakebook is a digital fakebook for musicians. Each saved song has one owner and one publication state. The public library shows published songs; each owner’s My Library shows all of their songs.
+MyFakeBook is a digital fakebook for musicians. Each saved song has one owner and one publication state. The public library shows published songs; each owner’s My Library shows all of their songs.
 
 ## Product documents
 
