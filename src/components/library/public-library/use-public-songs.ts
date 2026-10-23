@@ -15,6 +15,8 @@ type PublicSongQueryResult = {
   writers: string;
   rhythm: string;
   abc: string;
+  abcParts?: string;
+  content?: PublicSong["content"];
 };
 
 function toPublicSong(song: PublicSongQueryResult): PublicSong {
@@ -26,6 +28,8 @@ function toPublicSong(song: PublicSongQueryResult): PublicSong {
     writers: song.writers,
     rhythm: song.rhythm,
     abc: song.abc,
+    abcParts: song.abcParts,
+    content: song.content,
   };
 }
 

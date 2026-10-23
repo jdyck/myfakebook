@@ -49,6 +49,8 @@ export function PrivateSongBackedWorkspace({
         id: song._id,
         title: song.title,
         abc: song.abc,
+        abcParts: song.abcParts,
+        content: song.content,
         publicationState: song.publicationState,
         publicationTerritory: song.publicationTerritory,
       }}

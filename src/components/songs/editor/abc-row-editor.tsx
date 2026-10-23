@@ -350,7 +350,7 @@ export function AbcRowEditor({ abc, onChange }: AbcRowEditorProps) {
     return (
       <div className={componentStyles.unsupportedEditorPanel} role="tabpanel" id="abc-easy-panel" aria-labelledby="abc-easy-tab">
         <p className={componentStyles.unsupportedFormatMessage}>
-          {document.reason} The source editor is still available in the Source tab.
+          {document.reason} The source editor is still available in the Inline chords tab.
         </p>
         <textarea
           aria-label="Easy ABC notation editor"

@@ -1,5 +1,6 @@
 "use client";
 
+import type { SongContent } from "@/lib/song-content";
 import type { ChangeEventHandler } from "react";
 import { RecentMyLibrarySongs } from "@/components/library/my-library/recent-songs";
 import type { LoadedSong } from "@/components/songs/types";
@@ -12,6 +13,8 @@ import componentStyles from "./my-library-sidebar.module.css";
 type MyLibrarySidebarProps = {
   enabled: boolean;
   abc: string;
+  abcParts: string;
+  content: SongContent;
   title: string;
   isPublicSong: boolean;
   currentSong: LoadedSong | null;
@@ -27,6 +30,8 @@ type MyLibrarySidebarProps = {
 export function MyLibrarySidebar({
   enabled,
   abc,
+  abcParts,
+  content,
   title,
   isPublicSong,
   currentSong,
@@ -50,6 +55,8 @@ export function MyLibrarySidebar({
       </div>
       <RecentMyLibrarySongs
         abc={abc}
+        abcParts={abcParts}
+        content={content}
         enabled={enabled}
         isPublicSong={isPublicSong}
         currentSong={currentSong}

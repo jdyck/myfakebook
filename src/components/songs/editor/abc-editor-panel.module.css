@@ -1,5 +1,15 @@
 /* Component styles. */
 @layer components {
+  .editorHint,
+  .editorError {
+    margin: 12px 14px 0;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .editorHint { color: var(--muted); }
+  .editorError { color: var(--ink); }
+
   .sourceEditorPanel {
     margin: calc(var(--spacing) * 3.5);
     display: grid;
@@ -92,6 +102,10 @@
   .editorModeControls,
   .editorModeTabs {
     min-width: 0px;
+  }
+
+  .editorModeControls {
+    flex-wrap: wrap;
   }
 
   .sourceEditorPanel,

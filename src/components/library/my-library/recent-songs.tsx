@@ -7,11 +7,14 @@ import Link from "next/link";
 import { api } from "../../../../convex/_generated/api";
 import { SidebarAction } from "@/components/library/my-library/sidebar-action";
 import { publicationStatusForSong, type LoadedSong, type SongId } from "@/components/songs/types";
+import { sameSongContent, type SongContent } from "@/lib/song-content";
 import componentStyles from "@/components/shared/song-actions.module.css";
 
 type RecentMyLibrarySongsProps = {
   title: string;
   abc: string;
+  abcParts: string;
+  content: SongContent;
   isPublicSong: boolean;
   currentSong: LoadedSong | null;
   onNew: () => void;
@@ -34,6 +37,8 @@ export function RecentMyLibrarySongs({
 function ConnectedRecentMyLibrarySongs({
   title,
   abc,
+  abcParts,
+  content,
   isPublicSong,
   currentSong,
   onNew,
@@ -80,6 +85,8 @@ function ConnectedRecentMyLibrarySongs({
       id: song._id,
       title: song.title,
       abc: song.abc,
+      abcParts: song.abcParts,
+      content: song.content,
       publicationState: song.publicationState,
       publicationTerritory: song.publicationTerritory,
     }));
@@ -87,7 +94,7 @@ function ConnectedRecentMyLibrarySongs({
       nextSongs.length !== mySongsRef.current.length ||
       nextSongs.some((song, index) => {
         const previous = mySongsRef.current[index];
-        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc || previous.publicationState !== song.publicationState || previous.publicationTerritory !== song.publicationTerritory;
+        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc || !previous.content || !sameSongContent(previous.content, song.content) || previous.publicationState !== song.publicationState || previous.publicationTerritory !== song.publicationTerritory;
       });
     if (!songsChanged) return;
     mySongsRef.current = nextSongs;
@@ -105,6 +112,8 @@ function ConnectedRecentMyLibrarySongs({
           id: existingSong._id,
           title: existingSong.title,
           abc: existingSong.abc,
+          abcParts: existingSong.abcParts,
+          content: existingSong.content,
           publicationState: existingSong.publicationState,
           publicationTerritory: existingSong.publicationTerritory,
         });
@@ -140,6 +149,8 @@ function ConnectedRecentMyLibrarySongs({
           id: songId.current,
           title,
           abc,
+          content,
+          abcParts,
         });
         if (!active) return;
         songId.current = savedId;
@@ -148,6 +159,8 @@ function ConnectedRecentMyLibrarySongs({
           id: savedId,
           title,
           abc,
+          content,
+          abcParts,
           publicationState: currentSongRef.current?.publicationState ?? existingSong?.publicationState ?? "private",
           publicationTerritory: currentSongRef.current?.publicationTerritory ?? existingSong?.publicationTerritory,
         });
@@ -160,7 +173,7 @@ function ConnectedRecentMyLibrarySongs({
       active = false;
       window.clearTimeout(timeout);
     };
-  }, [abc, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, saveSong, title]);
+  }, [abc, abcParts, content, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, saveSong, title]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -197,6 +210,8 @@ function ConnectedRecentMyLibrarySongs({
                       id: song._id,
                       title: song.title,
                       abc: song.abc,
+                      abcParts: song.abcParts,
+                      content: song.content,
                       publicationState: song.publicationState,
                       publicationTerritory: song.publicationTerritory,
                     };

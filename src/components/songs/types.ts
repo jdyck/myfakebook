@@ -1,3 +1,4 @@
+import type { SongContent } from "@/lib/song-content";
 import type { Id } from "../../../convex/_generated/dataModel";
 
 export type SongId = Id<"songs">;
@@ -8,6 +9,8 @@ export type LoadedSong = {
   id: SongId;
   title: string;
   abc: string;
+  abcParts?: string;
+  content?: SongContent;
   publicationState: "private" | "published";
   publicationTerritory?: "US" | "worldwide";
 };

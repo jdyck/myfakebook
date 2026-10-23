@@ -3,25 +3,32 @@
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { TextField } from "@/components/ui/text-field";
+import type { SongContent } from "@/lib/song-content";
 import { AbcEditorPanel } from "@/components/songs/editor/abc-editor-panel";
 import componentStyles from "./song-editor-drawer.module.css";
 
 type SongEditorDrawerProps = {
   abc: string;
+  abcParts: string;
+  content: SongContent;
+  onContentChange: (content: SongContent) => void;
   copied: boolean;
   feedback: string | null;
   isOpen: boolean;
   lineCount: number;
   title: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, abcParts?: string) => void;
   onClose: () => void;
-  onCopy: () => void;
+  onCopy: (value?: string) => void;
   onFormat: () => void;
   onTitleChange: (value: string) => void;
 };
 
 export function SongEditorDrawer({
   abc,
+  abcParts,
+  content,
+  onContentChange,
   copied,
   feedback,
   isOpen,
@@ -82,6 +89,9 @@ export function SongEditorDrawer({
         <div className={componentStyles.drawerEditor}>
           <AbcEditorPanel
             abc={abc}
+            abcParts={abcParts}
+            content={content}
+            onContentChange={onContentChange}
             copied={copied}
             lineCount={lineCount}
             onChange={onChange}

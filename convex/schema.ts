@@ -1,7 +1,7 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-import { songDisplaySettingsValidator } from "./validators";
+import { songContentValidator, songDisplaySettingsValidator } from "./validators";
 
 export default defineSchema({
   songs: defineTable({
@@ -9,7 +9,9 @@ export default defineSchema({
     title: v.string(),
     writers: v.string(),
     rhythm: v.string(),
-    abc: v.string(),
+    abc: v.optional(v.string()),
+    abcParts: v.optional(v.string()),
+    content: v.optional(songContentValidator),
     publicationState: v.union(v.literal("private"), v.literal("published")),
     publicationTerritory: v.optional(v.union(v.literal("US"), v.literal("worldwide"))),
     updatedAt: v.number(),

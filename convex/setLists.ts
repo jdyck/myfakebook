@@ -4,6 +4,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query, type MutationCtx } from "./_generated/server";
 import { requireOwner } from "./auth";
 import { songDisplaySettingsValidator } from "./validators";
+import { withSongContent } from "./songStore";
 
 function isWorldwidePublicSong(song: Doc<"songs"> | null) {
   return song?.publicationState === "published" && (song.publicationTerritory ?? "worldwide") === "worldwide";
@@ -122,13 +123,16 @@ export const get = query({
       items: items.map((item, index) => {
         const song = songs[index];
         const canOpen = Boolean(song && (song.ownerId === ownerId || isWorldwidePublicSong(song)));
+        const source = canOpen && song ? withSongContent(song) : null;
         return {
           _id: item._id,
           songId: item.songId,
           title: canOpen && song ? song.title : "Song no longer public",
           canOpen,
           isOwned: song?.ownerId === ownerId,
-          abc: canOpen && song ? song.abc : null,
+          abc: source?.abc ?? null,
+          abcParts: source?.abcParts ?? null,
+          content: source?.content ?? null,
           position: item.position,
           displaySettings: item.displaySettings,
         };

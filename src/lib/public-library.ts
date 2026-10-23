@@ -1,3 +1,4 @@
+import type { SongContent } from "./song-content";
 export type PublicSong = {
   id: string;
   catalogId?: string;
@@ -6,6 +7,8 @@ export type PublicSong = {
   writers: string;
   rhythm: string;
   abc: string;
+  abcParts?: string;
+  content?: SongContent;
 };
 
 export const PUBLIC_LIBRARY: readonly PublicSong[] = [

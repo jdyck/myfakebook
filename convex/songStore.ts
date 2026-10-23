@@ -1,29 +1,41 @@
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
+import { sameSongContent } from "../src/lib/song-content";
+import { resolveSongSource, type SongSourceInput } from "../src/lib/song-source";
 
 export type SongId = Id<"songs">;
 type ReadCtx = QueryCtx | MutationCtx;
 
+export function withSongContent(song: Doc<"songs">) {
+  return { ...song, ...resolveSongSource(song) };
+}
+
+export function prepareSongContent(data: SongSourceInput, previousAbc = "") {
+  return resolveSongSource(data, previousAbc);
+}
+
 export async function listMine(ctx: ReadCtx, ownerId: string) {
-  return ctx.db
+  const songs = await ctx.db
     .query("songs")
     .withIndex("by_owner_updatedAt", (query) => query.eq("ownerId", ownerId))
     .order("desc")
     .collect();
+  return songs.map(withSongContent);
 }
 
 export async function listPublished(ctx: ReadCtx) {
-  return ctx.db
+  const songs = await ctx.db
     .query("songs")
     .withIndex("by_publication_updatedAt", (query) => query.eq("publicationState", "published"))
     .order("desc")
     .collect();
+  return songs.map(withSongContent);
 }
 
 export async function saveSong(
   ctx: MutationCtx,
   ownerId: string,
-  data: { title: string; abc: string; writers?: string; rhythm?: string },
+  data: { title: string; abc?: string; content?: Doc<"songs">["content"]; abcParts?: string; writers?: string; rhythm?: string },
   requestedId?: SongId,
   canEditPublished = false,
 ) {
@@ -33,9 +45,12 @@ export async function saveSong(
     const existing = await ctx.db.get("songs", requestedId);
     if (!existing || existing.ownerId !== ownerId) throw new Error("Song not found");
     if (existing.publicationState === "published" && !canEditPublished) throw new Error("Not authorized");
+    const notation = data.content === undefined && data.abc === undefined && data.abcParts === undefined
+      ? prepareSongContent({ ...existing, title: data.title })
+      : prepareSongContent(data, withSongContent(existing).abc);
     await ctx.db.patch("songs", requestedId, {
       title: data.title,
-      abc: data.abc,
+      ...notation,
       writers: data.writers?.trim() ?? existing.writers,
       rhythm: data.rhythm?.trim() ?? existing.rhythm,
       updatedAt: now,
@@ -43,22 +58,36 @@ export async function saveSong(
     return requestedId;
   }
 
-  const existing = await ctx.db
+  if (data.abc === undefined && data.content === undefined && data.abcParts === undefined) {
+    throw new Error("Song content or ABC is required");
+  }
+
+  const { abc, content, abcParts } = prepareSongContent(data);
+  const matches = await ctx.db
     .query("songs")
     .withIndex("by_owner_updatedAt", (query) => query.eq("ownerId", ownerId))
     .filter((query) =>
-      query.and(query.eq(query.field("title"), data.title), query.eq(query.field("abc"), data.abc)),
+      query.and(
+        query.eq(query.field("title"), data.title),
+        query.eq(query.field("abc"), abc),
+      ),
     )
-    .first();
+    .collect();
+  const existing = matches.find((song) => sameSongContent(withSongContent(song).content, content));
 
-  if (existing) return existing._id;
+  if (existing) {
+    if (existing.content === undefined) await ctx.db.patch("songs", existing._id, { content, abc, abcParts });
+    return existing._id;
+  }
 
   return ctx.db.insert("songs", {
     ownerId,
     title: data.title,
     writers: data.writers?.trim() ?? "",
     rhythm: data.rhythm?.trim() ?? "",
-    abc: data.abc,
+    abc,
+    content,
+    abcParts,
     publicationState: "private",
     updatedAt: now,
   });
@@ -78,7 +107,9 @@ export async function setPublicationState(
     ? "none"
     : song.publicationTerritory ?? "worldwide";
   if (currentPublication === publication) return id;
-  if (publication !== "none" && !song.abc.trim()) throw new Error("ABC content is required");
+  if (publication !== "none" && !song.abc?.trim() && !song.abcParts?.trim() && !withSongContent(song).content.measures.length) {
+    throw new Error("Song content or ABC is required");
+  }
   const now = Date.now();
   await ctx.db.patch("songs", id, {
     publicationState,

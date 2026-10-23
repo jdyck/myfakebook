@@ -4,6 +4,8 @@ export type AbcRowEvent = {
   prefix: string;
   chord: string;
   note: string;
+  sourceStart?: number;
+  sourceEnd?: number;
 };
 
 export type AbcRowMusicPart = {
@@ -130,6 +132,8 @@ function parseMusicLine(line: string, id: string): AbcRowMusicPart | null {
           prefix,
           chord,
           note: noteCluster[0],
+          sourceStart: index,
+          sourceEnd: index + noteCluster[0].length,
         });
         barBefore = "";
         prefix = "";
@@ -155,6 +159,8 @@ function parseMusicLine(line: string, id: string): AbcRowMusicPart | null {
         prefix,
         chord,
         note: note[0],
+        sourceStart: index,
+        sourceEnd: index + note[0].length,
       });
       barBefore = "";
       prefix = "";

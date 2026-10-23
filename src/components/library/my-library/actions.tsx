@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { api } from "../../../../convex/_generated/api";
 import type { LoadedSong } from "@/components/songs/types";
+import type { SongContent } from "@/lib/song-content";
 import componentStyles from "@/components/shared/song-actions.module.css";
 
 export function RemoveSongButton({
@@ -70,6 +71,8 @@ export function SaveToMyLibraryButton({
   enabled,
   title,
   abc,
+  abcParts,
+  content,
   sourceSongId,
   onCurrentSongChange,
   onSavedToMyLibrary,
@@ -78,6 +81,8 @@ export function SaveToMyLibraryButton({
   enabled: boolean;
   title: string;
   abc: string;
+  abcParts: string;
+  content: SongContent;
   sourceSongId: string | null;
   onCurrentSongChange: (song: LoadedSong | null) => void;
   onSavedToMyLibrary: () => void;
@@ -87,6 +92,8 @@ export function SaveToMyLibraryButton({
   return (
     <ConnectedSaveToMyLibraryButton
       abc={abc}
+      abcParts={abcParts}
+      content={content}
       sourceSongId={sourceSongId}
       onCurrentSongChange={onCurrentSongChange}
       onSavedToMyLibrary={onSavedToMyLibrary}
@@ -99,6 +106,8 @@ export function SaveToMyLibraryButton({
 function ConnectedSaveToMyLibraryButton({
   title,
   abc,
+  abcParts,
+  content,
   sourceSongId,
   onCurrentSongChange,
   onSavedToMyLibrary,
@@ -106,6 +115,8 @@ function ConnectedSaveToMyLibraryButton({
 }: {
   title: string;
   abc: string;
+  abcParts: string;
+  content: SongContent;
   sourceSongId: string | null;
   onCurrentSongChange: (song: LoadedSong | null) => void;
   onSavedToMyLibrary: () => void;
@@ -130,12 +141,16 @@ function ConnectedSaveToMyLibraryButton({
         id: ownedSource?._id,
         title,
         abc,
+        content,
+        abcParts,
       });
       const savedSong = songs?.find((song) => song._id === savedId);
       onCurrentSongChange({
         id: savedId,
         title,
         abc,
+        content,
+        abcParts,
         publicationState: savedSong?.publicationState ?? "private",
         publicationTerritory: savedSong?.publicationTerritory,
       });

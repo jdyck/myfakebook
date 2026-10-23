@@ -14,6 +14,8 @@ import { DisplayControls } from "@/components/songs/workspace/display-controls";
 import { WorkspaceToolbar } from "@/components/songs/workspace/workspace-toolbar";
 import { useRecentPrivateSongs } from "@/components/songs/workspace/use-recent-private-songs";
 import type { Id } from "../../../../convex/_generated/dataModel";
+import { resolveSongSource } from "@/lib/song-source";
+import type { SongContent } from "@/lib/song-content";
 import { abcToMusicXml, DEFAULT_ABC } from "@/lib/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/abc-display";
 import { downloadSongFile } from "@/lib/download-song-file";
@@ -65,7 +67,10 @@ export function SongView({
 }: SongViewProps) {
   const initialPublicSong = publishedSongs.find((song) => song.id === initialPublicSongId) ?? publishedSongs[0];
   const initialPrivateSongId = initialPrivateSong?.id;
-  const [abc, setAbc] = useState(initialPrivateSong?.abc ?? initialPublicSong?.abc ?? DEFAULT_ABC);
+  const [songSource, setSongSource] = useState(() => resolveSongSource(
+    initialPrivateSong ?? initialPublicSong ?? { title: "Untitled", abc: DEFAULT_ABC },
+  ));
+  const { abc, abcParts, content } = songSource;
   const [title, setTitle] = useState(initialPrivateSong?.title ?? initialPublicSong?.title ?? "Untitled");
   const [isPublicSong, setIsPublicSong] = useState(!initialPrivateSong && Boolean(initialPublicSong));
   const [selectedPublicSongId, setSelectedPublicSongId] = useState<string | null>(initialPrivateSong ? null : initialPublicSong?.id ?? null);
@@ -116,6 +121,15 @@ export function SongView({
     : currentSong
       ? { id: currentSong.id, title: currentSong.title }
       : null;
+  function setAbc(value: string | ((current: string) => string)) {
+    setSongSource((current) => resolveSongSource({ title: songTitle, abc: typeof value === "function" ? value(current.abc) : value }, current.abc));
+  }
+
+  function handleContentChange(nextContent: SongContent) {
+    setSelectedPublicSongId(null);
+    setSongSource((current) => resolveSongSource({ title: songTitle, content: nextContent }, current.abc));
+  }
+
   function updateDisplaySettings(patch: Partial<SongDisplaySettings>) {
     setDisplaySettings((current) => ({ ...current, ...patch }));
   }
@@ -184,7 +198,7 @@ export function SongView({
   function handleOpenPrivateSong(song: LoadedSong, feedbackMessage = `Loaded ${song.title}`) {
     setCurrentSong(song);
     setTitle(song.title);
-    setAbc(song.abc);
+    setSongSource(resolveSongSource(song));
     setIsPublicSong(false);
     setSelectedPublicSongId(null);
     setSourcePublicSongId(null);
@@ -205,14 +219,19 @@ export function SongView({
     setFeedback("ABC spacing cleaned up");
   }
 
-  function handleAbcChange(value: string) {
+  function handleAbcChange(value: string, parts?: string) {
     setSelectedPublicSongId(null);
-    setAbc(value);
+    try {
+      const nextSource = resolveSongSource({ title: songTitle, abc: value, abcParts: parts }, abc);
+      setSongSource(nextSource);
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "Check the ABC parts.");
+    }
   }
 
-  async function handleCopy() {
+  async function handleCopy(value = abc) {
     try {
-      await navigator.clipboard.writeText(abc);
+      await navigator.clipboard.writeText(value);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1600);
     } catch {
@@ -339,6 +358,8 @@ export function SongView({
       >
         <MyLibrarySidebar
           abc={abc}
+          abcParts={abcParts}
+          content={content}
           currentSong={currentSong}
           enabled={persistenceEnabled}
           isPublicSong={isPublicSong}
@@ -401,6 +422,8 @@ export function SongView({
                   {persistenceEnabled && isPublicSong && (
                     <SaveToMyLibraryButton
                       abc={abc}
+                      abcParts={abcParts}
+                      content={content}
                       enabled={persistenceEnabled}
                       onCurrentSongChange={handleCurrentSongChange}
                       onSavedToMyLibrary={() => {
@@ -470,6 +493,9 @@ export function SongView({
           </div>
           <SongEditorDrawer
             abc={abc}
+            abcParts={abcParts}
+            content={content}
+            onContentChange={handleContentChange}
             copied={copied}
             feedback={feedback}
             isOpen={editorOpen}
