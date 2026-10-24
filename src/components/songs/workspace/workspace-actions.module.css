@@ -16,7 +16,7 @@
     min-width: 140px;
     padding: 4px;
     border: 1px solid var(--line-strong);
-    border-radius: var(--radius-control);
+    border-radius: 0;
     background-color: var(--paper);
     box-shadow: var(--shadow-menu);
     color: var(--ink);
@@ -28,7 +28,7 @@
     align-items: center;
     padding: 8px 10px;
     border: 0;
-    border-radius: var(--radius-menu-item);
+    border-radius: 0;
     background: transparent;
     color: var(--ink);
     cursor: pointer;

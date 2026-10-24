@@ -5,8 +5,9 @@ import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@/components/app-shell/header/header", () => ({ Header: () => null }));
-vi.mock("next/font/google", () => ({ Roboto_Condensed: () => ({ className: "condensed" }) }));
+vi.mock("convex/react", () => { throw new Error("The list view must not import Convex hooks"); });
+vi.mock("@clerk/nextjs", () => { throw new Error("The list view must not import Clerk"); });
+vi.mock("../../../../convex/_generated/api", () => { throw new Error("The list view must not import the generated API"); });
 
 import { MyLibraryList } from "./my-library-list";
 import type { Id } from "../../../../convex/_generated/dataModel";

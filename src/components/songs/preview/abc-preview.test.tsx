@@ -49,8 +49,13 @@ it("uses the selected tempo, parts, and start measure for playback and stops whe
     const tempo = container.querySelector<HTMLInputElement>('[aria-label="Playback tempo"]')!;
     expect(tempo.value).toBe("120");
     await change(tempo, "90");
-    await change(container.querySelector<HTMLSelectElement>('[aria-label="Playback parts"]')!, "chords");
-    await change(container.querySelector<HTMLSelectElement>('[aria-label="Playback start measure"]')!, "2");
+    const choose = async (label: string, text: string) => {
+      await act(async () => container.querySelector<HTMLButtonElement>(`[aria-label="${label}"]`)!.click());
+      const option = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]')).find((item) => item.textContent === text)!;
+      await act(async () => option.click());
+    };
+    await choose("Playback parts", "Chords");
+    await choose("Playback start measure", "2");
     await act(async () => container.querySelector<HTMLButtonElement>('[aria-label="Play lead sheet"]')!.click());
     expect(mocks.synth.init).toHaveBeenLastCalledWith(expect.objectContaining({
       millisecondsPerMeasure: 240000 / 90,

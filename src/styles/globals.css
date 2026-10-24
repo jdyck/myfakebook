@@ -51,9 +51,9 @@
   --text-code: 11.5px;
   --text-detail: 13px;
   --font-weight-demibold: 650;
-  --radius-control: 8px;
-  --radius-field: 0.625rem;
-  --radius-menu-item: 5px;
+  --radius-control: 0px;
+  --radius-field: 0px;
+  --radius-menu-item: 0px;
   --spacing-control: 34px;
   --spacing-field: 38px;
   --spacing-touch: 44px;

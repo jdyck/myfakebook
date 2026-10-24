@@ -12,6 +12,8 @@
 
 Prefer direct imports from the owning module over creating a project-wide barrel. Use `@/` for frontend imports across features, and relative imports within a small module group. Shared song types belong in `src/lib/songs/types.ts`, not in a component folder.
 
+`src/styles/` owns framework-independent global styles shared by the application and component viewers. Keep Next.js font loading and application document shell classes in `src/app/layout.tsx` and its colocated CSS Module; viewer consumers follow the [styling contract](development.md#shared-stylesheet-consumer-contract).
+
 ## Entry points
 
 | Work area | Start here |
@@ -58,7 +60,7 @@ Structured content wins over legacy notation. Display choices such as transposit
 
 1. Find the owning module in the table above. Extend its existing responsibility before adding a new folder or abstraction.
 2. Keep reusable transformations in `lib/`, feature interactions in a colocated hook, and UI composition in the screen component. Extract a hook when a distinct responsibility needs its own state or lifecycle.
-3. Prefer Tailwind utility classes for new UI styling; keep custom CSS Modules and tests beside the code. Shared theme mappings live in `src/app/globals.css`; see [development](development.md#styling). Add behavioral coverage when changing parsing, permissions, persistence, or interactions; file moves should preserve the existing tests.
+3. Prefer Tailwind utility classes for new UI styling; keep custom CSS Modules and tests beside the code. Shared reset, Tailwind layers, and theme tokens are owned by `src/styles/globals.css`; see [development](development.md#styling). Add behavioral coverage when changing parsing, permissions, persistence, or interactions; file moves should preserve the existing tests.
 4. Run `npm run check`; run `npm run build` for route, rendering, or import changes. Update shared docs when a setup step, boundary, or storage invariant changes.
 
 For Next.js-specific changes, read the relevant guide in `node_modules/next/dist/docs/` first, as required by `AGENTS.md`.

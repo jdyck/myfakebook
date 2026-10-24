@@ -8,6 +8,7 @@ import Image from "next/image";
 import { Roboto_Condensed } from "next/font/google";
 import { prepareAbcForDisplay } from "@/lib/notation/abc-display";
 import { getSongMetadata } from "@/lib/notation/song-metadata";
+import { Select } from "@/components/ui/select";
 import componentStyles from "./abc-preview.module.css";
 
 const condensed = Roboto_Condensed({ subsets: ["latin"], display: "swap" });
@@ -453,16 +454,18 @@ export function AbcPreview({
           <div className={componentStyles.playbackFieldGroup}>
             <label className={componentStyles.playbackFieldLabel}>
               Parts
-              <select
-                aria-label="Playback parts"
+              <Select
+                ariaLabel="Playback parts"
+                variant="field"
                 className={componentStyles.playbackSelect}
                 value={playbackPart}
-                onChange={(event) => setPlaybackPart(event.target.value as PlaybackPart)}
-              >
-                <option value="melody">Melody</option>
-                <option value="chords">Chords</option>
-                <option value="both">Melody + chords</option>
-              </select>
+                onValueChange={(value) => setPlaybackPart(value as PlaybackPart)}
+                options={[
+                  { value: "melody", label: "Melody" },
+                  { value: "chords", label: "Chords" },
+                  { value: "both", label: "Melody + chords" },
+                ]}
+              />
             </label>
             <label className={componentStyles.tempoField}>
               Tempo <span>BPM</span>
@@ -473,24 +476,18 @@ export function AbcPreview({
             </label>
             <label className={componentStyles.playbackFieldLabel}>
               Start measure
-              <select
-                aria-label="Playback start measure"
+              <Select
+                ariaLabel="Playback start measure"
+                variant="field"
+                popupSize="scrollable"
                 className={componentStyles.playbackSelect}
                 value={startMeasure}
-                onChange={(event) => {
+                onValueChange={(value) => {
                   clearSelectedNote();
-                  setStartMeasure(Number(event.target.value));
+                  setStartMeasure(Number(value));
                 }}
-              >
-                {Array.from({ length: measureCount }, (_, index) => {
-                  const measure = index + 1;
-                  return (
-                    <option key={measure} value={measure}>
-                      {measure}
-                    </option>
-                  );
-                })}
-              </select>
+                options={Array.from({ length: measureCount }, (_, index) => ({ value: index + 1, label: index + 1 }))}
+              />
             </label>
             <div className={componentStyles.playbackTransport}>
               <button

@@ -24,8 +24,9 @@
   .playbackFieldLabel, .tempoField { font-size: var(--text-micro); font-weight: 400; color: var(--muted); min-width: 0; }
   .playbackFieldLabel:first-child { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: var(--text-caption); margin-bottom: 1px; }
   .playbackFieldLabel:not(:first-child) { grid-column: 2; grid-row: 2; }
-  .playbackSelect, .tempoField input { display: block; width: 100%; min-width: 0; font-size: var(--text-caption); border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 8px 6px; border-radius: 0; height: 35px; margin-top: 8px; }
-  .playbackFieldLabel:first-child select { margin-top: 0; max-width: 170px; }
+  .tempoField input { display: block; width: 100%; min-width: 0; font-size: var(--text-caption); border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 8px 6px; border-radius: 0; height: 35px; margin-top: 8px; }
+  .playbackFieldLabel:first-child .playbackSelect { margin-top: 0; max-width: 170px; }
+  .playbackSelect { margin-top: 8px; }
   .tempoField { grid-column: 1; grid-row: 2; }
   .tempoField > span { font: 7px/1.5 var(--font-roboto-mono); margin-left: 5px; }
   .playbackTransport { grid-column: 1 / -1; }
@@ -55,7 +56,7 @@
     .leadSheetPreview { padding: 16px; }
     .controlIntro h2 { font-size: 34px; }
     .playbackFieldLabel:first-child { display: block; }
-    .playbackFieldLabel:first-child select { margin-top: 8px; max-width: none; }
+    .playbackFieldLabel:first-child .playbackSelect { margin-top: 8px; max-width: none; }
     .playbackFieldGroup { gap: 10px; }
   }
   @media (width <= 1000px) {
@@ -64,7 +65,7 @@
     .scoreToolbar > p { width: auto; }
     .controlIntro h2 { font-size: 32px; }
     .playbackFieldLabel:first-child { display: flex; }
-    .playbackFieldLabel:first-child select { margin-top: 0; }
+    .playbackFieldLabel:first-child .playbackSelect { margin-top: 0; }
   }
   @media (width <= 750px) {
     .previewLayout { grid-template-columns: minmax(0, 1fr); }
@@ -90,7 +91,7 @@
     .previewControls { gap: 0 22px; }
     .sectionLabel { font-size: 7px; letter-spacing: .7px; }
     .playbackFieldLabel:first-child { display: block; }
-    .playbackFieldLabel:first-child select { margin-top: 7px; }
+    .playbackFieldLabel:first-child .playbackSelect { margin-top: 7px; }
     .playbackFieldGroup { gap: 8px; }
     .playbackFieldLabel, .tempoField { font-size: 8px; }
     .tempoField > span { display: none; }

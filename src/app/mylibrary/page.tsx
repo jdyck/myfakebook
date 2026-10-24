@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { MyLibraryListBacked, MyLibraryList } from "@/components/library/my-library/my-library-list";
+import { MyLibraryListBacked, MyLibraryListUnconfigured } from "@/components/library/my-library/my-library-list-backed";
 
 export default async function MyLibraryPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
@@ -15,5 +15,5 @@ export default async function MyLibraryPage() {
     return <MyLibraryListBacked />;
   }
 
-  return <MyLibraryList songs={[]} />;
+  return <MyLibraryListUnconfigured />;
 }

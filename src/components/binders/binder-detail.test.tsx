@@ -50,12 +50,12 @@ describe("Binder detail", () => {
       expect(selectSecond.getAttribute("aria-pressed")).toBe("true");
       expect(container.querySelector('[data-preview]')?.textContent).toContain("Second song");
       expect(container.querySelector('a[href^="/songs/song_2?"]')).not.toBeNull();
-      const key = container.querySelector<HTMLSelectElement>('select[aria-label="Concert key"]')!;
-      expect(key.value).toBe("2");
-      await act(async () => {
-        key.value = "0";
-        key.dispatchEvent(new Event("change", { bubbles: true }));
-      });
+      const key = container.querySelector<HTMLButtonElement>('button[aria-label="Concert key"]')!;
+      expect(key.textContent).toContain("A");
+      await act(async () => key.click());
+      const options = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'));
+      expect(options.find((option) => option.getAttribute("aria-checked") === "true")?.textContent).toContain("A");
+      await act(async () => options.find((option) => option.textContent === "G major")!.click());
       expect(state.mutate).toHaveBeenCalledWith({
         binderId: "binder_1",
         itemId: "item_2",

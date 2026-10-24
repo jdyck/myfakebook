@@ -3,7 +3,7 @@
     width: 100%;
     min-width: 0;
     border: 1px solid var(--line-strong);
-    border-radius: var(--ui-radius);
+    border-radius: 0;
     background: var(--paper);
     padding-inline: 12px;
     color: var(--ink);
@@ -20,7 +20,7 @@
 
   .large {
     min-height: var(--spacing-touch);
-    border-radius: var(--radius-control);
+    border-radius: 0;
     padding-block: 9px;
     font-size: 16px;
     font-weight: 500;

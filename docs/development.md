@@ -25,11 +25,13 @@ For the regional public library, configure the same server-only `PUBLIC_CATALOG_
 
 ## Styling
 
-Tailwind CSS v4 runs through `@tailwindcss/postcss` in `postcss.config.mjs`. Its theme and utilities are imported in `src/app/globals.css`, with class detection scoped to `src/`. The existing base reset and CSS Modules remain in place; Tailwind utilities are layered after component styles.
+Tailwind CSS v4 runs through `@tailwindcss/postcss` in `postcss.config.mjs`. Its theme and utilities are imported in `src/styles/globals.css`, with class detection scoped to `src/`. The existing base reset and CSS Modules remain in place; Tailwind utilities are layered after component styles.
 
-Use utility classes directly in component `className` values, for example `className="flex gap-4 rounded-lg border border-line bg-paper p-4 font-sans text-ink"`. Theme colors such as `bg-canvas`, `text-muted`, and `text-accent` follow the app's light/dark variables. Fonts are available as `font-sans` (Inter), `font-mono` (Roboto Mono), and `font-display` (Roboto Flex). The `dark:` variant follows the existing `data-theme="dark"` toggle. Use complete class names so Tailwind can detect them; avoid building class names with string fragments.
+Use utility classes directly in component `className` values, for example `className="flex gap-4 border border-line bg-paper p-4 font-sans text-ink"`. Theme colors such as `bg-canvas`, `text-muted`, and `text-accent` follow the app's light/dark variables. Fonts are available as `font-sans` (Inter), `font-mono` (Roboto Mono), and `font-display` (Roboto Flex). The `dark:` variant follows the existing `data-theme="dark"` toggle. Use complete class names so Tailwind can detect them; avoid building class names with string fragments.
 
-Shared design tokens are defined in `src/app/globals.css`. Use the same variables in CSS Modules, so utilities and component styles share one source of truth.
+Use square corners throughout the app and component viewer: controls, menus, panels, and badges must have zero border radius. Do not add rounded corner utilities or nonzero radius values.
+
+Shared design tokens are defined in `src/styles/globals.css`. Use the same variables in CSS Modules, so utilities and component styles share one source of truth.
 
 | Purpose | Utilities / tokens |
 | --- | --- |
@@ -40,12 +42,134 @@ Shared design tokens are defined in `src/app/globals.css`. Use the same variable
 | Text selection | `selection:bg-selection selection:text-selection-ink` |
 | Dense typography | `text-micro` (9px), `text-caption` (10px), `text-compact` (11px), `text-code` (11.5px), `text-xs` (12px), `text-detail` (13px) |
 | Intermediate font weight | `font-demibold` (650) |
-| Shared radii | `rounded-control` (8px), `rounded-field` (0.625rem), `rounded-menu-item` (5px) |
+| Shared radii | `rounded-control`, `rounded-field`, and `rounded-menu-item` are all zero |
 | Control sizes | `size-control` / `min-h-control` (34px), `min-h-field` (38px), `min-h-touch` (44px) |
 | Page width and menu elevation | `max-w-page` (1600px), `shadow-menu` |
 | Control transitions | `duration-control` (160ms) |
 
 Theme-aware colors use `@theme inline` mappings to light/dark variables. Fixed shared values use `@theme static` so their CSS variables remain available to CSS Modules even without a matching utility in JSX. Standard spacing and type sizes continue to use Tailwind's built-in scale. Keep one-off layout dimensions and responsive adjustments beside their components; add a token when it represents a shared design decision.
+
+### Shared stylesheet consumer contract
+
+Import `src/styles/globals.css` once from the consumer entry point (the app does this in its root layout). This is the shared entry point for the Ladle viewer, with no dependency on Next.js or application providers. Process it with the existing Tailwind v4 PostCSS plugin and support CSS Modules for component imports. Do not add another reset/Preflight or copy the tokens.
+
+The utilities import uses `source("../")`, relative to `src/styles/globals.css`, so detection still covers `src/` after the move from `src/app/`. Stories outside `src/` will need an explicit Tailwind source registration. The Bravura font URLs also retain their meaning (`../../node_modules/`); the consumer bundler must resolve and serve those font assets.
+
+Consumers must load fonts and define these inherited CSS variables on the document root before rendering components:
+
+| Variable | Font / role |
+| --- | --- |
+| `--font-inter` | Inter; body text and `font-sans` |
+| `--font-roboto-mono` | Roboto Mono; code and `font-mono` |
+| `--font-roboto-flex` | Roboto Flex; headings and `font-display` |
+
+Use font-family stacks as the variable values. Load the same variable fonts for application fidelity; deliberate fallback stacks can be used for a viewer but will change text metrics. The application continues to load these through `next/font/google` in `src/app/layout.tsx`; a viewer must supply its own font loading without importing the Next.js layout.
+
+Light tokens are defined on `:root`. For dark mode, set `data-theme="dark"` on the consumer document's `<html>` element; remove it or use `data-theme="light"` for light mode. This drives both theme variables and the Tailwind `dark:` variant, including portaled content. There is no automatic system-theme media query in this stylesheet.
+
+The application-specific `src/app/layout.module.css` remains responsible for the document canvas background, body minimum height, body font/ink, and selection colors. A viewer should apply equivalent shell styling using `--canvas`, `--font-inter`, `--ink`, `--selection`, and `--selection-ink` (including the canvas background on `<html>`). Keep these consumer shell choices separate from the shared token definitions.
+
+## Component viewer
+
+Run `npm ci` then `npm run viewer` to start Ladle (default port 61000).
+Run `npm run viewer:build` for the static production viewer in ignored `build/`;
+`npm run viewer:preview` serves that output on port 8080 (build it first).
+No credentials or backend are needed.
+Examples cover Button variants/sizes, editable and unavailable TextFields,
+controlled Selects, DisplayControls with live settings and transposed heading,
+SongHeading publication states, and HeaderView guest/signed-in navigation states.
+Header stories use fixture account controls; use Ladle’s theme and viewport tools
+to inspect dark mode and mobile layouts. Narrow stories use the sidebar layout.
+Use Ladle’s theme and viewport tools to check both themes and mobile widths.
+
+`.ladle/components.tsx` imports the shared stylesheet and locally bundled variable
+Inter, Roboto Mono, and Roboto Flex fonts, independently of `next/font`. Its
+provider maps Ladle's theme to `<html data-theme>` so body portals inherit it,
+and restores the previous attribute and viewer shell class on cleanup. It does
+not mount application providers, authentication, analytics, or a service worker.
+
+Stories use a padded layout by default. Set `Story.meta = { previewLayout:
+"sidebar" }` for a 320px-wide padded preview, or `previewLayout: "fullscreen"`
+for an unpadded, viewport-height preview (use Ladle's full-screen toggle to hide
+the viewer chrome). File-level `meta` works too. Viewer shell styles live in
+`.ladle/preview.module.css`; keep stories in `src/` for Tailwind class detection.
+Ladle uses the existing PostCSS config and built-in TypeScript path support.
+`.ladle/config.mjs` selects `.ladle/vite.config.mts` only for the viewer;
+`vitest.config.mts` stays separate.
+
+### Adding a story
+
+Colocate a `component-name.stories.tsx` file with its component under
+`src/components/`; `.ladle/config.mjs` explicitly discovers
+`src/components/**/*.stories.{ts,tsx}`. Export named components typed as
+`Story` from `@ladle/react`:
+
+```tsx
+import type { Story } from "@ladle/react";
+import { SongHeading } from "./song-heading";
+import { songHeadingFixtures } from "./song-heading.fixtures";
+
+export const Private: Story = () => <SongHeading {...songHeadingFixtures.private} />;
+Private.meta = { previewLayout: "sidebar" };
+```
+
+Omit `previewLayout` for padded controls, use `sidebar` for narrow controls,
+and `fullscreen` for page compositions. Keep interactive state inside the story
+(as in DisplayControls and Select) and pass callbacks to the component.
+
+Keep deterministic, typed props in colocated `*.fixtures.ts` files; shared song
+samples belong in `src/components/story-support/song-samples.ts`. Reuse these
+fixtures rather than fetching data or using real user records. Include useful
+empty, loading, long-content and populated states where applicable.
+
+For connected components, render the presentation boundary with fixture props
+instead of the `*-backed` wrapper or route. For example, MyLibraryList owns list
+interaction while MyLibraryListBacked owns Clerk/Convex integration. Do not add
+live providers or credentials to make a story render. Authentication, persistence,
+server rendering, and real navigation remain application/integration concerns.
+
+The viewer uses Vite, not the Next.js build pipeline. `@/` resolves through
+`tsconfig.json`; CSS Modules and the root PostCSS/Tailwind configuration are
+processed by Vite. Fonts are bundled locally, and `public/` assets are copied to
+`build/` with their root-relative URLs, so serve the production viewer at the
+host root. `build/` is already ignored. CI runs `npm run viewer:build` after
+`npm run check`; the latter retains lint, type checking and unit tests only.
+Rebuild and preview after changes to aliases, CSS, fonts or assets; a development
+server alone does not verify production bundling.
+
+### Next.js in examples
+
+SongHeading has unsaved and transposed published examples. Its metadata helper
+uses `abc-display` and `abcjs`; its song types have only type-level Convex imports.
+EditorialLibraryView has separate empty, loading, and populated examples using
+local fixtures. The populated example supports search (including no results and
+Clear filters), visibility filters, and sorting, with a long-title row. It
+deliberately omits the connected Header (covered separately through HeaderView)
+and the `next/font/google` wrapper in
+EditorialLibrary. No AppProviders, Clerk or Convex connections are mounted.
+The caption uses the viewer's bundled Inter font rather than Roboto Condensed.
+
+Following [Ladle's Vite configuration guidance](https://ladle.dev/docs/config/),
+the viewer aliases exactly `next/link` and `next/image` to `.ladle/next/` adapters.
+Application imports and navigation remain unchanged. These adapters support only
+the API used by these examples:
+
+- [Link](https://nextjs.org/docs/app/api-reference/components/link): string `href`,
+  children and anchor attributes. Links show their intended destination in a
+  tooltip; activation announces and displays it without leaving the story.
+  The actual anchor is `#`, so opening it in another tab stays in the viewer.
+  No prefetch, router, history, object hrefs or Next navigation options are
+  implemented. The view's native skip link still jumps to its main content.
+- [Image](https://nextjs.org/docs/app/api-reference/components/image): local
+  string sources, alt text, width/height, sizes, styles and absolute `fill`
+  positioning. Assets come from `public/`, including the production build.
+  There is no image optimization, generated srcset, static-import handling,
+  blur placeholder or custom loader. `sizes` is preserved but has no selection
+  effect without srcset.
+
+There is no general Next.js shim, router context or font-loader integration.
+Add a small renderable boundary or extend compatibility deliberately before
+adding examples that need other framework APIs.
 
 ## Checks
 

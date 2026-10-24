@@ -3,29 +3,32 @@
 import type { ReactNode, Ref } from "react";
 import { Menu } from "@base-ui/react/menu";
 import { Check, ChevronDown } from "lucide-react";
-import styles from "./radio-menu.module.css";
+import styles from "./select.module.css";
 
-export type RadioMenuValue = string | number;
+export type SelectValue = string | number;
 
-export type RadioMenuOption = {
-  value: RadioMenuValue;
+export type SelectOption = {
+  value: SelectValue;
   label: ReactNode;
   disabled?: boolean;
 };
 
-type RadioMenuProps = {
+type SelectProps = {
   ariaLabel: string;
-  value: RadioMenuValue;
-  options: RadioMenuOption[];
-  onValueChange: (value: RadioMenuValue) => void;
+  value: SelectValue;
+  options: SelectOption[];
+  onValueChange: (value: SelectValue) => void;
   disabled?: boolean;
   onOpenChange?: (open: boolean) => void;
   popupRef?: Ref<HTMLDivElement>;
   popupSize?: "compact" | "scrollable";
-  trigger: ReactNode;
+  trigger?: ReactNode;
+  id?: string;
+  className?: string;
+  variant?: "accent" | "field" | "display";
 };
 
-export function RadioMenu({
+export function Select({
   ariaLabel,
   value,
   options,
@@ -35,12 +38,15 @@ export function RadioMenu({
   popupRef,
   popupSize = "compact",
   trigger,
-}: RadioMenuProps) {
+  id,
+  className,
+  variant = "accent",
+}: SelectProps) {
   return (
     <Menu.Root onOpenChange={onOpenChange}>
-      <Menu.Trigger aria-label={ariaLabel} className={styles.trigger} disabled={disabled}>
-        {trigger}
-        <ChevronDown aria-hidden="true" size={13} strokeWidth={2} />
+      <Menu.Trigger id={id} aria-label={ariaLabel} className={[styles.trigger, styles[variant], className].filter(Boolean).join(" ")} disabled={disabled}>
+        {trigger ?? options.find((option) => option.value === value)?.label}
+        {variant !== "display" && <ChevronDown aria-hidden="true" size={13} strokeWidth={2} />}
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner align="end" sideOffset={6}>
@@ -48,7 +54,7 @@ export function RadioMenu({
             className={[styles.popup, popupSize === "scrollable" && styles.scrollable].filter(Boolean).join(" ")}
             ref={popupRef}
           >
-            <Menu.RadioGroup value={value} onValueChange={(nextValue) => onValueChange(nextValue as RadioMenuValue)}>
+            <Menu.RadioGroup value={value} onValueChange={(nextValue) => onValueChange(nextValue as SelectValue)}>
               {options.map((option) => (
                 <Menu.RadioItem
                   className={styles.item}

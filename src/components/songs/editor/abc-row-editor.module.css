@@ -91,7 +91,7 @@
   .unsupportedFormatMessage,
   .unsupportedSourceTextarea,
   .rowEditorGrid {
-    border-radius: var(--radius-control);
+    border-radius: 0;
     border-style: var(--component-border-style);
     border-width: 1px;
     background-color: var(--paper-soft);

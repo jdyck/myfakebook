@@ -16,8 +16,6 @@ type SongHeadingProps = {
 
 export function SongHeading({ abc, title, transposition, song, isPublicSong, position }: SongHeadingProps) {
   const metadata = getSongMetadata(abc, transposition);
-  const punctuation = title.match(/[.!?]$/)?.[0] ?? ".";
-  const displayTitle = /[.!?]$/.test(title) ? title.slice(0, -1) : title;
   return (
     <div className={styles.songHeading}>
       <div className="min-w-0">
@@ -25,7 +23,7 @@ export function SongHeading({ abc, title, transposition, song, isPublicSong, pos
           <ArrowLeft size={14} strokeWidth={1.5} aria-hidden="true" />
           {isPublicSong ? "SONGS" : "MY LIBRARY"} <span>/</span> SONG{position ? ` ${String(position).padStart(2, "0")}` : ""}
         </Link>
-        <h1>{displayTitle}<span>{punctuation}</span></h1>
+        <h1>{title}</h1>
         {metadata.writers && <p className={styles.writers}>{metadata.writers}</p>}
       </div>
       <div className={styles.catalog}>

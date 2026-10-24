@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { AppProviders } from "@/components/app-shell/app-providers";
 import { ServiceWorkerRegistration } from "@/components/app-shell/service-worker-registration";
 
-import "./globals.css";
+import "@/styles/globals.css";
 import componentStyles from "./layout.module.css";
 
 const inter = Inter({
