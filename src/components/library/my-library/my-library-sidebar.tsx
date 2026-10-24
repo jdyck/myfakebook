@@ -51,7 +51,8 @@ export function MyLibrarySidebar({
       aria-label="My Library"
     >
       <div className={componentStyles.libraryHeadingBar}>
-        <span className={componentStyles.libraryTitle}>My Library</span>
+        <Link className={componentStyles.libraryTitle} href="/mylibrary">My Library</Link>
+        <LibraryCount />
       </div>
       <RecentMyLibrarySongs
         abc={abc}
@@ -72,6 +73,12 @@ export function MyLibrarySidebar({
       <RecentBinders />
     </aside>
   );
+}
+
+function LibraryCount() {
+  const { isAuthenticated } = useConvexAuth();
+  const songs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
+  return <span className={componentStyles.libraryCount}>{songs ? String(songs.length).padStart(2, "0") : "—"}</span>;
 }
 
 function RecentBinders() {
@@ -99,7 +106,7 @@ function RecentBinders() {
           {binders.slice(0, 5).map((binder) => (
             <Link
               className={componentStyles.recentBinderLink}
-              href={`/setlists/${encodeURIComponent(binder._id)}`}
+              href={`/binders/${encodeURIComponent(binder._id)}`}
               key={binder._id}
             >
               <span className={componentStyles.binderName}>{binder.name}</span>
@@ -116,8 +123,8 @@ function RecentBinders() {
       )}
       {isAuthenticated && (
         <>
-          <SidebarAction href="/setlists" label="All binders" />
-          <SidebarAction href="/setlists" label="New binder" icon="plus" />
+          <SidebarAction href="/binders" label="All binders" />
+          <SidebarAction href="/binders" label="New binder" icon="plus" />
         </>
       )}
     </section>

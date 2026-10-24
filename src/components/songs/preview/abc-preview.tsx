@@ -4,12 +4,18 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import ABCJS from "abcjs";
 import { LoaderCircle, Play, Square } from "lucide-react";
+import Image from "next/image";
+import { Roboto_Condensed } from "next/font/google";
 import { prepareAbcForDisplay } from "@/lib/notation/abc-display";
+import { getSongMetadata } from "@/lib/notation/song-metadata";
 import componentStyles from "./abc-preview.module.css";
+
+const condensed = Roboto_Condensed({ subsets: ["latin"], display: "swap" });
 
 type Synth = {
   init: (options: {
     visualObj: ABCJS.TuneObject;
+    millisecondsPerMeasure?: number;
     options?: {
       chordsOff?: boolean;
       midiTranspose?: number;
@@ -25,13 +31,6 @@ type Synth = {
   resume: () => void;
   stop: () => number;
   getIsRunning: () => boolean;
-};
-
-type SelectedChordVariant = {
-  id: string;
-  startMeasure: number;
-  endMeasure: number;
-  chords: readonly string[];
 };
 
 type PlaybackPart = "melody" | "chords" | "both";
@@ -85,7 +84,7 @@ function removeRepeatedPreviewMetadata(abc: string) {
       continue;
     }
 
-    if (inHeader && /^[QRO]\s*:/i.test(line)) {
+    if (inHeader && /^[QO]\s*:/i.test(line)) {
       const colon = line.indexOf(":");
       const blankedLine = `${line.slice(0, colon + 1)}${" ".repeat(line.length - colon - 1)}`;
       output.push(blankedLine);
@@ -96,56 +95,6 @@ function removeRepeatedPreviewMetadata(abc: string) {
   }
 
   return { abc: output.join("\n") };
-}
-
-function applyChordVariant(abc: string, variant: SelectedChordVariant | null | undefined) {
-  if (!variant) return abc;
-
-  let measure = 1;
-  const replacedMeasures = new Set<number>();
-  let musicStarted = false;
-
-  return abc
-    .split("\n")
-    .map((line) => {
-      if (!musicStarted) {
-        if (/^K\s*:/i.test(line)) musicStarted = true;
-        return line;
-      }
-
-      let result = "";
-      let index = 0;
-      while (index < line.length) {
-        if (line[index] === '"') {
-          const closingQuote = line.indexOf('"', index + 1);
-          if (closingQuote < 0) {
-            result += line.slice(index);
-            break;
-          }
-
-          const variantIndex = measure - variant.startMeasure;
-          const replacement =
-            measure >= variant.startMeasure &&
-            measure <= variant.endMeasure &&
-            !replacedMeasures.has(measure) &&
-            variantIndex >= 0 &&
-            variantIndex < variant.chords.length
-              ? variant.chords[variantIndex]
-              : undefined;
-          result += replacement ? `"${replacement}"` : line.slice(index, closingQuote + 1);
-          if (replacement) replacedMeasures.add(measure);
-          index = closingQuote + 1;
-          continue;
-        }
-
-        const character = line[index];
-        result += character;
-        if (character === "|") measure += 1;
-        index += 1;
-      }
-      return result;
-    })
-    .join("\n");
 }
 
 function isInteractiveTarget(target: EventTarget | null) {
@@ -161,26 +110,26 @@ function isInteractiveTarget(target: EventTarget | null) {
 }
 
 export function AbcPreview({
+  isZoomed = false,
   abc,
   showChords = true,
   showLyrics = true,
   showParts = true,
   showFirstLineClefOnly = true,
   transposition = 0,
-  selectedChordVariant = null,
   workspaceToolbar,
   displayControls,
   saveAction,
   publishAction,
   onRenderedSvg,
 }: {
+  isZoomed?: boolean;
   abc: string;
   showChords?: boolean;
   showLyrics?: boolean;
   showParts?: boolean;
   showFirstLineClefOnly?: boolean;
   transposition?: number;
-  selectedChordVariant?: SelectedChordVariant | null;
   workspaceToolbar?: ReactNode;
   displayControls?: ReactNode;
   saveAction?: ReactNode;
@@ -188,8 +137,6 @@ export function AbcPreview({
   onRenderedSvg?: (svg: SVGSVGElement | null) => void;
 }) {
   const targetRef = useRef<HTMLDivElement>(null);
-  const pageRef = useRef<HTMLDivElement>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
   const tuneRef = useRef<ABCJS.TuneObject | null>(null);
   const synthRef = useRef<Synth | null>(null);
   const timingRef = useRef<ABCJS.TimingCallbacks | null>(null);
@@ -202,7 +149,12 @@ export function AbcPreview({
   const [isLoading, setIsLoading] = useState(false);
   const [playbackPart, setPlaybackPart] = useState<PlaybackPart>("both");
   const [startMeasure, setStartMeasure] = useState(1);
-  const renderedAbc = prepareAbcForDisplay(applyChordVariant(abc, selectedChordVariant), {
+  const [tempoInput, setTempoInput] = useState(() => {
+    try { return String(Math.round(ABCJS.parseOnly(abc)[0]?.getBpm() ?? 120)); } catch { return "120"; }
+  });
+  const tempo = Math.min(240, Math.max(40, Number(tempoInput) || 120));
+  const metadata = useMemo(() => getSongMetadata(abc, transposition), [abc, transposition]);
+  const renderedAbc = prepareAbcForDisplay(abc, {
     showChords,
     showLyrics,
     showParts,
@@ -211,28 +163,6 @@ export function AbcPreview({
   });
   const previewSource = useMemo(() => removeRepeatedPreviewMetadata(renderedAbc), [renderedAbc]);
   const measureCount = countMeasures(renderedAbc);
-  const selectedVariantKey = selectedChordVariant
-    ? `${selectedChordVariant.id}:${selectedChordVariant.startMeasure}:${selectedChordVariant.endMeasure}:${selectedChordVariant.chords.join("|")}`
-    : "";
-
-  useEffect(() => {
-    const page = pageRef.current;
-    const preview = previewRef.current;
-    if (!page || !preview) return;
-
-    const fitPageToViewport = () => {
-      const remainingHeight = Math.max(96, window.innerHeight - page.getBoundingClientRect().top - 20);
-      const availableWidth = Math.max(96, preview.clientWidth - 48);
-      const width = Math.min(816, availableWidth, remainingHeight * (8.5 / 11));
-      page.style.width = `${width}px`;
-      page.style.height = `${width * (11 / 8.5)}px`;
-    };
-
-    fitPageToViewport();
-    window.addEventListener("resize", fitPageToViewport);
-    return () => window.removeEventListener("resize", fitPageToViewport);
-  }, []);
-
   const clearSelectedNote = useCallback(() => {
     selectedNoteElementRef.current?.classList.remove("abcjs-note-start-selected");
     selectedNoteElementRef.current = null;
@@ -284,20 +214,20 @@ export function AbcPreview({
     targetRef.current.innerHTML = "";
     try {
       const previewTitle = renderedAbc.match(/^T:\s*(.+)$/m)?.[1]?.trim();
-      const staffWidth = Math.max(
-        520,
-        Math.min(1000, (pageRef.current?.clientWidth ?? window.innerWidth * 0.45) * 0.93),
-      );
       const rendered = ABCJS.renderAbc(targetRef.current, previewSource.abc, {
         add_classes: true,
         ariaLabel: previewTitle ? `Sheet music for ${previewTitle}` : "Lead sheet preview",
-        foregroundColor: "#252631",
-        format: { partsbox: true },
+        foregroundColor: "#0b0b0b",
+        format: { partsbox: true, titlefont: "Times New Roman 22", composerfont: "Times New Roman Italic 12", gchordfont: "Arial 12", vocalfont: "Times New Roman 12" },
+        paddingtop: 8,
+        paddingbottom: 14,
+        paddingleft: 5,
+        paddingright: 5,
         responsive: "resize",
         scale: 1,
         initialClef: showFirstLineClefOnly,
         selectTypes: ["note"],
-        staffwidth: staffWidth,
+        staffwidth: 800,
         visualTranspose: transposition,
         clickListener: (abcElement, _tuneNumber, _classes, analysis) => {
           if (abcElement.el_type !== "note") return;
@@ -332,6 +262,7 @@ export function AbcPreview({
       const playbackTune = ABCJS.parseOnly(renderedAbc)[0] ?? rendered[0];
       tuneRef.current = playbackTune;
       timingRef.current = new ABCJS.TimingCallbacks(playbackTune, {
+        qpm: tempo,
         eventCallback: handleTimingEvent,
       });
     } catch (renderError) {
@@ -358,11 +289,11 @@ export function AbcPreview({
     onRenderedSvg,
     previewSource,
     renderedAbc,
-    selectedVariantKey,
     showFirstLineClefOnly,
     showChords,
     showLyrics,
     transposition,
+    tempo,
   ]);
 
   const startPlayback = useCallback(async () => {
@@ -378,6 +309,7 @@ export function AbcPreview({
         };
       await synth.init({
         visualObj: tuneRef.current,
+        millisecondsPerMeasure: tuneRef.current.millisecondsPerMeasure(tempo),
         options: {
           ...partOptions,
           midiTranspose: transposition,
@@ -415,7 +347,7 @@ export function AbcPreview({
     } finally {
       setIsLoading(false);
     }
-  }, [clearPlaybackHighlight, isLoading, measureCount, playbackPart, showChords, startMeasure, transposition]);
+  }, [clearPlaybackHighlight, isLoading, measureCount, playbackPart, showChords, startMeasure, transposition, tempo]);
 
   const stopPlayback = useCallback(() => {
     synthRef.current?.stop();
@@ -472,14 +404,20 @@ export function AbcPreview({
 
   return (
     <div className={componentStyles.previewLayout}>
+      <div className={componentStyles.scoreToolbar}>
+        <p>LEAD SHEET <span>/</span> <span>CONCERT {metadata.key.toUpperCase()}</span></p>
+        {workspaceToolbar}
+      </div>
       <div
-        ref={previewRef}
         className={componentStyles.leadSheetPreview}
         aria-label="Rendered lead sheet"
+        tabIndex={0}
       >
-        <div ref={pageRef} className={componentStyles.previewPage}>
+        <div className={`${componentStyles.previewPage} ${isZoomed ? componentStyles.zoomedPage : ""}`}>
           <div
             ref={targetRef}
+            id="song-score"
+            tabIndex={-1}
             className={`${componentStyles.notationCanvas} abcjs-preview ${
               [
                 !showChords && "abc-preview-hide-chords",
@@ -489,6 +427,7 @@ export function AbcPreview({
                 .join(" ")
             } ${error ? componentStyles.notationErrorState : ""}`}
           />
+          <footer className={componentStyles.paperFooter}><span>MyFakeBook</span><span>{metadata.writers.toUpperCase()}</span><span>01</span></footer>
         </div>
         {error && (
           <div className={componentStyles.playbackErrorPanel}>
@@ -501,10 +440,16 @@ export function AbcPreview({
           </div>
         )}
       </div>
+      <p className={componentStyles.scoreFootnote}>A GREAT SONG. YOUR INTERPRETATION.</p>
       <aside aria-label="Preview controls" className={componentStyles.previewControls}>
-        {workspaceToolbar}
+        <div className={componentStyles.controlIntro}>
+          <p>STUDY / INTERPRET / REPEAT</p>
+          <h2 className={condensed.className}>MAKE IT<br /><span>YOURS.</span></h2>
+          <Image src="/images/library/bar.svg" width={30} height={5} alt="" />
+        </div>
         {displayControls}
         <div className={componentStyles.playbackControls}>
+          <p className={componentStyles.sectionLabel}>PLAY PREVIEW</p>
           <div className={componentStyles.playbackFieldGroup}>
             <label className={componentStyles.playbackFieldLabel}>
               Parts
@@ -518,6 +463,13 @@ export function AbcPreview({
                 <option value="chords">Chords</option>
                 <option value="both">Melody + chords</option>
               </select>
+            </label>
+            <label className={componentStyles.tempoField}>
+              Tempo <span>BPM</span>
+              <input aria-label="Playback tempo" type="number" min={40} max={240} value={tempoInput} disabled={isLoading} onBlur={() => setTempoInput(String(tempo))} onChange={(event) => {
+                stopPlayback();
+                setTempoInput(event.target.value);
+              }} />
             </label>
             <label className={componentStyles.playbackFieldLabel}>
               Start measure
@@ -555,9 +507,10 @@ export function AbcPreview({
                 ) : (
                   <Play size={13} fill="currentColor" strokeWidth={1.8} />
                 )}
+                <span>{isLoading ? "Preparing…" : isPlaying ? "Stop preview" : isPaused ? "Resume preview" : "Play preview"}</span>
               </button>
               <span className={componentStyles.playbackStatus}>
-                {isPlaying ? "Playing" : isPaused ? "Paused" : "Play preview"}
+                {isPlaying ? "Playing" : isPaused ? "Paused" : "Hear the melody and harmony."}
               </span>
             </div>
           </div>
@@ -568,6 +521,7 @@ export function AbcPreview({
             {publishAction}
           </div>
         )}
+        <p className={componentStyles.controlsEnd}>DIFFERENT KEYS.<br />SAME GREAT SONG.</p>
       </aside>
     </div>
   );

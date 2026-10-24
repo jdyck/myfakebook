@@ -5,7 +5,7 @@ import { BinderDetail } from "@/components/binders";
 
 export default async function BinderPage({ params }: { params: Promise<{ id: string }> }) {
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !(await auth()).userId) return redirect("/songs");
-  if (!process.env.NEXT_PUBLIC_CONVEX_URL) return redirect("/setlists");
+  if (!process.env.NEXT_PUBLIC_CONVEX_URL) return redirect("/binders");
   const { id } = await params;
   return <BinderDetail id={id} key={id} />;
 }

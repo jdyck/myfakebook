@@ -2,7 +2,7 @@
 
 import { Menu } from "@base-ui/react/menu";
 import { useContext } from "react";
-import { ChevronDown, Download, Maximize2, Pencil } from "lucide-react";
+import { ChevronDown, Download, Maximize2, Pencil, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FullscreenPreviewContext } from "@/components/songs/preview/fullscreen-preview-context";
 import componentStyles from "./workspace-actions.module.css";
@@ -34,18 +34,30 @@ export function WorkspaceActions({ exporting, onEdit, onExport, onExportAbc, onE
           onClick={(event) => fullscreenAction.onFullscreen(event.currentTarget)}
         >
           <Maximize2 aria-hidden="true" size={13} strokeWidth={1.8} />
-          Fullscreen
+          <span>Fullscreen</span>
         </Button>
       )}
+      {fullscreenAction?.onZoom && <Button
+        aria-label={fullscreenAction.zoomed ? "Fit score to width" : "Zoom score"}
+        aria-pressed={fullscreenAction.zoomed}
+        className={componentStyles.responsiveAction}
+        disabled={fullscreenAction.disabled}
+        size="compact"
+        variant="secondary"
+        type="button"
+        onClick={fullscreenAction.onZoom}
+      ><Search size={14} strokeWidth={1.5} aria-hidden="true" /></Button>}
       <Button
+        aria-label="Edit song"
+        data-action="edit"
         className={componentStyles.responsiveAction}
         size="compact"
         type="button"
         variant="secondary"
         onClick={onEdit}
       >
-        <Pencil size={13} strokeWidth={1.8} />
-        Edit song
+        <Pencil size={13} strokeWidth={1.8} aria-hidden="true" />
+        <span>Edit song</span>
       </Button>
       <Menu.Root>
         <Menu.Trigger

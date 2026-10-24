@@ -1,149 +1,16 @@
-/* Component styles. */
 @layer components {
-  .binderMetadata {
-    margin-top: calc(var(--spacing) * 0.5);
-  }
-
-  .recentBinderList {
-    margin-top: calc(var(--spacing) * 2);
-  }
-
-  .recentBindersSection {
-    margin-top: calc(var(--spacing) * 6);
-  }
-
-  .recentBinderLink,
-  .binderName,
-  .binderMetadata {
-    display: block;
-  }
-
-  .libraryHeadingBar,
-  .recentBinderList {
-    display: grid;
-  }
-
-  .librarySidebar,
-  .recentBinderLink {
-    min-width: 0px;
-  }
-
-  .libraryHeadingBar {
-    gap: var(--spacing);
-  }
-
-  .recentBinderList {
-    gap: 3px;
-  }
-
-  .binderName {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 11px;
-    --component-font-weight: 620;
-    font-weight: 620;
-    color: var(--ink);
-  }
-
-  .recentBinderLink {
-    border-radius: 8px;
-    padding: calc(var(--spacing) * 2);
-    transition-property: background-color;
-    transition-timing-function: var(
-      --component-ease,
-      var(--default-transition-timing-function)
-    );
-    transition-duration: var(
-      --component-duration,
-      var(--default-transition-duration)
-    );
-    --component-duration: 160ms;
-    transition-duration: 160ms;
-    --component-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-  }
-
-  .librarySidebar {
-    border-right-style: var(--component-border-style);
-    border-right-width: 1px;
-    border-color: var(--line);
-    padding-inline: calc(var(--spacing) * 3.75);
-    padding-block: calc(var(--spacing) * 6.25);
-  }
-
-  .libraryHeadingBar,
-  .sectionHeading,
-  .bindersMessage {
-    padding-inline: calc(var(--spacing) * 2);
-  }
-
-  .bindersMessage {
-    padding-block: calc(var(--spacing) * 3.5);
-    --component-leading: 1.5;
-    line-height: 1.5;
-  }
-
-  .sectionHeading,
-  .bindersMessage,
-  .binderMetadata {
-    font-size: 10px;
-  }
-
-  .libraryTitle {
-    font-size: 13px;
-    color: var(--ink);
-  }
-
-  .signInLink {
-    --component-font-weight: 650;
-    font-weight: 650;
-    color: var(--accent-deep);
-  }
-
-  .libraryTitle,
-  .sectionHeading {
-    --component-font-weight: 680;
-    font-weight: 680;
-  }
-
-  .sectionHeading {
-    --component-tracking: 0.08em;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .sectionHeading,
-  .bindersMessage,
-  .binderMetadata {
-    color: var(--muted-soft);
-  }
-
-  .signInLink,
-  .recentBinderLink {
-    text-decoration-line: none;
-  }
-
-  @media (hover: hover) {
-    .recentBinderLink:hover {
-      background-color: var(--paper-soft);
-    }
-
-    .signInLink:hover {
-      text-decoration-line: underline;
-    }
-  }
-
-  .recentBinderLink:focus-visible {
-    outline-style: var(--component-outline-style);
-    outline-width: 2px;
-    outline-offset: 2px;
-    outline-color: var(--accent);
-  }
-
-  @media (width < 720px) {
-    .librarySidebar {
-      display: none;
-    }
-  }
+  .librarySidebar { min-width: 0; padding-right: 23px; border-right: 1px solid var(--line); }
+  .libraryHeadingBar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 26px; }
+  .libraryTitle { font-size: 15px; font-weight: 750; letter-spacing: -.4px; color: var(--ink); }
+  .libraryCount { font: 9px/1.5 var(--font-roboto-mono); color: var(--accent); }
+  .sectionHeading { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: 1px; color: var(--muted); margin-bottom: 13px; text-transform: uppercase; }
+  .recentBindersSection { border-top: 1px solid var(--ink); margin-top: 25px; padding-top: 22px; }
+  .recentBinderLink { display: block; width: 100%; text-align: left; padding: 12px 0; }
+  .binderName { display: block; font-size: 11px; font-weight: 600; overflow-wrap: anywhere; }
+  .binderMetadata { display: block; font: 7px/1.5 var(--font-roboto-mono); letter-spacing: .25px; margin-top: 8px; color: var(--muted); text-transform: uppercase; }
+  .recentBinderLink:hover .binderName { color: var(--accent); }
+  .bindersMessage { padding: 12px 0; font-size: 11px; color: var(--muted); }
+  .signInLink { color: var(--accent); text-decoration: underline; }
+  @media (width <= 1250px) { .librarySidebar { padding-right: 17px; } }
+  @media (width <= 1000px) { .librarySidebar { display: none; } }
 }

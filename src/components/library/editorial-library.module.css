@@ -1,0 +1,171 @@
+@layer components {
+  .pageShell {
+    --canvas: #f7f7f6;
+    --paper: #f7f7f6;
+    --ink: #0b0b0b;
+    --accent: #e10600;
+    --muted: #6b6b6b;
+    --line: #d9d9d9;
+    --library-hover: #eeeeec;
+    min-height: 100vh;
+    background: var(--canvas);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .pageShell:where([data-theme="dark"] *) {
+    --canvas: #141414;
+    --paper: #141414;
+    --ink: #f7f7f6;
+    --accent: #ff4b43;
+    --muted: #adadad;
+    --line: #3c3c3c;
+    --library-hover: #202020;
+  }
+  .pageShell :is(button, a, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .pageShell button { cursor: pointer; }
+  .skipLink:not(:focus) { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .skipLink:focus { position: absolute; z-index: 30; left: 16px; top: 16px; background: var(--paper); padding: 12px; }
+  .pageContent { max-width: 1600px; margin: auto; padding: 0 64px; }
+  .pageHeading { display: flex; justify-content: space-between; align-items: flex-end; padding: 54px 0 44px; gap: 32px; }
+  .eyebrow { font: 400 10px/1.5 var(--font-roboto-mono); letter-spacing: 1.5px; }
+  .eyebrow span { color: var(--accent); margin: 0 10px; }
+  .pageTitle { font-family: var(--font-inter); font-size: clamp(60px, 6.5vw, 100px); line-height: 1.04; font-weight: 900; letter-spacing: -.055em; margin-top: 17px; }
+  .pageTitle > span { color: var(--accent); }
+  .headingActions { display: flex; align-items: center; gap: 40px; padding-bottom: 5px; }
+  .headingActions p { font-size: 13px; line-height: 1.7; }
+  .headingActions p span { color: var(--muted); }
+  .primary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 46px; padding: 0 22px; background: #e10600; color: #fff; font-size: 13px; font-weight: 600; border: 1px solid #e10600; white-space: nowrap; }
+  .primary:hover { background: #be0500; border-color: #be0500; }
+  .workspace { border-top: 1px solid var(--ink); display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 40px; padding-top: 28px; }
+  .editorialPhoto { position: relative; width: 100%; height: 282px; overflow: hidden; background: #0b0b0b; }
+  .editorialPhoto > img { object-fit: cover; object-position: left center; }
+  .editorialPhoto figcaption { position: absolute; left: 20px; bottom: 25px; color: #fff; font-size: 28px; line-height: 1.12; font-weight: 500; letter-spacing: 1.6px; }
+  .editorialPhoto strong { font-weight: 700; color: #e10600; }
+  .editorialPhoto figcaption img { margin-top: 18px; filter: brightness(0) invert(1); }
+  .collectionNote { padding: 25px 0 24px; }
+  .collectionNote .eyebrow { font-size: 9px; letter-spacing: 1px; color: var(--muted); }
+  .collectionNote > p:last-child { font-size: 18px; font-weight: 500; line-height: 1.5; margin-top: 13px; letter-spacing: -.3px; }
+  .collectionStats { border-top: 1px solid var(--ink); font: 9px/1.5 var(--font-roboto-mono); letter-spacing: .6px; }
+  .collectionStats > div { display: flex; align-items: center; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid var(--line); }
+  .collectionStats dd { font-size: 12px; }
+  .collectionStats > div:first-child dd { color: var(--accent); }
+  .songLibrary { min-width: 0; }
+  .libraryToolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 47px; margin-bottom: 18px; }
+  .filters { display: flex; gap: 22px; align-items: center; min-height: 44px; }
+  .filter { position: relative; padding: 12px 0; font-size: 12px; color: var(--muted); white-space: nowrap; border-bottom: 2px solid transparent; }
+  .filter[aria-pressed="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--accent); }
+  .filter:hover { color: var(--accent); }
+  .filter span { font: 400 10px/1 var(--font-roboto-mono); color: var(--accent); margin-left: 7px; }
+  .search { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); width: 204px; padding: 10px 0; }
+  .search svg { flex-shrink: 0; color: var(--muted); }
+  .search input { padding: 0; border: none; background: none; min-width: 0; width: 100%; color: var(--ink); font-size: 12px; border-radius: 0; }
+  .search input::placeholder { color: var(--muted); opacity: 1; }
+  .search:focus-within { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 5px; }
+  .search input:focus-visible { outline: none; }
+  .songTable { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
+  .numberCol { width: 46px; }
+  .visibilityCol { width: 190px; }
+  .dateCol { width: 126px; }
+  .actionCol { width: 60px; }
+  .songTable thead { border-block: 1px solid var(--ink); }
+  .songTable th { height: 42px; font: 400 9px/1.5 var(--font-roboto-mono); letter-spacing: .7px; color: var(--muted); padding: 0 8px; }
+  .songTable th:first-child, .songTable td:first-child { padding-left: 0; }
+  .songTable th button { text-align: left; }
+  .songTable th button:hover { color: var(--accent); }
+  .sortDirection { font-size: 8px; letter-spacing: 0; display: block; margin-top: 3px; color: var(--ink); }
+  .songTable td { padding: 19px 8px; border-bottom: 1px solid var(--line); height: 78px; }
+  .songTable tbody tr { transition: background .12s; }
+  .songTable tbody tr:hover { background: var(--library-hover); }
+  .rowNumber { font: 400 10px/1.5 var(--font-roboto-mono); color: var(--muted); }
+  .songName { display: inline-block; font-size: 17px; line-height: 1.3; font-weight: 650; letter-spacing: -.45px; padding: 6px 0; overflow-wrap: anywhere; }
+  .songName:hover { color: var(--accent); }
+  .visibility { font-size: 11px; line-height: 1.5; display: block; }
+  .territory { font: 400 9px/1.5 var(--font-roboto-mono); color: var(--muted); display: block; margin-top: 3px; }
+  .published { color: var(--accent); }
+  .updated { font: 400 10px/1.5 var(--font-roboto-mono); color: var(--muted); }
+  .openSong { display: flex; align-items: center; justify-content: flex-end; font-size: 11px; font-weight: 600; min-height: 44px; padding-left: 10px; }
+  .openSong:hover { color: var(--accent); text-decoration: underline; }
+  .tableFooter { display: flex; justify-content: space-between; gap: 16px; font: 8px/1.5 var(--font-roboto-mono); letter-spacing: .7px; padding-top: 17px; color: var(--muted); }
+  .emptyState { padding: 55px 20px; text-align: center; border-bottom: 1px solid var(--line); }
+  .emptyState h2 { font-family: var(--font-inter); font-size: 26px; letter-spacing: -1px; }
+  .emptyState p { font-size: 13px; color: var(--muted); margin: 12px 0 20px; }
+  .emptyState :is(button, a) { font-size: 12px; color: var(--accent); text-decoration: underline; }
+  .pageFooter { display: flex; align-items: center; gap: 30px; border-top: 1px solid var(--ink); margin-top: 57px; padding: 24px 0 28px; }
+  .pageFooter > p:first-child { font-size: 10px; letter-spacing: 2.5px; }
+  .pageFooter span { color: var(--muted); margin: 0 8px; }
+  .pageFooter b { color: var(--accent); font-weight: 500; }
+  .pageFooter > img { margin-left: auto; }
+  .pageFooter > p:last-child { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: 1px; }
+  .mobileMeta { display: none; }
+  @media (width >= 1500px) {
+    .workspace { grid-template-columns: 260px minmax(0, 1fr); gap: 48px; }
+    .editorialPhoto { height: 305px; }
+    .songTable td { height: 84px; }
+    .songName { font-size: 19px; }
+    .visibilityCol { width: 215px; }
+    .dateCol { width: 150px; }
+  }
+  @media (width <= 1150px) {
+    .pageContent { padding-inline: 36px; }
+    .workspace { grid-template-columns: 190px minmax(0, 1fr); gap: 26px; }
+    .editorialPhoto { height: 250px; }
+    .headingActions { gap: 24px; }
+    .headingActions p { font-size: 12px; }
+    .visibilityCol { width: 150px; }
+    .dateCol { width: 110px; }
+    .numberCol { width: 32px; }
+    .songName { font-size: 15px; }
+    .filter { font-size: 11px; }
+    .filters { gap: 18px; }
+    .search { width: 170px; }
+    .songTable th { font-size: 8px; }
+    .tableFooter > p:last-child { display: none; }
+  }
+  @media (width <= 850px) {
+    .pageContent { padding-inline: 24px; }
+    .pageHeading { padding: 38px 0 32px; }
+    .headingActions p { display: none; }
+    .pageTitle { font-size: 64px; }
+    .workspace { grid-template-columns: 1fr; padding-top: 18px; }
+    .collectionAside { display: none; }
+    .visibilityCol { width: 155px; }
+    .dateCol { width: 115px; }
+    .songName { font-size: 16px; }
+    .pageFooter { margin-top: 38px; gap: 20px; }
+    .pageFooter > p:first-child { font-size: 8px; letter-spacing: 1.3px; }
+    .pageFooter span { margin: 0 4px; }
+  }
+  @media (width <= 560px) {
+    .pageContent { padding: 0 20px; }
+    .pageHeading { display: block; padding: 30px 0 25px; }
+    .eyebrow { font-size: 9px; letter-spacing: 1.2px; }
+    .pageTitle { font-size: clamp(48px, 15vw, 60px); margin-top: 14px; }
+    .headingActions { padding: 0; margin-top: 22px; justify-content: space-between; }
+    .headingActions p { display: block; font-size: 12px; }
+    .headingActions p span { display: none; }
+    .primary { min-height: 44px; padding: 0 15px; font-size: 12px; gap: 8px; }
+    .workspace { padding-top: 9px; }
+    .libraryToolbar { flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .filters { width: 100%; gap: 26px; justify-content: flex-start; }
+    .filter { font-size: 12px; min-height: 44px; }
+    .search { width: 100%; padding: 13px 0; }
+    .search input { font-size: 14px; }
+    .visibilityCol, .dateCol { display: none; }
+    .numberCol { width: 28px; }
+    .actionCol { width: 56px; }
+    .songTable :is(th, td):nth-child(3), .songTable :is(th, td):nth-child(4) { display: none; }
+    .songTable td { height: 94px; padding: 15px 6px; }
+    .songTable th { height: 35px; }
+    .songName { font-size: 16px; font-weight: 650; letter-spacing: -.4px; }
+    .mobileMeta { display: block; font-size: 10px; line-height: 1.6; color: var(--muted); margin-top: 6px; font-weight: 400; letter-spacing: 0; }
+    .openSong { font-size: 11px; padding: 0; justify-content: center; min-width: 44px; }
+    .songTable td.rowNumber { font-size: 9px; vertical-align: top; padding-top: 24px; }
+    .tableFooter { font-size: 8px; padding-top: 18px; }
+    .pageFooter { margin-top: 34px; padding: 23px 0; flex-wrap: wrap; gap: 20px; }
+    .pageFooter > p:first-child { font-size: 8px; letter-spacing: 1px; width: 100%; }
+    .pageFooter > img { margin-left: 0; width: 28px; }
+    .pageFooter > p:last-child { margin-left: auto; text-align: right; font-size: 7px; }
+    .pageFooter span { margin: 0 3px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .songTable tbody tr { transition: none; } }
+}

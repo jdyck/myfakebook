@@ -1,7 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#5d54d9"/>
-  <g fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M278 324V146c0 57 70 36 70 102"/>
-    <ellipse cx="244" cy="328" rx="34" ry="28"/>
-  </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #c60909;
+      }
+    </style>
+  </defs>
+  <path d="M99.7,56.48v41.58h-.01c-.3,8.73-6.91,18.22-17.51,23.77-14.05,7.36-29.8,5.01-35.17-5.24-5.37-10.26,1.67-24.54,15.72-31.9,10.47-5.48,21.87-5.58,29.23-1.03V15.05H27.62v128.33h106.58V56.48h-34.5Z"/>
+  <path class="cls-1" d="M99.68,15.14l34.42,34.08h-29.23c-2.86,0-5.18-2.32-5.18-5.18V15.14Z"/>
 </svg>

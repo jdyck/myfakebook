@@ -1,31 +1,14 @@
-/* Component styles. */
 @layer components {
-  .feedbackStatus {
-    margin-top: calc(var(--spacing) * 2.5);
-    margin-bottom: 0px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .workspaceToolbar {
-    margin-bottom: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: calc(var(--spacing) * 3);
-  }
-
-  .workspaceToolbar {
-    display: flex;
-  }
-
-  .songMetadataBlock {
-    min-width: 0px;
-  }
-
-  @media (width < 720px) {
-    .workspaceToolbar {
-      display: block;
-    }
-  }
+  .toolbar { min-width: 0; }
+  .toolbar > div { display: flex; align-items: center; flex-wrap: nowrap; gap: 16px; margin-top: 0; }
+  .toolbar button { border: 0; border-radius: 0; box-shadow: none; background: transparent; color: var(--ink); padding: 8px 0; min-height: 36px; font-size: 10px; line-height: 1.5; font-weight: 500; gap: 6px; white-space: nowrap; }
+  .toolbar button:hover { color: var(--accent); background: transparent; }
+  .toolbar button svg { width: 14px; height: 14px; }
+  .toolbar button[aria-pressed="true"] { color: var(--accent); box-shadow: inset 0 -2px var(--accent); }
+  .toolbar button[aria-pressed] { min-width: 24px; }
+  @media (width >= 1500px) { .toolbar > div { gap: 18px; } .toolbar button { font-size: 11px; } }
+  @media (width <= 1250px) { .toolbar { width: 100%; } .toolbar > div { justify-content: space-between; } }
+  @media (width <= 1000px) { .toolbar { width: auto; } .toolbar > div { gap: 13px; } .toolbar button { font-size: 9px; } }
+  @media (width <= 750px) { .toolbar > div { gap: 16px; } .toolbar button { font-size: 10px; } }
+  @media (width <= 450px) { .toolbar > div { gap: 9px; } .toolbar button { font-size: 9px; min-height: 44px; min-width: 28px; gap: 5px; } .toolbar button svg { width: 13px; height: 13px; } .toolbar button > svg:last-child:not(:first-child) { display: none; } .toolbar button[data-action="edit"] > span { display: none; } }
 }

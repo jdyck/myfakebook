@@ -23,6 +23,7 @@ type PreviewPanelProps = {
 export function PreviewPanel({ abc, displaySettings, workspaceToolbar, displayControls, saveAction, publishAction, onRenderedSvg }: PreviewPanelProps) {
   const [renderedSvg, setRenderedSvg] = useState<SVGSVGElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
   const fullscreenCanvasRef = useRef<HTMLDivElement>(null);
   const fullscreenButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -140,9 +141,10 @@ export function PreviewPanel({ abc, displaySettings, workspaceToolbar, displayCo
       aria-label="Lead sheet preview"
     >
       <FullscreenPreviewContext.Provider
-        value={{ onFullscreen: openFullscreen, disabled: !renderedSvg }}
+        value={{ onFullscreen: openFullscreen, disabled: !renderedSvg, onZoom: () => setIsZoomed((current) => !current), zoomed: isZoomed }}
       >
         <AbcPreview
+          isZoomed={isZoomed}
           abc={abc}
           key={abc}
           showChords={displaySettings.showChords}

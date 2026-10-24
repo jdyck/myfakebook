@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { SongEditorDrawer } from "@/components/songs/editor/song-editor-drawer";
 import { RemoveSongButton, SaveToMyLibraryButton } from "@/components/library/my-library/actions";
 import { AdminPublicationButton, AdminPublicSongPublicationMenu } from "@/components/library/public-library/publication-actions";
@@ -20,6 +21,7 @@ import { DEFAULT_ABC } from "@/lib/notation/abc";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/notation/abc-display";
 import type { PublicSong } from "@/lib/songs/public-library";
 import { useSongExport } from "./use-song-export";
+import { SongHeading } from "./song-heading";
 import componentStyles from "./song-workspace.module.css";
 
 type SongWorkspaceProps = {
@@ -133,6 +135,12 @@ export function SongWorkspace({
   }
 
   useEffect(() => {
+    if (!feedback) return;
+    const timeout = window.setTimeout(() => setFeedback(null), 3500);
+    return () => window.clearTimeout(timeout);
+  }, [feedback]);
+
+  useEffect(() => {
     try {
       window.localStorage.removeItem("myfakebook:draft");
       window.localStorage.removeItem("notate:draft");
@@ -222,8 +230,18 @@ export function SongWorkspace({
 
   return (
     <div className={componentStyles.appShell}>
-      <Header clerkConfigured={clerkConfigured} />
+      <a className={componentStyles.skipLink} href="#song-score">Skip to the score</a>
+      <Header clerkConfigured={clerkConfigured} activeSection={isPublicSong ? "songs" : "library"} />
 
+      <main aria-label="Song view" className={componentStyles.pageContent}>
+      <SongHeading
+        abc={abc}
+        title={songTitle}
+        transposition={displaySettings.transposition}
+        song={currentSong ?? (selectedPublicSong ? { publicationState: "published", publicationTerritory: selectedPublicSong.publicationTerritory } : null)}
+        isPublicSong={isPublicSong}
+        position={currentSong ? mySongs.findIndex((song) => song.id === currentSong.id) + 1 : undefined}
+      />
       <div
         className={`${componentStyles.workspaceGrid} ${
           persistenceEnabled ? componentStyles.workspaceGridWithSidebar : componentStyles.workspaceGridWithoutSidebar
@@ -246,7 +264,7 @@ export function SongWorkspace({
           title={songTitle}
         />
 
-        <main aria-label="Song view" className={componentStyles.workspaceMain}>
+        <div className={componentStyles.workspaceMain}>
           {binderReturn && (
             <Link className={componentStyles.binderReturnLink} href={binderReturn.href}>
               ← Back to {binderReturn.name}
@@ -380,8 +398,15 @@ export function SongWorkspace({
             onTitleChange={updateTitle}
             title={title}
           />
-        </main>
+        </div>
       </div>
+      <footer className={componentStyles.pageFooter}>
+        <p>TRADITION <span>/</span> INTERPRETATION <span>/</span> <b>NEXT</b></p>
+        <Image src="/images/library/bar.svg" width={34} height={5} alt="" />
+        <p>FOR MUSICIANS.<br />FOR THE MUSIC.</p>
+      </footer>
+      </main>
+      {feedback && <p className={componentStyles.status} role="status">{feedback}</p>}
     </div>
   );
 }

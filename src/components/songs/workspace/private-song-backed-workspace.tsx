@@ -54,7 +54,7 @@ export function PrivateSongBackedWorkspace({
         publicationTerritory: song.publicationTerritory,
       }}
       binderReturn={binder && binderItem ? {
-        href: `/setlists/${encodeURIComponent(binder._id)}`,
+        href: `/binders/${encodeURIComponent(binder._id)}`,
         name: binder.name,
         binderId: binder._id,
         itemId: binderItem._id,

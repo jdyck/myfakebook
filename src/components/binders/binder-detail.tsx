@@ -10,6 +10,7 @@ import { Check, GripVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { Header } from "@/components/app-shell/header/header";
+import libraryStyles from "@/components/library/editorial-library.module.css";
 import { PreviewPanel } from "@/components/songs/preview/preview-panel";
 import { DisplayControls } from "@/components/songs/workspace/display-controls";
 import { DEFAULT_DISPLAY_SETTINGS, type SongDisplaySettings } from "@/lib/notation/abc-display";
@@ -235,7 +236,7 @@ export function BinderDetail({ id }: BinderDetailProps) {
     if (!validId || !window.confirm("Delete this binder? Its songs won’t be deleted.")) return;
     await runChange(async () => {
       await removeBinder({ id: validId });
-      router.push("/setlists");
+      router.push("/binders");
     });
   }
 
@@ -337,327 +338,340 @@ export function BinderDetail({ id }: BinderDetailProps) {
   }
 
   return (
-    <div className={componentStyles.pageShell}>
-      <Header clerkConfigured />
-      <main className={componentStyles.pageContent}>
+    <div className={libraryStyles.pageShell}>
+      <a className={libraryStyles.skipLink} href="#binder-main">Skip to binder</a>
+      <Header clerkConfigured activeSection="binders" />
+      <main id="binder-main" className={libraryStyles.pageContent}>
         {loading ? (
           <p className={componentStyles.loadingStatus} role="status">Loading binder…</p>
         ) : !binder ? (
           <section className={componentStyles.notFoundSection}>
-            <Link className={componentStyles.backToBindersLink} href="/setlists">← All binders</Link>
+            <Link className={componentStyles.backToBindersLink} href="/binders">← All binders</Link>
             <h1 className={componentStyles.notFoundTitle}>Binder not found</h1>
             <p className={componentStyles.notFoundDescription}>This binder may have been removed, or it may belong to another user.</p>
           </section>
         ) : (
-          <div className={componentStyles.binderWorkspace}>
-            <aside className={componentStyles.binderSidebar}>
-              <Link className={componentStyles.backToBindersLink} href="/setlists">← All binders</Link>
-              <div className={componentStyles.binderSidebarHeader}>
-                <div className={componentStyles.titleAndDetails}>
-                  <h1 className={componentStyles.binderTitle}>
-                    <input
-                      aria-label="Binder name"
-                      className={componentStyles.binderTitleInput}
-                      maxLength={80}
-                      onBlur={(event) => handleBinderNameBlur(event.currentTarget.value)}
-                      onChange={(event) => handleBinderNameChange(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key !== "Enter") return;
-                        event.preventDefault();
-                        event.currentTarget.blur();
-                      }}
-                      value={name}
-                    />
-                  </h1>
-                </div>
-              </div>
-
-              <section className={componentStyles.binderSongsSection} aria-labelledby="binder-songs-heading">
-                <div className={componentStyles.songsSectionHeader}>
-                  <h2 className={componentStyles.songsSectionTitle} id="binder-songs-heading">Songs</h2>
-                </div>
-                {binder.items.length ? (
-                  <ol className={componentStyles.orderedSongList} aria-label={`${binder.name} songs`}>
-                    {binder.items.map((item, index) => {
-                      const isSelected = selectedItem?._id === item._id;
-                      const isDragged = draggedItemId === item._id;
-                      const isDropTarget = dropTarget?.itemId === item._id;
-                      return (
-                        <li
-                          className={`${componentStyles.orderedSongItem} ${isSelected ? componentStyles.selectedSongItem : componentStyles.unselectedSongItem} ${isDragged ? componentStyles.draggedSongItem : ""} ${isDropTarget ? componentStyles.dropTargetSongItem : ""}`}
-                          data-binder-item={item._id}
-                          key={item._id}
-                        >
-                          {isDropTarget && (
-                            <span
-                              aria-hidden="true"
-                              className={`${componentStyles.dropIndicator} ${dropTarget.position === "before" ? componentStyles.dropIndicatorBefore : componentStyles.dropIndicatorAfter}`}
-                            />
-                          )}
-                          <div className={componentStyles.songItemDragControls}>
-                            <button
-                              aria-keyshortcuts="ArrowUp ArrowDown"
-                              aria-label={`Reorder ${item.title}; use the arrow keys to move`}
-                              className={componentStyles.dragHandleButton}
-                              disabled={saving}
-                              onKeyDown={(event) => {
-                                if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
-                                event.preventDefault();
-                                void handleMove(index, event.key === "ArrowUp" ? -1 : 1);
-                              }}
-                              onPointerCancel={(event) => {
-                                if (pointerDrag.current?.pointerId !== event.pointerId) return;
-                                clearPointerDrag();
-                              }}
-                              onPointerDown={(event) => {
-                                if (event.button !== 0 || saving) return;
-                                const itemBounds = event.currentTarget.closest<HTMLElement>("[data-binder-item]")?.getBoundingClientRect();
-                                if (!itemBounds) return;
-                                pointerDrag.current = {
-                                  pointerId: event.pointerId,
-                                  sourceId: item._id,
-                                  title: item.title,
-                                  startX: event.clientX,
-                                  startY: event.clientY,
-                                  clientX: event.clientX,
-                                  clientY: event.clientY,
-                                  width: itemBounds.width,
-                                  active: false,
-                                };
-                                event.currentTarget.setPointerCapture(event.pointerId);
-                              }}
-                              onPointerMove={(event) => {
-                                const current = pointerDrag.current;
-                                if (!current || current.pointerId !== event.pointerId) return;
-                                current.clientX = event.clientX;
-                                current.clientY = event.clientY;
-                                if (!current.active && Math.hypot(event.clientX - current.startX, event.clientY - current.startY) < 6) return;
-
-                                if (!current.active) {
-                                  current.active = true;
-                                  setDraggedItemId(current.sourceId);
-                                }
-                                event.preventDefault();
-                                updateDropTargetAtPoint(event.clientX, event.clientY, current.sourceId);
-                                const width = Math.min(current.width, window.innerWidth - 16);
-                                setDragPreview({
-                                  title: current.title,
-                                  left: Math.max(8, Math.min(event.clientX + 16, window.innerWidth - width - 8)),
-                                  top: Math.max(8, Math.min(event.clientY - 46, window.innerHeight - 44)),
-                                  width,
-                                });
-                                scheduleAutoScroll();
-                              }}
-                              onPointerUp={(event) => {
-                                const current = pointerDrag.current;
-                                if (!current || current.pointerId !== event.pointerId) return;
-                                const target = current.active ? getDropTargetAtPoint(event.clientX, event.clientY) : null;
-                                clearPointerDrag();
-                                if (!current.active) return;
-                                if (target) void handleDrop(current.sourceId, target.itemId, target.position);
-                              }}
-                              type="button"
-                            >
-                              <GripVertical aria-hidden="true" size={14} />
-                            </button>
-                            <button
-                              aria-pressed={isSelected}
-                              className={componentStyles.songSelectionButton}
-                              disabled={!item.canOpen || saving}
-                              onClick={() => setSelectedItemId(item._id)}
-                              type="button"
-                            >
-                              <span className={componentStyles.songPositionNumber}>{index + 1}</span>
-                              <span className={componentStyles.titleAndDetails}>
-                                <span className={componentStyles.songName}>{item.title}</span>
-                                {!item.canOpen && <span className={componentStyles.unavailableBadge}>Unavailable</span>}
-                              </span>
-                            </button>
-                            <div className={componentStyles.songItemActions}>
-                              <button aria-label={`Remove ${item.title} from binder`} className={`${componentStyles.sharedButton} ${componentStyles.removeSongButton}`} disabled={saving} onClick={() => validId && void runChange(() => removeItem({ binderId: validId, itemId: item._id }), `${item.title} removed from binder`)} type="button"><Trash2 aria-hidden="true" size={14} /></button>
-                            </div>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ol>
-                ) : (
-                  <p className={componentStyles.emptySongListMessage}>Add a song to start your set.</p>
-                )}
-                <p className={componentStyles.visuallyHidden} aria-live="polite" aria-atomic="true">
-                  {draggedItemId && binder.items.find((item) => item._id === draggedItemId)
-                    ? dropTarget
-                      ? `${binder.items.find((item) => item._id === draggedItemId)?.title} will move ${dropTarget.position} ${binder.items.find((item) => item._id === dropTarget.itemId)?.title}.`
-                      : `Moving ${binder.items.find((item) => item._id === draggedItemId)?.title}. Move over another song and release to place it.`
-                    : ""}
-                </p>
-              </section>
-
-              <div className={componentStyles.binderFooterActions}>
-                <button
-                  aria-controls={addSongDialogId}
-                  aria-haspopup="dialog"
-                  className={`${componentStyles.sharedPrimaryButton} ${componentStyles.addSongTrigger}`}
-                  disabled={saving}
-                  onClick={openAddSongDialog}
-                  type="button"
-                >
-                  <Plus aria-hidden="true" size={14} /> Add a song
-                </button>
-                <button className={`${componentStyles.sharedButton} ${componentStyles.deleteBinderButton}`} disabled={saving} onClick={() => void handleDeleteBinder()} type="button">
-                  <Trash2 aria-hidden="true" size={13} /> Delete
-                </button>
-              </div>
-              <dialog
-                aria-describedby={addSongDescriptionId}
-                aria-labelledby={addSongTitleId}
-                className={componentStyles.addSongDialog}
-                id={addSongDialogId}
-                onClick={(event) => {
-                  if (event.target === event.currentTarget) closeAddSongDialog();
-                }}
-                onClose={() => {
-                  setIsAddSongDialogOpen(false);
-                  setSongSearch("");
-                  setSelectedSongId(null);
-                  setAddSongError(null);
-                  highlightedSongId.current = null;
-                }}
-                ref={addSongDialogRef}
-              >
-                <section className={componentStyles.addSongDialogContent}>
-                  <header className={componentStyles.addSongDialogHeader}>
-                    <div>
-                      <h2 className={componentStyles.addSongDialogTitle} id={addSongTitleId}>Add a song</h2>
-                      <p className={componentStyles.addSongDialogDescription} id={addSongDescriptionId}>Search available songs for {binder.name}.</p>
-                    </div>
-                    <button
-                      aria-label="Close add song dialog"
-                      className={`${componentStyles.sharedButton} ${componentStyles.closeAddSongDialog}`}
-                      onClick={closeAddSongDialog}
-                      type="button"
-                    >
-                      <X aria-hidden="true" size={15} />
-                    </button>
-                  </header>
-                  <form className={componentStyles.addSongDialogForm} onSubmit={(event) => void handleAddSong(event)}>
-                    <div className={componentStyles.addSongDialogBody}>
-                      {songsToAdd.length ? (
-                        <Combobox.Root
-                          autoComplete="off"
-                          autoHighlight
-                          inline
-                          inputValue={songSearch}
-                          isItemEqualToValue={(item: AvailableSong, value: AvailableSong) => item.songId === value.songId}
-                          itemToStringLabel={(song: AvailableSong) => song.title}
-                          itemToStringValue={(song: AvailableSong) => String(song.songId)}
-                          items={songsToAdd}
-                          onInputValueChange={(value, { reason }) => {
-                            setSongSearch(value);
-                            if (reason !== "item-press") setSelectedSongId(null);
-                            setAddSongError(null);
-                            highlightedSongId.current = null;
-                          }}
-                          onItemHighlighted={(song, { reason }) => {
-                            highlightedSongId.current = reason === "keyboard" ? song?.songId ?? null : null;
-                          }}
-                          onValueChange={(song: AvailableSong | null) => {
-                            setSelectedSongId(song?.songId ?? null);
-                            setAddSongError(null);
-                          }}
-                          open={isAddSongDialogOpen}
-                          value={selectedSong}
-                        >
-                          <label className={componentStyles.addSongSearchLabel} htmlFor={addSongSearchId}>Search songs</label>
-                          <div className={componentStyles.addSongSearchBox}>
-                            <Search aria-hidden="true" className={componentStyles.addSongSearchIcon} size={15} />
-                            <Combobox.Input
-                              id={addSongSearchId}
-                              placeholder="Type a song title…"
-                              ref={addSongSearchRef}
-                              onKeyDownCapture={handleAddSongSearchKeyDown}
-                              className={componentStyles.addSongSearchInput}
-                            />
-                          </div>
-                          <Combobox.Empty>
-                            <p className={componentStyles.addSongEmptyResult}>No songs match “{songSearch}”. Try another title.</p>
-                          </Combobox.Empty>
-                          <Combobox.List className={componentStyles.addSongResultList}>
-                            {(song: AvailableSong) => (
-                              <Combobox.Item className={componentStyles.addSongResult} key={song.songId} value={song}>
-                                <span className={componentStyles.addSongResultTitle}>{song.title}</span>
-                                <span className={componentStyles.addSongResultSource}>{song.isPublic ? "Public" : "My Library"}</span>
-                                <Combobox.ItemIndicator className={componentStyles.addSongResultIndicator}>
-                                  <Check aria-hidden="true" size={15} />
-                                </Combobox.ItemIndicator>
-                              </Combobox.Item>
-                            )}
-                          </Combobox.List>
-                        </Combobox.Root>
-                      ) : (
-                        <div className={componentStyles.addSongEmptyState} role="status">
-                          {availableSongs?.length ? (
-                            "All available songs are already in this binder."
-                          ) : (
-                            <>
-                              There are no songs to add yet. Create one or <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.
-                            </>
-                          )}
-                        </div>
-                      )}
-                      {addSongError && <p className={componentStyles.addSongError} role="alert">{addSongError}</p>}
-                    </div>
-                    <footer className={componentStyles.addSongDialogActions}>
-                      <button className={componentStyles.sharedButton} onClick={closeAddSongDialog} type="button">Cancel</button>
-                      <button className={componentStyles.sharedPrimaryButton} disabled={saving || !selectedSong} type="submit">
-                        {saving ? "Adding…" : "Add song"}
-                      </button>
-                    </footer>
-                  </form>
-                </section>
-              </dialog>
-            </aside>
-
-            <section className={componentStyles.selectedSongSection} aria-label="Selected song">
-              {status && <p className={componentStyles.actionStatusMessage} role="status">{status}</p>}
-              {selectedItem ? selectedItem.canOpen && selectedItem.abc ? (
-                <div className={componentStyles.selectedSongLayout}>
-                  <div className={componentStyles.selectedSongContent}>
-                    <Link
-                      className={componentStyles.openSongWorkspaceLink}
-                      href={`/${selectedItem.isOwned ? "mylibrary" : "songs"}/${encodeURIComponent(selectedItem.songId)}?setListId=${encodeURIComponent(binder._id)}&setListItemId=${encodeURIComponent(selectedItem._id)}`}
-                    >
-                      Open song workspace
-                    </Link>
-                  </div>
-
-                  <PreviewPanel
-                    abc={selectedItem.abc}
-                    displaySettings={selectedSettings}
-                    displayControls={
-                      <DisplayControls
-                        abc={selectedItem.abc}
-                        settings={selectedSettings}
-                        onChange={(patch) => void handleDisplayChange(selectedItem._id, selectedSettings, patch)}
-                      />
-                    }
-                    key={selectedItem._id}
+          <>
+            <section className={libraryStyles.pageHeading} aria-label="Binder details">
+              <div className={componentStyles.titleAndDetails}>
+                <p className={libraryStyles.eyebrow}>YOUR PERFORMANCE <span>/</span> {String(binder.items.length).padStart(2, "0")} SONG{binder.items.length === 1 ? "" : "S"}</p>
+                <h1 className={componentStyles.binderTitle}>
+                  <input
+                    aria-label="Binder name"
+                    className={componentStyles.binderTitleInput}
+                    maxLength={80}
+                    onBlur={(event) => handleBinderNameBlur(event.currentTarget.value)}
+                    onChange={(event) => handleBinderNameChange(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter") return;
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }}
+                    value={name}
                   />
-                </div>
-              ) : (
-                <div className={componentStyles.selectedSongEmptyState}>
-                  <h2 className={componentStyles.emptyStateTitle}>Song unavailable</h2>
-                  <p className={componentStyles.emptyStateDescription}>{selectedItem.title} is no longer available to open.</p>
-                </div>
-              ) : (
-                <div className={componentStyles.selectedSongEmptyState}>
-                  <h2 className={componentStyles.emptyStateTitle}>This binder is empty</h2>
-                  <p className={componentStyles.emptyStateDescription}>Choose one of your songs or a public song in the sidebar to start arranging your performance.</p>
-                  <p className={componentStyles.emptyStateBrowseLink}>You can also <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.</p>
-                </div>
-              )}
+                </h1>
+              </div>
+              <div className={libraryStyles.headingActions}>
+                <p>Your songs. Your order.<br /><span>Ready for the next set.</span></p>
+                <Link className={componentStyles.backToBindersLink} href="/binders">← All binders</Link>
+              </div>
             </section>
-          </div>
+            <div className={componentStyles.binderWorkspace}>
+              <aside className={componentStyles.binderSidebar} aria-label="Binder songs and actions">
+                <p className={libraryStyles.eyebrow}>THE RUNNING ORDER.</p>
+
+                <section className={componentStyles.binderSongsSection} aria-labelledby="binder-songs-heading">
+                  <div className={componentStyles.songsSectionHeader}>
+                    <h2 className={componentStyles.songsSectionTitle} id="binder-songs-heading">Songs</h2>
+                    <span className={componentStyles.songCount}>{String(binder.items.length).padStart(2, "0")}</span>
+                  </div>
+                  {binder.items.length ? (
+                    <ol className={componentStyles.orderedSongList} aria-label={`${binder.name} songs`}>
+                      {binder.items.map((item, index) => {
+                        const isSelected = selectedItem?._id === item._id;
+                        const isDragged = draggedItemId === item._id;
+                        const isDropTarget = dropTarget?.itemId === item._id;
+                        return (
+                          <li
+                            className={`${componentStyles.orderedSongItem} ${isSelected ? componentStyles.selectedSongItem : componentStyles.unselectedSongItem} ${isDragged ? componentStyles.draggedSongItem : ""} ${isDropTarget ? componentStyles.dropTargetSongItem : ""}`}
+                            data-binder-item={item._id}
+                            key={item._id}
+                          >
+                            {isDropTarget && (
+                              <span
+                                aria-hidden="true"
+                                className={`${componentStyles.dropIndicator} ${dropTarget.position === "before" ? componentStyles.dropIndicatorBefore : componentStyles.dropIndicatorAfter}`}
+                              />
+                            )}
+                            <div className={componentStyles.songItemDragControls}>
+                              <button
+                                aria-keyshortcuts="ArrowUp ArrowDown"
+                                aria-label={`Reorder ${item.title}; use the arrow keys to move`}
+                                className={componentStyles.dragHandleButton}
+                                disabled={saving}
+                                onKeyDown={(event) => {
+                                  if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+                                  event.preventDefault();
+                                  void handleMove(index, event.key === "ArrowUp" ? -1 : 1);
+                                }}
+                                onPointerCancel={(event) => {
+                                  if (pointerDrag.current?.pointerId !== event.pointerId) return;
+                                  clearPointerDrag();
+                                }}
+                                onPointerDown={(event) => {
+                                  if (event.button !== 0 || saving) return;
+                                  const itemBounds = event.currentTarget.closest<HTMLElement>("[data-binder-item]")?.getBoundingClientRect();
+                                  if (!itemBounds) return;
+                                  pointerDrag.current = {
+                                    pointerId: event.pointerId,
+                                    sourceId: item._id,
+                                    title: item.title,
+                                    startX: event.clientX,
+                                    startY: event.clientY,
+                                    clientX: event.clientX,
+                                    clientY: event.clientY,
+                                    width: itemBounds.width,
+                                    active: false,
+                                  };
+                                  event.currentTarget.setPointerCapture(event.pointerId);
+                                }}
+                                onPointerMove={(event) => {
+                                  const current = pointerDrag.current;
+                                  if (!current || current.pointerId !== event.pointerId) return;
+                                  current.clientX = event.clientX;
+                                  current.clientY = event.clientY;
+                                  if (!current.active && Math.hypot(event.clientX - current.startX, event.clientY - current.startY) < 6) return;
+
+                                  if (!current.active) {
+                                    current.active = true;
+                                    setDraggedItemId(current.sourceId);
+                                  }
+                                  event.preventDefault();
+                                  updateDropTargetAtPoint(event.clientX, event.clientY, current.sourceId);
+                                  const width = Math.min(current.width, window.innerWidth - 16);
+                                  setDragPreview({
+                                    title: current.title,
+                                    left: Math.max(8, Math.min(event.clientX + 16, window.innerWidth - width - 8)),
+                                    top: Math.max(8, Math.min(event.clientY - 46, window.innerHeight - 44)),
+                                    width,
+                                  });
+                                  scheduleAutoScroll();
+                                }}
+                                onPointerUp={(event) => {
+                                  const current = pointerDrag.current;
+                                  if (!current || current.pointerId !== event.pointerId) return;
+                                  const target = current.active ? getDropTargetAtPoint(event.clientX, event.clientY) : null;
+                                  clearPointerDrag();
+                                  if (!current.active) return;
+                                  if (target) void handleDrop(current.sourceId, target.itemId, target.position);
+                                }}
+                                type="button"
+                              >
+                                <GripVertical aria-hidden="true" size={14} />
+                              </button>
+                              <button
+                                aria-pressed={isSelected}
+                                className={componentStyles.songSelectionButton}
+                                disabled={!item.canOpen || saving}
+                                onClick={() => setSelectedItemId(item._id)}
+                                type="button"
+                              >
+                                <span className={componentStyles.songPositionNumber}>{String(index + 1).padStart(2, "0")}</span>
+                                <span className={componentStyles.titleAndDetails}>
+                                  <span className={componentStyles.songName}>{item.title}</span>
+                                  {!item.canOpen && <span className={componentStyles.unavailableBadge}>Unavailable</span>}
+                                </span>
+                              </button>
+                              <div className={componentStyles.songItemActions}>
+                                <button aria-label={`Remove ${item.title} from binder`} className={`${componentStyles.sharedButton} ${componentStyles.removeSongButton}`} disabled={saving} onClick={() => validId && void runChange(() => removeItem({ binderId: validId, itemId: item._id }), `${item.title} removed from binder`)} type="button"><Trash2 aria-hidden="true" size={14} /></button>
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  ) : (
+                    <p className={componentStyles.emptySongListMessage}>Add a song to start your set.</p>
+                  )}
+                  <p className={componentStyles.visuallyHidden} aria-live="polite" aria-atomic="true">
+                    {draggedItemId && binder.items.find((item) => item._id === draggedItemId)
+                      ? dropTarget
+                        ? `${binder.items.find((item) => item._id === draggedItemId)?.title} will move ${dropTarget.position} ${binder.items.find((item) => item._id === dropTarget.itemId)?.title}.`
+                        : `Moving ${binder.items.find((item) => item._id === draggedItemId)?.title}. Move over another song and release to place it.`
+                      : ""}
+                  </p>
+                </section>
+
+                <div className={componentStyles.binderFooterActions}>
+                  <button
+                    aria-controls={addSongDialogId}
+                    aria-haspopup="dialog"
+                    className={`${componentStyles.sharedPrimaryButton} ${componentStyles.addSongTrigger}`}
+                    disabled={saving}
+                    onClick={openAddSongDialog}
+                    type="button"
+                  >
+                    <Plus aria-hidden="true" size={14} /> Add a song
+                  </button>
+                  <button className={`${componentStyles.sharedButton} ${componentStyles.deleteBinderButton}`} disabled={saving} onClick={() => void handleDeleteBinder()} type="button">
+                    <Trash2 aria-hidden="true" size={13} /> Delete
+                  </button>
+                </div>
+                <dialog
+                  aria-describedby={addSongDescriptionId}
+                  aria-labelledby={addSongTitleId}
+                  className={componentStyles.addSongDialog}
+                  id={addSongDialogId}
+                  onClick={(event) => {
+                    if (event.target === event.currentTarget) closeAddSongDialog();
+                  }}
+                  onClose={() => {
+                    setIsAddSongDialogOpen(false);
+                    setSongSearch("");
+                    setSelectedSongId(null);
+                    setAddSongError(null);
+                    highlightedSongId.current = null;
+                  }}
+                  ref={addSongDialogRef}
+                >
+                  <section className={componentStyles.addSongDialogContent}>
+                    <header className={componentStyles.addSongDialogHeader}>
+                      <div>
+                        <h2 className={componentStyles.addSongDialogTitle} id={addSongTitleId}>Add a song</h2>
+                        <p className={componentStyles.addSongDialogDescription} id={addSongDescriptionId}>Search available songs for {binder.name}.</p>
+                      </div>
+                      <button
+                        aria-label="Close add song dialog"
+                        className={`${componentStyles.sharedButton} ${componentStyles.closeAddSongDialog}`}
+                        onClick={closeAddSongDialog}
+                        type="button"
+                      >
+                        <X aria-hidden="true" size={15} />
+                      </button>
+                    </header>
+                    <form className={componentStyles.addSongDialogForm} onSubmit={(event) => void handleAddSong(event)}>
+                      <div className={componentStyles.addSongDialogBody}>
+                        {songsToAdd.length ? (
+                          <Combobox.Root
+                            autoComplete="off"
+                            autoHighlight
+                            inline
+                            inputValue={songSearch}
+                            isItemEqualToValue={(item: AvailableSong, value: AvailableSong) => item.songId === value.songId}
+                            itemToStringLabel={(song: AvailableSong) => song.title}
+                            itemToStringValue={(song: AvailableSong) => String(song.songId)}
+                            items={songsToAdd}
+                            onInputValueChange={(value, { reason }) => {
+                              setSongSearch(value);
+                              if (reason !== "item-press") setSelectedSongId(null);
+                              setAddSongError(null);
+                              highlightedSongId.current = null;
+                            }}
+                            onItemHighlighted={(song, { reason }) => {
+                              highlightedSongId.current = reason === "keyboard" ? song?.songId ?? null : null;
+                            }}
+                            onValueChange={(song: AvailableSong | null) => {
+                              setSelectedSongId(song?.songId ?? null);
+                              setAddSongError(null);
+                            }}
+                            open={isAddSongDialogOpen}
+                            value={selectedSong}
+                          >
+                            <label className={componentStyles.addSongSearchLabel} htmlFor={addSongSearchId}>Search songs</label>
+                            <div className={componentStyles.addSongSearchBox}>
+                              <Search aria-hidden="true" className={componentStyles.addSongSearchIcon} size={15} />
+                              <Combobox.Input
+                                id={addSongSearchId}
+                                placeholder="Type a song title…"
+                                ref={addSongSearchRef}
+                                onKeyDownCapture={handleAddSongSearchKeyDown}
+                                className={componentStyles.addSongSearchInput}
+                              />
+                            </div>
+                            <Combobox.Empty>
+                              <p className={componentStyles.addSongEmptyResult}>No songs match “{songSearch}”. Try another title.</p>
+                            </Combobox.Empty>
+                            <Combobox.List className={componentStyles.addSongResultList}>
+                              {(song: AvailableSong) => (
+                                <Combobox.Item className={componentStyles.addSongResult} key={song.songId} value={song}>
+                                  <span className={componentStyles.addSongResultTitle}>{song.title}</span>
+                                  <span className={componentStyles.addSongResultSource}>{song.isPublic ? "Public" : "My Library"}</span>
+                                  <Combobox.ItemIndicator className={componentStyles.addSongResultIndicator}>
+                                    <Check aria-hidden="true" size={15} />
+                                  </Combobox.ItemIndicator>
+                                </Combobox.Item>
+                              )}
+                            </Combobox.List>
+                          </Combobox.Root>
+                        ) : (
+                          <div className={componentStyles.addSongEmptyState} role="status">
+                            {availableSongs?.length ? (
+                              "All available songs are already in this binder."
+                            ) : (
+                              <>
+                                There are no songs to add yet. Create one or <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.
+                              </>
+                            )}
+                          </div>
+                        )}
+                        {addSongError && <p className={componentStyles.addSongError} role="alert">{addSongError}</p>}
+                      </div>
+                      <footer className={componentStyles.addSongDialogActions}>
+                        <button className={componentStyles.sharedButton} onClick={closeAddSongDialog} type="button">Cancel</button>
+                        <button className={componentStyles.sharedPrimaryButton} disabled={saving || !selectedSong} type="submit">
+                          {saving ? "Adding…" : "Add song"}
+                        </button>
+                      </footer>
+                    </form>
+                  </section>
+                </dialog>
+              </aside>
+
+              <section className={componentStyles.selectedSongSection} aria-label="Selected song">
+                {status && <p className={componentStyles.actionStatusMessage} role="status">{status}</p>}
+                {selectedItem ? selectedItem.canOpen && selectedItem.abc ? (
+                  <div className={componentStyles.selectedSongLayout}>
+                    <div className={componentStyles.selectedSongContent}>
+                      <Link
+                        className={componentStyles.openSongWorkspaceLink}
+                        href={`/${selectedItem.isOwned ? "mylibrary" : "songs"}/${encodeURIComponent(selectedItem.songId)}?setListId=${encodeURIComponent(binder._id)}&setListItemId=${encodeURIComponent(selectedItem._id)}`}
+                      >
+                        Open song workspace
+                      </Link>
+                    </div>
+
+                    <PreviewPanel
+                      abc={selectedItem.abc}
+                      displaySettings={selectedSettings}
+                      displayControls={
+                        <DisplayControls
+                          abc={selectedItem.abc}
+                          settings={selectedSettings}
+                          onChange={(patch) => void handleDisplayChange(selectedItem._id, selectedSettings, patch)}
+                        />
+                      }
+                      key={selectedItem._id}
+                    />
+                  </div>
+                ) : (
+                  <div className={componentStyles.selectedSongEmptyState}>
+                    <h2 className={componentStyles.emptyStateTitle}>Song unavailable</h2>
+                    <p className={componentStyles.emptyStateDescription}>{selectedItem.title} is no longer available to open.</p>
+                  </div>
+                ) : (
+                  <div className={componentStyles.selectedSongEmptyState}>
+                    <h2 className={componentStyles.emptyStateTitle}>This binder is empty</h2>
+                    <p className={componentStyles.emptyStateDescription}>Choose one of your songs or a public song in the sidebar to start arranging your performance.</p>
+                    <p className={componentStyles.emptyStateBrowseLink}>You can also <Link className={componentStyles.browsePublicSongsLink} href="/songs">browse public songs</Link>.</p>
+                  </div>
+                )}
+              </section>
+            </div>
+            <footer className={libraryStyles.pageFooter}>
+              <p>GATHER <span>/</span> ARRANGE <span>/</span> <b>PERFORM</b></p>
+              <p className="ml-auto">FOR MUSICIANS.<br />FOR THE MUSIC.</p>
+            </footer>
+          </>
         )}
       </main>
       {dragPreview && (

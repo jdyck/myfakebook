@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inconsolata, Inter } from "next/font/google";
+import { Inter, Roboto_Flex, Roboto_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
 import { AppProviders } from "@/components/app-shell/app-providers";
@@ -14,10 +14,16 @@ const inter = Inter({
   display: "swap",
 });
 
-const inconsolata = Inconsolata({
+const robotoMono = Roboto_Mono({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-inconsolata",
+  variable: "--font-roboto-mono",
+  display: "swap",
+});
+
+const robotoFlex = Roboto_Flex({
+  subsets: ["latin"],
+  variable: "--font-roboto-flex",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -35,7 +41,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#5d54d9",
+  themeColor: "#E10600",
 };
 
 export default function RootLayout({
@@ -44,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`${inter.variable} ${inconsolata.variable} ${componentStyles.fontVariables}`} lang="en">
+    <html className={`${inter.variable} ${robotoMono.variable} ${robotoFlex.variable} ${componentStyles.fontVariables}`} lang="en">
       <body className={componentStyles.pageBody}>
         <AppProviders>{children}</AppProviders>
         <ServiceWorkerRegistration />

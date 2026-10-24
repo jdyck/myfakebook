@@ -1,7 +1,7 @@
 // Cache only the public offline screen. Songs, authentication, API responses,
 // and Next.js navigation payloads always use the network.
 const CACHE_PREFIX = "myfakebook-offline-";
-const CACHE_NAME = `${CACHE_PREFIX}v2`;
+const CACHE_NAME = `${CACHE_PREFIX}v3`;
 const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {

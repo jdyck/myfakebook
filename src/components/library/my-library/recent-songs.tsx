@@ -8,7 +8,7 @@ import { api } from "../../../../convex/_generated/api";
 import { SidebarAction } from "@/components/library/my-library/sidebar-action";
 import { publicationStatusForSong, type LoadedSong, type SongId } from "@/lib/songs/types";
 import { sameSongContent, type SongContent } from "@/lib/songs/song-content";
-import componentStyles from "@/components/shared/song-actions.module.css";
+import componentStyles from "./recent-songs.module.css";
 
 type RecentMyLibrarySongsProps = {
   title: string;
@@ -225,8 +225,9 @@ function ConnectedRecentMyLibrarySongs({
                   <span className={componentStyles.songDetails}>
                     <span className={componentStyles.songTitle}>{song.title}</span>
                     <span className={componentStyles.songPublicationDetails}>
-                      {publicationStatusForSong(song)} · {new Date(song.updatedAt).toLocaleDateString()}
+                      {publicationStatusForSong(song)}
                     </span>
+                    <span className={componentStyles.songUpdated}>{new Date(song.updatedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }).toUpperCase()}</span>
                   </span>
                 </Link>
               </div>
@@ -239,7 +240,7 @@ function ConnectedRecentMyLibrarySongs({
         )}
         <SidebarAction href="/mylibrary" label="All my songs" />
         <SidebarAction label="New song" onClick={onNew} icon="plus" />
-        <SidebarAction label="Import" onFileImport={onFileImport} icon="upload" />
+        <SidebarAction label="Import ABC" onFileImport={onFileImport} icon="upload" />
       </Authenticated>
       <Unauthenticated>
         <div className={componentStyles.recentSongsMessage}>

@@ -41,12 +41,12 @@ Prefer direct imports from the owning module over creating a project-wide barrel
 | `/new` | Unsaved song workspace |
 | `/songs`, `/songs/[id]` | Public library and public song workspace |
 | `/mylibrary`, `/mylibrary/[id]` | Owner's library and song workspace |
-| `/setlists`, `/setlists/[id]` | Binder list and detail |
+| `/binders`, `/binders/[id]` | Binder list and detail |
 | `/sign-in`, `/sign-up` | Clerk authentication |
 | `GET /api/public-songs` | Regional public library with worldwide fallback |
 | `POST /api/musicxml` | Convert `{ abc, display? }` to a downloadable MusicXML document |
 
-The product and frontend use **binder**. Existing `/setlists` URLs and `setListId`/`setListItemId` query parameters remain stable for saved links. Song route pages translate those query parameters to binder props. The `legacySetListId` and `legacySetListItemId` database fields, `convex/setLists.ts`, and old tables support migration compatibility; see [binder migration](binder-migration.md) before removing them.
+The product and frontend use **binder**. Existing `/setlists` URLs permanently redirect to `/binders`, preserving the path and query parameters. The `setListId`/`setListItemId` query parameters remain supported for saved song links; song route pages translate them to binder props. The `legacySetListId` and `legacySetListItemId` database fields, `convex/setLists.ts`, and old tables support migration compatibility; see [binder migration](binder-migration.md) before removing them.
 
 ## Song data flow
 
@@ -58,7 +58,7 @@ Structured content wins over legacy notation. Display choices such as transposit
 
 1. Find the owning module in the table above. Extend its existing responsibility before adding a new folder or abstraction.
 2. Keep reusable transformations in `lib/`, feature interactions in a colocated hook, and UI composition in the screen component. Extract a hook when a distinct responsibility needs its own state or lifecycle.
-3. Keep CSS and tests beside the code. Add behavioral coverage when changing parsing, permissions, persistence, or interactions; file moves should preserve the existing tests.
+3. Prefer Tailwind utility classes for new UI styling; keep custom CSS Modules and tests beside the code. Shared theme mappings live in `src/app/globals.css`; see [development](development.md#styling). Add behavioral coverage when changing parsing, permissions, persistence, or interactions; file moves should preserve the existing tests.
 4. Run `npm run check`; run `npm run build` for route, rendering, or import changes. Update shared docs when a setup step, boundary, or storage invariant changes.
 
 For Next.js-specific changes, read the relevant guide in `node_modules/next/dist/docs/` first, as required by `AGENTS.md`.

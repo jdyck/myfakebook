@@ -69,7 +69,7 @@ function ConnectedPublicLibraryBackedWorkspace({
   const initialSong = publishedSongs.find((song) => song.id === initialPublicSongId || song.catalogId === initialPublicSongId);
   const binderItem = binder?.items.find((item) => (item._id === binderItemId || (item.legacySetListItemId !== undefined && item.legacySetListItemId === binderItemId)) && item.songId === initialSong?.id);
   const resolvedBinderReturn = binderReturn ?? (binder && binderItem && validBinderId ? {
-    href: `/setlists/${encodeURIComponent(binder._id)}`,
+    href: `/binders/${encodeURIComponent(binder._id)}`,
     name: binder.name,
     binderId: binder._id,
     itemId: binderItem._id,

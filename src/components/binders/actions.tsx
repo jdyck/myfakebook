@@ -138,7 +138,7 @@ function ConnectedSaveToBinderButton({
               <div className={componentStyles.emptyBindersState}>
                 <p className={componentStyles.emptyStateTitle}>No binders yet</p>
                 <p className={componentStyles.emptyStateDescription}>Create a binder before adding this song.</p>
-                <Link className={componentStyles.createBinderLink} href="/setlists">Create a binder</Link>
+                <Link className={componentStyles.createBinderLink} href="/binders">Create a binder</Link>
               </div>
             )}
             {error && <p className={componentStyles.dialogErrorMessage} role="alert">{error}</p>}

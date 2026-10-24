@@ -1,7 +1,0 @@
-@layer components {
-  .publicationBadge {
-    --component-font-weight: 650;
-    font-weight: 650;
-    color: var(--accent-deep);
-  }
-}

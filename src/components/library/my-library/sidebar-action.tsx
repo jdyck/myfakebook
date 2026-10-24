@@ -2,7 +2,7 @@
 
 import { useRef, type ChangeEventHandler } from "react";
 import Link from "next/link";
-import { Plus, Upload } from "lucide-react";
+import { ArrowRight, Plus, Upload } from "lucide-react";
 import componentStyles from "./sidebar-action.module.css";
 
 type SidebarActionBase = {
@@ -41,6 +41,7 @@ export function SidebarAction(props: SidebarActionProps) {
     return (
       <Link className={componentStyles.sidebarAction} href={props.href}>
         {content}
+        {!props.icon && <ArrowRight size={14} strokeWidth={1.5} aria-hidden="true" />}
       </Link>
     );
   }

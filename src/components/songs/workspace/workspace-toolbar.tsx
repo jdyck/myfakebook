@@ -23,7 +23,7 @@ export function WorkspaceToolbar({
   onExportPdf,
 }: WorkspaceToolbarProps) {
   return (
-    <div className={componentStyles.workspaceToolbar}>
+    <div className={componentStyles.toolbar}>
       <WorkspaceActions
         exporting={exporting}
         onEdit={onEdit}

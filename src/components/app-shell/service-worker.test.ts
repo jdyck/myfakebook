@@ -56,7 +56,7 @@ describe("PWA service worker", () => {
     expect(request.cache).toBe("reload");
     expect(worker.skipWaiting).toHaveBeenCalledOnce();
     await lifecycle("activate");
-    expect(caches.delete.mock.calls).toEqual([["myfakebook-offline-v0"], ["myfakebook-offline-v1"]]);
+    expect(caches.delete.mock.calls).toEqual([["myfakebook-offline-v0"], ["myfakebook-offline-v1"], ["myfakebook-offline-v2"]]);
     expect(worker.clients.claim).toHaveBeenCalledOnce();
   });
 

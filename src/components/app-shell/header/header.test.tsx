@@ -28,5 +28,6 @@ describe("Header navigation", () => {
     const markup = renderToStaticMarkup(<Header clerkConfigured={true} />);
     expect(markup).toContain('href="/songs"');
     expect(markup).toContain('href="/mylibrary"');
+    expect(markup).toContain('href="/binders"');
   });
 });
