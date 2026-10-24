@@ -71,7 +71,7 @@
     resize: none;
     padding-inline: calc(var(--spacing) * 4);
     padding-block: calc(var(--spacing) * 3.5);
-    font-size: 11.5px;
+    font-size: var(--text-code);
     color: var(--ink);
   }
 
@@ -91,7 +91,7 @@
   .unsupportedFormatMessage,
   .unsupportedSourceTextarea,
   .rowEditorGrid {
-    border-radius: 8px;
+    border-radius: var(--radius-control);
     border-style: var(--component-border-style);
     border-width: 1px;
     background-color: var(--paper-soft);
@@ -120,7 +120,7 @@
   .unsupportedFormatMessage {
     padding-inline: calc(var(--spacing) * 3);
     padding-block: calc(var(--spacing) * 2);
-    font-size: 11px;
+    font-size: var(--text-compact);
     color: var(--muted);
   }
 
@@ -132,7 +132,7 @@
 
   .rowValidationMessage,
   .rowLabelGutter {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
 
   .unsupportedFormatMessage {
@@ -157,11 +157,11 @@
   }
 
   .rowTextarea ::selection {
-    background-color: #FFD5D3;
+    background-color: var(--selection);
   }
 
   .rowTextarea::selection {
-    background-color: #FFD5D3;
+    background-color: var(--selection);
   }
 
   .unsupportedSourceTextarea:focus {
@@ -177,15 +177,5 @@
     .editorInstructionsRow {
       margin-inline: calc(var(--spacing) * 3);
     }
-  }
-
-  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
-    background-color: #7D211E;
-    color: var(--color-white);
-  }
-
-  .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
-    background-color: #7D211E;
-    color: var(--color-white);
   }
 }

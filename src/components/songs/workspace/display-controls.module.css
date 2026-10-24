@@ -2,18 +2,18 @@
   .transposeSection, .viewSection { border-top: 1px solid var(--ink); padding: 19px 0; }
   .controlLabel { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .controlLabel label { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: 1px; }
-  .controlLabel button { font-size: 9px; padding: 6px 0; color: var(--muted); }
+  .controlLabel button { font-size: var(--text-micro); padding: 6px 0; color: var(--muted); }
   .controlLabel button:hover { color: var(--accent); }
   .keyControl { display: flex; align-items: center; gap: 12px; margin: 10px 0 8px; }
-  .keyControl select { width: 100%; min-width: 0; background: transparent; color: var(--ink); border: 0; font: 650 28px/1.3 var(--font-inter); letter-spacing: -1px; padding: 4px 0; appearance: none; cursor: pointer; }
+  .keyControl select { width: 100%; min-width: 0; background: transparent; color: var(--ink); border: 0; font: var(--font-weight-demibold) 28px/1.3 var(--font-inter); letter-spacing: -1px; padding: 4px 0; appearance: none; cursor: pointer; }
   .keyControl option { font-size: 14px; background: var(--paper); color: var(--ink); }
   .keyControl > svg { flex-shrink: 0; }
-  .utilityNote { font-size: 10px; line-height: 1.7; color: var(--muted); }
-  .disclosure { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 15px; font-size: 11px; font-weight: 600; min-height: 30px; padding: 0; }
+  .utilityNote { font-size: var(--text-caption); line-height: 1.7; color: var(--muted); }
+  .disclosure { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 15px; font-size: var(--text-compact); font-weight: 600; min-height: 30px; padding: 0; }
   .disclosure > span { display: flex; gap: 8px; align-items: center; }
   .disclosure[aria-expanded="true"] > svg { transform: rotate(180deg); }
   .viewPanel { padding-top: 14px; }
-  .checkRow { display: flex; align-items: center; gap: 10px; min-height: 34px; font-size: 11px; }
+  .checkRow { display: flex; align-items: center; gap: 10px; min-height: var(--spacing-control); font-size: var(--text-compact); }
   .checkRow input { accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; }
   @media (width <= 1250px) { .keyControl select { font-size: 25px; } }
   @media (width <= 750px) {
@@ -25,8 +25,8 @@
     .controlLabel label { font-size: 7px; letter-spacing: .7px; }
     .keyControl select { font-size: 23px; }
     .keyControl > svg { width: 17px; height: 17px; }
-    .utilityNote { font-size: 9px; }
-    .disclosure { font-size: 10px; }
+    .utilityNote { font-size: var(--text-micro); }
+    .disclosure { font-size: var(--text-caption); }
   }
   @media (width <= 350px) { .keyControl select { font-size: 21px; } }
 }

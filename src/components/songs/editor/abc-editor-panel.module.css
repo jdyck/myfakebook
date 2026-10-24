@@ -3,7 +3,7 @@
   .editorHint,
   .editorError {
     margin: 12px 14px 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
   }
 
@@ -37,7 +37,7 @@
 
   .editorActionButton {
     display: inline-flex;
-    min-height: 34px;
+    min-height: var(--spacing-control);
     justify-content: center;
     gap: 7px;
     border-color: transparent;
@@ -51,8 +51,8 @@
       --component-duration,
       var(--default-transition-duration)
     );
-    --component-duration: 160ms;
-    transition-duration: 160ms;
+    --component-duration: var(--transition-duration-control);
+    transition-duration: var(--transition-duration-control);
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
@@ -122,9 +122,9 @@
   .editorModeTab,
   .editorActionButton {
     cursor: pointer;
-    font-size: 11px;
-    --component-font-weight: 650;
-    font-weight: 650;
+    font-size: var(--text-compact);
+    --component-font-weight: var(--font-weight-demibold);
+    font-weight: var(--font-weight-demibold);
   }
 
   .abcEditorPanel,
@@ -182,7 +182,7 @@
   .sourceEditorPanel,
   .editorModeTabs,
   .editorActionButton {
-    border-radius: 8px;
+    border-radius: var(--radius-control);
   }
 
   .abcEditorPanel {
@@ -242,11 +242,11 @@
     padding-top: calc(var(--spacing) * 3.5);
     padding-bottom: 17px;
     font-family: var(--default-mono-font-family);
-    font-size: 11.5px;
+    font-size: var(--text-code);
   }
 
   .fileTypeBadge {
-    font-size: 9px;
+    font-size: var(--text-micro);
   }
 
   .lineNumberGutter,
@@ -276,11 +276,11 @@
   }
 
   .sourceTextarea ::selection {
-    background-color: #FFD5D3;
+    background-color: var(--selection);
   }
 
   .sourceTextarea::selection {
-    background-color: #FFD5D3;
+    background-color: var(--selection);
   }
 
   @media (hover: hover) {
@@ -315,16 +315,5 @@
     .editorToolbar {
       padding-inline: calc(var(--spacing) * 3);
     }
-  }
-
-  .sourceTextarea:where([data-theme="dark"], [data-theme="dark"] *)
-    ::selection {
-    background-color: #7D211E;
-    color: var(--color-white);
-  }
-
-  .sourceTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
-    background-color: #7D211E;
-    color: var(--color-white);
   }
 }

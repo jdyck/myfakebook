@@ -12,15 +12,15 @@
   }
 
   .compact {
-    min-height: 38px;
+    min-height: var(--spacing-field);
     padding-block: 8px;
     font-size: var(--text-sm);
     line-height: var(--text-sm--line-height);
   }
 
   .large {
-    min-height: 44px;
-    border-radius: 8px;
+    min-height: var(--spacing-touch);
+    border-radius: var(--radius-control);
     padding-block: 9px;
     font-size: 16px;
     font-weight: 500;

@@ -64,7 +64,7 @@
       --component-ease,
       var(--default-transition-timing-function)
     );
-    transition-duration: 160ms;
+    transition-duration: var(--transition-duration-control);
   }
 
   @media (hover: hover) {

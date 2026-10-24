@@ -8,16 +8,16 @@
     align-items: center;
     justify-content: center;
     gap: calc(var(--spacing) * 1.75);
-    border-radius: 8px;
+    border-radius: var(--radius-control);
     border-style: var(--component-border-style);
     border-width: 1px;
     padding-inline: calc(var(--spacing) * 2.75);
-    font-size: 11px;
-    --component-font-weight: 650;
-    font-weight: 650;
+    font-size: var(--text-compact);
+    --component-font-weight: var(--font-weight-demibold);
+    font-weight: var(--font-weight-demibold);
     color: var(--muted);
-    --component-duration: 160ms;
-    transition-duration: 160ms;
+    --component-duration: var(--transition-duration-control);
+    transition-duration: var(--transition-duration-control);
     --component-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
@@ -38,7 +38,7 @@
 
   .signInButton,
   .createAccountButton {
-    min-height: calc(var(--spacing) * 8.5);
+    min-height: var(--spacing-control);
   }
 
   .signInLink,

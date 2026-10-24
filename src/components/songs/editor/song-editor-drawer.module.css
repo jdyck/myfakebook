@@ -46,8 +46,8 @@
   .drawerEyebrow {
     margin-bottom: calc(var(--spacing) * 1);
     color: var(--muted);
-    font-size: 10px;
-    font-weight: 650;
+    font-size: var(--text-caption);
+    font-weight: var(--font-weight-demibold);
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
@@ -55,7 +55,7 @@
   .drawerTitle {
     font-size: 20px;
     line-height: 1.2;
-    font-weight: 650;
+    font-weight: var(--font-weight-demibold);
     letter-spacing: -0.025em;
   }
 
@@ -87,8 +87,8 @@
     flex-direction: column;
     gap: calc(var(--spacing) * 1.5);
     color: var(--muted);
-    font-size: 12px;
-    font-weight: 650;
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-demibold);
   }
 
   .closeButton:focus-visible {
@@ -99,7 +99,7 @@
   .feedbackStatus {
     margin: 0;
     color: var(--muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
 
   .drawerEditor {

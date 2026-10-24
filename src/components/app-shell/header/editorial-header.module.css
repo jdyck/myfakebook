@@ -1,7 +1,7 @@
 @layer components {
   .siteHeader {
     height: 100px;
-    max-width: 1600px;
+    max-width: var(--container-page);
     margin: auto;
     display: flex;
     align-items: center;
@@ -11,9 +11,9 @@
   }
   .brand { font-size: 32px; line-height: 1; font-weight: 900; letter-spacing: -1.3px; white-space: nowrap; }
   .brand span { color: var(--accent); }
-  .caption { font: 9px/1.6 var(--font-roboto-mono); letter-spacing: 1px; border-left: 1px solid var(--line); padding-left: 28px; }
+  .caption { font: var(--text-micro)/1.6 var(--font-roboto-mono); letter-spacing: 1px; border-left: 1px solid var(--line); padding-left: 28px; }
   .navigation { margin-left: auto; display: flex; align-items: stretch; align-self: stretch; gap: 32px; }
-  .navigation a { display: flex; align-items: center; font-weight: 600; font-size: 13px; padding: 0 1px; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+  .navigation a { display: flex; align-items: center; font-weight: 600; font-size: var(--text-detail); padding: 0 1px; border-bottom: 3px solid transparent; margin-bottom: -1px; }
   .navigation a[aria-current="page"] { border-bottom-color: var(--accent); }
   .navigation a:hover { color: var(--accent); }
   .siteHeader a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
@@ -29,7 +29,7 @@
     .accountControls { gap: 16px; margin-left: 0; }
     .accountControls > button { display: none; }
     .navigation { gap: 20px; }
-    .navigation a { font-size: 12px; }
+    .navigation a { font-size: var(--text-xs); }
   }
   @media (width <= 560px) {
     .siteHeader { padding: 22px 20px 0; height: 114px; flex-wrap: wrap; gap: 0; align-content: space-between; }

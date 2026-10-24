@@ -3,14 +3,13 @@
   .scoreToolbar { grid-column: 1; grid-row: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 42px; margin-bottom: 13px; }
   .scoreToolbar > p { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: .7px; white-space: nowrap; color: var(--muted); }
   .scoreToolbar > p > span:first-child { margin: 0 7px; color: var(--accent); }
-  .leadSheetPreview { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; padding: 22px; background: #eaeae7; overflow-x: auto; }
-  .leadSheetPreview:where([data-theme="dark"] *) { background: #242424; }
-  .previewPage { background: #fff; color: #0b0b0b; padding: 32px 24px 20px; min-height: 760px; overflow: hidden; border: 1px solid #d9d9d9; }
+  .leadSheetPreview { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; padding: 22px; background: var(--score-surround); overflow-x: auto; }
+  .previewPage { background: var(--color-score-paper); color: var(--color-score-ink); padding: 32px 24px 20px; min-height: 760px; overflow: hidden; border: 1px solid var(--color-score-line); }
   .zoomedPage { min-width: 800px; }
-  .notationCanvas { width: 100%; color: #0b0b0b; outline: none; }
-  .notationCanvas svg { display: block; width: 100%; height: auto; color: #0b0b0b; }
-  .paperFooter { border-top: 1px solid #d9d9d9; display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 30px; padding-top: 14px; color: #6b6b6b; font-size: 8px; }
-  .paperFooter > span:first-child { font-weight: 800; color: #0b0b0b; letter-spacing: -.3px; }
+  .notationCanvas { width: 100%; color: var(--color-score-ink); outline: none; }
+  .notationCanvas svg { display: block; width: 100%; height: auto; color: var(--color-score-ink); }
+  .paperFooter { border-top: 1px solid var(--color-score-line); display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 30px; padding-top: 14px; color: var(--color-score-muted); font-size: 8px; }
+  .paperFooter > span:first-child { font-weight: 800; color: var(--color-score-ink); letter-spacing: -.3px; }
   .paperFooter > span:not(:first-child) { font: 6px/1.5 var(--font-roboto-mono); letter-spacing: .5px; }
   .scoreFootnote { grid-column: 1; grid-row: 3; font: 7px/1.5 var(--font-roboto-mono); letter-spacing: 1.1px; padding-top: 16px; color: var(--muted); text-align: center; }
   .previewControls { grid-column: 2; grid-row: 1 / span 3; min-width: 0; padding-top: 4px; }
@@ -22,25 +21,25 @@
   .playbackControls { border-top: 1px solid var(--ink); padding: 19px 0; }
   .sectionLabel { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: 1px; }
   .playbackFieldGroup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin-top: 17px; }
-  .playbackFieldLabel, .tempoField { font-size: 9px; font-weight: 400; color: var(--muted); min-width: 0; }
-  .playbackFieldLabel:first-child { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 10px; margin-bottom: 1px; }
+  .playbackFieldLabel, .tempoField { font-size: var(--text-micro); font-weight: 400; color: var(--muted); min-width: 0; }
+  .playbackFieldLabel:first-child { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: var(--text-caption); margin-bottom: 1px; }
   .playbackFieldLabel:not(:first-child) { grid-column: 2; grid-row: 2; }
-  .playbackSelect, .tempoField input { display: block; width: 100%; min-width: 0; font-size: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 8px 6px; border-radius: 0; height: 35px; margin-top: 8px; }
+  .playbackSelect, .tempoField input { display: block; width: 100%; min-width: 0; font-size: var(--text-caption); border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 8px 6px; border-radius: 0; height: 35px; margin-top: 8px; }
   .playbackFieldLabel:first-child select { margin-top: 0; max-width: 170px; }
   .tempoField { grid-column: 1; grid-row: 2; }
   .tempoField > span { font: 7px/1.5 var(--font-roboto-mono); margin-left: 5px; }
   .playbackTransport { grid-column: 1 / -1; }
-  .playbackButton { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--ink); color: var(--paper); font-size: 11px; font-weight: 600; min-height: 43px; margin: 3px 0 9px; }
-  .playbackButton:hover { background: #e10600; color: #fff; }
+  .playbackButton { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--ink); color: var(--paper); font-size: var(--text-compact); font-weight: 600; min-height: 43px; margin: 3px 0 9px; }
+  .playbackButton:hover { background: var(--color-brand); color: var(--color-white); }
   .playbackButton:disabled { cursor: not-allowed; opacity: .6; }
-  .playbackStatus { font-size: 10px; line-height: 1.7; color: var(--muted); }
+  .playbackStatus { font-size: var(--text-caption); line-height: 1.7; color: var(--muted); }
   .songActions { border-top: 1px solid var(--ink); padding: 19px 0; display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
-  .songActions > button { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 0; font-size: 11px; padding: 10px 12px; }
-  .songActions > button:first-child { background: #e10600; border-color: #e10600; color: #fff; }
-  .songActions > button[aria-haspopup="menu"] { display: flex; justify-content: space-between; background: transparent; color: var(--accent); padding: 0; border: 0; font-size: 11px; }
+  .songActions > button { width: 100%; min-height: var(--spacing-touch); border: 1px solid var(--line); border-radius: 0; font-size: var(--text-compact); padding: 10px 12px; }
+  .songActions > button:first-child { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-white); }
+  .songActions > button[aria-haspopup="menu"] { display: flex; justify-content: space-between; background: transparent; color: var(--accent); padding: 0; border: 0; font-size: var(--text-compact); }
   .controlsEnd { border-top: 1px solid var(--line); padding-top: 19px; font: 8px/1.7 var(--font-roboto-mono); letter-spacing: 1px; color: var(--muted); }
-  .playbackErrorPanel { padding: 24px; font-size: 12px; color: var(--amber); }
-  .syntaxHelpExample { display: block; margin-top: 7px; font: 11px/1.6 var(--font-inter); }
+  .playbackErrorPanel { padding: 24px; font-size: var(--text-xs); color: var(--amber); }
+  .syntaxHelpExample { display: block; margin-top: 7px; font: var(--text-compact)/1.6 var(--font-inter); }
   .notationErrorState { display: none; }
   .loadingSpinner { animation: var(--animate-spin); }
   @media (width >= 1500px) {
@@ -95,10 +94,10 @@
     .playbackFieldGroup { gap: 8px; }
     .playbackFieldLabel, .tempoField { font-size: 8px; }
     .tempoField > span { display: none; }
-    .playbackButton { font-size: 10px; }
-    .playbackStatus { font-size: 9px; }
+    .playbackButton { font-size: var(--text-caption); }
+    .playbackStatus { font-size: var(--text-micro); }
     .songActions { gap: 20px; }
-    .songActions > button { font-size: 10px; padding: 10px 12px; }
+    .songActions > button { font-size: var(--text-caption); padding: 10px 12px; }
     .paperFooter > span:nth-child(2) { display: none; }
   }
   @media (width <= 350px) { .scoreToolbar > p { display: none; } .previewControls { gap: 0 15px; } .songActions > button { padding-inline: 8px; } }

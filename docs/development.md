@@ -29,6 +29,24 @@ Tailwind CSS v4 runs through `@tailwindcss/postcss` in `postcss.config.mjs`. Its
 
 Use utility classes directly in component `className` values, for example `className="flex gap-4 rounded-lg border border-line bg-paper p-4 font-sans text-ink"`. Theme colors such as `bg-canvas`, `text-muted`, and `text-accent` follow the app's light/dark variables. Fonts are available as `font-sans` (Inter), `font-mono` (Roboto Mono), and `font-display` (Roboto Flex). The `dark:` variant follows the existing `data-theme="dark"` toggle. Use complete class names so Tailwind can detect them; avoid building class names with string fragments.
 
+Shared design tokens are defined in `src/app/globals.css`. Use the same variables in CSS Modules, so utilities and component styles share one source of truth.
+
+| Purpose | Utilities / tokens |
+| --- | --- |
+| Theme surfaces, text, borders, and states | `bg-paper`, `text-ink`, `border-line`, `text-destructive`, `text-on-accent` |
+| Fixed brand colors | `bg-brand`, `hover:bg-brand-hover`; use `accent` for the local theme's accent |
+| Library and workspace palette | `bg-editorial-canvas`, `text-editorial-ink`, `border-editorial-line`; existing shells alias their local colors to these tokens |
+| Score rendering | `bg-score-paper`, `text-score-ink`, `text-score-muted`, `border-score-line`, `bg-score-surround`; the score stays white in dark mode |
+| Text selection | `selection:bg-selection selection:text-selection-ink` |
+| Dense typography | `text-micro` (9px), `text-caption` (10px), `text-compact` (11px), `text-code` (11.5px), `text-xs` (12px), `text-detail` (13px) |
+| Intermediate font weight | `font-demibold` (650) |
+| Shared radii | `rounded-control` (8px), `rounded-field` (0.625rem), `rounded-menu-item` (5px) |
+| Control sizes | `size-control` / `min-h-control` (34px), `min-h-field` (38px), `min-h-touch` (44px) |
+| Page width and menu elevation | `max-w-page` (1600px), `shadow-menu` |
+| Control transitions | `duration-control` (160ms) |
+
+Theme-aware colors use `@theme inline` mappings to light/dark variables. Fixed shared values use `@theme static` so their CSS variables remain available to CSS Modules even without a matching utility in JSX. Standard spacing and type sizes continue to use Tailwind's built-in scale. Keep one-off layout dimensions and responsive adjustments beside their components; add a token when it represents a shared design decision.
+
 ## Checks
 
 Run `npm run check` before submitting changes. It runs ESLint, `next typegen`, TypeScript, and Vitest. Tests sit beside the code they cover; DOM tests opt into jsdom, and backend tests use `convex-test` without a live deployment. When interacting with a menu in a React test, finish the opening `act` before querying its portaled options.

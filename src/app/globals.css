@@ -24,6 +24,42 @@
   --color-amber: var(--amber);
   --color-amber-soft: var(--amber-soft);
   --color-editor-gutter: var(--editor-gutter);
+  --color-destructive: var(--ui-destructive);
+  --color-on-accent: var(--ui-primary-foreground);
+  --color-selection: var(--selection);
+  --color-selection-ink: var(--selection-ink);
+  --color-editorial-canvas: var(--editorial-canvas);
+  --color-editorial-ink: var(--editorial-ink);
+  --color-editorial-accent: var(--editorial-accent);
+  --color-editorial-muted: var(--editorial-muted);
+  --color-editorial-line: var(--editorial-line);
+  --color-editorial-hover: var(--editorial-hover);
+  --color-score-surround: var(--score-surround);
+}
+
+/* Static tokens also stay available to CSS Modules without utility usage. */
+@theme static {
+  --color-brand: #e10600;
+  --color-brand-hover: #be0500;
+  --color-score-paper: #fff;
+  --color-score-ink: #0b0b0b;
+  --color-score-muted: #6b6b6b;
+  --color-score-line: #d9d9d9;
+  --text-micro: 9px;
+  --text-caption: 10px;
+  --text-compact: 11px;
+  --text-code: 11.5px;
+  --text-detail: 13px;
+  --font-weight-demibold: 650;
+  --radius-control: 8px;
+  --radius-field: 0.625rem;
+  --radius-menu-item: 5px;
+  --spacing-control: 34px;
+  --spacing-field: 38px;
+  --spacing-touch: 44px;
+  --container-page: 1600px;
+  --shadow-menu: 0 8px 24px rgb(0 0 0 / 14%);
+  --transition-duration-control: 160ms;
 }
 
 @layer theme {
@@ -324,7 +360,7 @@
   --muted-soft: #9a9ca3;
   --line: #e4e4e0;
   --line-strong: #d2d2cc;
-  --accent: #E10600;
+  --accent: var(--color-brand);
   --accent-deep: #B30500;
   --accent-soft: #FFF0EF;
   --green: #208c68;
@@ -350,7 +386,16 @@
   --ui-border: var(--line);
   --ui-input: var(--line-strong);
   --ui-ring: var(--accent);
-  --ui-radius: 0.625rem;
+  --ui-radius: var(--radius-field);
+  --selection: #ffd5d3;
+  --selection-ink: #5c0906;
+  --editorial-canvas: #f7f7f6;
+  --editorial-ink: #0b0b0b;
+  --editorial-accent: var(--color-brand);
+  --editorial-muted: #6b6b6b;
+  --editorial-line: #d9d9d9;
+  --editorial-hover: #eeeeec;
+  --score-surround: #eaeae7;
 }
 
 [data-theme="dark"] {
@@ -363,7 +408,7 @@
   --muted-soft: #7f8492;
   --line: #2d303a;
   --line-strong: #414551;
-  --accent: #E10600;
+  --accent: var(--color-brand);
   --accent-deep: #FF8A85;
   --accent-soft: #3B1B1A;
   --green: #55c79a;
@@ -372,6 +417,15 @@
   --editor-gutter: #20232a;
   --ui-secondary: #272a33;
   --ui-destructive: #ef8e86;
+  --selection: #7d211e;
+  --selection-ink: var(--color-white);
+  --editorial-canvas: #141414;
+  --editorial-ink: #f7f7f6;
+  --editorial-accent: #ff4b43;
+  --editorial-muted: #adadad;
+  --editorial-line: #3c3c3c;
+  --editorial-hover: #202020;
+  --score-surround: #242424;
 }
 
 .abc-preview-hide-chords .abcjs-chord,

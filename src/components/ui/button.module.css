@@ -9,36 +9,36 @@
     color: var(--muted);
     cursor: pointer;
     font-family: inherit;
-    font-weight: 650;
+    font-weight: var(--font-weight-demibold);
     line-height: 1;
     text-align: center;
     text-decoration: none;
     transition-property: border-color, background-color, color, opacity;
-    transition-duration: 160ms;
+    transition-duration: var(--transition-duration-control);
     transition-timing-function: var(--ease-in-out);
     white-space: nowrap;
   }
 
   .compact {
-    min-height: 34px;
-    border-radius: 8px;
+    min-height: var(--spacing-control);
+    border-radius: var(--radius-control);
     padding-inline: 11px;
-    font-size: 11px;
+    font-size: var(--text-compact);
   }
 
   .regular {
-    min-height: 34px;
+    min-height: var(--spacing-control);
     border-radius: var(--ui-radius);
     padding-inline: 12px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
   }
 
   .icon {
-    width: 34px;
-    height: 34px;
+    width: var(--spacing-control);
+    height: var(--spacing-control);
     flex: none;
-    border-radius: 8px;
+    border-radius: var(--radius-control);
     padding: 0;
   }
 

@@ -2,14 +2,14 @@
   .librarySidebar { min-width: 0; padding-right: 23px; border-right: 1px solid var(--line); }
   .libraryHeadingBar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 26px; }
   .libraryTitle { font-size: 15px; font-weight: 750; letter-spacing: -.4px; color: var(--ink); }
-  .libraryCount { font: 9px/1.5 var(--font-roboto-mono); color: var(--accent); }
+  .libraryCount { font: var(--text-micro)/1.5 var(--font-roboto-mono); color: var(--accent); }
   .sectionHeading { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: 1px; color: var(--muted); margin-bottom: 13px; text-transform: uppercase; }
   .recentBindersSection { border-top: 1px solid var(--ink); margin-top: 25px; padding-top: 22px; }
   .recentBinderLink { display: block; width: 100%; text-align: left; padding: 12px 0; }
-  .binderName { display: block; font-size: 11px; font-weight: 600; overflow-wrap: anywhere; }
+  .binderName { display: block; font-size: var(--text-compact); font-weight: 600; overflow-wrap: anywhere; }
   .binderMetadata { display: block; font: 7px/1.5 var(--font-roboto-mono); letter-spacing: .25px; margin-top: 8px; color: var(--muted); text-transform: uppercase; }
   .recentBinderLink:hover .binderName { color: var(--accent); }
-  .bindersMessage { padding: 12px 0; font-size: 11px; color: var(--muted); }
+  .bindersMessage { padding: 12px 0; font-size: var(--text-compact); color: var(--muted); }
   .signInLink { color: var(--accent); text-decoration: underline; }
   @media (width <= 1250px) { .librarySidebar { padding-right: 17px; } }
   @media (width <= 1000px) { .librarySidebar { display: none; } }

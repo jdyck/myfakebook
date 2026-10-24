@@ -1,11 +1,11 @@
 @layer components {
   .createBinderForm { display: flex; align-items: flex-end; gap: 20px; padding: 0 0 26px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
   .formField { flex: 1; min-width: 0; }
-  .binderNameInput { display: block; width: 100%; min-width: 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 14px 0; margin-top: 9px; background: transparent; color: var(--ink); font-size: 13px; }
+  .binderNameInput { display: block; width: 100%; min-width: 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 14px 0; margin-top: 9px; background: transparent; color: var(--ink); font-size: var(--text-detail); }
   .binderNameInput::placeholder { color: var(--muted); opacity: 1; }
   .createBinderForm button:disabled { cursor: wait; opacity: .6; }
-  .formErrorMessage { margin-bottom: 20px; color: var(--ui-destructive); font-size: 13px; }
-  .setupMessage { padding: 22px 0; border-bottom: 1px solid var(--line); margin-bottom: 20px; font-size: 13px; color: var(--muted); }
+  .formErrorMessage { margin-bottom: 20px; color: var(--ui-destructive); font-size: var(--text-detail); }
+  .setupMessage { padding: 22px 0; border-bottom: 1px solid var(--line); margin-bottom: 20px; font-size: var(--text-detail); color: var(--muted); }
   @media (width <= 560px) {
     .createBinderForm { align-items: stretch; flex-direction: column; gap: 16px; padding-top: 16px; }
     .binderNameInput { font-size: 16px; }
