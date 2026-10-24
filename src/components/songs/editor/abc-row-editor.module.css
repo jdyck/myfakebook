@@ -1,8 +1,5 @@
 /* Component styles. */
 @layer components {
-  .editorInstructions {
-    margin: 0px;
-  }
 
   .unsupportedSourceTextarea,
   .rowEditorGrid {
@@ -130,17 +127,15 @@
   .unsupportedSourceTextarea,
   .rowLabelGutter,
   .rowTextarea {
-    font-family: var(--font-inconsolata);
+    font-family: var(--default-mono-font-family);
   }
 
-  .editorInstructions,
   .rowValidationMessage,
   .rowLabelGutter {
     font-size: 10px;
   }
 
-  .unsupportedFormatMessage,
-  .editorInstructions {
+  .unsupportedFormatMessage {
     --component-leading: calc(var(--spacing) * 5);
     line-height: calc(var(--spacing) * 5);
   }
@@ -157,17 +152,16 @@
     color: var(--amber);
   }
 
-  .editorInstructions,
   .rowLabelGutter {
     color: var(--muted-soft);
   }
 
   .rowTextarea ::selection {
-    background-color: #ddd9ff;
+    background-color: #FFD5D3;
   }
 
   .rowTextarea::selection {
-    background-color: #ddd9ff;
+    background-color: #FFD5D3;
   }
 
   .unsupportedSourceTextarea:focus {
@@ -186,12 +180,12 @@
   }
 
   .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
-    background-color: #4a4387;
+    background-color: #7D211E;
     color: var(--color-white);
   }
 
   .rowTextarea:where([data-theme="dark"], [data-theme="dark"] *)::selection {
-    background-color: #4a4387;
+    background-color: #7D211E;
     color: var(--color-white);
   }
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { abcToMusicXml } from "@/lib/abc";
-import { DEFAULT_DISPLAY_SETTINGS, prepareAbcForExport, type SongDisplaySettings } from "@/lib/abc-display";
+import { abcToMusicXml } from "@/lib/notation/abc";
+import { DEFAULT_DISPLAY_SETTINGS, prepareAbcForExport, type SongDisplaySettings } from "@/lib/notation/abc-display";
 
 function readDisplaySettings(value: unknown): SongDisplaySettings {
   if (!value || typeof value !== "object") return DEFAULT_DISPLAY_SETTINGS;

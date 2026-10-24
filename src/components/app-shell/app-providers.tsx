@@ -6,7 +6,7 @@ import { ConvexProvider, ConvexReactClient, useConvexAuth, useMutation } from "c
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 
 import { api } from "../../../convex/_generated/api";
-import { PUBLIC_LIBRARY } from "@/lib/public-library";
+import { PUBLIC_LIBRARY } from "@/lib/songs/public-library";
 
 const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;

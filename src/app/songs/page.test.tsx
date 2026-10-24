@@ -7,6 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import SongsPage from "./page";
 
+vi.mock("next/font/google", () => ({ Roboto_Condensed: () => ({ className: "condensed" }) }));
+
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 describe("Songs page", () => {
@@ -40,7 +42,7 @@ describe("Songs page", () => {
       root.render(SongsPage());
     });
 
-    expect(container.querySelector("#songs-heading")?.textContent).toBe("Songs");
+    expect(container.querySelector("#songs-heading")?.textContent).toBe("Songs.");
     expect(container.textContent).toContain("No published songs yet.");
     expect(container.querySelector("textarea")).toBeNull();
     expect(container.querySelector("a[href^='/songs/']")).toBeNull();

@@ -1,0 +1,37 @@
+@layer components {
+  .textField {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--ui-radius);
+    background: var(--paper);
+    padding-inline: 12px;
+    color: var(--ink);
+    font-family: inherit;
+    font-weight: 400;
+  }
+
+  .compact {
+    min-height: 38px;
+    padding-block: 8px;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+
+  .large {
+    min-height: 44px;
+    border-radius: 8px;
+    padding-block: 9px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .textField::placeholder {
+    color: var(--muted-soft);
+  }
+
+  .textField:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}

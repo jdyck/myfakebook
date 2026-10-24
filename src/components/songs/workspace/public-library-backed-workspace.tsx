@@ -1,13 +1,14 @@
 "use client";
 
 import { useConvexAuth, useQuery } from "convex/react";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
-import { MyFakebookWorkspace } from "@/components/songs/workspace/my-fakebook-workspace";
-import type { LoadedSong } from "@/components/songs/types";
-import type { SongDisplaySettings } from "@/lib/abc-display";
+import { SongWorkspace } from "@/components/songs/workspace/song-workspace";
+import type { LoadedSong } from "@/lib/songs/types";
+import type { SongDisplaySettings } from "@/lib/notation/abc-display";
 import { usePublicSongs } from "@/components/library/public-library/use-public-songs";
 import componentStyles from "./public-library-backed-workspace.module.css";
 
@@ -17,31 +18,43 @@ type PublicLibraryBackedWorkspaceProps = {
   initialPublicSongId?: string;
   initialPrivateSong?: LoadedSong;
   initialDisplaySettings?: SongDisplaySettings;
-  setListId?: string;
-  setListItemId?: string;
-  setListReturn?: {
+  binderId?: string;
+  binderItemId?: string;
+  binderReturn?: {
     href: string;
     name: string;
-    setListId: Id<"setLists">;
-    itemId: Id<"setListItems">;
+    binderId: Id<"binders">;
+    itemId: Id<"binderItems">;
     songId: Id<"songs">;
   };
 };
 
-export function PublicLibraryBackedWorkspace({
+export function PublicLibraryBackedWorkspace(props: PublicLibraryBackedWorkspaceProps) {
+  return props.clerkConfigured
+    ? <AdminAwarePublicLibraryBackedWorkspace {...props} />
+    : <ConnectedPublicLibraryBackedWorkspace {...props} isAdmin={false} />;
+}
+
+function AdminAwarePublicLibraryBackedWorkspace(props: PublicLibraryBackedWorkspaceProps) {
+  const { user } = useUser();
+  return <ConnectedPublicLibraryBackedWorkspace {...props} isAdmin={user?.publicMetadata?.role === "admin"} />;
+}
+
+function ConnectedPublicLibraryBackedWorkspace({
   clerkConfigured,
   persistenceEnabled,
   initialPublicSongId,
   initialPrivateSong,
   initialDisplaySettings,
-  setListId,
-  setListItemId,
-  setListReturn,
-}: PublicLibraryBackedWorkspaceProps) {
+  binderId,
+  binderItemId,
+  binderReturn,
+  isAdmin,
+}: PublicLibraryBackedWorkspaceProps & { isAdmin: boolean }) {
   const { isAuthenticated } = useConvexAuth();
-  const { songs: publishedSongs, loading: publicSongsLoading } = usePublicSongs();
-  const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
-  const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
+  const { songs: publishedSongs, loading: publicSongsLoading } = usePublicSongs({ isAdmin });
+  const validBinderId = binderId && /^[a-zA-Z0-9_-]+$/.test(binderId) ? binderId : null;
+  const binder = useQuery(api.binders.get, isAuthenticated && validBinderId ? { id: validBinderId } : "skip");
 
   if (publicSongsLoading || !publishedSongs) {
     return (
@@ -54,15 +67,15 @@ export function PublicLibraryBackedWorkspace({
   }
 
   const initialSong = publishedSongs.find((song) => song.id === initialPublicSongId || song.catalogId === initialPublicSongId);
-  const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === initialSong?.id);
-  const resolvedSetListReturn = setListReturn ?? (setList && setListItem && validSetListId ? {
-    href: `/setlists/${encodeURIComponent(setList._id)}`,
-    name: setList.name,
-    setListId: validSetListId,
-    itemId: setListItem._id,
-    songId: setListItem.songId,
+  const binderItem = binder?.items.find((item) => (item._id === binderItemId || (item.legacySetListItemId !== undefined && item.legacySetListItemId === binderItemId)) && item.songId === initialSong?.id);
+  const resolvedBinderReturn = binderReturn ?? (binder && binderItem && validBinderId ? {
+    href: `/binders/${encodeURIComponent(binder._id)}`,
+    name: binder.name,
+    binderId: binder._id,
+    itemId: binderItem._id,
+    songId: binderItem.songId,
   } : undefined);
-  const resolvedDisplaySettings = initialDisplaySettings ?? setListItem?.displaySettings;
+  const resolvedDisplaySettings = initialDisplaySettings ?? binderItem?.displaySettings;
 
   if (initialPublicSongId && !initialSong) {
     return (
@@ -76,8 +89,8 @@ export function PublicLibraryBackedWorkspace({
   }
 
   return (
-    <MyFakebookWorkspace
-      key={`${initialPrivateSong?.id ?? initialSong?.id ?? "default"}:${JSON.stringify(resolvedDisplaySettings ?? null)}:${resolvedSetListReturn?.href ?? ""}`}
+    <SongWorkspace
+      key={`${initialPrivateSong?.id ?? initialSong?.id ?? "default"}:${JSON.stringify(resolvedDisplaySettings ?? null)}:${resolvedBinderReturn?.href ?? ""}`}
       publicLibraryIsPersisted={publishedSongs.length > 0}
       clerkConfigured={clerkConfigured}
       persistenceEnabled={persistenceEnabled}
@@ -85,7 +98,7 @@ export function PublicLibraryBackedWorkspace({
       initialPublicSongId={initialSong?.id}
       initialPrivateSong={initialPrivateSong}
       initialDisplaySettings={resolvedDisplaySettings}
-      setListReturn={resolvedSetListReturn}
+      binderReturn={resolvedBinderReturn}
     />
   );
 }

@@ -1,18 +1,24 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ChangeEventHandler } from "react";
 import { Authenticated, Unauthenticated, useConvexAuth, useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
-import { publicationStatusForSong, type LoadedSong, type SongId } from "@/components/songs/types";
-import componentStyles from "@/components/shared/song-actions.module.css";
+import { SidebarAction } from "@/components/library/my-library/sidebar-action";
+import { publicationStatusForSong, type LoadedSong, type SongId } from "@/lib/songs/types";
+import { sameSongContent, type SongContent } from "@/lib/songs/song-content";
+import componentStyles from "./recent-songs.module.css";
 
 type RecentMyLibrarySongsProps = {
   title: string;
   abc: string;
+  abcParts: string;
+  content: SongContent;
   isPublicSong: boolean;
   currentSong: LoadedSong | null;
+  onNew: () => void;
+  onFileImport: ChangeEventHandler<HTMLInputElement>;
   recentSongIds: readonly string[];
   onCurrentSongChange: (song: LoadedSong | null) => void;
   onMySongsChange: (songs: LoadedSong[]) => void;
@@ -31,8 +37,12 @@ export function RecentMyLibrarySongs({
 function ConnectedRecentMyLibrarySongs({
   title,
   abc,
+  abcParts,
+  content,
   isPublicSong,
   currentSong,
+  onNew,
+  onFileImport,
   recentSongIds,
   onCurrentSongChange,
   onMySongsChange,
@@ -75,6 +85,8 @@ function ConnectedRecentMyLibrarySongs({
       id: song._id,
       title: song.title,
       abc: song.abc,
+      abcParts: song.abcParts,
+      content: song.content,
       publicationState: song.publicationState,
       publicationTerritory: song.publicationTerritory,
     }));
@@ -82,7 +94,7 @@ function ConnectedRecentMyLibrarySongs({
       nextSongs.length !== mySongsRef.current.length ||
       nextSongs.some((song, index) => {
         const previous = mySongsRef.current[index];
-        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc || previous.publicationState !== song.publicationState || previous.publicationTerritory !== song.publicationTerritory;
+        return !previous || previous.id !== song.id || previous.title !== song.title || previous.abc !== song.abc || !previous.content || !sameSongContent(previous.content, song.content) || previous.publicationState !== song.publicationState || previous.publicationTerritory !== song.publicationTerritory;
       });
     if (!songsChanged) return;
     mySongsRef.current = nextSongs;
@@ -100,6 +112,8 @@ function ConnectedRecentMyLibrarySongs({
           id: existingSong._id,
           title: existingSong.title,
           abc: existingSong.abc,
+          abcParts: existingSong.abcParts,
+          content: existingSong.content,
           publicationState: existingSong.publicationState,
           publicationTerritory: existingSong.publicationTerritory,
         });
@@ -135,6 +149,8 @@ function ConnectedRecentMyLibrarySongs({
           id: songId.current,
           title,
           abc,
+          content,
+          abcParts,
         });
         if (!active) return;
         songId.current = savedId;
@@ -143,6 +159,8 @@ function ConnectedRecentMyLibrarySongs({
           id: savedId,
           title,
           abc,
+          content,
+          abcParts,
           publicationState: currentSongRef.current?.publicationState ?? existingSong?.publicationState ?? "private",
           publicationTerritory: currentSongRef.current?.publicationTerritory ?? existingSong?.publicationTerritory,
         });
@@ -155,7 +173,7 @@ function ConnectedRecentMyLibrarySongs({
       active = false;
       window.clearTimeout(timeout);
     };
-  }, [abc, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, saveSong, title]);
+  }, [abc, abcParts, content, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, saveSong, title]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -172,7 +190,7 @@ function ConnectedRecentMyLibrarySongs({
   return (
     <section className={componentStyles.recentSongsSection} aria-labelledby="recent-songs-heading">
       <h2 className={componentStyles.sectionHeading} id="recent-songs-heading">
-        Recently viewed songs
+        Recent songs
       </h2>
       <Authenticated>
         {songs === undefined ? (
@@ -180,7 +198,7 @@ function ConnectedRecentMyLibrarySongs({
             Loading your songs…
           </p>
         ) : recentSongs.length ? (
-          <div className={componentStyles.recentSongList} aria-label="Recently viewed songs">
+          <div className={componentStyles.recentSongList} aria-label="Recent songs">
             {recentSongs.map((song) => (
               <div className={componentStyles.recentSongItem} key={song._id}>
                 <Link
@@ -192,6 +210,8 @@ function ConnectedRecentMyLibrarySongs({
                       id: song._id,
                       title: song.title,
                       abc: song.abc,
+                      abcParts: song.abcParts,
+                      content: song.content,
                       publicationState: song.publicationState,
                       publicationTerritory: song.publicationTerritory,
                     };
@@ -205,8 +225,9 @@ function ConnectedRecentMyLibrarySongs({
                   <span className={componentStyles.songDetails}>
                     <span className={componentStyles.songTitle}>{song.title}</span>
                     <span className={componentStyles.songPublicationDetails}>
-                      {publicationStatusForSong(song)} · {new Date(song.updatedAt).toLocaleDateString()}
+                      {publicationStatusForSong(song)}
                     </span>
+                    <span className={componentStyles.songUpdated}>{new Date(song.updatedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }).toUpperCase()}</span>
                   </span>
                 </Link>
               </div>
@@ -217,12 +238,9 @@ function ConnectedRecentMyLibrarySongs({
             Songs you open will appear here.
           </div>
         )}
-        <Link
-          className={componentStyles.myLibraryLink}
-          href="/mylibrary"
-        >
-          All my songs
-        </Link>
+        <SidebarAction href="/mylibrary" label="All my songs" />
+        <SidebarAction label="New song" onClick={onNew} icon="plus" />
+        <SidebarAction label="Import ABC" onFileImport={onFileImport} icon="upload" />
       </Authenticated>
       <Unauthenticated>
         <div className={componentStyles.recentSongsMessage}>

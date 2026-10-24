@@ -1,4 +1,31 @@
-@layer theme, base, components;
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source("../");
+
+/* Keep the existing base reset below instead of adding a second Preflight. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-roboto-mono);
+  --font-display: var(--font-roboto-flex);
+  --color-canvas: var(--canvas);
+  --color-paper: var(--paper);
+  --color-paper-soft: var(--paper-soft);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-muted-soft: var(--muted-soft);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-soft: var(--accent-soft);
+  --color-green: var(--green);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-editor-gutter: var(--editor-gutter);
+}
+
 @layer theme {
   :root, :host {
     --color-black: #000;
@@ -30,7 +57,7 @@
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-inter);
-    --default-mono-font-family: var(--font-inconsolata);
+    --default-mono-font-family: var(--font-roboto-mono);
   }
 }
 @layer base {
@@ -59,6 +86,7 @@
     text-decoration: underline dotted;
   }
   h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-roboto-flex);
     font-size: inherit;
     font-weight: inherit;
   }
@@ -296,9 +324,9 @@
   --muted-soft: #9a9ca3;
   --line: #e4e4e0;
   --line-strong: #d2d2cc;
-  --accent: #5d54d9;
-  --accent-deep: #4940b4;
-  --accent-soft: #efeeff;
+  --accent: #E10600;
+  --accent-deep: #B30500;
+  --accent-soft: #FFF0EF;
   --green: #208c68;
   --amber: #aa6d1d;
   --amber-soft: #fff5e6;
@@ -335,9 +363,9 @@
   --muted-soft: #7f8492;
   --line: #2d303a;
   --line-strong: #414551;
-  --accent: #7066e4;
-  --accent-deep: #afa8ff;
-  --accent-soft: #2b294b;
+  --accent: #E10600;
+  --accent-deep: #FF8A85;
+  --accent-soft: #3B1B1A;
   --green: #55c79a;
   --amber: #e8ae61;
   --amber-soft: #40301a;
@@ -349,27 +377,6 @@
 .abc-preview-hide-chords .abcjs-chord,
 .abc-preview-hide-lyrics .abcjs-lyric {
   display: none !important;
-}
-
-.abcjs-preview svg text:not(.abcjs-chord),
-.abcjs-preview svg text:not(.abcjs-chord) tspan {
-  font-family: var(--font-inter) !important;
-}
-
-.abcjs-title,
-.abcjs-title tspan {
-  font-weight: 700 !important;
-}
-
-.abcjs-lyric,
-.abcjs-lyric tspan {
-  font-weight: 300 !important;
-}
-
-.abcjs-preview svg .abcjs-chord {
-  font-family: "Bravura Chord Symbols", var(--font-inter), sans-serif !important;
-  letter-spacing: -0.04em;
-  line-height: 1;
 }
 
 .abcjs-note-playing,
@@ -393,4 +400,3 @@
   fill: var(--accent-deep) !important;
   stroke: var(--accent-deep) !important;
 }
-

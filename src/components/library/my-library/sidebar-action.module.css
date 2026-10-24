@@ -1,0 +1,6 @@
+@layer components {
+  .sidebarAction { display: flex; align-items: center; gap: 10px; font-size: 11px; min-height: 38px; text-align: left; padding: 6px 0; width: 100%; cursor: pointer; }
+  .sidebarAction[href] { justify-content: space-between; font-weight: 600; min-height: 44px; margin-top: 9px; padding: 8px 0; }
+  .sidebarAction:hover { color: var(--accent); }
+  .sidebarAction svg { flex-shrink: 0; }
+}

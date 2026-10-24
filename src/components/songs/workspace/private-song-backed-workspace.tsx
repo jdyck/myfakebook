@@ -4,25 +4,24 @@ import { useConvexAuth, useQuery } from "convex/react";
 import Link from "next/link";
 
 import { api } from "../../../../convex/_generated/api";
-import type { Id } from "../../../../convex/_generated/dataModel";
 import { PublicLibraryBackedWorkspace } from "@/components/songs/workspace/public-library-backed-workspace";
 import componentStyles from "./private-song-backed-workspace.module.css";
 
 export function PrivateSongBackedWorkspace({
   id,
-  setListId,
-  setListItemId,
+  binderId,
+  binderItemId,
 }: {
   id: string;
-  setListId?: string;
-  setListItemId?: string;
+  binderId?: string;
+  binderItemId?: string;
 }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const songs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
-  const validSetListId = setListId && /^[a-zA-Z0-9_-]+$/.test(setListId) ? setListId as Id<"setLists"> : null;
-  const setList = useQuery(api.setLists.get, isAuthenticated && validSetListId ? { id: validSetListId } : "skip");
+  const validBinderId = binderId && /^[a-zA-Z0-9_-]+$/.test(binderId) ? binderId : null;
+  const binder = useQuery(api.binders.get, isAuthenticated && validBinderId ? { id: validBinderId } : "skip");
 
-  if (isLoading || (isAuthenticated && (songs === undefined || (validSetListId && setList === undefined)))) {
+  if (isLoading || (isAuthenticated && (songs === undefined || (validBinderId && binder === undefined)))) {
     return <main className={componentStyles.loadingPage} role="status">Loading song…</main>;
   }
 
@@ -38,25 +37,27 @@ export function PrivateSongBackedWorkspace({
     );
   }
 
-  const setListItem = setList?.items.find((item) => item._id === setListItemId && item.songId === song._id);
+  const binderItem = binder?.items.find((item) => (item._id === binderItemId || (item.legacySetListItemId !== undefined && item.legacySetListItemId === binderItemId)) && item.songId === song._id);
 
   return (
     <PublicLibraryBackedWorkspace
       clerkConfigured
       persistenceEnabled
-      initialDisplaySettings={setListItem?.displaySettings}
+      initialDisplaySettings={binderItem?.displaySettings}
       initialPrivateSong={{
         id: song._id,
         title: song.title,
         abc: song.abc,
+        abcParts: song.abcParts,
+        content: song.content,
         publicationState: song.publicationState,
         publicationTerritory: song.publicationTerritory,
       }}
-      setListReturn={setList && setListItem ? {
-        href: `/setlists/${encodeURIComponent(setList._id)}`,
-        name: setList.name,
-        setListId: setList._id,
-        itemId: setListItem._id,
+      binderReturn={binder && binderItem ? {
+        href: `/binders/${encodeURIComponent(binder._id)}`,
+        name: binder.name,
+        binderId: binder._id,
+        itemId: binderItem._id,
         songId: song._id,
       } : undefined}
     />

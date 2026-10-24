@@ -1,44 +1,69 @@
 "use client";
 
-import { useRef, type ChangeEventHandler } from "react";
 import { Menu } from "@base-ui/react/menu";
-import { ChevronDown, Download, Plus, Upload } from "lucide-react";
+import { useContext } from "react";
+import { ChevronDown, Download, Maximize2, Pencil, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FullscreenPreviewContext } from "@/components/songs/preview/fullscreen-preview-context";
 import componentStyles from "./workspace-actions.module.css";
 
 type WorkspaceActionsProps = {
   exporting: boolean;
-  onNew: () => void;
+  onEdit: () => void;
   onExport: () => void;
   onExportAbc: () => void;
   onExportSvg: () => void;
   onExportPng: () => void;
   onExportPdf: () => void;
-  onFileImport: ChangeEventHandler<HTMLInputElement>;
 };
 
-export function WorkspaceActions({ exporting, onNew, onExport, onExportAbc, onExportSvg, onExportPng, onExportPdf, onFileImport }: WorkspaceActionsProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export function WorkspaceActions({ exporting, onEdit, onExport, onExportAbc, onExportSvg, onExportPng, onExportPdf }: WorkspaceActionsProps) {
+  const fullscreenAction = useContext(FullscreenPreviewContext);
 
   return (
     <div className={componentStyles.workspaceActionGroup}>
-      <button
-        className={componentStyles.secondaryActionButton}
+      {fullscreenAction && (
+        <Button
+          aria-label="Open fullscreen preview"
+          className={componentStyles.responsiveAction}
+          disabled={fullscreenAction.disabled}
+          size="compact"
+          variant="secondary"
+          title="Open fullscreen preview"
+          type="button"
+          onClick={(event) => fullscreenAction.onFullscreen(event.currentTarget)}
+        >
+          <Maximize2 aria-hidden="true" size={13} strokeWidth={1.8} />
+          <span>Fullscreen</span>
+        </Button>
+      )}
+      {fullscreenAction?.onZoom && <Button
+        aria-label={fullscreenAction.zoomed ? "Fit score to width" : "Zoom score"}
+        aria-pressed={fullscreenAction.zoomed}
+        className={componentStyles.responsiveAction}
+        disabled={fullscreenAction.disabled}
+        size="compact"
+        variant="secondary"
         type="button"
-        onClick={onNew}
-      >
-        <Plus size={13} strokeWidth={2} />
-        New
-      </button>
-      <button
-        className={componentStyles.secondaryActionButton}
+        onClick={fullscreenAction.onZoom}
+      ><Search size={14} strokeWidth={1.5} aria-hidden="true" /></Button>}
+      <Button
+        aria-label="Edit song"
+        data-action="edit"
+        className={componentStyles.responsiveAction}
+        size="compact"
         type="button"
-        onClick={() => fileInputRef.current?.click()}
+        variant="secondary"
+        onClick={onEdit}
       >
-        <Upload size={13} strokeWidth={1.8} />
-        Import
-      </button>
+        <Pencil size={13} strokeWidth={1.8} aria-hidden="true" />
+        <span>Edit song</span>
+      </Button>
       <Menu.Root>
-        <Menu.Trigger className={componentStyles.exportButton} disabled={exporting}>
+        <Menu.Trigger
+          disabled={exporting}
+          render={<Button className={componentStyles.responsiveAction} size="compact" variant="primary" />}
+        >
           <Download size={13} strokeWidth={1.8} />
           Export
           <ChevronDown size={13} strokeWidth={2} />
@@ -65,13 +90,6 @@ export function WorkspaceActions({ exporting, onNew, onExport, onExportAbc, onEx
           </Menu.Positioner>
         </Menu.Portal>
       </Menu.Root>
-      <input
-        ref={fileInputRef}
-        accept=".abc,.txt"
-        hidden
-        type="file"
-        onChange={onFileImport}
-      />
     </div>
   );
 }

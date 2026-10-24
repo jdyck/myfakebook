@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "convex/react";
 
 import { api } from "../../../../convex/_generated/api";
-import type { PublicSong } from "@/lib/public-library";
+import type { PublicSong } from "@/lib/songs/public-library";
 
 type PublicSongsResponse = { songs: PublicSong[] };
 type PublicSongQueryResult = {
@@ -15,6 +15,8 @@ type PublicSongQueryResult = {
   writers: string;
   rhythm: string;
   abc: string;
+  abcParts?: string;
+  content?: PublicSong["content"];
 };
 
 function toPublicSong(song: PublicSongQueryResult): PublicSong {
@@ -26,15 +28,20 @@ function toPublicSong(song: PublicSongQueryResult): PublicSong {
     writers: song.writers,
     rhythm: song.rhythm,
     abc: song.abc,
+    abcParts: song.abcParts,
+    content: song.content,
   };
 }
 
-export function usePublicSongs() {
-  const worldwideSongs = useQuery(api.songs.listPublicSongs);
+export function usePublicSongs({ isAdmin = false }: { isAdmin?: boolean } = {}) {
+  const worldwideSongs = useQuery(api.songs.listPublicSongs, isAdmin ? "skip" : {});
+  const adminSongs = useQuery(api.songs.listAdminPublicSongs, isAdmin ? {} : "skip");
   const [regionalSongs, setRegionalSongs] = useState<readonly PublicSong[] | null>(null);
   const [requestFinished, setRequestFinished] = useState(false);
 
   useEffect(() => {
+    if (isAdmin) return;
+
     let active = true;
 
     async function loadSongs() {
@@ -55,17 +62,21 @@ export function usePublicSongs() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [isAdmin]);
 
   const worldwidePublicSongs = worldwideSongs?.map(toPublicSong);
-  const songs = regionalSongs === null
-    ? worldwidePublicSongs
-    : worldwidePublicSongs
-      ? [
-          ...worldwidePublicSongs,
-          ...regionalSongs.filter((song) => song.publicationTerritory === "US"),
-        ]
-      : regionalSongs;
-  const loading = regionalSongs === null && (!requestFinished || worldwideSongs === undefined);
+  const songs = isAdmin
+    ? adminSongs?.map(toPublicSong)
+    : regionalSongs === null
+      ? worldwidePublicSongs
+      : worldwidePublicSongs
+        ? [
+            ...worldwidePublicSongs,
+            ...regionalSongs.filter((song) => song.publicationTerritory === "US"),
+          ]
+        : regionalSongs;
+  const loading = isAdmin
+    ? adminSongs === undefined
+    : regionalSongs === null && (!requestFinished || worldwideSongs === undefined);
   return { songs, loading };
 }

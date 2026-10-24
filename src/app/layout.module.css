@@ -13,22 +13,22 @@
   }
 
   .pageBody ::selection {
-    background-color: #d9d6ff;
-    color: #27235e;
+    background-color: #FFD5D3;
+    color: #5C0906;
   }
 
   .pageBody::selection {
-    background-color: #d9d6ff;
-    color: #27235e;
+    background-color: #FFD5D3;
+    color: #5C0906;
   }
 
   .pageBody:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
-    background-color: #4a4387;
+    background-color: #7D211E;
     color: var(--color-white);
   }
 
   .pageBody:where([data-theme="dark"], [data-theme="dark"] *)::selection {
-    background-color: #4a4387;
+    background-color: #7D211E;
     color: var(--color-white);
   }
 }

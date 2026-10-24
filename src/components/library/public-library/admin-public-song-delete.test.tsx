@@ -45,9 +45,13 @@ it("keeps an unpublished song in My Library", async () => {
 
     await act(async () => {
       container.querySelector<HTMLButtonElement>('button[aria-label="Published: Worldwide"]')?.click();
-      Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
-        .find((item) => item.textContent?.includes("None"))
-        ?.click();
+    });
+
+    const option = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
+      .find((item) => item.textContent?.includes("None"));
+    expect(option).toBeDefined();
+    await act(async () => {
+      option!.click();
     });
 
     expect(mocks.setPublication).toHaveBeenCalledExactlyOnceWith({ id: songId, publication: "none" });

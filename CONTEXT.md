@@ -1,11 +1,14 @@
-# MyFakebook Context
+# MyFakeBook Context
 
-MyFakebook is a digital fakebook for musicians. Each saved song has one owner and one publication state. The public library shows published songs; each owner’s My Library shows all of their songs.
+MyFakeBook is a digital fakebook for musicians. Each saved song has one owner and one publication state. The public library shows published songs; each owner’s My Library shows all of their songs.
 
 ## Product documents
 
 - [Content model](docs/product/CONTENT_MODEL.md): song concepts, fields, ownership, relationships, storage authority, and invariants.
-- [Requirements](local/docs/product/REQUIREMENTS.md): scope, user workflows, priorities, and acceptance criteria.
+- [Architecture](docs/architecture.md): implementation map and contributor conventions.
+- [Song content](docs/song-content.md): structured content and editor formats.
+
+Personal planning notes may live under ignored `local/`; shared documentation belongs in `docs/`.
 
 ## Language
 
@@ -33,7 +36,7 @@ _Avoid_: Score, library chart
 A visitor who is not signed in. A guest may experiment with song content in the open workspace and download it; that unsaved work is not retained after refresh.
 _Avoid_: Anonymous user
 
-**Set list**:
+**Binder**:
 A user-owned ordered collection of private songs.
 _Avoid_: Playlist
 

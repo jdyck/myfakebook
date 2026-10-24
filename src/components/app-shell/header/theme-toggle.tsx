@@ -1,6 +1,5 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
 import { useEffect } from "react";
 import componentStyles from "./theme-toggle.module.css";
 
@@ -47,8 +46,8 @@ export function ThemeToggle() {
       type="button"
       onClick={toggleTheme}
     >
-      <Moon className={componentStyles.moonIcon} aria-hidden="true" size={15} strokeWidth={1.8} />
-      <Sun className={componentStyles.sunIcon} aria-hidden="true" size={15} strokeWidth={1.8} />
+      <span className={componentStyles.darkLabel}>DARK</span>
+      <span className={componentStyles.lightLabel}>LIGHT</span>
     </button>
   );
 }

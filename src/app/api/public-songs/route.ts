@@ -4,6 +4,17 @@ import { api } from "../../../../convex/_generated/api";
 
 const responseHeaders = { "Cache-Control": "private, no-store" };
 
+function getCatalogCountry(request: Request): "US" | "other" {
+  if (process.env.NODE_ENV === "development" && process.env.LOCAL_PUBLIC_CATALOG_COUNTRY === "US") {
+    return "US";
+  }
+
+  const vercelCountry = request.headers.get("x-vercel-ip-country");
+  if (vercelCountry !== null) return vercelCountry === "US" ? "US" : "other";
+
+  return "other";
+}
+
 function getConvexSiteUrl() {
   if (process.env.CONVEX_SITE_URL) return process.env.CONVEX_SITE_URL.replace(/\/$/, "");
 
@@ -29,7 +40,7 @@ export async function GET(request: Request) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          country: request.headers.get("x-vercel-ip-country") === "US" ? "US" : "other",
+          country: getCatalogCountry(request),
         }),
         cache: "no-store",
       });

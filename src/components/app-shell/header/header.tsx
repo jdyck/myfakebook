@@ -1,45 +1,30 @@
 "use client";
 
 import { Show } from "@clerk/nextjs";
-import { Music2 } from "lucide-react";
 import Link from "next/link";
 
 import { AuthControls } from "@/components/app-shell/header/auth-controls";
 import { ThemeToggle } from "@/components/app-shell/header/theme-toggle";
-import componentStyles from "./header.module.css";
+import editorialStyles from "./editorial-header.module.css";
 
 type HeaderProps = {
   clerkConfigured: boolean;
+  activeSection?: "songs" | "library" | "binders";
 };
 
-export function Header({ clerkConfigured }: HeaderProps) {
+export function Header({ clerkConfigured, activeSection = "library" }: HeaderProps) {
   return (
-    <header className={componentStyles.siteHeader}>
-      <div className={componentStyles.brandIdentity}>
-        <div className={componentStyles.brandIcon} aria-hidden="true">
-          <Music2 size={17} strokeWidth={2.2} />
-        </div>
-        <span className={componentStyles.brandName}>MyFakebook</span>
-      </div>
-      <div className={componentStyles.headerTools}>
-        <nav aria-label="Main navigation" className={componentStyles.primaryNavigation}>
-          <Link className={componentStyles.navigationLink} href="/songs">
-            Songs
-          </Link>
-          <Link className={componentStyles.navigationLink} href="/new">
-            New
-          </Link>
-          {clerkConfigured && (
-            <Show when="signed-in">
-              <Link className={componentStyles.navigationLink} href="/mylibrary">
-                My Library
-              </Link>
-              <Link className={componentStyles.navigationLink} href="/setlists">
-                Set lists
-              </Link>
-            </Show>
-          )}
-        </nav>
+    <header className={editorialStyles.siteHeader}>
+      <Link className={editorialStyles.brand} href="/" aria-label="MyFakeBook home"><span>My</span>FakeBook</Link>
+      <p className={editorialStyles.caption}>A MODERN HOME<br />FOR THE GREAT SONGS.</p>
+      <nav aria-label="Main navigation" className={editorialStyles.navigation}>
+        <Link href="/songs" aria-current={activeSection === "songs" ? "page" : undefined}>Songs</Link>
+        {clerkConfigured && <Show when="signed-in">
+          <Link href="/mylibrary" aria-current={activeSection === "library" ? "page" : undefined}>My Library</Link>
+          <Link href="/binders" aria-current={activeSection === "binders" ? "page" : undefined}>Binders</Link>
+        </Show>}
+      </nav>
+      <div className={editorialStyles.accountControls}>
         <ThemeToggle />
         <AuthControls configured={clerkConfigured} />
       </div>

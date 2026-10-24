@@ -2,7 +2,8 @@ import { v } from "convex/values";
 
 import { internalQuery, mutation, query } from "./_generated/server";
 import { isAdmin, requireAdmin, requireOwner, requireUser } from "./auth";
-import { listMine, listPublished, removeSong, saveSong, setPublicationState } from "./songStore";
+import { listMine, listPublished, prepareSongContent, removeSong, saveSong, setPublicationState } from "./songStore";
+import { songContentValidator } from "./validators";
 
 export const listMySongs = query({
   args: {},
@@ -23,6 +24,28 @@ export const listPublicSongs = query({
       writers: song.writers,
       rhythm: song.rhythm,
       abc: song.abc,
+      abcParts: song.abcParts,
+      content: song.content,
+      updatedAt: song.updatedAt,
+    }));
+  },
+});
+
+export const listAdminPublicSongs = query({
+  args: {},
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    const songs = await listPublished(ctx);
+    return songs.map((song) => ({
+      id: song._id,
+      ...(song.catalogId ? { catalogId: song.catalogId } : {}),
+      publicationTerritory: song.publicationTerritory ?? "worldwide",
+      title: song.title,
+      writers: song.writers,
+      rhythm: song.rhythm,
+      abc: song.abc,
+      abcParts: song.abcParts,
+      content: song.content,
       updatedAt: song.updatedAt,
     }));
   },
@@ -45,6 +68,8 @@ export const listPublicSongsForCountry = internalQuery({
         writers: song.writers,
         rhythm: song.rhythm,
         abc: song.abc,
+        abcParts: song.abcParts,
+        content: song.content,
         updatedAt: song.updatedAt,
       }));
   },
@@ -54,7 +79,9 @@ export const save = mutation({
   args: {
     id: v.optional(v.id("songs")),
     title: v.string(),
-    abc: v.string(),
+    abc: v.optional(v.string()),
+    abcParts: v.optional(v.string()),
+    content: v.optional(songContentValidator),
     writers: v.optional(v.string()),
     rhythm: v.optional(v.string()),
   },
@@ -63,6 +90,8 @@ export const save = mutation({
     return saveSong(ctx, identity.subject, {
       title: args.title.trim() || "Untitled lead sheet",
       abc: args.abc,
+      abcParts: args.abcParts,
+      content: args.content,
       writers: args.writers,
       rhythm: args.rhythm,
     }, args.id, isAdmin(identity));
@@ -110,7 +139,9 @@ export const ensureCatalogSongs = mutation({
       title: v.string(),
       writers: v.string(),
       rhythm: v.string(),
-      abc: v.string(),
+      abc: v.optional(v.string()),
+      abcParts: v.optional(v.string()),
+      content: v.optional(songContentValidator),
     })),
   },
   handler: async (ctx, args) => {
@@ -125,6 +156,7 @@ export const ensureCatalogSongs = mutation({
     let imported = 0;
 
     for (const catalogSong of args.songs) {
+      const notation = prepareSongContent(catalogSong);
       const alreadyImported = await ctx.db
         .query("songs")
         .withIndex("by_catalogId", (query) => query.eq("catalogId", catalogSong.id))
@@ -146,6 +178,7 @@ export const ensureCatalogSongs = mutation({
         await ctx.db.patch("songs", matchingPublishedSong._id, {
           writers: catalogSong.writers,
           rhythm: catalogSong.rhythm,
+          ...notation,
           publicationState: "published",
           publicationTerritory: "worldwide",
           publishedAt: matchingPublishedSong.publishedAt ?? now,
@@ -158,7 +191,7 @@ export const ensureCatalogSongs = mutation({
           title: catalogSong.title,
           writers: catalogSong.writers,
           rhythm: catalogSong.rhythm,
-          abc: catalogSong.abc,
+          ...notation,
           publicationState: "published",
           publicationTerritory: "worldwide",
           publishedAt: now,
