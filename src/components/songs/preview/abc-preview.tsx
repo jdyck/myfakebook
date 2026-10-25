@@ -4,13 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import ABCJS from "abcjs";
 import { LoaderCircle, Play, Square } from "lucide-react";
-import Image from "next/image";
-import { Roboto_Condensed } from "next/font/google";
 import { prepareAbcForDisplay } from "@/lib/notation/abc-display";
-import { getSongMetadata } from "@/lib/notation/song-metadata";
+import { Select } from "@/components/ui/select";
 import componentStyles from "./abc-preview.module.css";
-
-const condensed = Roboto_Condensed({ subsets: ["latin"], display: "swap" });
 
 type Synth = {
   init: (options: {
@@ -36,9 +32,7 @@ type Synth = {
 type PlaybackPart = "melody" | "chords" | "both";
 
 function addSystemStartBarlines(container: HTMLElement) {
-  const wrappers = container.querySelectorAll<SVGGElement>(
-    ".abcjs-staff-wrapper:not(.abcjs-l0)",
-  );
+  const wrappers = Array.from(container.querySelectorAll<SVGGElement>(".abcjs-staff-wrapper")).slice(1);
 
   for (const wrapper of wrappers) {
     const staffs = wrapper.querySelectorAll<SVGGElement>(".abcjs-staff");
@@ -153,7 +147,6 @@ export function AbcPreview({
     try { return String(Math.round(ABCJS.parseOnly(abc)[0]?.getBpm() ?? 120)); } catch { return "120"; }
   });
   const tempo = Math.min(240, Math.max(40, Number(tempoInput) || 120));
-  const metadata = useMemo(() => getSongMetadata(abc, transposition), [abc, transposition]);
   const renderedAbc = prepareAbcForDisplay(abc, {
     showChords,
     showLyrics,
@@ -225,7 +218,9 @@ export function AbcPreview({
         paddingright: 5,
         responsive: "resize",
         scale: 1,
-        initialClef: showFirstLineClefOnly,
+        // ABCJS counts text/subtitle lines too, so its initialClef option can
+        // suppress the first musical staff's clef. Filter musical systems below.
+        initialClef: false,
         selectTypes: ["note"],
         staffwidth: 800,
         visualTranspose: transposition,
@@ -251,11 +246,11 @@ export function AbcPreview({
         },
       });
       if (showFirstLineClefOnly) {
-        targetRef.current
-          .querySelectorAll<SVGGElement>(
-            ".abcjs-staff-wrapper:not(.abcjs-l0) .abcjs-clef, .abcjs-staff-wrapper:not(.abcjs-l0) .abcjs-key-signature",
-          )
-          .forEach((element) => element.remove());
+        Array.from(targetRef.current.querySelectorAll<SVGGElement>(".abcjs-staff-wrapper"))
+          .slice(1)
+          .forEach((staff) => {
+            staff.querySelectorAll(".abcjs-clef, .abcjs-key-signature").forEach((element) => element.remove());
+          });
         addSystemStartBarlines(targetRef.current);
       }
       onRenderedSvg?.(targetRef.current.querySelector("svg"));
@@ -405,7 +400,6 @@ export function AbcPreview({
   return (
     <div className={componentStyles.previewLayout}>
       <div className={componentStyles.scoreToolbar}>
-        <p>LEAD SHEET <span>/</span> <span>CONCERT {metadata.key.toUpperCase()}</span></p>
         {workspaceToolbar}
       </div>
       <div
@@ -427,7 +421,6 @@ export function AbcPreview({
                 .join(" ")
             } ${error ? componentStyles.notationErrorState : ""}`}
           />
-          <footer className={componentStyles.paperFooter}><span>MyFakeBook</span><span>{metadata.writers.toUpperCase()}</span><span>01</span></footer>
         </div>
         {error && (
           <div className={componentStyles.playbackErrorPanel}>
@@ -440,29 +433,25 @@ export function AbcPreview({
           </div>
         )}
       </div>
-      <p className={componentStyles.scoreFootnote}>A GREAT SONG. YOUR INTERPRETATION.</p>
       <aside aria-label="Preview controls" className={componentStyles.previewControls}>
-        <div className={componentStyles.controlIntro}>
-          <p>STUDY / INTERPRET / REPEAT</p>
-          <h2 className={condensed.className}>MAKE IT<br /><span>YOURS.</span></h2>
-          <Image src="/images/library/bar.svg" width={30} height={5} alt="" />
-        </div>
         {displayControls}
         <div className={componentStyles.playbackControls}>
           <p className={componentStyles.sectionLabel}>PLAY PREVIEW</p>
           <div className={componentStyles.playbackFieldGroup}>
             <label className={componentStyles.playbackFieldLabel}>
               Parts
-              <select
-                aria-label="Playback parts"
+              <Select
+                ariaLabel="Playback parts"
+                variant="field"
                 className={componentStyles.playbackSelect}
                 value={playbackPart}
-                onChange={(event) => setPlaybackPart(event.target.value as PlaybackPart)}
-              >
-                <option value="melody">Melody</option>
-                <option value="chords">Chords</option>
-                <option value="both">Melody + chords</option>
-              </select>
+                onValueChange={(value) => setPlaybackPart(value as PlaybackPart)}
+                options={[
+                  { value: "melody", label: "Melody" },
+                  { value: "chords", label: "Chords" },
+                  { value: "both", label: "Melody + chords" },
+                ]}
+              />
             </label>
             <label className={componentStyles.tempoField}>
               Tempo <span>BPM</span>
@@ -473,24 +462,18 @@ export function AbcPreview({
             </label>
             <label className={componentStyles.playbackFieldLabel}>
               Start measure
-              <select
-                aria-label="Playback start measure"
+              <Select
+                ariaLabel="Playback start measure"
+                variant="field"
+                popupSize="scrollable"
                 className={componentStyles.playbackSelect}
                 value={startMeasure}
-                onChange={(event) => {
+                onValueChange={(value) => {
                   clearSelectedNote();
-                  setStartMeasure(Number(event.target.value));
+                  setStartMeasure(Number(value));
                 }}
-              >
-                {Array.from({ length: measureCount }, (_, index) => {
-                  const measure = index + 1;
-                  return (
-                    <option key={measure} value={measure}>
-                      {measure}
-                    </option>
-                  );
-                })}
-              </select>
+                options={Array.from({ length: measureCount }, (_, index) => ({ value: index + 1, label: index + 1 }))}
+              />
             </label>
             <div className={componentStyles.playbackTransport}>
               <button
@@ -521,7 +504,6 @@ export function AbcPreview({
             {publishAction}
           </div>
         )}
-        <p className={componentStyles.controlsEnd}>DIFFERENT KEYS.<br />SAME GREAT SONG.</p>
       </aside>
     </div>
   );

@@ -5,6 +5,7 @@ import { ArrowRightLeft, ChevronDown, SlidersHorizontal } from "lucide-react";
 import { concertKeyLabel } from "@/lib/notation/song-metadata";
 import { getTranspositionChoices } from "@/lib/notation/abc-display";
 import type { SongDisplaySettings } from "@/lib/notation/abc-display";
+import { Select } from "@/components/ui/select";
 import componentStyles from "./display-controls.module.css";
 
 type DisplayControlsProps = {
@@ -26,9 +27,15 @@ export function DisplayControls({ abc, settings, onChange }: DisplayControlsProp
           <button type="button" onClick={() => onChange({ transposition: 0 })}>Reset</button>
         </div>
         <div className={componentStyles.keyControl}>
-          <select id={`${titleId}-key`} aria-label="Concert key" value={settings.transposition} onChange={(event) => onChange({ transposition: Number(event.target.value) })}>
-            {choices.map(({ key, steps }) => <option value={steps} key={steps}>{concertKeyLabel(key)}{steps < 0 ? " (down)" : steps === 12 ? " (up an octave)" : ""}</option>)}
-          </select>
+          <Select
+            id={`${titleId}-key`}
+            ariaLabel="Concert key"
+            variant="display"
+            popupSize="scrollable"
+            value={settings.transposition}
+            onValueChange={(value) => onChange({ transposition: Number(value) })}
+            options={choices.map(({ key, steps }) => ({ value: steps, label: `${concertKeyLabel(key)}${steps < 0 ? " (down)" : steps === 12 ? " (up an octave)" : ""}` }))}
+          />
           <ArrowRightLeft size={21} strokeWidth={1.5} aria-hidden="true" />
         </div>
         <p className={componentStyles.utilityNote}>{settings.transposition === 0 ? "Original key" : `${settings.transposition > 0 ? "+" : ""}${settings.transposition} semitone${Math.abs(settings.transposition) === 1 ? "" : "s"}`} · Concert pitch</p>

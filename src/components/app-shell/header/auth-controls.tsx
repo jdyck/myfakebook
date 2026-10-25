@@ -1,20 +1,24 @@
 "use client";
 
 import { LogIn, UserRound } from "lucide-react";
-import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { Show, SignInButton, SignUpButton, useClerk } from "@clerk/nextjs";
 import Link from "next/link";
+import { SettingsButton } from "./settings-button";
 import componentStyles from "./auth-controls.module.css";
 
 export function AuthControls({ configured }: { configured: boolean }) {
   if (!configured) {
     return (
-      <Link
-        className={componentStyles.signInLink}
-        href="/sign-in"
-      >
-        <LogIn size={13} strokeWidth={1.8} />
-        Sign in
-      </Link>
+      <>
+        <Link
+          className={componentStyles.signInLink}
+          href="/sign-in"
+        >
+          <LogIn size={13} strokeWidth={1.8} />
+          Sign in
+        </Link>
+        <SettingsButton />
+      </>
     );
   }
 
@@ -38,10 +42,17 @@ export function AuthControls({ configured }: { configured: boolean }) {
             Create account
           </button>
         </SignUpButton>
+        <SettingsButton />
       </Show>
       <Show when="signed-in">
-        <UserButton />
+        <AccountSettings />
       </Show>
     </>
   );
+}
+
+function AccountSettings() {
+  const { openUserProfile, signOut } = useClerk();
+
+  return <SettingsButton onAccountClick={() => openUserProfile()} onSignOut={() => { void signOut({ redirectUrl: "/songs" }); }} />;
 }

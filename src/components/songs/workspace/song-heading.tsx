@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { getSongMetadata } from "@/lib/notation/song-metadata";
 import { publicationStatusForSong, type LoadedSong } from "@/lib/songs/types";
+import titleStyles from "@/components/ui/page-title.module.css";
 import styles from "./song-heading.module.css";
 
 type SongHeadingProps = {
@@ -11,21 +12,18 @@ type SongHeadingProps = {
   transposition: number;
   song: Pick<LoadedSong, "publicationState" | "publicationTerritory"> | null;
   isPublicSong: boolean;
-  position?: number;
 };
 
-export function SongHeading({ abc, title, transposition, song, isPublicSong, position }: SongHeadingProps) {
+export function SongHeading({ abc, title, transposition, song, isPublicSong }: SongHeadingProps) {
   const metadata = getSongMetadata(abc, transposition);
-  const punctuation = title.match(/[.!?]$/)?.[0] ?? ".";
-  const displayTitle = /[.!?]$/.test(title) ? title.slice(0, -1) : title;
   return (
     <div className={styles.songHeading}>
       <div className="min-w-0">
         <Link className={styles.backLink} href={isPublicSong ? "/songs" : "/mylibrary"}>
           <ArrowLeft size={14} strokeWidth={1.5} aria-hidden="true" />
-          {isPublicSong ? "SONGS" : "MY LIBRARY"} <span>/</span> SONG{position ? ` ${String(position).padStart(2, "0")}` : ""}
+          {isPublicSong ? "SONGS" : "MY LIBRARY"}
         </Link>
-        <h1>{displayTitle}<span>{punctuation}</span></h1>
+        <h1 className={`${titleStyles.title} ${styles.title}`}>{title}</h1>
         {metadata.writers && <p className={styles.writers}>{metadata.writers}</p>}
       </div>
       <div className={styles.catalog}>

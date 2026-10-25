@@ -1,17 +1,15 @@
 "use client";
 
-import { useConvexAuth, useQuery } from "convex/react";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
-import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import { publicationLabel, publicationStatusForSong, publicationValueForSong } from "@/lib/songs/types";
-import { EditorialLibrary } from "../editorial-library";
+import { EditorialLibraryView } from "../editorial-library-view";
 import styles from "../editorial-library.module.css";
 
-type LibrarySong = {
+export type LibrarySong = {
   id: Id<"songs">;
   title: string;
   updatedAt: number;
@@ -24,20 +22,7 @@ type Sort = { field: "title" | "updatedAt"; ascending: boolean };
 const countLabel = (count: number) => String(count).padStart(2, "0");
 const dateLabel = (timestamp: number) => new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-export function MyLibraryListBacked() {
-  const { isAuthenticated, isLoading } = useConvexAuth();
-  const savedSongs = useQuery(api.songs.listMySongs, isAuthenticated ? {} : "skip");
-  const songs = savedSongs?.map((song) => ({
-    id: song._id,
-    title: song.title,
-    updatedAt: song.updatedAt,
-    publicationState: song.publicationState,
-    publicationTerritory: song.publicationTerritory,
-  }));
-  return <MyLibraryList songs={songs} loading={isLoading || (isAuthenticated && !savedSongs)} />;
-}
-
-export function MyLibraryList({ songs, loading = false }: { songs: readonly LibrarySong[] | undefined; loading?: boolean }) {
+export function MyLibraryList({ songs, loading = false, header, captionClassName }: { songs: readonly LibrarySong[] | undefined; loading?: boolean; header?: ReactNode; captionClassName?: string }) {
   const [filter, setFilter] = useState<VisibilityFilter>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>({ field: "updatedAt", ascending: false });
@@ -61,8 +46,9 @@ export function MyLibraryList({ songs, loading = false }: { songs: readonly Libr
   }
 
   return (
-    <EditorialLibrary
-      clerkConfigured
+    <EditorialLibraryView
+      header={header}
+      captionClassName={captionClassName}
       section="library"
       title="My Library"
       titleId="library-title"
@@ -130,6 +116,6 @@ export function MyLibraryList({ songs, loading = false }: { songs: readonly Libr
           <p>COLLECT / EDIT / TRANSPOSE</p>
         </div>
       </section>
-    </EditorialLibrary>
+    </EditorialLibraryView>
   );
 }

@@ -8,7 +8,6 @@ vi.mock("@clerk/nextjs", () => ({
     authState.signedIn === (when === "signed-in") ? children : null,
 }));
 vi.mock("./auth-controls", () => ({ AuthControls: () => null }));
-vi.mock("./theme-toggle", () => ({ ThemeToggle: () => null }));
 
 import { Header } from "./header";
 

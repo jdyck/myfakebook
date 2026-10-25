@@ -1,25 +1,61 @@
 @layer components {
   .trigger {
     display: inline-flex;
-    min-height: 34px;
+    min-height: var(--spacing-control);
     align-items: center;
     justify-content: center;
     gap: 7px;
     cursor: pointer;
     border: 1px solid var(--accent);
-    border-radius: 8px;
+    border-radius: 0;
     padding-inline: 11px;
     background: var(--accent);
     color: var(--color-white);
     font-family: inherit;
-    font-size: 11px;
-    font-weight: 650;
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-semibold);
     line-height: inherit;
     transition-property: border-color, background-color, opacity;
-    transition-duration: 160ms;
+    transition-duration: var(--transition-duration-control);
     transition-timing-function: var(--ease-in-out);
     white-space: nowrap;
   }
+
+  .trigger.field {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: 35px;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 8px 6px;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: var(--text-xs);
+    font-weight: 400;
+  }
+
+  .trigger.display {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    justify-content: flex-start;
+    border: 0;
+    border-radius: 0;
+    padding: 4px 0;
+    background: transparent;
+    color: var(--ink);
+    font: var(--font-weight-semibold) 28px/1.3 var(--font-inter);
+    letter-spacing: -1px;
+  }
+
+  .trigger > svg { flex-shrink: 0; }
+
+  @media (width <= 1250px) { .trigger.display { font-size: 25px; } }
+  @media (width <= 450px) { .trigger.display { font-size: 23px; } }
+  @media (width <= 350px) { .trigger.display { font-size: 21px; } }
 
   .trigger:focus-visible {
     outline: 2px solid var(--accent);
@@ -36,9 +72,9 @@
     min-width: 160px;
     padding: 4px;
     border: 1px solid var(--line-strong);
-    border-radius: 8px;
+    border-radius: 0;
     background: var(--paper);
-    box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+    box-shadow: var(--shadow-menu);
     color: var(--ink);
   }
 
@@ -56,12 +92,12 @@
     gap: calc(var(--spacing) * 1.5);
     padding: 7px 10px;
     border: 0;
-    border-radius: 5px;
+    border-radius: 0;
     background: transparent;
     color: var(--ink);
     cursor: pointer;
     font: inherit;
-    font-size: 12px;
+    font-size: var(--text-xs);
     text-align: left;
     white-space: nowrap;
   }
@@ -73,7 +109,7 @@
   }
 
   .item[data-checked] {
-    font-weight: 650;
+    font-weight: var(--font-weight-semibold);
   }
 
   .item:disabled {
@@ -96,7 +132,7 @@
   }
 
   @media (hover: hover) {
-    .trigger:hover:not(:disabled) {
+    .accent:hover:not(:disabled) {
       border-color: var(--accent-deep);
       background: var(--accent-deep);
     }

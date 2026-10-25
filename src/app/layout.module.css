@@ -13,22 +13,12 @@
   }
 
   .pageBody ::selection {
-    background-color: #FFD5D3;
-    color: #5C0906;
+    background-color: var(--selection);
+    color: var(--selection-ink);
   }
 
   .pageBody::selection {
-    background-color: #FFD5D3;
-    color: #5C0906;
-  }
-
-  .pageBody:where([data-theme="dark"], [data-theme="dark"] *) ::selection {
-    background-color: #7D211E;
-    color: var(--color-white);
-  }
-
-  .pageBody:where([data-theme="dark"], [data-theme="dark"] *)::selection {
-    background-color: #7D211E;
-    color: var(--color-white);
+    background-color: var(--selection);
+    color: var(--selection-ink);
   }
 }

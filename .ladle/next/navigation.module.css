@@ -1,0 +1,14 @@
+.status {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 1000;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font: var(--text-sm) var(--font-inter);
+  letter-spacing: normal;
+  text-transform: none;
+}

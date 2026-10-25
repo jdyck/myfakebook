@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { api } from "../../../../convex/_generated/api";
 import { publicationLabel, publicationValueForSong, type LoadedSong, type PublicationValue } from "@/lib/songs/types";
-import { RadioMenu } from "@/components/ui/radio-menu";
+import { PublicationSelect } from "./publication-select";
 
 export function AdminPublicationButton({
   enabled,
@@ -61,19 +61,7 @@ function ConnectedAdminPublicationButton({
   }
 
   return (
-    <RadioMenu
-      ariaLabel={`Published: ${publicationLabel(publication)}`}
-      disabled={changing}
-      onValueChange={(value) => {
-        if (typeof value === "string") void handleChange(value as PublicationValue);
-      }}
-      options={(["none", "US", "worldwide"] as const).map((value) => ({
-        value,
-        label: publicationLabel(value),
-      }))}
-      trigger={<>Published: {publicationLabel(publication)}</>}
-      value={publication}
-    />
+    <PublicationSelect publication={publication} changing={changing} onChange={(value) => void handleChange(value)} />
   );
 }
 

@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
-import { abcToMusicXml } from "@/lib/notation/abc";
 import type { SongDisplaySettings } from "@/lib/notation/abc-display";
 import { downloadSongFile } from "@/lib/export/download-song-file";
 import { svgToLetterPage, svgToPdf, svgToPng } from "@/lib/export/svg-pdf";
@@ -18,14 +17,6 @@ type SongExportOptions = {
 export function useSongExport({ abc, songTitle, displaySettings, onStatus }: SongExportOptions) {
   const [exporting, setExporting] = useState(false);
   const renderedSvgRef = useRef<SVGSVGElement | null>(null);
-  const conversion = useMemo(() => {
-    try {
-      return abcToMusicXml(abc);
-    } catch {
-      return null;
-    }
-  }, [abc]);
-
   const handleRenderedSvg = useCallback((svg: SVGSVGElement | null) => {
     renderedSvgRef.current = svg;
   }, []);
@@ -59,10 +50,6 @@ export function useSongExport({ abc, songTitle, displaySettings, onStatus }: Son
   }
 
   async function handleExport() {
-    if (!conversion) {
-      onStatus("Fix the ABC source before exporting");
-      return;
-    }
     setExporting(true);
     onStatus(null);
     try {
