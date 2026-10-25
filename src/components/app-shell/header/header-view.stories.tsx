@@ -11,6 +11,7 @@ function HeaderExample({ signedIn, activeSection }: typeof headerFixtures[keyof 
     <HeaderView
       activeSection={activeSection}
       memberNavigation={signedIn && <HeaderMemberNavigation activeSection={activeSection} />}
+      mobileAccountControls={signedIn ? <><button type="button">Manage account</button><button type="button">Sign out</button></> : undefined}
       accountControls={
         <>
           {!signedIn && (
@@ -22,7 +23,7 @@ function HeaderExample({ signedIn, activeSection }: typeof headerFixtures[keyof 
               </Link>
             </>
           )}
-          <SettingsButton onAccountClick={signedIn ? () => {} : undefined} onSignOut={signedIn ? () => {} : undefined} />
+          {signedIn && <SettingsButton onAccountClick={() => {}} onSignOut={() => {}} />}
         </>
       }
     />
