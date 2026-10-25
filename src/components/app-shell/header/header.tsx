@@ -19,6 +19,7 @@ export function Header({ clerkConfigured, activeSection = "library" }: HeaderPro
         </Show>
       )}
       accountControls={<AuthControls configured={clerkConfigured} />}
+      mobileAccountControls={<AuthControls configured={clerkConfigured} mobileMenu />}
     />
   );
 }
