@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => {
   const synth = { init: vi.fn().mockResolvedValue(undefined), prime: vi.fn().mockResolvedValue(undefined), seek: vi.fn(), start: vi.fn(), stop: vi.fn(), getIsRunning: vi.fn(() => false) };
   const tune = { getBpm: () => 120, millisecondsPerMeasure: (bpm: number) => 240000 / bpm };
   const timingOptions = vi.fn();
-  return { synth, tune, timingOptions };
+  return { synth, tune, timingOptions, renderOptions: vi.fn() };
 });
 
 vi.mock("next/font/google", () => ({ Roboto_Condensed: () => ({ className: "condensed" }) }));
@@ -16,8 +16,11 @@ vi.mock("abcjs", () => ({ default: {
   parseOnly: () => [mocks.tune],
   strTranspose: (abc: string) => abc,
   extractMeasures: () => [{ measures: [{}, {}, {}] }],
-  renderAbc: (target: HTMLElement) => {
-    target.innerHTML = '<svg viewBox="0 0 800 100" aria-label="Test score"></svg>';
+  renderAbc: (target: HTMLElement, abc: string, options: { initialClef: boolean }) => {
+    mocks.renderOptions(options);
+    target.innerHTML = abc.includes("%%text")
+      ? `<svg viewBox="0 0 800 100"><g class="abcjs-staff-wrapper abcjs-l1">${options.initialClef ? "" : '<g class="abcjs-clef"></g>'}<g class="abcjs-key-signature"></g></g><g class="abcjs-staff-wrapper abcjs-l2"><g class="abcjs-clef"></g><g class="abcjs-key-signature"></g></g></svg>`
+      : '<svg viewBox="0 0 800 100" aria-label="Test score"></svg>';
     return [mocks.tune];
   },
   TimingCallbacks: class {
@@ -32,6 +35,27 @@ vi.mock("abcjs", () => ({ default: {
 import { AbcPreview } from "./abc-preview";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+it("preserves the first musical staff's clef and key when text precedes the music", async () => {
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  const abc = "X:1\nT:Song\nM:4/4\nK:G\n%%text Verse\nG8|\nA8|";
+  try {
+    await act(async () => root.render(<AbcPreview abc={abc} />));
+    expect(mocks.renderOptions).toHaveBeenLastCalledWith(expect.objectContaining({ initialClef: false }));
+    const systems = container.querySelectorAll(".abcjs-staff-wrapper");
+    expect(systems[0].querySelector(".abcjs-clef")).not.toBeNull();
+    expect(systems[0].querySelector(".abcjs-key-signature")).not.toBeNull();
+    expect(systems[1].querySelector(".abcjs-clef")).toBeNull();
+    expect(systems[1].querySelector(".abcjs-key-signature")).toBeNull();
+    await act(async () => root.render(<AbcPreview abc={abc} showFirstLineClefOnly={false} />));
+    expect(container.querySelectorAll(".abcjs-clef")).toHaveLength(2);
+  } finally {
+    await act(async () => root.unmount());
+    container.remove();
+  }
+});
 
 it("uses the selected tempo, parts, and start measure for playback and stops when tempo changes", async () => {
   const container = document.createElement("div");

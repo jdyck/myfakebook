@@ -1,46 +1,34 @@
 @layer components {
   .previewLayout { display: grid; min-width: 0; grid-template-columns: minmax(0, 1fr) 248px; column-gap: 30px; align-items: start; }
-  .scoreToolbar { grid-column: 1; grid-row: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 42px; margin-bottom: 13px; }
-  .scoreToolbar > p { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: .7px; white-space: nowrap; color: var(--muted); }
-  .scoreToolbar > p > span:first-child { margin: 0 7px; color: var(--accent); }
+  .scoreToolbar { grid-column: 1; grid-row: 1; display: flex; align-items: center; justify-content: flex-end; gap: 16px; min-height: 42px; margin-bottom: 13px; }
   .leadSheetPreview { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; padding: 22px; background: var(--score-surround); overflow-x: auto; }
   .previewPage { background: var(--color-score-paper); color: var(--color-score-ink); padding: 32px 24px 20px; min-height: 760px; overflow: hidden; border: 1px solid var(--color-score-line); }
   .zoomedPage { min-width: 800px; }
   .notationCanvas { width: 100%; color: var(--color-score-ink); outline: none; }
   .notationCanvas svg { display: block; width: 100%; height: auto; color: var(--color-score-ink); }
-  .paperFooter { border-top: 1px solid var(--color-score-line); display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 30px; padding-top: 14px; color: var(--color-score-muted); font-size: 8px; }
-  .paperFooter > span:first-child { font-weight: 800; color: var(--color-score-ink); letter-spacing: -.3px; }
-  .paperFooter > span:not(:first-child) { font: 6px/1.5 var(--font-roboto-mono); letter-spacing: .5px; }
-  .scoreFootnote { grid-column: 1; grid-row: 3; font: 7px/1.5 var(--font-roboto-mono); letter-spacing: 1.1px; padding-top: 16px; color: var(--muted); text-align: center; }
-  .previewControls { grid-column: 2; grid-row: 1 / span 3; min-width: 0; padding-top: 4px; }
-  .controlIntro { padding: 6px 0 24px; }
-  .controlIntro > p { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: .7px; }
-  .controlIntro h2 { font-size: 36px; font-weight: 700; line-height: .96; letter-spacing: -.5px; margin: 17px 0; }
-  .controlIntro h2 > span { color: var(--accent); }
-  .controlIntro > img { margin-top: 20px; }
+  .previewControls { grid-column: 2; grid-row: 1 / span 2; min-width: 0; padding-top: 4px; }
   .playbackControls { border-top: 1px solid var(--ink); padding: 19px 0; }
-  .sectionLabel { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: 1px; }
+  .sectionLabel { font: var(--text-xs) var(--font-roboto-mono); letter-spacing: 1px; }
   .playbackFieldGroup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin-top: 17px; }
-  .playbackFieldLabel, .tempoField { font-size: var(--text-micro); font-weight: 400; color: var(--muted); min-width: 0; }
-  .playbackFieldLabel:first-child { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: var(--text-caption); margin-bottom: 1px; }
+  .playbackFieldLabel, .tempoField { font-size: var(--text-xs); font-weight: 400; color: var(--muted); min-width: 0; }
+  .playbackFieldLabel:first-child { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: var(--text-xs); margin-bottom: 1px; }
   .playbackFieldLabel:not(:first-child) { grid-column: 2; grid-row: 2; }
-  .tempoField input { display: block; width: 100%; min-width: 0; font-size: var(--text-caption); border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 8px 6px; border-radius: 0; height: 35px; margin-top: 8px; }
+  .tempoField input { display: block; width: 100%; min-width: 0; font-size: var(--text-xs); border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 8px 6px; border-radius: 0; height: 35px; margin-top: 8px; }
   .playbackFieldLabel:first-child .playbackSelect { margin-top: 0; max-width: 170px; }
   .playbackSelect { margin-top: 8px; }
   .tempoField { grid-column: 1; grid-row: 2; }
-  .tempoField > span { font: 7px/1.5 var(--font-roboto-mono); margin-left: 5px; }
+  .tempoField > span { font: var(--text-xs) var(--font-roboto-mono); margin-left: 5px; }
   .playbackTransport { grid-column: 1 / -1; }
-  .playbackButton { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--ink); color: var(--paper); font-size: var(--text-compact); font-weight: 600; min-height: 43px; margin: 3px 0 9px; }
+  .playbackButton { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--ink); color: var(--paper); font-size: var(--text-xs); font-weight: 600; min-height: 43px; margin: 3px 0 9px; }
   .playbackButton:hover { background: var(--color-brand); color: var(--color-white); }
   .playbackButton:disabled { cursor: not-allowed; opacity: .6; }
-  .playbackStatus { font-size: var(--text-caption); line-height: 1.7; color: var(--muted); }
+  .playbackStatus { font-size: var(--text-xs); line-height: 1.7; color: var(--muted); }
   .songActions { border-top: 1px solid var(--ink); padding: 19px 0; display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
-  .songActions > button { width: 100%; min-height: var(--spacing-touch); border: 1px solid var(--line); border-radius: 0; font-size: var(--text-compact); padding: 10px 12px; }
+  .songActions > button { width: 100%; min-height: var(--spacing-touch); border: 1px solid var(--line); border-radius: 0; font-size: var(--text-xs); padding: 10px 12px; }
   .songActions > button:first-child { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-white); }
-  .songActions > button[aria-haspopup="menu"] { display: flex; justify-content: space-between; background: transparent; color: var(--accent); padding: 0; border: 0; font-size: var(--text-compact); }
-  .controlsEnd { border-top: 1px solid var(--line); padding-top: 19px; font: 8px/1.7 var(--font-roboto-mono); letter-spacing: 1px; color: var(--muted); }
+  .songActions > button[aria-haspopup="menu"] { display: flex; justify-content: space-between; background: transparent; color: var(--accent); padding: 0; border: 0; font-size: var(--text-xs); }
   .playbackErrorPanel { padding: 24px; font-size: var(--text-xs); color: var(--amber); }
-  .syntaxHelpExample { display: block; margin-top: 7px; font: var(--text-compact)/1.6 var(--font-inter); }
+  .syntaxHelpExample { display: block; margin-top: 7px; font: var(--text-xs)/1.6 var(--font-inter); }
   .notationErrorState { display: none; }
   .loadingSpinner { animation: var(--animate-spin); }
   @media (width >= 1500px) {
@@ -50,11 +38,8 @@
   }
   @media (width <= 1250px) {
     .previewLayout { grid-template-columns: minmax(0, 1fr) 214px; column-gap: 22px; }
-    .scoreToolbar { flex-wrap: wrap; gap: 0; min-height: 61px; }
-    .scoreToolbar > p { width: 100%; padding: 6px 0; }
     .previewPage { padding: 28px 16px 16px; min-height: 600px; }
     .leadSheetPreview { padding: 16px; }
-    .controlIntro h2 { font-size: 34px; }
     .playbackFieldLabel:first-child { display: block; }
     .playbackFieldLabel:first-child .playbackSelect { margin-top: 8px; max-width: none; }
     .playbackFieldGroup { gap: 10px; }
@@ -62,32 +47,22 @@
   @media (width <= 1000px) {
     .previewLayout { grid-template-columns: minmax(0, 1fr) 220px; column-gap: 24px; }
     .scoreToolbar { flex-wrap: nowrap; min-height: 42px; gap: 12px; }
-    .scoreToolbar > p { width: auto; }
-    .controlIntro h2 { font-size: 32px; }
     .playbackFieldLabel:first-child { display: flex; }
     .playbackFieldLabel:first-child .playbackSelect { margin-top: 0; }
   }
   @media (width <= 750px) {
     .previewLayout { grid-template-columns: minmax(0, 1fr); }
-    .previewControls { grid-column: 1; grid-row: 4; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; padding-top: 0; margin-top: 24px; }
-    .controlIntro { display: none; }
+    .previewControls { grid-column: 1; grid-row: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; padding-top: 0; margin-top: 24px; }
     .playbackControls { grid-column: 2; grid-row: 1 / span 2; padding: 18px 0; }
     .songActions { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 25px; padding: 18px 0; }
     .songActions > button { width: auto; flex: 1; }
-    .controlsEnd { display: none; }
     .previewPage { min-height: 550px; padding: 30px 20px 18px; }
     .leadSheetPreview { padding: 18px; }
-    .scoreToolbar > p { font-size: 7px; }
-    .paperFooter { margin-top: 20px; }
-    .paperFooter > span:not(:first-child) { font-size: 5px; }
   }
   @media (width <= 450px) {
     .scoreToolbar { gap: 7px; margin-bottom: 8px; }
-    .scoreToolbar > p { font-size: 6px; letter-spacing: .3px; max-width: 80px; }
-    .scoreToolbar > p > span { display: none; }
-    .leadSheetPreview { padding: 9px; }
+    .leadSheetPreview { padding: 0; }
     .previewPage { padding: 23px 12px 16px; min-height: 480px; }
-    .scoreFootnote { font-size: 6px; letter-spacing: .8px; padding-top: 13px; }
     .previewControls { gap: 0 22px; }
     .sectionLabel { font-size: 7px; letter-spacing: .7px; }
     .playbackFieldLabel:first-child { display: block; }
@@ -95,12 +70,18 @@
     .playbackFieldGroup { gap: 8px; }
     .playbackFieldLabel, .tempoField { font-size: 8px; }
     .tempoField > span { display: none; }
-    .playbackButton { font-size: var(--text-caption); }
-    .playbackStatus { font-size: var(--text-micro); }
+    .playbackButton { font-size: var(--text-xs); }
+    .playbackStatus { font-size: var(--text-xs); }
     .songActions { gap: 20px; }
-    .songActions > button { font-size: var(--text-caption); padding: 10px 12px; }
-    .paperFooter > span:nth-child(2) { display: none; }
+    .songActions > button { font-size: var(--text-xs); padding: 10px 12px; }
   }
-  @media (width <= 350px) { .scoreToolbar > p { display: none; } .previewControls { gap: 0 15px; } .songActions > button { padding-inline: 8px; } }
+  @media (width <= 350px) { .previewControls { gap: 0 15px; } .songActions > button { padding-inline: 8px; } }
+  @container song-editor-preview (min-width: 0px) {
+    .previewLayout { grid-template-columns: minmax(0, 1fr); }
+    .previewControls { display: none; }
+    .leadSheetPreview { padding: 9px; }
+    .previewPage { padding: 23px 12px 16px; }
+    .scoreToolbar { display: none; }
+  }
   @media (prefers-reduced-motion: reduce) { .loadingSpinner { animation: none; } }
 }

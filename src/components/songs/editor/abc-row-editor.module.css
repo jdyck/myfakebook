@@ -71,7 +71,7 @@
     resize: none;
     padding-inline: calc(var(--spacing) * 4);
     padding-block: calc(var(--spacing) * 3.5);
-    font-size: var(--text-code);
+    font-size: var(--text-xs);
     color: var(--ink);
   }
 
@@ -120,7 +120,7 @@
   .unsupportedFormatMessage {
     padding-inline: calc(var(--spacing) * 3);
     padding-block: calc(var(--spacing) * 2);
-    font-size: var(--text-compact);
+    font-size: var(--text-xs);
     color: var(--muted);
   }
 
@@ -132,7 +132,7 @@
 
   .rowValidationMessage,
   .rowLabelGutter {
-    font-size: var(--text-caption);
+    font-size: var(--text-xs);
   }
 
   .unsupportedFormatMessage {

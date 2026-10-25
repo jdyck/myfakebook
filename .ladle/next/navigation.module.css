@@ -8,7 +8,7 @@
   border: 1px solid var(--line);
   background: var(--paper);
   color: var(--ink);
-  font: 13px/1.5 var(--font-inter);
+  font: var(--text-sm) var(--font-inter);
   letter-spacing: normal;
   text-transform: none;
 }

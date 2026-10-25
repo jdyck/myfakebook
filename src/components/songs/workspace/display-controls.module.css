@@ -1,17 +1,17 @@
 @layer components {
   .transposeSection, .viewSection { border-top: 1px solid var(--ink); padding: 19px 0; }
   .controlLabel { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .controlLabel label { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: 1px; }
-  .controlLabel button { font-size: var(--text-micro); padding: 6px 0; color: var(--muted); }
+  .controlLabel label { font: var(--text-xs) var(--font-roboto-mono); letter-spacing: 1px; }
+  .controlLabel button { font-size: var(--text-xs); padding: 6px 0; color: var(--muted); }
   .controlLabel button:hover { color: var(--accent); }
   .keyControl { display: flex; align-items: center; gap: 12px; margin: 10px 0 8px; }
   .keyControl > svg { flex-shrink: 0; }
-  .utilityNote { font-size: var(--text-caption); line-height: 1.7; color: var(--muted); }
-  .disclosure { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 15px; font-size: var(--text-compact); font-weight: 600; min-height: 30px; padding: 0; }
+  .utilityNote { font-size: var(--text-xs); line-height: 1.7; color: var(--muted); }
+  .disclosure { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 15px; font-size: var(--text-xs); font-weight: 600; min-height: 30px; padding: 0; }
   .disclosure > span { display: flex; gap: 8px; align-items: center; }
   .disclosure[aria-expanded="true"] > svg { transform: rotate(180deg); }
   .viewPanel { padding-top: 14px; }
-  .checkRow { display: flex; align-items: center; gap: 10px; min-height: var(--spacing-control); font-size: var(--text-compact); }
+  .checkRow { display: flex; align-items: center; gap: 10px; min-height: var(--spacing-control); font-size: var(--text-xs); }
   .checkRow input { accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; }
   @media (width <= 750px) {
     .transposeSection, .viewSection { padding: 18px 0; }
@@ -21,7 +21,7 @@
   @media (width <= 450px) {
     .controlLabel label { font-size: 7px; letter-spacing: .7px; }
     .keyControl > svg { width: 17px; height: 17px; }
-    .utilityNote { font-size: var(--text-micro); }
-    .disclosure { font-size: var(--text-caption); }
+    .utilityNote { font-size: var(--text-xs); }
+    .disclosure { font-size: var(--text-xs); }
   }
 }

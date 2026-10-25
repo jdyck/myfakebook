@@ -152,10 +152,6 @@ export function SongWorkspace({
   function updateTitle(value: string) {
     setSelectedPublicSongId(null);
     setTitle(value);
-    setAbc((current) => {
-      if (/^T:.*$/m.test(current)) return current.replace(/^T:.*$/m, `T:${value}`);
-      return `T:${value}\n${current}`;
-    });
   }
 
   function handleNewSong() {
@@ -240,7 +236,6 @@ export function SongWorkspace({
         transposition={displaySettings.transposition}
         song={currentSong ?? (selectedPublicSong ? { publicationState: "published", publicationTerritory: selectedPublicSong.publicationTerritory } : null)}
         isPublicSong={isPublicSong}
-        position={currentSong ? mySongs.findIndex((song) => song.id === currentSong.id) + 1 : undefined}
       />
       <div
         className={`${componentStyles.workspaceGrid} ${

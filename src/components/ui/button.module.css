@@ -10,7 +10,7 @@
     color: var(--muted);
     cursor: pointer;
     font-family: inherit;
-    font-weight: var(--font-weight-demibold);
+    font-weight: var(--font-weight-semibold);
     line-height: 1;
     text-align: center;
     text-decoration: none;
@@ -23,7 +23,7 @@
   .compact {
     min-height: var(--spacing-control);
     padding-inline: 11px;
-    font-size: var(--text-compact);
+    font-size: var(--text-xs);
   }
 
   .regular {
@@ -64,9 +64,24 @@
     color: var(--ui-destructive);
   }
 
+  .field {
+    min-height: var(--spacing-touch);
+    border-color: var(--line-strong);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .field.icon {
+    width: var(--spacing-touch);
+    height: var(--spacing-touch);
+  }
+
   @media (hover: hover) {
     .secondary:hover,
-    .danger:hover {
+    .danger:hover,
+    .field:hover:enabled {
       border-color: var(--accent);
       color: var(--ink);
     }

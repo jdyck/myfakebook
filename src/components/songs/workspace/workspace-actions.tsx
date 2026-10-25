@@ -44,9 +44,13 @@ export function WorkspaceActions({ exporting, onEdit, onExport, onExportAbc, onE
         disabled={fullscreenAction.disabled}
         size="compact"
         variant="secondary"
+        title={fullscreenAction.zoomed ? "Fit the score to the available width" : "Enlarge the score for easier reading on narrow screens"}
         type="button"
         onClick={fullscreenAction.onZoom}
-      ><Search size={14} strokeWidth={1.5} aria-hidden="true" /></Button>}
+      >
+        <Search size={14} strokeWidth={1.5} aria-hidden="true" />
+        <span>{fullscreenAction.zoomed ? "Fit to width" : "Zoom score"}</span>
+      </Button>}
       <Button
         aria-label="Edit song"
         data-action="edit"

@@ -286,12 +286,12 @@
 
   .removeSongButton,
   .songLibraryActionButton {
-    font-size: var(--text-caption);
+    font-size: var(--text-xs);
   }
 
   .removeSongButton {
-    --component-font-weight: var(--font-weight-demibold);
-    font-weight: var(--font-weight-demibold);
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
   }
 
   .songLibraryActionButton {

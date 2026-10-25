@@ -4,7 +4,7 @@ import { UserRound } from "lucide-react";
 import { HeaderMemberNavigation, HeaderView } from "./header-view";
 import { headerFixtures } from "./header.fixtures";
 import authStyles from "./auth-controls.module.css";
-import themeStyles from "./theme-toggle.module.css";
+import { SettingsButton } from "./settings-button";
 
 function HeaderExample({ signedIn, activeSection }: typeof headerFixtures[keyof typeof headerFixtures]) {
   return (
@@ -13,24 +13,7 @@ function HeaderExample({ signedIn, activeSection }: typeof headerFixtures[keyof 
       memberNavigation={signedIn && <HeaderMemberNavigation activeSection={activeSection} />}
       accountControls={
         <>
-          <button
-            type="button"
-            className={themeStyles.themeToggleButton}
-            aria-label="Theme preview: use Ladle's theme toolbar"
-            title="Use Ladle's theme toolbar to change the preview theme"
-            disabled
-          >
-            <span className={themeStyles.darkLabel}>DARK</span>
-            <span className={themeStyles.lightLabel}>LIGHT</span>
-          </button>
-          {signedIn ? (
-            <span
-              className="flex size-7 shrink-0 items-center justify-center bg-brand text-xs font-semibold text-on-accent"
-              role="img"
-              aria-label="Example account: Alex Morgan"
-              title="Example account: Alex Morgan"
-            >AM</span>
-          ) : (
+          {!signedIn && (
             <>
               <Link className={authStyles.signInButton} href="/sign-in">Sign in</Link>
               <Link className={authStyles.createAccountButton} href="/sign-up">
@@ -39,6 +22,7 @@ function HeaderExample({ signedIn, activeSection }: typeof headerFixtures[keyof 
               </Link>
             </>
           )}
+          <SettingsButton onAccountClick={signedIn ? () => {} : undefined} onSignOut={signedIn ? () => {} : undefined} />
         </>
       }
     />

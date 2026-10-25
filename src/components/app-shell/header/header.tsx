@@ -2,7 +2,6 @@
 
 import { Show } from "@clerk/nextjs";
 import { AuthControls } from "./auth-controls";
-import { ThemeToggle } from "./theme-toggle";
 import { HeaderMemberNavigation, HeaderView, type HeaderSection } from "./header-view";
 
 type HeaderProps = {
@@ -19,7 +18,7 @@ export function Header({ clerkConfigured, activeSection = "library" }: HeaderPro
           <HeaderMemberNavigation activeSection={activeSection} />
         </Show>
       )}
-      accountControls={<><ThemeToggle /><AuthControls configured={clerkConfigured} /></>}
+      accountControls={<AuthControls configured={clerkConfigured} />}
     />
   );
 }

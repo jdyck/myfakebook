@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import titleStyles from "@/components/ui/page-title.module.css";
 import styles from "./editorial-library.module.css";
 
 export type EditorialLibraryViewProps = {
@@ -36,8 +37,8 @@ export function EditorialLibraryView({
       <main id={mainId} className={styles.pageContent}>
         <section className={styles.pageHeading} aria-labelledby={titleId}>
           <div>
-            <p className={styles.eyebrow}>{eyebrow} <span>/</span> 01</p>
-            <h1 id={titleId} className={styles.pageTitle}>{title}</h1>
+            <p className={styles.eyebrow}>{eyebrow}</p>
+            <h1 id={titleId} className={`${titleStyles.title} ${styles.pageTitle}`}>{title}</h1>
           </div>
           <div className={styles.headingActions}>
             <p>{description}</p>

@@ -41,7 +41,7 @@ Shared design tokens are defined in `src/styles/globals.css`. Use the same varia
 | Score rendering | `bg-score-paper`, `text-score-ink`, `text-score-muted`, `border-score-line`, `bg-score-surround`; the score stays white in dark mode |
 | Text selection | `selection:bg-selection selection:text-selection-ink` |
 | Dense typography | `text-micro` (9px), `text-caption` (10px), `text-compact` (11px), `text-code` (11.5px), `text-xs` (12px), `text-detail` (13px) |
-| Intermediate font weight | `font-demibold` (650) |
+| Intermediate font weight | `font-semibold` (650) |
 | Shared radii | `rounded-control`, `rounded-field`, and `rounded-menu-item` are all zero |
 | Control sizes | `size-control` / `min-h-control` (34px), `min-h-field` (38px), `min-h-touch` (44px) |
 | Page width and menu elevation | `max-w-page` (1600px), `shadow-menu` |
@@ -75,12 +75,21 @@ Run `npm ci` then `npm run viewer` to start Ladle (default port 61000).
 Run `npm run viewer:build` for the static production viewer in ignored `build/`;
 `npm run viewer:preview` serves that output on port 8080 (build it first).
 No credentials or backend are needed.
+
+The viewer also covers score previews with display controls, zoom, fullscreen,
+and export menus; binder lists and details; public-library collections and
+territory labels; Add to Binder dialogs; and publication selection. Binder
+examples support local creation, renaming, adding/removing songs, reordering,
+and display settings. Error stories fail their local callbacks on interaction;
+Add to Binder's Saving example stays pending after selecting a destination.
+Use the narrow score preview and Ladle's viewport tools to check mobile layouts.
+Preview export callbacks report the selected format without downloading a file.
+
 Examples cover Button variants/sizes, editable and unavailable TextFields,
 controlled Selects, DisplayControls with live settings and transposed heading,
 SongHeading publication states, and HeaderView guest/signed-in navigation states.
 Header stories use fixture account controls; use Ladle’s theme and viewport tools
 to inspect dark mode and mobile layouts. Narrow stories use the sidebar layout.
-Use Ladle’s theme and viewport tools to check both themes and mobile widths.
 
 `.ladle/components.tsx` imports the shared stylesheet and locally bundled variable
 Inter, Roboto Mono, and Roboto Flex fonts, independently of `next/font`. Its
@@ -148,6 +157,13 @@ deliberately omits the connected Header (covered separately through HeaderView)
 and the `next/font/google` wrapper in
 EditorialLibrary. No AppProviders, Clerk or Convex connections are mounted.
 The caption uses the viewer's bundled Inter font rather than Roboto Condensed.
+
+Binder and public-library stories import `BindersListView`, `BinderDetailView`,
+`SaveToBinderView`, and `PublicSongsListView` directly. Their application wrappers
+retain Clerk, Convex, router navigation, and Next.js font loading. The views take
+local data and async callbacks; story mutations update fixture state rather than
+calling the backend. `PublicationSelect` exposes the same control used by the
+admin wrapper, while permission checks remain in the connected component.
 
 Following [Ladle's Vite configuration guidance](https://ladle.dev/docs/config/),
 the viewer aliases exactly `next/link` and `next/image` to `.ladle/next/` adapters.

@@ -31,7 +31,7 @@
   }
 
   .loadingStatus {
-    font-size: var(--text-compact);
+    font-size: var(--text-xs);
     color: var(--muted);
   }
 }

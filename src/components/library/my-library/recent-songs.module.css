@@ -1,15 +1,15 @@
 @layer components {
-  .sectionHeading { font: 8px/1.5 var(--font-roboto-mono); letter-spacing: 1px; color: var(--muted); margin-bottom: 13px; text-transform: uppercase; }
+  .sectionHeading { font: xs var(--font-roboto-mono); letter-spacing: 1px; color: var(--muted); margin-bottom: 13px; text-transform: uppercase; }
   .recentSongList { display: flex; flex-direction: column; }
   .recentSongLink { position: relative; text-align: left; padding: 15px 0; border-bottom: 1px solid var(--line); display: block; width: 100%; }
   .songDetails { display: block; min-width: 0; }
-  .songTitle { display: block; font-weight: var(--font-weight-demibold); font-size: var(--text-xs); line-height: 1.5; letter-spacing: -.2px; overflow-wrap: anywhere; }
-  .songPublicationDetails { display: block; font-size: var(--text-caption); line-height: 1.6; color: var(--muted); margin: 4px 0; }
-  .songUpdated { display: block; font: 8px/1.5 var(--font-roboto-mono); letter-spacing: .3px; color: var(--muted); }
+  .songTitle { display: block; font-weight: var(--font-weight-semibold); font-size: var(--text-xs); line-height: 1.5; letter-spacing: -.2px; overflow-wrap: anywhere; }
+  .songPublicationDetails { display: block; font-size: var(--text-xs); line-height: 1.6; color: var(--muted); margin: 4px 0; }
+  .songUpdated { display: block; font: var(--text-xs) var(--font-roboto-mono); letter-spacing: .3px; color: var(--muted); }
   .recentSongLink:hover .songTitle { color: var(--accent); }
   .recentSongLink[aria-current="page"] { padding-left: 12px; color: var(--accent); }
   .recentSongLink[aria-current="page"]::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; border-left: 2px solid var(--accent); }
-  .recentSongsMessage { padding: 12px 0; font-size: var(--text-compact); color: var(--muted); }
+  .recentSongsMessage { padding: 12px 0; font-size: var(--text-xs); color: var(--muted); }
   .signInLink { color: var(--accent); text-decoration: underline; }
-  @media (width <= 1250px) { .songTitle { font-size: var(--text-compact); } }
+  @media (width <= 1250px) { .songTitle { font-size: var(--text-xs); } }
 }

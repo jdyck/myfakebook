@@ -122,9 +122,9 @@
   .editorModeTab,
   .editorActionButton {
     cursor: pointer;
-    font-size: var(--text-compact);
-    --component-font-weight: var(--font-weight-demibold);
-    font-weight: var(--font-weight-demibold);
+    font-size: var(--text-xs);
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
   }
 
   .abcEditorPanel,
@@ -245,11 +245,11 @@
     padding-top: calc(var(--spacing) * 3.5);
     padding-bottom: 17px;
     font-family: var(--default-mono-font-family);
-    font-size: var(--text-code);
+    font-size: var(--text-xs);
   }
 
   .fileTypeBadge {
-    font-size: var(--text-micro);
+    font-size: var(--text-xs);
   }
 
   .lineNumberGutter,

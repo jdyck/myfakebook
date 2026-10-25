@@ -4,7 +4,7 @@
 
 `src/app/` adapts URLs and requests to the application. Pages handle route parameters, server-side authentication, redirects, and choosing connected or unconfigured views. Keep editing and collection behavior in components rather than growing page files.
 
-`src/components/` groups UI by feature: application shell, libraries, songs, and binders. Components own React state and interactions; connected wrappers subscribe to Convex. Reusable UI controls live in `ui/`. Keep feature hooks, CSS Modules, and tests beside the UI they support.
+`src/components/` groups UI by feature: application shell, libraries, songs, and binders. Components own React state and interactions; connected wrappers subscribe to Convex. Binder and public-library `*-view.tsx` modules accept data and callbacks so the same interactions can run in Ladle without application providers. Reusable UI controls live in `ui/`. Keep feature hooks, CSS Modules, and tests beside the UI they support.
 
 `src/lib/` contains non-React logic shared by the frontend, API endpoints, and backend. It must not import components or routes; ESLint enforces that boundary. Modules under `notation/` and `songs/` should remain usable without a browser. Browser-dependent file and image conversion belongs in `export/`.
 

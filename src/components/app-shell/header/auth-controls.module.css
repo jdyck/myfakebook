@@ -12,9 +12,9 @@
     border-style: var(--component-border-style);
     border-width: 1px;
     padding-inline: calc(var(--spacing) * 2.75);
-    font-size: var(--text-compact);
-    --component-font-weight: var(--font-weight-demibold);
-    font-weight: var(--font-weight-demibold);
+    font-size: var(--text-xs);
+    --component-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
     color: var(--muted);
     --component-duration: var(--transition-duration-control);
     transition-duration: var(--transition-duration-control);
