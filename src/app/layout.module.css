@@ -1,4 +1,6 @@
-/* Component styles. */
+/* Establish precedence before this module can introduce the components layer. */
+@layer theme, base, components, utilities;
+
 @layer components {
   .pageBody {
     margin: 0px;
