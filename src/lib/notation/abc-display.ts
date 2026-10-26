@@ -16,7 +16,7 @@ export const DEFAULT_DISPLAY_SETTINGS: SongDisplaySettings = {
   showFirstLineClefOnly: true,
 };
 
-export type TranspositionChoice = {
+type TranspositionChoice = {
   steps: number;
   key: string;
 };
@@ -33,6 +33,16 @@ function keyLabelFromAbc(abc: string) {
 }
 
 export function getTranspositionChoices(abc: string): TranspositionChoice[] {
+  const steps = Array.from({ length: 25 }, (_, index) => index - 12);
+  try {
+    return transpositionChoices(abc, steps);
+  } catch {
+    // This runs during render, including while the user is editing incomplete ABC.
+    return steps.map((steps) => ({ steps, key: "Unknown key" }));
+  }
+}
+
+function transpositionChoices(abc: string, steps: number[]): TranspositionChoice[] {
   const source = abc.replaceAll("\r", "");
   let keyField = source.match(/^K:\s*([^\r\n]*)/m)?.[1]?.trim();
   if (!keyField) {
@@ -43,9 +53,14 @@ export function getTranspositionChoices(abc: string): TranspositionChoice[] {
   }
 
   const keySource = `K:${keyField}\nC`;
+  const key = keyLabelFromAbc(keySource);
+  // abcjs cannot transpose the synthetic C note with a keyless signature.
+  if (key === "No key" || key === "Highland pipes") {
+    return steps.map((steps) => ({ steps, key }));
+  }
   const tunes = ABCJS.parseOnly(keySource);
 
-  return Array.from({ length: 25 }, (_, index) => index - 12).map((steps) => {
+  return steps.map((steps) => {
     const transposed = steps === 0 ? keySource : ABCJS.strTranspose(keySource, tunes, steps);
     return { steps, key: keyLabelFromAbc(transposed) };
   });

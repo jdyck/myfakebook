@@ -1,4 +1,4 @@
-export type SongFileExtension = "abc" | "musicxml" | "pdf" | "png" | "svg";
+type SongFileExtension = "abc" | "musicxml" | "pdf" | "png" | "svg";
 
 export function downloadSongFile(
   blob: Blob,

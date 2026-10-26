@@ -1,7 +1,7 @@
 import { toInlineAbc, toSeparateAbc } from "../notation/abc-voices";
 import { abcToSongContent, sameSongContent, songContentToAbc, validateSongContent, type SongContent } from "./song-content";
 
-export type SongSource = { content: SongContent; abc: string; abcParts: string };
+type SongSource = { content: SongContent; abc: string; abcParts: string };
 export type SongSourceInput = { title: string; content?: unknown; abc?: string | null; abcParts?: string | null };
 
 /** The object is authoritative; older records fall back to inline ABC, then separate ABC. */

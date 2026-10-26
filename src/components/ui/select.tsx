@@ -7,7 +7,7 @@ import styles from "./select.module.css";
 
 export type SelectValue = string | number;
 
-export type SelectOption = {
+type SelectOption = {
   value: SelectValue;
   label: ReactNode;
   disabled?: boolean;

@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef } from "react";
 import styles from "./text-field.module.css";
 
-export type TextFieldSize = "compact" | "large";
+type TextFieldSize = "compact" | "large";
 
 type TextFieldProps = Omit<ComponentPropsWithRef<"input">, "className" | "size"> & {
   className?: string;

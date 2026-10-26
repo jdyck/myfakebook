@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 
 import type { Id } from "../../../../convex/_generated/dataModel";
+import { compareSongTitles } from "@/lib/songs/title-sort";
 import { publicationLabel, publicationStatusForSong, publicationValueForSong } from "@/lib/songs/types";
 import { EditorialLibraryView } from "../editorial-library-view";
 import styles from "../editorial-library.module.css";
@@ -32,7 +33,7 @@ export function MyLibraryList({ songs, loading = false, header, captionClassName
   const visibleSongs = allSongs.filter((song) =>
     (filter === "all" || song.publicationState === filter) && song.title.toLocaleLowerCase().includes(searchQuery),
   ).sort((a, b) => {
-    const comparison = sort.field === "title" ? a.title.localeCompare(b.title) : a.updatedAt - b.updatedAt;
+    const comparison = sort.field === "title" ? compareSongTitles(a.title, b.title) : a.updatedAt - b.updatedAt;
     return sort.ascending ? comparison : -comparison;
   });
 

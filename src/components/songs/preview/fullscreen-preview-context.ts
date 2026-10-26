@@ -2,7 +2,7 @@
 
 import { createContext } from "react";
 
-export type FullscreenPreviewAction = {
+type FullscreenPreviewAction = {
   onFullscreen: (button: HTMLButtonElement) => void;
   disabled: boolean;
   onZoom?: () => void;

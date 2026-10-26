@@ -10,7 +10,7 @@ L:1/8
 Q:1/4=104
 K:C`;
 
-export type MusicXmlResult = {
+type MusicXmlResult = {
   xml: string;
   title: string;
 };
