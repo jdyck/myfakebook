@@ -1,8 +1,8 @@
 import type { ComponentPropsWithRef } from "react";
 import styles from "./button.module.css";
 
-export type ButtonVariant = "primary" | "secondary" | "quiet" | "danger" | "field";
-export type ButtonSize = "compact" | "regular" | "icon";
+type ButtonVariant = "primary" | "secondary" | "quiet" | "danger" | "field";
+type ButtonSize = "compact" | "regular" | "icon";
 
 type ButtonProps = Omit<ComponentPropsWithRef<"button">, "className"> & {
   className?: string;

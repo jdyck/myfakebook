@@ -431,7 +431,7 @@ function parseMeasures(header: HeaderInfo) {
   return measures;
 }
 
-export type ParsedAbc = {
+type ParsedAbc = {
   header: HeaderInfo;
   measures: ParsedMeasure[];
 };

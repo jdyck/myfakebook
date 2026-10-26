@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { BinderDetail } from "@/components/binders";
+import { BinderDetail } from "@/components/binders/binder-detail";
 
 export default async function BinderPage({ params }: { params: Promise<{ id: string }> }) {
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !(await auth()).userId) return redirect("/songs");

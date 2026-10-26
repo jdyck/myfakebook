@@ -154,8 +154,8 @@ EditorialLibraryView has separate empty, loading, and populated examples using
 local fixtures. The populated example supports search (including no results and
 Clear filters), visibility filters, and sorting, with a long-title row. It
 deliberately omits the connected Header (covered separately through HeaderView)
-and the `next/font/google` wrapper in
-EditorialLibrary. No AppProviders, Clerk or Convex connections are mounted.
+and uses the viewer’s bundled fonts. No AppProviders, Clerk or Convex connections
+are mounted.
 The caption uses the viewer's bundled Inter font rather than Roboto Condensed.
 
 Binder and public-library stories import `BindersListView`, `BinderDetailView`,

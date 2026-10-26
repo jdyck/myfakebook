@@ -23,14 +23,14 @@ export type AbcRowLyricsPart = {
   tokens: string[];
 };
 
-export type AbcRowRawPart = {
+type AbcRowRawPart = {
   kind: "raw";
   text: string;
 };
 
-export type AbcRowPart = AbcRowMusicPart | AbcRowLyricsPart | AbcRowRawPart;
+type AbcRowPart = AbcRowMusicPart | AbcRowLyricsPart | AbcRowRawPart;
 
-export type AbcRowDocument = {
+type AbcRowDocument = {
   header: string[];
   parts: AbcRowPart[];
   supported: boolean;

@@ -6,6 +6,7 @@ import { useState, type ReactNode } from "react";
 import { EditorialLibraryView } from "../editorial-library-view";
 import { publicationLabel } from "@/lib/songs/types";
 import type { PublicSong } from "@/lib/songs/public-library";
+import { compareSongTitles } from "@/lib/songs/title-sort";
 import styles from "../editorial-library.module.css";
 
 type SortField = "title" | "writers" | "rhythm";
@@ -20,7 +21,9 @@ export function PublicSongsListView({ songs, isAdmin = false, header, captionCla
   const visibleSongs = allSongs.filter((song) =>
     [song.title, song.writers, song.rhythm].some((value) => value.toLocaleLowerCase().includes(searchQuery)),
   ).sort((a, b) => {
-    const comparison = a[sort.field].localeCompare(b[sort.field]) || a.title.localeCompare(b.title);
+    const comparison = sort.field === "title"
+      ? compareSongTitles(a.title, b.title)
+      : a[sort.field].localeCompare(b[sort.field]) || compareSongTitles(a.title, b.title);
     return sort.ascending ? comparison : -comparison;
   });
 

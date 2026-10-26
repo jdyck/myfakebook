@@ -2,7 +2,7 @@ import { parseAbcRows, type AbcRowEvent } from "../notation/abc-rows";
 import { durationSuffix, eventLengths } from "../notation/abc-timing";
 import { toInlineAbc } from "../notation/abc-voices";
 
-export type SongMeasure = {
+type SongMeasure = {
   /** Chord name and duration in multiples of unitLength. An empty name is a gap. */
   chords: [string, number][];
   melody: string;
