@@ -135,18 +135,6 @@ export async function removeSong(ctx: MutationCtx, id: SongId, ownerId: string) 
       await ctx.db.patch("binders", binder._id, { updatedAt: Date.now() });
     }
   }
-  // Keep the retained migration source consistent when songs are removed.
-  const setListItems = await ctx.db
-    .query("setListItems")
-    .withIndex("by_song", (query) => query.eq("songId", id))
-    .collect();
-  for (const item of setListItems) {
-    await ctx.db.delete("setListItems", item._id);
-    const setList = await ctx.db.get("setLists", item.setListId);
-    if (setList) {
-      await ctx.db.patch("setLists", setList._id, { updatedAt: Date.now() });
-    }
-  }
   await ctx.db.delete("songs", id);
   return id;
 }

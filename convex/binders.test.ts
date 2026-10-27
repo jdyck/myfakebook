@@ -39,8 +39,6 @@ test("binder operations use the new tables and enforce ownership", async () => {
   await t.run(async (ctx) => {
     expect(await ctx.db.query("binderItems").collect()).toEqual([]);
     expect(await ctx.db.query("binders").collect()).toEqual([]);
-    expect(await ctx.db.query("setLists").collect()).toEqual([]);
-    expect(await ctx.db.query("setListItems").collect()).toEqual([]);
     expect(await ctx.db.query("songs").collect()).toHaveLength(2);
   });
 });
@@ -57,4 +55,24 @@ test("removing a song cleans up its binder items and updates the binder", async 
 
   expect(await owner.query(api.binders.get, { id: binderId })).toMatchObject({ items: [] });
   expect((await owner.query(api.binders.get, { id: binderId }))!.updatedAt).toBeGreaterThan(0);
+});
+
+
+test("legacy saved links resolve without the retired tables and enforce ownership", async () => {
+  const t = convexTest(schema, modules);
+  const owner = t.withIdentity({ subject: "owner" });
+  const songId = await owner.mutation(api.songs.save, { title: "Song", abc: "K:C\nC|" });
+  const binderId = await owner.mutation(api.binders.create, { name: "Migrated" });
+  const itemId = await owner.mutation(api.binders.addSong, { binderId, songId });
+  await t.run(async (ctx) => {
+    await ctx.db.patch("binders", binderId, { legacySetListId: "retired-set-list-id" });
+    await ctx.db.patch("binderItems", itemId, { legacySetListItemId: "retired-item-id" });
+  });
+
+  expect(await owner.query(api.binders.get, { id: "retired-set-list-id" })).toMatchObject({
+    _id: binderId, items: [{ _id: itemId, legacySetListItemId: "retired-item-id" }],
+  });
+  expect(await t.withIdentity({ subject: "other" }).query(api.binders.get, {
+    id: "retired-set-list-id",
+  })).toBeNull();
 });

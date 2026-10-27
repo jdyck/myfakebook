@@ -11,6 +11,7 @@ import { api } from "../../../../convex/_generated/api";
 import componentStyles from "./my-library-sidebar.module.css";
 
 type MyLibrarySidebarProps = {
+  hasSongEdits: boolean;
   enabled: boolean;
   abc: string;
   abcParts: string;
@@ -28,6 +29,7 @@ type MyLibrarySidebarProps = {
 };
 
 export function MyLibrarySidebar({
+  hasSongEdits,
   enabled,
   abc,
   abcParts,
@@ -55,6 +57,7 @@ export function MyLibrarySidebar({
         <LibraryCount />
       </div>
       <RecentMyLibrarySongs
+        hasSongEdits={hasSongEdits}
         abc={abc}
         abcParts={abcParts}
         content={content}

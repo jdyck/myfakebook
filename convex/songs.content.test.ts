@@ -100,19 +100,6 @@ test("binders return objects only while the viewer can access the song", async (
   ]);
 });
 
-test("catalog imports persist song objects", async () => {
-  const t = convexTest(schema, modules);
-  const admin = t.withIdentity({ subject: "admin", metadata: { role: "admin" } });
-  await admin.mutation(api.songs.ensureCatalogSongs, {
-    songs: [{ id: "catalog-song", title: "Song", writers: "", rhythm: "", abc: "K:C\nC|", content }],
-  });
-
-  expect(await t.query(api.songs.listPublicSongs, {})).toEqual([
-    expect.objectContaining({ catalogId: "catalog-song", content }),
-  ]);
-});
-
-
 test.each([
   [["F"]],
   [[2, "F"]],

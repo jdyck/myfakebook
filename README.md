@@ -48,6 +48,5 @@ The same `check` command runs in CI. Run `build` when changing routes, imports, 
 - [Song content and editor formats](docs/song-content.md)
 - [Product vocabulary](CONTEXT.md)
 - [Product content model](docs/product/CONTENT_MODEL.md)
-- [Binder migration](docs/binder-migration.md)
 
 Repository conventions for coding agents are in [AGENTS.md](AGENTS.md), including the requirement to read this installed Next.js version's documentation before changing framework code.

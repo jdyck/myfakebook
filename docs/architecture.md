@@ -48,7 +48,7 @@ Prefer direct imports from the owning module over creating a project-wide barrel
 | `GET /api/public-songs` | Regional public library with worldwide fallback |
 | `POST /api/musicxml` | Convert `{ abc, display? }` to a downloadable MusicXML document |
 
-The product and frontend use **binder**. Existing `/setlists` URLs permanently redirect to `/binders`, preserving the path and query parameters. The `setListId`/`setListItemId` query parameters remain supported for saved song links; song route pages translate them to binder props. The `legacySetListId` and `legacySetListItemId` database fields, `convex/setLists.ts`, and old tables support migration compatibility; see [binder migration](binder-migration.md) before removing them.
+The product and frontend use **binder**. Existing `/setlists` URLs permanently redirect to `/binders`, preserving the path and query parameters. The `setListId`/`setListItemId` query parameters remain supported for saved song links; song route pages translate them to binder props. The optional `legacySetListId` and `legacySetListItemId` string fields preserve saved links after retirement of the old tables and API.
 
 ## Song data flow
 

@@ -12,6 +12,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm test",
     "icons": "node scripts/generate-icons.mjs",
+    "db:export:prod": "node scripts/export-production.mjs",
+    "db:import:dev": "node scripts/import-development.mjs",
     "viewer": "ladle serve",
     "viewer:build": "ladle build",
     "viewer:preview": "ladle preview"

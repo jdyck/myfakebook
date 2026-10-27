@@ -110,14 +110,11 @@ export const get = query({
   handler: async (ctx, args) => {
     const ownerId = await requireOwner(ctx);
     const binderId = ctx.db.normalizeId("binders", args.id);
-    const legacyId = ctx.db.normalizeId("setLists", args.id);
     const binder = binderId
       ? await ctx.db.get("binders", binderId)
-      : legacyId
-        ? await ctx.db.query("binders")
-          .withIndex("by_legacySetListId", (q) => q.eq("legacySetListId", legacyId))
-          .unique()
-        : null;
+      : await ctx.db.query("binders")
+        .withIndex("by_legacySetListId", (q) => q.eq("legacySetListId", args.id))
+        .unique();
     if (!binder || binder.ownerId !== ownerId) return null;
 
     const items = await ctx.db

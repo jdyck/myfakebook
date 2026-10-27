@@ -19,14 +19,13 @@ export default defineSchema({
     catalogId: v.optional(v.string()),
   })
     .index("by_owner_updatedAt", ["ownerId", "updatedAt"])
-    .index("by_publication_updatedAt", ["publicationState", "updatedAt"])
-    .index("by_catalogId", ["catalogId"]),
+    .index("by_publication_updatedAt", ["publicationState", "updatedAt"]),
 
   binders: defineTable({
     ownerId: v.string(),
     name: v.string(),
     updatedAt: v.number(),
-    legacySetListId: v.optional(v.id("setLists")),
+    legacySetListId: v.optional(v.string()),
   })
     .index("by_owner_updatedAt", ["ownerId", "updatedAt"])
     .index("by_legacySetListId", ["legacySetListId"]),
@@ -37,31 +36,9 @@ export default defineSchema({
     songId: v.id("songs"),
     position: v.number(),
     displaySettings: v.optional(songDisplaySettingsValidator),
-    legacySetListItemId: v.optional(v.id("setListItems")),
+    legacySetListItemId: v.optional(v.string()),
   })
     .index("by_binder_position", ["binderId", "position"])
     .index("by_song", ["songId"])
     .index("by_legacySetListItemId", ["legacySetListItemId"]),
-
-  // Retained as migration sources until the binder migration is verified.
-  setLists: defineTable({
-    ownerId: v.string(),
-    name: v.string(),
-    updatedAt: v.number(),
-  }).index("by_owner_updatedAt", ["ownerId", "updatedAt"]),
-
-  setListItems: defineTable({
-    ownerId: v.string(),
-    setListId: v.id("setLists"),
-    songId: v.id("songs"),
-    position: v.number(),
-    displaySettings: v.optional(songDisplaySettingsValidator),
-  })
-    .index("by_setList_position", ["setListId", "position"])
-    .index("by_song", ["songId"]),
-
-  catalogImports: defineTable({
-    libraryId: v.string(),
-    importedAt: v.number(),
-  }).index("by_libraryId", ["libraryId"]),
 });

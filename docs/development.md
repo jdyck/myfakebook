@@ -193,9 +193,88 @@ Run `npm run check` before submitting changes. It runs ESLint, `next typegen`, T
 
 Run `npm run build` to validate production bundling. The root layout uses `next/font/google`, so building requires access to Google Fonts. Browser downloads and audio also deserve a manual check when their behavior changes.
 
+## Import production songs into development
+
+Add `DEV_CLERK_USER_ID=user_...` to `.env.local`, using the user ID from the
+**development** Clerk dashboard's Users page. This must match the account you
+sign into locally; production and development Clerk IDs differ. No additional
+secret key is needed. Keep the `CONVEX_DEPLOYMENT=dev:...` setting written by
+`npx convex dev`, and log into the Convex CLI with `npx convex login`.
+
+```bash
+# Preview the latest ZIP in local/exports/ without connecting to Convex.
+npm run db:import:dev -- --dry-run
+# Append the copies to development.
+npm run db:import:dev
+# Replace all development songs with the selected export's songs.
+npm run db:import:dev -- --replace --dry-run
+npm run db:import:dev -- --replace
+# Optionally choose a ZIP and copy only one production user's songs.
+npm run db:import:dev -- --path local/exports/my-backup.zip --source-owner user_PRODUCTION_ID
+```
+
+The script selects the ZIP with the newest modification time, reads only
+`songs/documents.jsonl`, and assigns every selected song to `DEV_CLERK_USER_ID`
+(or `--owner user_...`). Without `--source-owner`, it copies **all** exported
+songs. Copies are private, with new IDs and creation times, and no publication
+or catalog identity. Notation, titles, writers, rhythms, and update times remain.
+Binders, other tables, and uploaded files are not imported. Existing development
+records remain; **repeating an import creates additional copies**.
+
+Use `--replace` to replace the **entire development songs table, across all
+owners**, instead of appending. It preserves the export's `_creationTime`
+and `updatedAt`, and generates new development IDs. Production IDs can embed table
+numbers that conflict with unrelated development tables, so they are removed.
+Ownership still changes to your development user, and copies
+remain private without publication metadata or catalog IDs. Convex performs
+the table replacement atomically; the script does not clear records in a separate
+step. An empty selection is refused. Repeating replacement resets the table
+without accumulating copies, but generates new IDs each time. With `--source-owner`, only that owner's
+exported songs survive the replacement. Other tables are untouched, so existing
+binder items referencing previous song IDs become dangling.
+This is a song reset, not a full database restore. `--replace` skips the CLI's
+deletion confirmation; use `--dry-run` to review the source, destination and count.
+
+It requires `unzip` (included with macOS) and accepts `--env-file <file>` for an
+alternate development settings file. Only a `dev:` deployment is accepted. The
+CLI receives an isolated selection file and no `CONVEX_*` shell variables, so
+production deploy keys cannot override the destination. It uses your Convex CLI
+login, not a deploy key. Temporary private data files are removed when it exits.
+The ZIP remains unchanged. See [Convex data import](https://docs.convex.dev/database/import-export/import)
+for the underlying append and ID behavior.
+
 ## Deployment
 
-The app is configured for Vercel in `vercel.json` and includes Vercel Web Analytics. Connect the repository in Vercel, configure production Clerk and Convex environment variables, and enable Web Analytics there. Deploy the Convex backend with `npx convex deploy` and ensure its issuer and regional library secret match the frontend environment. Follow [the binder migration guide](binder-migration.md) for existing deployments.
+### Export the production database
+
+Run `npm run db:export:prod` to save a production snapshot to
+`local/exports/production-<timestamp>.zip` (ignored by Git). It uses the installed
+Convex CLI with `--prod`, your linked project's configuration, and your Convex
+login. Run `npx convex login` first if needed. The export reads database data;
+it does not deploy code or change records.
+
+```bash
+npm run db:export:prod
+npm run db:export:prod -- --path local/exports/my-backup.zip --include-file-storage
+npm run db:export:prod -- --env-file .env.production.local
+```
+
+For a separate production connection, put `CONVEX_DEPLOY_KEY=<production deploy key>`
+in the ignored `.env.production.local` file and use the last command. Create the
+key in the production deployment's Convex dashboard settings. A deployment key
+overrides `--prod`, so use a **production** key and remove any development or
+preview deploy key from your shell environment before running. Never commit keys
+or snapshots; custom output paths should also be outside tracked directories.
+
+The ZIP contains table data as `<table>/documents.jsonl`, preserving document IDs
+and creation times. Add `--include-file-storage` to include uploaded file contents.
+Existing output files are refused. Treat the archive as private production data.
+This exports Convex data, not Clerk accounts, environment variables, or app code.
+See the [Convex export guide](https://docs.convex.dev/database/import-export/export).
+
+The app is configured for Vercel in `vercel.json` and includes Vercel Web Analytics. Connect the repository in Vercel, configure production Clerk and Convex environment variables, and enable Web Analytics there. Deploy the Convex backend with `npx convex deploy` and ensure its issuer and regional library secret match the frontend environment. Before deploying to an older deployment, verify that its set list data has already been copied to `binders` and `binderItems` and no copy migration jobs remain scheduled. The copy migration is available in the previous revision. Removing `setLists` and `setListItems` from the schema leaves their deployed data intact; after verifying the copy and taking a backup, delete the old tables separately in the Convex dashboard. Legacy ID mappings remain on binders and items to preserve saved links.
+
+The built-in catalogue bootstrap and `catalogImports` tracking table have been retired. Songs already imported remain ordinary song records; admin sign-in no longer imports sample songs. The retained `catalogImports` table can be deleted separately in the Convex dashboard after taking a backup.
 
 Convex regenerates `convex/_generated/` during development and deployment. Those files are committed because application code imports them; regenerate them rather than editing them manually.
 

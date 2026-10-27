@@ -2,7 +2,7 @@ import { v } from "convex/values";
 
 import { internalQuery, mutation, query } from "./_generated/server";
 import { isAdmin, requireAdmin, requireOwner, requireUser } from "./auth";
-import { listMine, listPublished, prepareSongContent, removeSong, saveSong, setPublicationState } from "./songStore";
+import { listMine, listPublished, removeSong, saveSong, setPublicationState } from "./songStore";
 import { songContentValidator } from "./validators";
 
 export const listMySongs = query({
@@ -128,81 +128,4 @@ export const unpublish = mutation({
 export const remove = mutation({
   args: { id: v.id("songs") },
   handler: async (ctx, args) => removeSong(ctx, args.id, await requireOwner(ctx)),
-});
-
-// The hardcoded public library was already visible to everyone. Import it once
-// as published song records so future visibility changes go through publish.
-export const ensureCatalogSongs = mutation({
-  args: {
-    songs: v.array(v.object({
-      id: v.string(),
-      title: v.string(),
-      writers: v.string(),
-      rhythm: v.string(),
-      abc: v.optional(v.string()),
-      abcParts: v.optional(v.string()),
-      content: v.optional(songContentValidator),
-    })),
-  },
-  handler: async (ctx, args) => {
-    const identity = await requireAdmin(ctx);
-    const libraryId = "built-in-v1";
-    const importRecord = await ctx.db
-      .query("catalogImports")
-      .withIndex("by_libraryId", (query) => query.eq("libraryId", libraryId))
-      .first();
-    if (importRecord) return { imported: 0 };
-
-    let imported = 0;
-
-    for (const catalogSong of args.songs) {
-      const notation = prepareSongContent(catalogSong);
-      const alreadyImported = await ctx.db
-        .query("songs")
-        .withIndex("by_catalogId", (query) => query.eq("catalogId", catalogSong.id))
-        .first();
-      if (alreadyImported) continue;
-
-      const matchingPublishedSong = await ctx.db
-        .query("songs")
-        .withIndex("by_owner_updatedAt", (query) => query.eq("ownerId", identity.subject))
-        .filter((query) => query.and(
-          query.eq(query.field("title"), catalogSong.title),
-          query.eq(query.field("abc"), catalogSong.abc),
-        ))
-        .collect()
-        .then((matches) => matches.find((song) => song.publicationState === "published"));
-
-      const now = Date.now();
-      if (matchingPublishedSong) {
-        await ctx.db.patch("songs", matchingPublishedSong._id, {
-          writers: catalogSong.writers,
-          rhythm: catalogSong.rhythm,
-          ...notation,
-          publicationState: "published",
-          publicationTerritory: "worldwide",
-          publishedAt: matchingPublishedSong.publishedAt ?? now,
-          catalogId: catalogSong.id,
-          updatedAt: now,
-        });
-      } else {
-        await ctx.db.insert("songs", {
-          ownerId: identity.subject,
-          title: catalogSong.title,
-          writers: catalogSong.writers,
-          rhythm: catalogSong.rhythm,
-          ...notation,
-          publicationState: "published",
-          publicationTerritory: "worldwide",
-          publishedAt: now,
-          catalogId: catalogSong.id,
-          updatedAt: now,
-        });
-      }
-      imported += 1;
-    }
-
-    await ctx.db.insert("catalogImports", { libraryId, importedAt: Date.now() });
-    return { imported };
-  },
 });

@@ -14,7 +14,8 @@ describe("ABC display settings", () => {
     vi.restoreAllMocks();
   });
 
-  it.each(["", "K:C\n"])("handles music without a tonal key (%j)", (key) => {
+  it("handles music with an explicit keyless signature", () => {
+    const key = "K:none\n";
     const source = `X:17\nT:The First Noel\nM:3/4\nL:1/4\n${key}(E/D/) | "C" (C3/2 D/) "Am" (E/F/) |`;
     const choices = getTranspositionChoices(source);
     expect(choices).toHaveLength(25);
@@ -28,8 +29,10 @@ describe("ABC display settings", () => {
     expect(getTranspositionChoices("X:1\nK:")[12]).toEqual({ steps: 0, key: "Unknown key" });
   });
 
-  it("still labels transposition choices for tonal keys", () => {
-    expect(getTranspositionChoices("K:C\nC |")[14]).toEqual({ steps: 2, key: "D" });
+  it.each(["", "K:C\n"])("uses C major when the key is omitted or explicitly C (%j)", (key) => {
+    const choices = getTranspositionChoices(`${key}C |`);
+    expect(choices[12]).toEqual({ steps: 0, key: "C" });
+    expect(choices[14]).toEqual({ steps: 2, key: "D" });
   });
 
   it("delegates export transposition to abcjs", () => {

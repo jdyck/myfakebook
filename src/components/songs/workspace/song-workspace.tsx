@@ -85,6 +85,7 @@ export function SongWorkspace({
     showFirstLineClefOnly: initialDisplaySettings?.showFirstLineClefOnly ?? true,
   }));
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
+  const [hasSongEdits, setHasSongEdits] = useState(false);
   const [mySongs, setMySongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
   const [editorOpen, setEditorOpen] = useState(initialEditMode);
   const {
@@ -122,10 +123,12 @@ export function SongWorkspace({
       ? { id: currentSong.id, title: currentSong.title }
       : null;
   function setAbc(value: string | ((current: string) => string)) {
+    setHasSongEdits(true);
     setSongSource((current) => resolveSongSource({ title: songTitle, abc: typeof value === "function" ? value(current.abc) : value }, current.abc));
   }
 
   function handleContentChange(nextContent: SongContent) {
+    setHasSongEdits(true);
     setSelectedPublicSongId(null);
     setSongSource((current) => resolveSongSource({ title: songTitle, content: nextContent }, current.abc));
   }
@@ -150,6 +153,7 @@ export function SongWorkspace({
   }, []);
 
   function updateTitle(value: string) {
+    setHasSongEdits(true);
     setSelectedPublicSongId(null);
     setTitle(value);
   }
@@ -166,6 +170,7 @@ export function SongWorkspace({
   }
 
   function handleOpenPrivateSong(song: LoadedSong, feedbackMessage = `Loaded ${song.title}`) {
+    setHasSongEdits(false);
     setCurrentSong(song);
     setTitle(song.title);
     setSongSource(resolveSongSource(song));
@@ -194,6 +199,7 @@ export function SongWorkspace({
     try {
       const nextSource = resolveSongSource({ title: songTitle, abc: value, abcParts: parts }, abc);
       setSongSource(nextSource);
+      setHasSongEdits(true);
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "Check the ABC parts.");
     }
@@ -243,6 +249,7 @@ export function SongWorkspace({
         }`}
       >
         <MyLibrarySidebar
+          hasSongEdits={hasSongEdits}
           abc={abc}
           abcParts={abcParts}
           content={content}
