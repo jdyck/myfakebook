@@ -1,14 +1,12 @@
 import { v } from "convex/values";
 
-import type { Doc, Id } from "./_generated/dataModel";
-import { mutation, query, type MutationCtx } from "./_generated/server";
-import { requireOwner } from "./auth";
+import type { Id } from "./_generated/dataModel";
+import { internalMutation, internalQuery, mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
+import { requireAdmin, requireOwner } from "./auth";
 import { songDisplaySettingsValidator } from "./validators";
+import { canReadSong, regionalAccessValidator, trustedCountry, type CatalogCountry } from "./songAccess";
 import { withSongContent } from "./songStore";
 
-function isWorldwidePublicSong(song: Doc<"songs"> | null) {
-  return song?.publicationState === "published" && (song.publicationTerritory ?? "worldwide") === "worldwide";
-}
 
 async function ownedBinder(
   ctx: MutationCtx,
@@ -59,8 +57,9 @@ export const listMine = query({
 });
 
 export const listAvailableSongs = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { regionalAccess: regionalAccessValidator },
+  handler: async (ctx, args) => {
+    const country = trustedCountry(args.regionalAccess);
     const ownerId = await requireOwner(ctx);
     const [ownedSongs, publishedSongs] = await Promise.all([
       ctx.db
@@ -73,7 +72,7 @@ export const listAvailableSongs = query({
         .withIndex("by_publication_updatedAt", (index) => index.eq("publicationState", "published"))
         .order("desc")
         .collect()
-        .then((songs) => songs.filter(isWorldwidePublicSong)),
+        .then((songs) => songs.filter(song => canReadSong(song, undefined, country))),
     ]);
 
     const available = new Map<string, {
@@ -87,7 +86,7 @@ export const listAvailableSongs = query({
       available.set(song._id, {
         songId: song._id,
         title: song.title,
-        isPublic: isWorldwidePublicSong(song),
+        isPublic: canReadSong(song, undefined, country),
         updatedAt: song.updatedAt,
       });
     }
@@ -106,18 +105,15 @@ export const listAvailableSongs = query({
 
 export const get = query({
   // Strings allow old saved links to resolve through the migration mapping.
-  args: { id: v.string() },
+  args: { id: v.string(), regionalAccess: regionalAccessValidator },
   handler: async (ctx, args) => {
     const ownerId = await requireOwner(ctx);
     const binderId = ctx.db.normalizeId("binders", args.id);
-    const legacyId = ctx.db.normalizeId("setLists", args.id);
     const binder = binderId
       ? await ctx.db.get("binders", binderId)
-      : legacyId
-        ? await ctx.db.query("binders")
-          .withIndex("by_legacySetListId", (q) => q.eq("legacySetListId", legacyId))
-          .unique()
-        : null;
+      : await ctx.db.query("binders")
+        .withIndex("by_legacySetListId", (q) => q.eq("legacySetListId", args.id))
+        .unique();
     if (!binder || binder.ownerId !== ownerId) return null;
 
     const items = await ctx.db
@@ -131,7 +127,7 @@ export const get = query({
       ...binder,
       items: items.map((item, index) => {
         const song = songs[index];
-        const canOpen = Boolean(song && (song.ownerId === ownerId || isWorldwidePublicSong(song)));
+        const canOpen = Boolean(song && (canReadSong(song, ownerId, trustedCountry(args.regionalAccess))));
         const source = canOpen && song ? withSongContent(song) : null;
         return {
           _id: item._id,
@@ -158,7 +154,7 @@ export const create = mutation({
     const name = args.name.trim();
     if (!name) throw new Error("Enter a binder name");
     if (name.length > 80) throw new Error("Binder names must be 80 characters or fewer");
-    return ctx.db.insert("binders", { ownerId, name, updatedAt: Date.now() });
+    return ctx.db.insert("binders", { ownerId, name, published: false, updatedAt: Date.now() });
   },
 });
 
@@ -194,13 +190,14 @@ export const addSong = mutation({
   args: {
     binderId: v.id("binders"),
     songId: v.id("songs"),
+    regionalAccess: regionalAccessValidator,
   },
   handler: async (ctx, args) => {
     const ownerId = await requireOwner(ctx);
     await ownedBinder(ctx, args.binderId, ownerId);
 
     const song = await ctx.db.get("songs", args.songId);
-    if (!song || (song.ownerId !== ownerId && !isWorldwidePublicSong(song))) {
+    if (!song || !canReadSong(song, ownerId, trustedCountry(args.regionalAccess))) {
       throw new Error("Song is not available to add");
     }
     const songId = song._id;
@@ -275,5 +272,67 @@ export const reorder = mutation({
     }
     await ctx.db.patch("binders", args.binderId, { updatedAt: Date.now() });
     return args.binderId;
+  },
+});
+
+export const setPublished = mutation({
+  args: { id: v.id("binders"), published: v.boolean() },
+  handler: async (ctx, { id, published }) => {
+    const admin = await requireAdmin(ctx);
+    const binder = await ownedBinder(ctx, id, admin.subject);
+    await ctx.db.patch("binders", binder._id, { published, updatedAt: Date.now() });
+    return binder._id;
+  },
+});
+
+async function publicBinder(ctx: QueryCtx, id: string, country: CatalogCountry) {
+  const binderId = ctx.db.normalizeId("binders", id);
+  const binder = binderId ? await ctx.db.get("binders", binderId) : null;
+  if (!binder?.published) return null;
+  const items = await ctx.db.query("binderItems")
+    .withIndex("by_binder_position", q => q.eq("binderId", binder._id)).order("asc").collect();
+  const visible = [];
+  for (const item of items) {
+    const song = await ctx.db.get("songs", item.songId);
+    if (!song || !canReadSong(song, undefined, country)) continue;
+    const source = withSongContent(song);
+    visible.push({ songId: song._id, title: song.title, abc: source.abc, displaySettings: item.displaySettings });
+  }
+  // No owner, hidden item IDs, original positions, or total counts in public responses.
+  return { _id: binder._id, name: binder.name, updatedAt: binder.updatedAt, items: visible };
+}
+
+async function publicBinders(ctx: QueryCtx, country: CatalogCountry) {
+  const binders = await ctx.db.query("binders")
+    .withIndex("by_published_updatedAt", q => q.eq("published", true)).order("desc").collect();
+  return Promise.all(binders.map(async binder => {
+    const view = await publicBinder(ctx, binder._id, country);
+    return { _id: binder._id, name: binder.name, published: true, updatedAt: binder.updatedAt, itemCount: view?.items.length ?? 0 };
+  }));
+}
+
+export const getPublic = query({
+  args: { id: v.string() },
+  handler: (ctx, { id }) => publicBinder(ctx, id, "other"),
+});
+export const listPublic = query({
+  args: {},
+  handler: ctx => publicBinders(ctx, "other"),
+});
+export const publicForCountry = internalQuery({
+  args: { id: v.optional(v.string()), country: v.union(v.literal("US"), v.literal("other")) },
+  handler: async (ctx, { id, country }) => id
+    ? { binder: await publicBinder(ctx, id, country), binders: null }
+    : { binder: null, binders: await publicBinders(ctx, country) },
+});
+
+export const migratePublication = internalMutation({
+  args: { cursor: v.union(v.string(), v.null()) },
+  handler: async (ctx, { cursor }) => {
+    const page = await ctx.db.query("binders").paginate({ cursor, numItems: 100 });
+    for (const binder of page.page) {
+      if (binder.published === undefined) await ctx.db.patch("binders", binder._id, { published: false });
+    }
+    return { cursor: page.continueCursor, done: page.isDone };
   },
 });

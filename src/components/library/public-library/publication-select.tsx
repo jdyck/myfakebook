@@ -9,13 +9,13 @@ export function PublicationSelect({ publication, changing = false, onChange }: {
   onChange: (value: PublicationValue) => void;
 }) {
   return <Select
-    ariaLabel={`Published: ${publicationLabel(publication)}`}
+    ariaLabel={`Public domain: ${publicationLabel(publication)}`}
     disabled={changing}
     onValueChange={(value) => {
       if (value === "none" || value === "US" || value === "worldwide") onChange(value);
     }}
     options={(["none", "US", "worldwide"] as const).map((value) => ({ value, label: publicationLabel(value) }))}
-    trigger={<>Published: {publicationLabel(publication)}</>}
+    trigger={<>Public domain: {publicationLabel(publication)}</>}
     value={publication}
   />;
 }

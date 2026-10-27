@@ -10,6 +10,7 @@ import componentStyles from "./binders-index.module.css";
 type BinderSummary = {
   _id: string;
   name: string;
+  published?: boolean;
   itemCount: number;
   updatedAt: number;
 };
@@ -17,9 +18,8 @@ type SortField = "name" | "itemCount" | "updatedAt";
 const countLabel = (count: number) => String(count).padStart(2, "0");
 const dateLabel = (timestamp: number) => new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-export function BindersListView({ binders, loading = false, onCreate, header, captionClassName }: {
+export function BindersListView({ binders, loading = false, onCreate, header }: {
   header?: ReactNode;
-  captionClassName?: string;
   binders: readonly BinderSummary[] | undefined;
   loading?: boolean;
   onCreate?: (name: string) => Promise<void>;
@@ -58,23 +58,18 @@ export function BindersListView({ binders, loading = false, onCreate, header, ca
   return (
     <EditorialLibraryView
       header={header}
-      captionClassName={captionClassName}
       section="binders"
       title="Binders"
       titleId="binders-heading"
-      eyebrow="YOUR SETS"
-      description={<>Your songs. Your order.<br /><span>A performance of your own.</span></>}
-      noteTitle="THE SONGS YOU BRING."
-      note={<>Gather them.<br />Find your flow.<br />Make the set yours.</>}
       stats={[
-        ["YOUR BINDERS", allBinders.length],
-        ["SONGS IN YOUR SETS", allBinders.reduce((count, binder) => count + binder.itemCount, 0)],
+        ["BINDERS", allBinders.length],
+        ["AVAILABLE SONGS", allBinders.reduce((count, binder) => count + binder.itemCount, 0)],
         ["READY TO PLAY", allBinders.filter((binder) => binder.itemCount > 0).length],
       ]}
       loading={loading}
       primaryAction={onCreate ? <button className={styles.primary} type="button" onClick={() => nameInput.current?.focus()}><Plus size={16} strokeWidth={1.5} aria-hidden="true" />New binder</button> : null}
     >
-      <section className={styles.songLibrary} aria-label="Your binders" aria-busy={loading}>
+      <section className={styles.songLibrary} aria-label="Available binders" aria-busy={loading}>
         {onCreate ? <>
           <form className={componentStyles.createBinderForm} onSubmit={(event) => void handleCreate(event)}>
             <div className={componentStyles.formField}>
@@ -84,7 +79,7 @@ export function BindersListView({ binders, loading = false, onCreate, header, ca
             <button className={styles.primary} disabled={saving} type="submit">{saving ? "Creating…" : "Create binder"}</button>
           </form>
           {status && <p className={componentStyles.formErrorMessage} role="alert">{status}</p>}
-        </> : <p className={componentStyles.setupMessage}>Connect Convex to create and save binders.</p>}
+        </> : <p className={componentStyles.setupMessage}>Sign in to create your own private binders.</p>}
         <div className={styles.libraryToolbar}>
           <div className={styles.filters} role="group" aria-label="Binder collection">
             <button type="button" className={styles.filter} aria-pressed={!searchQuery} onClick={() => setQuery("")}>All binders <span>{loading ? "—" : countLabel(allBinders.length)}</span></button>
@@ -95,7 +90,7 @@ export function BindersListView({ binders, loading = false, onCreate, header, ca
           </label>
         </div>
         <table className={styles.songTable}>
-          <caption className="sr-only">Your binders, song counts, and updated dates</caption>
+          <caption className="sr-only">Available binders, song counts, and updated dates</caption>
           <colgroup><col className={styles.numberCol} /><col /><col className={styles.visibilityCol} /><col className={styles.dateCol} /><col className={styles.actionCol} /></colgroup>
           <thead><tr>
             <th scope="col" className={styles.rowNumber}>NO.</th>
@@ -112,7 +107,7 @@ export function BindersListView({ binders, loading = false, onCreate, header, ca
               const songCount = `${binder.itemCount} song${binder.itemCount === 1 ? "" : "s"}`;
               return <tr key={binder._id}>
                 <td className={styles.rowNumber}>{countLabel(index + 1)}</td>
-                <td><Link className={styles.songName} href={href}>{binder.name}</Link><span className={styles.mobileMeta}>{songCount}<br />{dateLabel(binder.updatedAt)}</span></td>
+                <td><Link className={styles.songName} href={href}>{binder.name}</Link><span className={styles.territory}>{binder.published ? "Published" : "Private"}</span><span className={styles.mobileMeta}>{songCount}<br />{dateLabel(binder.updatedAt)}</span></td>
                 <td><span className={styles.visibility}>{songCount}</span></td>
                 <td className={styles.updated}><time dateTime={new Date(binder.updatedAt).toISOString()}>{dateLabel(binder.updatedAt)}</time></td>
                 <td><Link className={styles.openSong} href={href} aria-label={`Open ${binder.name}`}>Open</Link></td>
@@ -120,14 +115,13 @@ export function BindersListView({ binders, loading = false, onCreate, header, ca
             })}
           </tbody>
         </table>
-        {loading ? <p className={styles.emptyState} role="status">Loading your binders…</p> : !allBinders.length ? (
+        {loading ? <p className={styles.emptyState} role="status">Loading binders…</p> : !allBinders.length ? (
           <div className={styles.emptyState}><h2>No binders yet</h2><p>Create a binder, then add your songs or songs from the public library.</p></div>
         ) : !visibleBinders.length ? (
           <div className={styles.emptyState}><h2>No binders found.</h2><p>Try another name.</p><button type="button" onClick={() => setQuery("")}>Clear search</button></div>
         ) : null}
         <div className={styles.tableFooter}>
-          <p role="status">{loading ? "LOADING YOUR BINDERS" : searchQuery ? `${countLabel(visibleBinders.length)} OF ${countLabel(allBinders.length)} BINDERS` : `${countLabel(allBinders.length)} BINDER${allBinders.length === 1 ? "" : "S"} IN YOUR COLLECTION`}</p>
-          <p>GATHER / ARRANGE / PERFORM</p>
+          <p role="status">{loading ? "LOADING BINDERS" : searchQuery ? `${countLabel(visibleBinders.length)} OF ${countLabel(allBinders.length)} BINDERS` : `${countLabel(allBinders.length)} BINDER${allBinders.length === 1 ? "" : "S"} AVAILABLE`}</p>
         </div>
       </section>
     </EditorialLibraryView>

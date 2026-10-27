@@ -6,7 +6,6 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/components/app-shell/header/header", () => ({ Header: () => null }));
-vi.mock("next/font/google", () => ({ Roboto_Condensed: () => ({ className: "condensed" }) }));
 
 import { BindersList } from "./binders-index";
 
@@ -95,13 +94,13 @@ describe("Binders list", () => {
   it("distinguishes loading, empty collections, and unavailable persistence", () => {
     const loading = renderToStaticMarkup(<BindersList binders={undefined} loading onCreate={vi.fn()} />);
     expect(loading).toContain('aria-busy="true"');
-    expect(loading).toContain("Loading your binders…");
+    expect(loading).toContain("Loading binders…");
     expect(loading).not.toContain("No binders yet");
     const empty = renderToStaticMarkup(<BindersList binders={[]} onCreate={vi.fn()} />);
     expect(empty).toContain("No binders yet");
     expect(empty).toContain("Create binder");
     const unavailable = renderToStaticMarkup(<BindersList binders={[]} />);
-    expect(unavailable).toContain("Connect Convex to create and save binders.");
+    expect(unavailable).toContain("Sign in to create your own private binders.");
     expect(unavailable).not.toContain("<form");
   });
 });

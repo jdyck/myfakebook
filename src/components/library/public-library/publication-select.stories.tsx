@@ -10,7 +10,7 @@ function PublicationExample({ initial = "none", changing = false, fail = false }
     <PublicationSelect publication={publication} changing={changing} onChange={(value) => {
       if (fail) { setStatus("Couldn’t update publication"); return; }
       setPublication(value);
-      setStatus(value === "none" ? "Song is private" : `Published ${publicationLabel(value)}`);
+      setStatus(value === "none" ? "Song is private" : `Public domain · ${publicationLabel(value)}`);
     }} />
     <p role="status" className="mt-4 text-xs text-muted">{status}</p>
   </div>;

@@ -44,7 +44,7 @@ export function getTranspositionChoices(abc: string): TranspositionChoice[] {
 
 function transpositionChoices(abc: string, steps: number[]): TranspositionChoice[] {
   const source = abc.replaceAll("\r", "");
-  let keyField = source.match(/^K:\s*([^\r\n]*)/m)?.[1]?.trim();
+  let keyField = source.match(/^K:\s*([^\r\n]*)/m)?.[1]?.trim() ?? "C";
   if (!keyField) {
     const keySignature = ABCJS.parseOnly(source)[0]?.getKeySignature();
     keyField = keySignature?.root === "none"

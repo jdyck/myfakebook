@@ -31,15 +31,15 @@ it("renders local assets with fill positioning or intrinsic dimensions", () => {
   const container = document.createElement("div");
   container.innerHTML = renderToStaticMarkup(<>
     <PreviewImage src="/images/library/bassist.png" alt="Bass" fill sizes="190px" />
-    <PreviewImage src="/images/library/bar.svg" alt="" width={28} height={5} />
+    <PreviewImage src="/images/library/bassist.png" alt="Bass thumbnail" width={28} height={42} />
   </>);
-  const [photo, bar] = container.querySelectorAll("img");
+  const [photo, thumbnail] = container.querySelectorAll("img");
   expect(photo.getAttribute("src")).toBe("/images/library/bassist.png");
   expect(photo.style.position).toBe("absolute");
   expect(photo.style.width).toBe("100%");
   expect(photo.getAttribute("sizes")).toBe("190px");
-  expect(bar.width).toBe(28);
-  expect(bar.height).toBe(5);
-  expect(bar.alt).toBe("");
+  expect(thumbnail.width).toBe(28);
+  expect(thumbnail.height).toBe(42);
+  expect(thumbnail.alt).toBe("Bass thumbnail");
   expect(container.innerHTML).not.toContain("/_next/image");
 });

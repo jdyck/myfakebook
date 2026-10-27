@@ -23,7 +23,7 @@ type Sort = { field: "title" | "updatedAt"; ascending: boolean };
 const countLabel = (count: number) => String(count).padStart(2, "0");
 const dateLabel = (timestamp: number) => new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-export function MyLibraryList({ songs, loading = false, header, captionClassName }: { songs: readonly LibrarySong[] | undefined; loading?: boolean; header?: ReactNode; captionClassName?: string }) {
+export function MyLibraryList({ songs, loading = false, header }: { songs: readonly LibrarySong[] | undefined; loading?: boolean; header?: ReactNode }) {
   const [filter, setFilter] = useState<VisibilityFilter>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>({ field: "updatedAt", ascending: false });
@@ -49,21 +49,16 @@ export function MyLibraryList({ songs, loading = false, header, captionClassName
   return (
     <EditorialLibraryView
       header={header}
-      captionClassName={captionClassName}
       section="library"
       title="My Library"
       titleId="library-title"
-      eyebrow="YOUR COLLECTION"
-      description={<>Your saved songs.<br /><span>A repertoire of your own.</span></>}
-      noteTitle="THE SONGS YOU KEEP."
-      note={<>Study them.<br />Make them yours.<br />Take them further.</>}
       stats={[["IN YOUR LIBRARY", allSongs.length], ["PRIVATE", privateCount], ["PUBLISHED", allSongs.length - privateCount]]}
       loading={loading}
     >
       <section className={styles.songLibrary} aria-label="Saved songs" aria-busy={loading}>
         <div className={styles.libraryToolbar}>
           <div className={styles.filters} role="group" aria-label="Filter by visibility">
-            {([['all', 'All songs'], ['private', 'Private'], ['published', 'Published']] as const).map(([value, label]) => (
+            {([['all', 'All songs'], ['private', 'Private'], ['published', 'Public domain']] as const).map(([value, label]) => (
               <button type="button" className={styles.filter} aria-pressed={filter === value} onClick={() => setFilter(value)} key={value}>
                 {label}{value === "all" && <> <span>{loading ? "—" : countLabel(allSongs.length)}</span></>}
               </button>
@@ -75,7 +70,7 @@ export function MyLibraryList({ songs, loading = false, header, captionClassName
           </label>
         </div>
         <table className={styles.songTable}>
-          <caption className="sr-only">Your saved songs, visibility, publication territory, and updated dates</caption>
+          <caption className="sr-only">Your saved songs, visibility, public-domain territory, and updated dates</caption>
           <colgroup><col className={styles.numberCol} /><col /><col className={styles.visibilityCol} /><col className={styles.dateCol} /><col className={styles.actionCol} /></colgroup>
           <thead><tr>
             <th scope="col" className={styles.rowNumber}>NO.</th>
@@ -99,7 +94,7 @@ export function MyLibraryList({ songs, loading = false, header, captionClassName
                     <Link className={styles.songName} href={href}>{song.title}</Link>
                     <span className={styles.mobileMeta}><span className={published ? styles.published : undefined}>{publicationStatusForSong(song)}</span><br />{dateLabel(song.updatedAt)}</span>
                   </td>
-                  <td><span className={`${styles.visibility} ${published ? styles.published : ""}`}>{published ? "Published" : "Private"}</span>{published && <span className={styles.territory}>{publicationLabel(publicationValueForSong(song))}</span>}</td>
+                  <td><span className={`${styles.visibility} ${published ? styles.published : ""}`}>{published ? "Public domain" : "Private"}</span>{published && <span className={styles.territory}>{publicationLabel(publicationValueForSong(song))}</span>}</td>
                   <td className={styles.updated}><time dateTime={new Date(song.updatedAt).toISOString()}>{dateLabel(song.updatedAt)}</time></td>
                   <td><Link className={styles.openSong} href={href} aria-label={`Open ${song.title}`}>Open</Link></td>
                 </tr>
@@ -114,7 +109,6 @@ export function MyLibraryList({ songs, loading = false, header, captionClassName
         ) : null}
         <div className={styles.tableFooter}>
           <p role="status">{loading ? "LOADING YOUR COLLECTION" : filter !== "all" || searchQuery ? `${countLabel(visibleSongs.length)} OF ${countLabel(allSongs.length)} SONGS` : `${countLabel(allSongs.length)} SONG${allSongs.length === 1 ? "" : "S"} IN YOUR LIBRARY`}</p>
-          <p>COLLECT / EDIT / TRANSPOSE</p>
         </div>
       </section>
     </EditorialLibraryView>

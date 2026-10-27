@@ -1,12 +1,9 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
-import { ClerkProvider, useAuth, useUser } from "@clerk/nextjs";
-import { ConvexProvider, ConvexReactClient, useConvexAuth, useMutation } from "convex/react";
+import type { ReactNode } from "react";
+import { ClerkProvider, useAuth } from "@clerk/nextjs";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
-
-import { api } from "../../../convex/_generated/api";
-import { PUBLIC_LIBRARY } from "@/lib/songs/public-library";
 
 const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -39,25 +36,9 @@ function AuthenticatedConvexProvider({
 
   return (
     <ConvexProviderWithClerk client={convexClient} useAuth={useAuth}>
-      <CatalogSongSync>{children}</CatalogSongSync>
+      {children}
     </ConvexProviderWithClerk>
   );
-}
-
-function CatalogSongSync({ children }: { children: ReactNode }) {
-  const { isAuthenticated, isLoading } = useConvexAuth();
-  const { user } = useUser();
-  const ensureCatalogSongs = useMutation(api.songs.ensureCatalogSongs);
-  const isAdmin = user?.publicMetadata.role === "admin";
-
-  useEffect(() => {
-    if (isLoading || !isAuthenticated || !isAdmin) return;
-    void ensureCatalogSongs({
-      songs: PUBLIC_LIBRARY.map(({ id, title, writers, rhythm, abc }) => ({ id, title, writers, rhythm, abc })),
-    }).catch(() => undefined);
-  }, [ensureCatalogSongs, isAdmin, isAuthenticated, isLoading]);
-
-  return children;
 }
 
 export function AppProviders({ children }: { children: ReactNode }) {

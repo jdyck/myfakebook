@@ -11,8 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as binders from "../binders.js";
 import type * as http from "../http.js";
-import type * as migrations from "../migrations.js";
-import type * as setLists from "../setLists.js";
+import type * as songAccess from "../songAccess.js";
 import type * as songStore from "../songStore.js";
 import type * as songs from "../songs.js";
 import type * as validators from "../validators.js";
@@ -27,8 +26,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   binders: typeof binders;
   http: typeof http;
-  migrations: typeof migrations;
-  setLists: typeof setLists;
+  songAccess: typeof songAccess;
   songStore: typeof songStore;
   songs: typeof songs;
   validators: typeof validators;

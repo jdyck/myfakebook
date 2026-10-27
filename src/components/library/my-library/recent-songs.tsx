@@ -8,9 +8,11 @@ import { api } from "../../../../convex/_generated/api";
 import { SidebarAction } from "@/components/library/my-library/sidebar-action";
 import { publicationStatusForSong, type LoadedSong, type SongId } from "@/lib/songs/types";
 import { sameSongContent, type SongContent } from "@/lib/songs/song-content";
+import { resolveSongSource } from "@/lib/songs/song-source";
 import componentStyles from "./recent-songs.module.css";
 
 type RecentMyLibrarySongsProps = {
+  hasSongEdits: boolean;
   title: string;
   abc: string;
   abcParts: string;
@@ -35,6 +37,7 @@ export function RecentMyLibrarySongs({
 }
 
 function ConnectedRecentMyLibrarySongs({
+  hasSongEdits,
   title,
   abc,
   abcParts,
@@ -87,6 +90,7 @@ function ConnectedRecentMyLibrarySongs({
       abc: song.abc,
       abcParts: song.abcParts,
       content: song.content,
+      publicDomainTerritory: song.publicDomainTerritory,
       publicationState: song.publicationState,
       publicationTerritory: song.publicationTerritory,
     }));
@@ -135,12 +139,24 @@ function ConnectedRecentMyLibrarySongs({
   useEffect(() => {
     if (
       !isAuthenticated ||
+      !hasSongEdits ||
       !persistenceReady ||
       isPublicSong ||
       !abc.trim()
     ) {
       return;
     }
+    const savedSong = currentSongRef.current
+      ?? songsRef.current?.find((song) => song._id === songId.current);
+    if (savedSong && savedSong.title === title) {
+      const savedSource = resolveSongSource(savedSong);
+      if (
+        savedSource.abc === abc &&
+        savedSource.abcParts === abcParts &&
+        sameSongContent(savedSource.content, content)
+      ) return;
+    }
+
     let active = true;
     statusRef.current("Saving…");
     const timeout = window.setTimeout(async () => {
@@ -173,7 +189,7 @@ function ConnectedRecentMyLibrarySongs({
       active = false;
       window.clearTimeout(timeout);
     };
-  }, [abc, abcParts, content, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, saveSong, title]);
+  }, [abc, abcParts, content, hasSongEdits, isAuthenticated, isPublicSong, onCurrentSongChange, persistenceReady, saveSong, title]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -212,7 +228,8 @@ function ConnectedRecentMyLibrarySongs({
                       abc: song.abc,
                       abcParts: song.abcParts,
                       content: song.content,
-                      publicationState: song.publicationState,
+                      publicDomainTerritory: song.publicDomainTerritory,
+      publicationState: song.publicationState,
                       publicationTerritory: song.publicationTerritory,
                     };
                     songId.current = song._id;

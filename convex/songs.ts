@@ -1,8 +1,9 @@
 import { v } from "convex/values";
 
-import { internalQuery, mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { isAdmin, requireAdmin, requireOwner, requireUser } from "./auth";
-import { listMine, listPublished, prepareSongContent, removeSong, saveSong, setPublicationState } from "./songStore";
+import { listMine, listPublicDomain, removeSong, saveSong, setPublicDomainStatus } from "./songStore";
+import { canReadSong, publicDomainTerritory } from "./songAccess";
 import { songContentValidator } from "./validators";
 
 export const listMySongs = query({
@@ -13,12 +14,13 @@ export const listMySongs = query({
 export const listPublicSongs = query({
   args: {},
   handler: async (ctx) => {
-    const songs = await listPublished(ctx);
-    return songs.filter((song) => (song.publicationTerritory ?? "worldwide") === "worldwide").map((song) => ({
+    const songs = await listPublicDomain(ctx);
+    return songs.filter((song) => canReadSong(song)).map((song) => ({
       id: song._id,
       ...(song.catalogId
         ? { catalogId: song.catalogId }
         : {}),
+      publicDomainTerritory: publicDomainTerritory(song),
       publicationTerritory: song.publicationTerritory ?? "worldwide",
       title: song.title,
       writers: song.writers,
@@ -35,10 +37,11 @@ export const listAdminPublicSongs = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const songs = await listPublished(ctx);
+    const songs = await listPublicDomain(ctx);
     return songs.map((song) => ({
       id: song._id,
       ...(song.catalogId ? { catalogId: song.catalogId } : {}),
+      publicDomainTerritory: publicDomainTerritory(song),
       publicationTerritory: song.publicationTerritory ?? "worldwide",
       title: song.title,
       writers: song.writers,
@@ -54,15 +57,13 @@ export const listAdminPublicSongs = query({
 export const listPublicSongsForCountry = internalQuery({
   args: { country: v.union(v.literal("US"), v.literal("other")) },
   handler: async (ctx, { country }) => {
-    const songs = await listPublished(ctx);
+    const songs = await listPublicDomain(ctx);
     return songs
-      .filter((song) => {
-        const territory = song.publicationTerritory ?? "worldwide";
-        return territory === "worldwide" || (territory === "US" && country === "US");
-      })
+      .filter((song) => canReadSong(song, undefined, country))
       .map((song) => ({
         id: song._id,
         ...(song.catalogId ? { catalogId: song.catalogId } : {}),
+        publicDomainTerritory: publicDomainTerritory(song),
         publicationTerritory: song.publicationTerritory ?? "worldwide",
         title: song.title,
         writers: song.writers,
@@ -102,7 +103,7 @@ export const publish = mutation({
   args: { id: v.id("songs") },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
-    return setPublicationState(ctx, args.id, identity.subject, "worldwide");
+    return setPublicDomainStatus(ctx, args.id, identity.subject, "worldwide");
   },
 });
 
@@ -113,7 +114,7 @@ export const setPublication = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
-    return setPublicationState(ctx, args.id, identity.subject, args.publication);
+    return setPublicDomainStatus(ctx, args.id, identity.subject, args.publication);
   },
 });
 
@@ -121,7 +122,7 @@ export const unpublish = mutation({
   args: { id: v.id("songs") },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
-    return setPublicationState(ctx, args.id, identity.subject, "none");
+    return setPublicDomainStatus(ctx, args.id, identity.subject, "none");
   },
 });
 
@@ -130,79 +131,27 @@ export const remove = mutation({
   handler: async (ctx, args) => removeSong(ctx, args.id, await requireOwner(ctx)),
 });
 
-// The hardcoded public library was already visible to everyone. Import it once
-// as published song records so future visibility changes go through publish.
-export const ensureCatalogSongs = mutation({
-  args: {
-    songs: v.array(v.object({
-      id: v.string(),
-      title: v.string(),
-      writers: v.string(),
-      rhythm: v.string(),
-      abc: v.optional(v.string()),
-      abcParts: v.optional(v.string()),
-      content: v.optional(songContentValidator),
-    })),
-  },
-  handler: async (ctx, args) => {
-    const identity = await requireAdmin(ctx);
-    const libraryId = "built-in-v1";
-    const importRecord = await ctx.db
-      .query("catalogImports")
-      .withIndex("by_libraryId", (query) => query.eq("libraryId", libraryId))
-      .first();
-    if (importRecord) return { imported: 0 };
-
-    let imported = 0;
-
-    for (const catalogSong of args.songs) {
-      const notation = prepareSongContent(catalogSong);
-      const alreadyImported = await ctx.db
-        .query("songs")
-        .withIndex("by_catalogId", (query) => query.eq("catalogId", catalogSong.id))
-        .first();
-      if (alreadyImported) continue;
-
-      const matchingPublishedSong = await ctx.db
-        .query("songs")
-        .withIndex("by_owner_updatedAt", (query) => query.eq("ownerId", identity.subject))
-        .filter((query) => query.and(
-          query.eq(query.field("title"), catalogSong.title),
-          query.eq(query.field("abc"), catalogSong.abc),
-        ))
-        .collect()
-        .then((matches) => matches.find((song) => song.publicationState === "published"));
-
-      const now = Date.now();
-      if (matchingPublishedSong) {
-        await ctx.db.patch("songs", matchingPublishedSong._id, {
-          writers: catalogSong.writers,
-          rhythm: catalogSong.rhythm,
-          ...notation,
-          publicationState: "published",
-          publicationTerritory: "worldwide",
-          publishedAt: matchingPublishedSong.publishedAt ?? now,
-          catalogId: catalogSong.id,
-          updatedAt: now,
-        });
-      } else {
-        await ctx.db.insert("songs", {
-          ownerId: identity.subject,
-          title: catalogSong.title,
-          writers: catalogSong.writers,
-          rhythm: catalogSong.rhythm,
-          ...notation,
-          publicationState: "published",
-          publicationTerritory: "worldwide",
-          publishedAt: now,
-          catalogId: catalogSong.id,
-          updatedAt: now,
-        });
+// Safe to run repeatedly after deploying the compatibility schema.
+export const migratePublicDomainStatus = internalMutation({
+  args: { cursor: v.union(v.string(), v.null()) },
+  handler: async (ctx, { cursor }) => {
+    const page = await ctx.db.query("songs").paginate({ cursor, numItems: 100 });
+    for (const song of page.page) {
+      if (song.publicDomainTerritory === undefined) {
+        await ctx.db.patch("songs", song._id, { publicDomainTerritory: publicDomainTerritory(song) });
       }
-      imported += 1;
     }
+    return { cursor: page.continueCursor, done: page.isDone };
+  },
+});
 
-    await ctx.db.insert("catalogImports", { libraryId, importedAt: Date.now() });
-    return { imported };
+export const setPublicDomain = mutation({
+  args: {
+    id: v.id("songs"),
+    territory: v.union(v.literal("none"), v.literal("US"), v.literal("worldwide")),
+  },
+  handler: async (ctx, { id, territory }) => {
+    const identity = await requireAdmin(ctx);
+    return setPublicDomainStatus(ctx, id, identity.subject, territory);
   },
 });

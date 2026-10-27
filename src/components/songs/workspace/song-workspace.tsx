@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { SongEditorDrawer } from "@/components/songs/editor/song-editor-drawer";
 import { RemoveSongButton, SaveToMyLibraryButton } from "@/components/library/my-library/actions";
 import { AdminPublicationButton, AdminPublicSongPublicationMenu } from "@/components/library/public-library/publication-actions";
@@ -85,6 +84,7 @@ export function SongWorkspace({
     showFirstLineClefOnly: initialDisplaySettings?.showFirstLineClefOnly ?? true,
   }));
   const [currentSong, setCurrentSong] = useState<LoadedSong | null>(initialPrivateSong ?? null);
+  const [hasSongEdits, setHasSongEdits] = useState(false);
   const [mySongs, setMySongs] = useState<LoadedSong[]>(initialPrivateSong ? [initialPrivateSong] : []);
   const [editorOpen, setEditorOpen] = useState(initialEditMode);
   const {
@@ -115,17 +115,19 @@ export function SongWorkspace({
     ? publishedSongs.find((song) => song.id === selectedPublicSongId)
     : undefined;
   const binderSong: BinderSong | null = isPublicSong
-    ? publicLibraryIsPersisted && selectedPublicSong && (selectedPublicSong.publicationTerritory ?? "worldwide") === "worldwide"
+    ? publicLibraryIsPersisted && selectedPublicSong
       ? { id: selectedPublicSong.id as Id<"songs">, title: songTitle }
       : null
     : currentSong
       ? { id: currentSong.id, title: currentSong.title }
       : null;
   function setAbc(value: string | ((current: string) => string)) {
+    setHasSongEdits(true);
     setSongSource((current) => resolveSongSource({ title: songTitle, abc: typeof value === "function" ? value(current.abc) : value }, current.abc));
   }
 
   function handleContentChange(nextContent: SongContent) {
+    setHasSongEdits(true);
     setSelectedPublicSongId(null);
     setSongSource((current) => resolveSongSource({ title: songTitle, content: nextContent }, current.abc));
   }
@@ -150,6 +152,7 @@ export function SongWorkspace({
   }, []);
 
   function updateTitle(value: string) {
+    setHasSongEdits(true);
     setSelectedPublicSongId(null);
     setTitle(value);
   }
@@ -166,6 +169,7 @@ export function SongWorkspace({
   }
 
   function handleOpenPrivateSong(song: LoadedSong, feedbackMessage = `Loaded ${song.title}`) {
+    setHasSongEdits(false);
     setCurrentSong(song);
     setTitle(song.title);
     setSongSource(resolveSongSource(song));
@@ -194,6 +198,7 @@ export function SongWorkspace({
     try {
       const nextSource = resolveSongSource({ title: songTitle, abc: value, abcParts: parts }, abc);
       setSongSource(nextSource);
+      setHasSongEdits(true);
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "Check the ABC parts.");
     }
@@ -243,6 +248,7 @@ export function SongWorkspace({
         }`}
       >
         <MyLibrarySidebar
+          hasSongEdits={hasSongEdits}
           abc={abc}
           abcParts={abcParts}
           content={content}
@@ -395,11 +401,6 @@ export function SongWorkspace({
           />
         </div>
       </div>
-      <footer className={componentStyles.pageFooter}>
-        <p>TRADITION <span>/</span> INTERPRETATION <span>/</span> <b>NEXT</b></p>
-        <Image src="/images/library/bar.svg" width={34} height={5} alt="" />
-        <p>FOR MUSICIANS.<br />FOR THE MUSIC.</p>
-      </footer>
       </main>
       {feedback && <p className={componentStyles.status} role="status">{feedback}</p>}
     </div>

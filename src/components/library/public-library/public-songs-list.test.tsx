@@ -6,7 +6,6 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/components/app-shell/header/header", () => ({ Header: () => null }));
-vi.mock("next/font/google", () => ({ Roboto_Condensed: () => ({ className: "condensed" }) }));
 
 import type { PublicSong } from "@/lib/songs/public-library";
 import { PublicSongsList } from "./public-songs-list";
@@ -23,7 +22,7 @@ describe("Public Songs list", () => {
   it("links to public songs and preserves admin publication details", () => {
     const markup = renderToStaticMarkup(<PublicSongsList clerkConfigured={false} songs={songs} isAdmin />);
     expect(markup).toContain('href="/songs/alpha%2Fsong"');
-    expect(markup).toContain("Published songs in all territories.");
+    expect(markup).toContain("Public-domain songs in all territories.");
     expect(markup).toContain("U.S.");
     expect(markup).toContain("Worldwide");
     expect(markup).toContain("Alice");
@@ -86,9 +85,9 @@ describe("Public Songs list", () => {
     const loading = renderToStaticMarkup(<PublicSongsList clerkConfigured={false} songs={undefined} />);
     expect(loading).toContain('aria-busy="true"');
     expect(loading).toContain("Loading songs…");
-    expect(loading).not.toContain("No published songs yet.");
+    expect(loading).not.toContain("No public-domain songs yet.");
     const empty = renderToStaticMarkup(<PublicSongsList clerkConfigured={false} songs={[]} />);
-    expect(empty).toContain("No published songs yet.");
+    expect(empty).toContain("No public-domain songs yet.");
     expect(empty).toContain("Songs available in your region.");
   });
 });
