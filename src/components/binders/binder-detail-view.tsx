@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { Dialog } from "@base-ui/react/dialog";
 import { Combobox } from "@base-ui/react/combobox";
 import Link from "next/link";
 import { Check, GripVertical, Plus, Search, Settings, Trash2, X } from "lucide-react";
@@ -37,6 +38,8 @@ type AvailableSong = {
 
 type BinderMutation<K extends "rename" | "remove" | "addSong" | "updateDisplaySettings" | "removeItem" | "reorder"> = (args: FunctionArgs<typeof api.binders[K]>) => Promise<FunctionReturnType<typeof api.binders[K]>>;
 export type BinderDetailViewProps = {
+  canPublish?: boolean;
+  setPublished?: (args: { id: Id<"binders">; published: boolean }) => Promise<unknown>;
   binder: FunctionReturnType<typeof api.binders.get> | undefined;
   availableSongs: readonly AvailableSong[] | undefined;
   loading: boolean;
@@ -50,7 +53,7 @@ export type BinderDetailViewProps = {
   reorder: BinderMutation<"reorder">;
 };
 
-export function BinderDetailView({ binder, availableSongs, loading, header, onDeleted, renameBinder, removeBinder, addSong, updateDisplaySettings, removeItem, reorder }: BinderDetailViewProps) {
+export function BinderDetailView({ canPublish, setPublished, binder, availableSongs, loading, header, onDeleted, renameBinder, removeBinder, addSong, updateDisplaySettings, removeItem, reorder }: BinderDetailViewProps) {
   const validId = binder?._id ?? null;
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameOverride, setNameOverride] = useState<string | null>(null);
@@ -349,38 +352,59 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
               <div className={componentStyles.titleAndDetails}>
                 <Link className={componentStyles.binderBackLink} href="/binders">← All binders</Link>
                 <h1 className={`${titleStyles.title} ${componentStyles.binderTitle}`}>{name}</h1>
-                {isEditingName && (
-                  <div className={componentStyles.nameEditor}>
-                    <label htmlFor="binder-name">Binder name</label>
-                    <input
-                      id="binder-name"
-                      autoFocus
-                      className={componentStyles.binderTitleInput}
-                      maxLength={80}
-                      onBlur={(event) => handleBinderNameBlur(event.currentTarget.value)}
-                      onChange={(event) => handleBinderNameChange(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key !== "Enter") return;
-                        event.preventDefault();
-                        event.currentTarget.blur();
-                        setIsEditingName(false);
-                      }}
-                      value={name}
-                    />
-                  </div>
-                )}
+
               </div>
               <div className={libraryStyles.headingActions}>
-                <button
-                  type="button"
-                  className={componentStyles.sharedButton}
-                  aria-label="Edit binder settings"
-                  aria-expanded={isEditingName}
-                  onClick={() => setIsEditingName((current) => !current)}
-                >
-                  <Settings size={16} aria-hidden="true" />
-                  Settings
-                </button>
+                <span>{binder.published ? "Published" : "Private"}</span>
+                <Dialog.Root open={isEditingName} onOpenChange={setIsEditingName}>
+                  <Dialog.Trigger type="button" className={componentStyles.sharedButton} aria-label="Edit binder settings">
+                    <Settings size={16} aria-hidden="true" />
+                    Settings
+                  </Dialog.Trigger>
+                  <Dialog.Portal>
+                    <Dialog.Backdrop className={componentStyles.settingsBackdrop} />
+                    <Dialog.Popup className={componentStyles.settingsPopup}>
+                      <header className={componentStyles.addSongDialogHeader}>
+                        <div>
+                          <Dialog.Title className={componentStyles.addSongDialogTitle}>Binder settings</Dialog.Title>
+                          <Dialog.Description className={componentStyles.addSongDialogDescription}>Changes save automatically.</Dialog.Description>
+                        </div>
+                        <Dialog.Close className={`${componentStyles.sharedButton} ${componentStyles.closeAddSongDialog}`} aria-label="Close binder settings">
+                          <X size={18} aria-hidden="true" />
+                        </Dialog.Close>
+                      </header>
+                      <div className={componentStyles.addSongDialogBody}>
+                        <div className={componentStyles.settingsNameField}>
+                          <label htmlFor="binder-name">Binder name</label>
+                          <input id="binder-name" autoFocus className={componentStyles.binderTitleInput} maxLength={80}
+                            onBlur={(event) => handleBinderNameBlur(event.currentTarget.value)}
+                            onChange={(event) => handleBinderNameChange(event.target.value)}
+                            onKeyDown={(event) => {
+                              if (event.key !== "Enter") return;
+                              event.preventDefault();
+                              event.currentTarget.blur();
+                              setIsEditingName(false);
+                            }}
+                            value={name}
+                          />
+                        </div>
+                        {canPublish && setPublished && <div className={componentStyles.settingsPublication}>
+                          <p className={componentStyles.addSongDialogDescription}>
+                            {binder.published ? "This binder is published. Visitors see only songs available to them." : "Publish this binder so others can view songs available in their location."}
+                          </p>
+                          <button type="button" className={componentStyles.sharedButton} disabled={saving}
+                            onClick={() => void runChange(() => setPublished({ id: binder._id, published: !binder.published }), binder.published ? "Binder unpublished" : "Binder published")}>
+                            {binder.published ? "Unpublish binder" : "Publish binder"}
+                          </button>
+                        </div>}
+                        {status && <p className={componentStyles.actionStatusMessage} role="status">{status}</p>}
+                      </div>
+                      <footer className={componentStyles.addSongDialogActions}>
+                        <Dialog.Close className={componentStyles.sharedButton}>Done</Dialog.Close>
+                      </footer>
+                    </Dialog.Popup>
+                  </Dialog.Portal>
+                </Dialog.Root>
               </div>
             </section>
             <div className={componentStyles.binderWorkspace}>

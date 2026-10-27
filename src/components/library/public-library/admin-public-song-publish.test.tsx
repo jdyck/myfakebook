@@ -47,7 +47,7 @@ it("publishes an admin's song without changing its ID", async () => {
     });
 
     await act(async () => {
-      container.querySelector<HTMLButtonElement>('button[aria-label="Published: None"]')?.click();
+      container.querySelector<HTMLButtonElement>('button[aria-label="Public domain: Not public domain"]')?.click();
     });
 
     const option = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
@@ -57,14 +57,14 @@ it("publishes an admin's song without changing its ID", async () => {
       option!.click();
     });
 
-    expect(mocks.setPublication).toHaveBeenCalledExactlyOnceWith({ id: songId, publication: "US" });
-    expect(mocks.useMutation).toHaveBeenCalledWith(api.songs.setPublication);
+    expect(mocks.setPublication).toHaveBeenCalledExactlyOnceWith({ id: songId, territory: "US" });
+    expect(mocks.useMutation).toHaveBeenCalledWith(api.songs.setPublicDomain);
     expect(onChanged).toHaveBeenCalledWith(expect.objectContaining({
       id: songId,
       publicationState: "published",
       publicationTerritory: "US",
     }));
-    expect(onStatus).toHaveBeenLastCalledWith("Published U.S.");
+    expect(onStatus).toHaveBeenLastCalledWith("Public domain · U.S.");
   } finally {
     await act(async () => root.unmount());
     container.remove();

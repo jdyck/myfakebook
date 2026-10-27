@@ -42,7 +42,7 @@ describe("Songs page", () => {
     });
 
     expect(container.querySelector("#songs-heading")?.textContent).toBe("Songs");
-    expect(container.textContent).toContain("No published songs yet.");
+    expect(container.textContent).toContain("No public-domain songs yet.");
     expect(container.querySelector("textarea")).toBeNull();
     expect(container.querySelector("a[href^='/songs/']")).toBeNull();
   });

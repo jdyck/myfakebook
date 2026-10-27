@@ -58,7 +58,7 @@ export function MyLibraryList({ songs, loading = false, header }: { songs: reado
       <section className={styles.songLibrary} aria-label="Saved songs" aria-busy={loading}>
         <div className={styles.libraryToolbar}>
           <div className={styles.filters} role="group" aria-label="Filter by visibility">
-            {([['all', 'All songs'], ['private', 'Private'], ['published', 'Published']] as const).map(([value, label]) => (
+            {([['all', 'All songs'], ['private', 'Private'], ['published', 'Public domain']] as const).map(([value, label]) => (
               <button type="button" className={styles.filter} aria-pressed={filter === value} onClick={() => setFilter(value)} key={value}>
                 {label}{value === "all" && <> <span>{loading ? "—" : countLabel(allSongs.length)}</span></>}
               </button>
@@ -70,7 +70,7 @@ export function MyLibraryList({ songs, loading = false, header }: { songs: reado
           </label>
         </div>
         <table className={styles.songTable}>
-          <caption className="sr-only">Your saved songs, visibility, publication territory, and updated dates</caption>
+          <caption className="sr-only">Your saved songs, visibility, public-domain territory, and updated dates</caption>
           <colgroup><col className={styles.numberCol} /><col /><col className={styles.visibilityCol} /><col className={styles.dateCol} /><col className={styles.actionCol} /></colgroup>
           <thead><tr>
             <th scope="col" className={styles.rowNumber}>NO.</th>
@@ -94,7 +94,7 @@ export function MyLibraryList({ songs, loading = false, header }: { songs: reado
                     <Link className={styles.songName} href={href}>{song.title}</Link>
                     <span className={styles.mobileMeta}><span className={published ? styles.published : undefined}>{publicationStatusForSong(song)}</span><br />{dateLabel(song.updatedAt)}</span>
                   </td>
-                  <td><span className={`${styles.visibility} ${published ? styles.published : ""}`}>{published ? "Published" : "Private"}</span>{published && <span className={styles.territory}>{publicationLabel(publicationValueForSong(song))}</span>}</td>
+                  <td><span className={`${styles.visibility} ${published ? styles.published : ""}`}>{published ? "Public domain" : "Private"}</span>{published && <span className={styles.territory}>{publicationLabel(publicationValueForSong(song))}</span>}</td>
                   <td className={styles.updated}><time dateTime={new Date(song.updatedAt).toISOString()}>{dateLabel(song.updatedAt)}</time></td>
                   <td><Link className={styles.openSong} href={href} aria-label={`Open ${song.title}`}>Open</Link></td>
                 </tr>

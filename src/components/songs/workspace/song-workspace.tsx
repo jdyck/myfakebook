@@ -115,7 +115,7 @@ export function SongWorkspace({
     ? publishedSongs.find((song) => song.id === selectedPublicSongId)
     : undefined;
   const binderSong: BinderSong | null = isPublicSong
-    ? publicLibraryIsPersisted && selectedPublicSong && (selectedPublicSong.publicationTerritory ?? "worldwide") === "worldwide"
+    ? publicLibraryIsPersisted && selectedPublicSong
       ? { id: selectedPublicSong.id as Id<"songs">, title: songTitle }
       : null
     : currentSong

@@ -90,6 +90,7 @@ function ConnectedRecentMyLibrarySongs({
       abc: song.abc,
       abcParts: song.abcParts,
       content: song.content,
+      publicDomainTerritory: song.publicDomainTerritory,
       publicationState: song.publicationState,
       publicationTerritory: song.publicationTerritory,
     }));
@@ -227,7 +228,8 @@ function ConnectedRecentMyLibrarySongs({
                       abc: song.abc,
                       abcParts: song.abcParts,
                       content: song.content,
-                      publicationState: song.publicationState,
+                      publicDomainTerritory: song.publicDomainTerritory,
+      publicationState: song.publicationState,
                       publicationTerritory: song.publicationTerritory,
                     };
                     songId.current = song._id;

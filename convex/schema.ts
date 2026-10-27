@@ -12,6 +12,8 @@ export default defineSchema({
     abc: v.optional(v.string()),
     abcParts: v.optional(v.string()),
     content: v.optional(songContentValidator),
+    // Legacy fields remain during the rolling migration.
+    publicDomainTerritory: v.optional(v.union(v.literal("none"), v.literal("US"), v.literal("worldwide"))),
     publicationState: v.union(v.literal("private"), v.literal("published")),
     publicationTerritory: v.optional(v.union(v.literal("US"), v.literal("worldwide"))),
     updatedAt: v.number(),
@@ -24,10 +26,12 @@ export default defineSchema({
   binders: defineTable({
     ownerId: v.string(),
     name: v.string(),
+    published: v.optional(v.boolean()),
     updatedAt: v.number(),
     legacySetListId: v.optional(v.string()),
   })
     .index("by_owner_updatedAt", ["ownerId", "updatedAt"])
+    .index("by_published_updatedAt", ["published", "updatedAt"])
     .index("by_legacySetListId", ["legacySetListId"]),
 
   binderItems: defineTable({

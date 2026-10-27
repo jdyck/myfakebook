@@ -50,3 +50,42 @@ Use `npm run db:export:prod -- --help` or `npm run db:import:dev -- --help` for 
 ```bash
 npm run db:import:dev -- --owner user_... --dry-run
 ```
+
+## Public-domain songs and published binders
+
+Non-admin users create songs and binders for themselves. Only admins can classify
+songs as public domain or publish their own binders. Song creation always starts
+private; adding a song to a published binder never changes that song's access.
+
+Songs use `publicDomainTerritory`: `none` (creator only), `US` (US visitors and the
+creator), or `worldwide` (everyone). Binders use `published`, defaulting to false.
+Published binders are available to signed-out visitors at `/binders` and
+`/binders/[id]`. Their public views and counts omit inaccessible songs entirely.
+A US-only binder is empty outside the US. Owners retain all their binder entries.
+
+Regional access uses Vercel's `x-vercel-ip-country` header. Set the same
+server-only `PUBLIC_CATALOG_ACCESS_KEY` in Next.js and Convex. Do not prefix this
+key with `NEXT_PUBLIC_`. Unknown countries or an unavailable regional service
+fall back to worldwide access only. For local US testing, set
+`LOCAL_PUBLIC_CATALOG_COUNTRY=US` in development. Country values from browser
+request bodies and query parameters do not grant regional access.
+
+### Rolling migration
+
+Deploy the Convex compatibility schema/functions before deploying the Next.js
+changes. Existing song publication fields remain readable and are kept in sync
+for compatibility; the new admin UI writes through `songs:setPublicDomain`.
+Existing binders without a `published` field are treated as unpublished.
+
+After deployment, backfill in batches using the Convex dashboard or CLI:
+
+```bash
+npx convex run songs:migratePublicDomainStatus '{"cursor":null}'
+npx convex run binders:migratePublication '{"cursor":null}'
+```
+
+For each function, pass the returned `cursor` into the next call until `done`
+is true. Both migrations are safe to rerun. Use the appropriate deployment
+selection when running these commands; no migration is run automatically.
+Existing private data remains private throughout the rollout. Development
+imports reset both legacy publication fields and public-domain status to private.

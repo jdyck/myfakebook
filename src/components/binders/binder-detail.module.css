@@ -8,6 +8,12 @@
   .binderTitle { margin-top: 17px; }
   .binderBackLink { display: flex; align-items: center; width: fit-content; font: var(--text-xs)/1.5 var(--font-roboto-mono); letter-spacing: 1.3px; text-transform: uppercase; }
   .binderBackLink:hover { color: var(--accent); }
+  .settingsBackdrop { position: fixed; inset: 0; z-index: 100; background: rgb(0 0 0 / .5); }
+  .settingsPopup { position: fixed; top: 50%; left: 50%; z-index: 101; transform: translate(-50%, -50%); width: min(38rem, calc(100vw - 40px)); max-height: calc(100dvh - 40px); overflow-y: auto; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); }
+  .settingsNameField { font-size: var(--text-sm); }
+  .settingsNameField label { display: block; margin-bottom: 12px; color: var(--muted); }
+  .settingsNameField input { min-height: var(--spacing-touch); }
+  .settingsPublication { display: grid; justify-items: start; gap: 16px; margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); }
   .nameEditor { max-width: 28rem; margin-top: 20px; font-size: var(--text-sm); }
   .nameEditor label { display: block; margin-bottom: 8px; color: var(--muted); }
   .binderTitleInput { display: block; width: 100%; min-width: 0; cursor: text; padding: 0 0 5px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; color: var(--ink); font: inherit; letter-spacing: inherit; }

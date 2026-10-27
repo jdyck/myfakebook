@@ -19,7 +19,6 @@ export function HeaderMemberNavigation({ activeSection }: { activeSection?: Head
   return (
     <>
       <Link href="/mylibrary" aria-current={activeSection === "library" ? "page" : undefined}>My Library</Link>
-      <Link href="/binders" aria-current={activeSection === "binders" ? "page" : undefined}>Binders</Link>
     </>
   );
 }
@@ -34,6 +33,7 @@ export function HeaderView({ activeSection = "library", memberNavigation, accoun
       <nav aria-label="Main navigation" className={editorialStyles.navigation}>
         <Link href="/songs" aria-current={activeSection === "songs" ? "page" : undefined}>Songs</Link>
         {memberNavigation}
+        <Link href="/binders" aria-current={activeSection === "binders" ? "page" : undefined}>Binders</Link>
       </nav>
       <div className={editorialStyles.accountControls}>
         {accountControls}
@@ -56,6 +56,7 @@ export function HeaderView({ activeSection = "library", memberNavigation, accoun
             }}>
               <Link href="/songs" aria-current={activeSection === "songs" ? "page" : undefined}>Songs</Link>
               {memberNavigation}
+              <Link href="/binders" aria-current={activeSection === "binders" ? "page" : undefined}>Binders</Link>
             </nav>
             <div className={editorialStyles.menuAccountControls}>
               <p className="w-full text-xs font-semibold text-muted">Account</p>

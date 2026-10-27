@@ -34,7 +34,16 @@ function ConnectedSaveToBinderButton({
   const binders = useQuery(api.binders.listMine, isAuthenticated ? {} : "skip");
   const addSong = useMutation(api.binders.addSong);
   if (!isAuthenticated) return null;
-  return <SaveToBinderView song={song} binders={binders} addSong={addSong} onStatus={onStatus} />;
+  return <SaveToBinderView song={song} binders={binders} addSong={async (args) => {
+    try { return await addSong(args); }
+    catch (error) {
+      const response = await fetch("/api/binder-owner", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(args),
+      });
+      if (!response.ok) throw error;
+      return (await response.json()).itemId;
+    }
+  }} onStatus={onStatus} />;
 }
 
 export function SaveBinderDisplaySettingsButton({

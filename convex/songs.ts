@@ -1,8 +1,9 @@
 import { v } from "convex/values";
 
-import { internalQuery, mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { isAdmin, requireAdmin, requireOwner, requireUser } from "./auth";
-import { listMine, listPublished, removeSong, saveSong, setPublicationState } from "./songStore";
+import { listMine, listPublicDomain, removeSong, saveSong, setPublicDomainStatus } from "./songStore";
+import { canReadSong, publicDomainTerritory } from "./songAccess";
 import { songContentValidator } from "./validators";
 
 export const listMySongs = query({
@@ -13,12 +14,13 @@ export const listMySongs = query({
 export const listPublicSongs = query({
   args: {},
   handler: async (ctx) => {
-    const songs = await listPublished(ctx);
-    return songs.filter((song) => (song.publicationTerritory ?? "worldwide") === "worldwide").map((song) => ({
+    const songs = await listPublicDomain(ctx);
+    return songs.filter((song) => canReadSong(song)).map((song) => ({
       id: song._id,
       ...(song.catalogId
         ? { catalogId: song.catalogId }
         : {}),
+      publicDomainTerritory: publicDomainTerritory(song),
       publicationTerritory: song.publicationTerritory ?? "worldwide",
       title: song.title,
       writers: song.writers,
@@ -35,10 +37,11 @@ export const listAdminPublicSongs = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const songs = await listPublished(ctx);
+    const songs = await listPublicDomain(ctx);
     return songs.map((song) => ({
       id: song._id,
       ...(song.catalogId ? { catalogId: song.catalogId } : {}),
+      publicDomainTerritory: publicDomainTerritory(song),
       publicationTerritory: song.publicationTerritory ?? "worldwide",
       title: song.title,
       writers: song.writers,
@@ -54,15 +57,13 @@ export const listAdminPublicSongs = query({
 export const listPublicSongsForCountry = internalQuery({
   args: { country: v.union(v.literal("US"), v.literal("other")) },
   handler: async (ctx, { country }) => {
-    const songs = await listPublished(ctx);
+    const songs = await listPublicDomain(ctx);
     return songs
-      .filter((song) => {
-        const territory = song.publicationTerritory ?? "worldwide";
-        return territory === "worldwide" || (territory === "US" && country === "US");
-      })
+      .filter((song) => canReadSong(song, undefined, country))
       .map((song) => ({
         id: song._id,
         ...(song.catalogId ? { catalogId: song.catalogId } : {}),
+        publicDomainTerritory: publicDomainTerritory(song),
         publicationTerritory: song.publicationTerritory ?? "worldwide",
         title: song.title,
         writers: song.writers,
@@ -102,7 +103,7 @@ export const publish = mutation({
   args: { id: v.id("songs") },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
-    return setPublicationState(ctx, args.id, identity.subject, "worldwide");
+    return setPublicDomainStatus(ctx, args.id, identity.subject, "worldwide");
   },
 });
 
@@ -113,7 +114,7 @@ export const setPublication = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
-    return setPublicationState(ctx, args.id, identity.subject, args.publication);
+    return setPublicDomainStatus(ctx, args.id, identity.subject, args.publication);
   },
 });
 
@@ -121,11 +122,36 @@ export const unpublish = mutation({
   args: { id: v.id("songs") },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
-    return setPublicationState(ctx, args.id, identity.subject, "none");
+    return setPublicDomainStatus(ctx, args.id, identity.subject, "none");
   },
 });
 
 export const remove = mutation({
   args: { id: v.id("songs") },
   handler: async (ctx, args) => removeSong(ctx, args.id, await requireOwner(ctx)),
+});
+
+// Safe to run repeatedly after deploying the compatibility schema.
+export const migratePublicDomainStatus = internalMutation({
+  args: { cursor: v.union(v.string(), v.null()) },
+  handler: async (ctx, { cursor }) => {
+    const page = await ctx.db.query("songs").paginate({ cursor, numItems: 100 });
+    for (const song of page.page) {
+      if (song.publicDomainTerritory === undefined) {
+        await ctx.db.patch("songs", song._id, { publicDomainTerritory: publicDomainTerritory(song) });
+      }
+    }
+    return { cursor: page.continueCursor, done: page.isDone };
+  },
+});
+
+export const setPublicDomain = mutation({
+  args: {
+    id: v.id("songs"),
+    territory: v.union(v.literal("none"), v.literal("US"), v.literal("worldwide")),
+  },
+  handler: async (ctx, { id, territory }) => {
+    const identity = await requireAdmin(ctx);
+    return setPublicDomainStatus(ctx, id, identity.subject, territory);
+  },
 });

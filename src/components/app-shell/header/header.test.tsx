@@ -16,9 +16,10 @@ describe("Header navigation", () => {
     authState.signedIn = false;
   });
 
-  it("links guests to Songs without showing My Library", () => {
+  it("links guests to Songs and public binders without showing My Library", () => {
     const markup = renderToStaticMarkup(<Header clerkConfigured={true} />);
     expect(markup).toContain('href="/songs"');
+    expect(markup).toContain('href="/binders"');
     expect(markup).not.toContain('href="/mylibrary"');
   });
 

@@ -1,3 +1,4 @@
+import { publicDomainTerritory } from "./songAccess";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { sameSongContent } from "../src/lib/songs/song-content";
@@ -7,7 +8,7 @@ export type SongId = Id<"songs">;
 type ReadCtx = QueryCtx | MutationCtx;
 
 export function withSongContent(song: Doc<"songs">) {
-  return { ...song, ...resolveSongSource(song) };
+  return { ...song, publicDomainTerritory: publicDomainTerritory(song), ...resolveSongSource(song) };
 }
 
 export function prepareSongContent(data: SongSourceInput, previousAbc = "") {
@@ -23,7 +24,7 @@ export async function listMine(ctx: ReadCtx, ownerId: string) {
   return songs.map(withSongContent);
 }
 
-export async function listPublished(ctx: ReadCtx) {
+export async function listPublicDomain(ctx: ReadCtx) {
   const songs = await ctx.db
     .query("songs")
     .withIndex("by_publication_updatedAt", (query) => query.eq("publicationState", "published"))
@@ -44,7 +45,7 @@ export async function saveSong(
   if (requestedId) {
     const existing = await ctx.db.get("songs", requestedId);
     if (!existing || existing.ownerId !== ownerId) throw new Error("Song not found");
-    if (existing.publicationState === "published" && !canEditPublished) throw new Error("Not authorized");
+    if (publicDomainTerritory(existing) !== "none" && !canEditPublished) throw new Error("Not authorized");
     const notation = data.content === undefined && data.abc === undefined && data.abcParts === undefined
       ? prepareSongContent({ ...existing, title: data.title })
       : prepareSongContent(data, withSongContent(existing).abc);
@@ -88,12 +89,13 @@ export async function saveSong(
     abc,
     content,
     abcParts,
+    publicDomainTerritory: "none",
     publicationState: "private",
     updatedAt: now,
   });
 }
 
-export async function setPublicationState(
+export async function setPublicDomainStatus(
   ctx: MutationCtx,
   id: SongId,
   ownerId: string,
@@ -103,15 +105,14 @@ export async function setPublicationState(
   if (!song || song.ownerId !== ownerId) throw new Error("Song not found");
   const publicationState = publication === "none" ? "private" : "published";
   const publicationTerritory = publication === "none" ? undefined : publication;
-  const currentPublication = song.publicationState === "private"
-    ? "none"
-    : song.publicationTerritory ?? "worldwide";
-  if (currentPublication === publication) return id;
+  const currentPublication = publicDomainTerritory(song);
+  if (currentPublication === publication && song.publicDomainTerritory === publication) return id;
   if (publication !== "none" && !song.abc?.trim() && !song.abcParts?.trim() && !withSongContent(song).content.measures.length) {
     throw new Error("Song content or ABC is required");
   }
   const now = Date.now();
   await ctx.db.patch("songs", id, {
+    publicDomainTerritory: publication,
     publicationState,
     publicationTerritory,
     publishedAt: publication === "none" ? undefined : song.publishedAt ?? now,
@@ -123,7 +124,7 @@ export async function setPublicationState(
 export async function removeSong(ctx: MutationCtx, id: SongId, ownerId: string) {
   const song = await ctx.db.get("songs", id);
   if (!song || song.ownerId !== ownerId) throw new Error("Song not found");
-  if (song.publicationState === "published") throw new Error("Unpublish song before removing");
+  if (publicDomainTerritory(song) !== "none") throw new Error("Remove public-domain status before removing");
   const binderItems = await ctx.db
     .query("binderItems")
     .withIndex("by_song", (query) => query.eq("songId", id))

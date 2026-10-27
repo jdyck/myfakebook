@@ -27,7 +27,7 @@ describe("My Library list", () => {
     expect(markup).toContain('href="/mylibrary/song_2"');
     expect(markup).toContain("First Song");
     expect(markup).toContain("Second Song");
-    expect(markup).toContain("Published");
+    expect(markup).toContain("Public domain");
     expect(markup).not.toContain("textarea");
   });
 
@@ -54,7 +54,7 @@ describe("My Library list", () => {
         { id: "bravo" as Id<"songs">, title: "Bravo", updatedAt: 2, publicationState: "published" },
       ]} />));
       expect(titles()).toEqual(["Zulu", "Bravo", "Alpha"]);
-      await click("Published");
+      await click("Public domain");
       expect(titles()).toEqual(["Zulu", "Bravo"]);
       expect(container.textContent).toContain("02 OF 03 SONGS");
 

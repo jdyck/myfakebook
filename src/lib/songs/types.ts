@@ -11,11 +11,13 @@ export type LoadedSong = {
   abc: string;
   abcParts?: string;
   content?: SongContent;
+  publicDomainTerritory?: PublicationValue;
   publicationState: "private" | "published";
   publicationTerritory?: "US" | "worldwide";
 };
 
-export function publicationValueForSong(song: Pick<LoadedSong, "publicationState" | "publicationTerritory">): PublicationValue {
+export function publicationValueForSong(song: Pick<LoadedSong, "publicationState" | "publicationTerritory" | "publicDomainTerritory">): PublicationValue {
+  if (song.publicDomainTerritory !== undefined) return song.publicDomainTerritory;
   if (song.publicationState === "private") return "none";
   return song.publicationTerritory ?? "worldwide";
 }
@@ -24,13 +26,13 @@ export function publicationLabel(value: PublicationValue) {
   switch (value) {
     case "US": return "U.S.";
     case "worldwide": return "Worldwide";
-    case "none": return "None";
+    case "none": return "Not public domain";
   }
 }
 
-export function publicationStatusForSong(song: Pick<LoadedSong, "publicationState" | "publicationTerritory">) {
+export function publicationStatusForSong(song: Pick<LoadedSong, "publicationState" | "publicationTerritory" | "publicDomainTerritory">) {
   const value = publicationValueForSong(song);
-  return value === "none" ? "Private" : `Published · ${publicationLabel(value)}`;
+  return value === "none" ? "Private" : `Public domain · ${publicationLabel(value)}`;
 }
 
 export type BinderSong = { id: Id<"songs">; title: string };

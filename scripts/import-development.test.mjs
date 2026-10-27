@@ -6,9 +6,9 @@ import { copySongs, developmentDeployment, latestExport } from "./import-develop
 
 describe("development song import", () => {
   it("drops production IDs to avoid cross-table conflicts while preserving replacement times", () => {
-    const source = { _id: "original", _creationTime: 123, updatedAt: 456, ownerId: "user_prod", title: "Tune", publicationState: "published", publishedAt: 789, catalogId: "catalog" };
+    const source = { _id: "original", _creationTime: 123, updatedAt: 456, ownerId: "user_prod", title: "Tune", publicationState: "published", publicDomainTerritory: "worldwide", publishedAt: 789, catalogId: "catalog" };
     expect(copySongs(JSON.stringify(source), "user_dev", undefined, true)).toEqual([{
-      _creationTime: 123, updatedAt: 456, ownerId: "user_dev", title: "Tune", publicationState: "private",
+      _creationTime: 123, updatedAt: 456, ownerId: "user_dev", title: "Tune", publicationState: "private", publicDomainTerritory: "none",
     }]);
     expect(copySongs(JSON.stringify({ ...source, _id: undefined }), "user_dev", undefined, true)[0]._creationTime).toBe(123);
     for (const invalid of [{ ownerId: "user_prod" }, { ...source, _creationTime: "123" }, { ...source, _creationTime: -1 }]) {
@@ -16,9 +16,9 @@ describe("development song import", () => {
     }
   });
   it("copies notation to a private development song without production identity or publication metadata", () => {
-    const source = { _id: "old", _creationTime: 1, ownerId: "user_prod", title: "Tune", abc: "K:C", content: { measures: [] }, publicationState: "published", publicationTerritory: "US", publishedAt: 2, catalogId: "catalog", updatedAt: 3 };
+    const source = { _id: "old", _creationTime: 1, ownerId: "user_prod", title: "Tune", abc: "K:C", content: { measures: [] }, publicationState: "published", publicDomainTerritory: "worldwide", publicationTerritory: "US", publishedAt: 2, catalogId: "catalog", updatedAt: 3 };
     expect(copySongs(JSON.stringify(source), "user_dev")).toEqual([{
-      ownerId: "user_dev", title: "Tune", abc: "K:C", content: { measures: [] }, publicationState: "private", updatedAt: 3,
+      ownerId: "user_dev", title: "Tune", abc: "K:C", content: { measures: [] }, publicationState: "private", publicDomainTerritory: "none", updatedAt: 3,
     }]);
     expect(source.ownerId).toBe("user_prod");
   });

@@ -37,7 +37,7 @@ export function PublicSongsListView({ songs, isAdmin = false, header }: { songs:
       section="songs"
       title="Songs"
       titleId="songs-heading"
-      description={isAdmin ? "Published songs in all territories." : "Songs available in your region."}
+      description={isAdmin ? "Public-domain songs in all territories." : "Songs available in your region."}
       stats={[
         ["IN THE CATALOG", allSongs.length],
         ["COMPOSERS / WRITERS", new Set(allSongs.map((song) => song.writers.trim()).filter(Boolean)).size],
@@ -45,7 +45,7 @@ export function PublicSongsListView({ songs, isAdmin = false, header }: { songs:
       ]}
       loading={loading}
     >
-      <section className={styles.songLibrary} aria-label="Published songs" aria-busy={loading}>
+      <section className={styles.songLibrary} aria-label="Public-domain songs" aria-busy={loading}>
         <div className={styles.libraryToolbar}>
           <div className={styles.filters} role="group" aria-label="Song catalog">
             <button type="button" className={styles.filter} aria-pressed={!searchQuery} onClick={() => setQuery("")}>
@@ -58,7 +58,7 @@ export function PublicSongsListView({ songs, isAdmin = false, header }: { songs:
           </label>
         </div>
         <table className={styles.songTable}>
-          <caption className="sr-only">Published songs, composers, and styles{isAdmin ? ", with publication territories" : ""}</caption>
+          <caption className="sr-only">Public-domain songs, composers, and styles{isAdmin ? ", with public-domain territories" : ""}</caption>
           <colgroup><col className={styles.numberCol} /><col /><col className={styles.visibilityCol} /><col className={styles.dateCol} /><col className={styles.actionCol} /></colgroup>
           <thead><tr>
             <th scope="col" className={styles.rowNumber}>NO.</th>
@@ -89,7 +89,7 @@ export function PublicSongsListView({ songs, isAdmin = false, header }: { songs:
           </tbody>
         </table>
         {loading ? <p className={styles.emptyState} role="status">Loading songs…</p> : !allSongs.length ? (
-          <div className={styles.emptyState}><h2>No published songs yet.</h2><p>Published songs will appear here when they’re available.</p></div>
+          <div className={styles.emptyState}><h2>No public-domain songs yet.</h2><p>Public-domain songs will appear here when they’re available.</p></div>
         ) : !visibleSongs.length ? (
           <div className={styles.emptyState}><h2>No songs found.</h2><p>Try another title, composer, or style.</p><button type="button" onClick={() => setQuery("")}>Clear search</button></div>
         ) : null}

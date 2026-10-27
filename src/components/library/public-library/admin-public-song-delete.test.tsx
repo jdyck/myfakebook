@@ -44,17 +44,17 @@ it("keeps an unpublished song in My Library", async () => {
     });
 
     await act(async () => {
-      container.querySelector<HTMLButtonElement>('button[aria-label="Published: Worldwide"]')?.click();
+      container.querySelector<HTMLButtonElement>('button[aria-label="Public domain: Worldwide"]')?.click();
     });
 
     const option = Array.from(document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
-      .find((item) => item.textContent?.includes("None"));
+      .find((item) => item.textContent?.includes("Not public domain"));
     expect(option).toBeDefined();
     await act(async () => {
       option!.click();
     });
 
-    expect(mocks.setPublication).toHaveBeenCalledExactlyOnceWith({ id: songId, publication: "none" });
+    expect(mocks.setPublication).toHaveBeenCalledExactlyOnceWith({ id: songId, territory: "none" });
     expect(mocks.push).toHaveBeenCalledExactlyOnceWith(`/mylibrary/${songId}`);
     expect(onStatus).toHaveBeenLastCalledWith("Song is private");
   } finally {

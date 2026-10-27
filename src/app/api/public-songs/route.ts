@@ -4,28 +4,7 @@ import { api } from "../../../../convex/_generated/api";
 
 const responseHeaders = { "Cache-Control": "private, no-store" };
 
-function getCatalogCountry(request: Request): "US" | "other" {
-  if (process.env.NODE_ENV === "development" && process.env.LOCAL_PUBLIC_CATALOG_COUNTRY === "US") {
-    return "US";
-  }
-
-  const vercelCountry = request.headers.get("x-vercel-ip-country");
-  if (vercelCountry !== null) return vercelCountry === "US" ? "US" : "other";
-
-  return "other";
-}
-
-function getConvexSiteUrl() {
-  if (process.env.CONVEX_SITE_URL) return process.env.CONVEX_SITE_URL.replace(/\/$/, "");
-
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!convexUrl) return undefined;
-
-  const url = new URL(convexUrl);
-  if (!url.hostname.endsWith(".convex.cloud")) return undefined;
-  url.hostname = url.hostname.replace(/\.convex\.cloud$/, ".convex.site");
-  return url.toString().replace(/\/$/, "");
-}
+import { getCatalogCountry, getConvexSiteUrl } from "@/lib/songs/catalog-server";
 
 export async function GET(request: Request) {
   const accessKey = process.env.PUBLIC_CATALOG_ACCESS_KEY;

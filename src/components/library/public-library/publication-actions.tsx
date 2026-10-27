@@ -34,7 +34,7 @@ function ConnectedAdminPublicationButton({
   onStatus: (status: string) => void;
 }) {
   const { user } = useUser();
-  const setPublication = useMutation(api.songs.setPublication);
+  const setPublicDomain = useMutation(api.songs.setPublicDomain);
   const [changing, setChanging] = useState(false);
   const isAdmin = user?.publicMetadata?.role === "admin";
   const publication = publicationValueForSong(song);
@@ -44,17 +44,18 @@ function ConnectedAdminPublicationButton({
   async function handleChange(nextPublication: PublicationValue) {
     if (nextPublication === publication) return;
     setChanging(true);
-    onStatus(nextPublication === "none" ? "Unpublishing…" : "Publishing…");
+    onStatus("Updating public-domain status…");
     try {
-      await setPublication({ id: song.id, publication: nextPublication });
+      await setPublicDomain({ id: song.id, territory: nextPublication });
       onChanged({
         ...song,
+        publicDomainTerritory: nextPublication,
         publicationState: nextPublication === "none" ? "private" : "published",
         publicationTerritory: nextPublication === "none" ? undefined : nextPublication,
       });
-      onStatus(nextPublication === "none" ? "Song is private" : `Published ${publicationLabel(nextPublication)}`);
+      onStatus(nextPublication === "none" ? "Song is private" : `Public domain · ${publicationLabel(nextPublication)}`);
     } catch {
-      onStatus("Couldn’t update publication");
+      onStatus("Couldn’t update public-domain status");
     } finally {
       setChanging(false);
     }

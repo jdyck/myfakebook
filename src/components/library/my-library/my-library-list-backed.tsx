@@ -17,7 +17,8 @@ export function MyLibraryListBacked() {
     id: song._id,
     title: song.title,
     updatedAt: song.updatedAt,
-    publicationState: song.publicationState,
+    publicDomainTerritory: song.publicDomainTerritory,
+      publicationState: song.publicationState,
     publicationTerritory: song.publicationTerritory,
   }));
   return <MyLibraryList header={<Header clerkConfigured activeSection="library" />} songs={songs} loading={isLoading || (isAuthenticated && !savedSongs)} />;

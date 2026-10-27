@@ -28,7 +28,7 @@ export function copySongs(jsonl, ownerId, sourceOwner, replace = false) {
     if (replace && (!Number.isFinite(source._creationTime) || source._creationTime < 0)) {
       throw new Error("Replacement requires each song's original numeric _creationTime.");
     }
-    const song = { ...source, ownerId, publicationState: "private" };
+    const song = { ...source, ownerId, publicationState: "private", publicDomainTerritory: "none" };
     // Production IDs embed table numbers that can refer to different dev tables.
     const removedFields = ["_id", "publishedAt", "publicationTerritory", "catalogId"];
     if (!replace) removedFields.push("_creationTime");
