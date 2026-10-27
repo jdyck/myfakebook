@@ -20,7 +20,10 @@ const binder = {
 
 vi.mock("convex/react", () => ({
   useConvexAuth: () => ({ isAuthenticated: true, isLoading: false }),
-  useQuery: (_query: unknown, args: object) => "id" in args ? binder : [],
+  useQuery: (_query: unknown, args: object) => "id" in args ? binder : [
+    { songId: "song_3", title: "Third song", isPublic: true },
+    { songId: "song_4", title: "Fourth song", isPublic: false },
+  ],
   useMutation: () => state.mutate,
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: state.push }) }));
@@ -70,13 +73,44 @@ describe("Binder detail", () => {
     }
   });
 
-  it("saves the binder name from the page heading", async () => {
+  it("selects multiple songs and adds them together", async () => {
+    HTMLDialogElement.prototype.showModal = function () { this.open = true; };
+    HTMLDialogElement.prototype.close = function () { this.open = false; };
     const container = document.createElement("div");
     document.body.appendChild(container);
     const root = createRoot(container);
     try {
       await act(async () => root.render(<BinderDetail id="binder_1" />));
-      const input = container.querySelector<HTMLInputElement>('h1 input[aria-label="Binder name"]')!;
+      const open = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("Add song"))!;
+      await act(async () => open.click());
+      const options = Array.from(container.querySelectorAll<HTMLElement>('[role="option"]'));
+      expect(options).toHaveLength(2);
+      await act(async () => options[0].click());
+      await act(async () => options[1].click());
+      expect(state.mutate).not.toHaveBeenCalled();
+      const submit = container.querySelector<HTMLButtonElement>('dialog button[type="submit"]')!;
+      expect(submit.textContent).toBe("Add 2 songs");
+      await act(async () => submit.click());
+      expect(state.mutate).toHaveBeenNthCalledWith(1, { binderId: "binder_1", songId: "song_3" });
+      expect(state.mutate).toHaveBeenNthCalledWith(2, { binderId: "binder_1", songId: "song_4" });
+      expect(container.querySelector("dialog")!.open).toBe(false);
+    } finally {
+      await act(async () => root.unmount());
+      container.remove();
+    }
+  });
+
+  it("opens binder settings and saves the binder name", async () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    try {
+      await act(async () => root.render(<BinderDetail id="binder_1" />));
+      expect(container.querySelector("h1")?.textContent).toBe("Friday set");
+      expect(container.textContent).not.toContain("THE RUNNING ORDER.");
+      expect(container.querySelector('input#binder-name')).toBeNull();
+      await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="Edit binder settings"]')!.click());
+      const input = container.querySelector<HTMLInputElement>('input#binder-name')!;
       await act(async () => input.focus());
       await act(async () => {
         Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "Saturday set");

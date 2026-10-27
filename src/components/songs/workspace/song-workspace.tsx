@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { SongEditorDrawer } from "@/components/songs/editor/song-editor-drawer";
 import { RemoveSongButton, SaveToMyLibraryButton } from "@/components/library/my-library/actions";
 import { AdminPublicationButton, AdminPublicSongPublicationMenu } from "@/components/library/public-library/publication-actions";
@@ -402,11 +401,6 @@ export function SongWorkspace({
           />
         </div>
       </div>
-      <footer className={componentStyles.pageFooter}>
-        <p>TRADITION <span>/</span> INTERPRETATION <span>/</span> <b>NEXT</b></p>
-        <Image src="/images/library/bar.svg" width={34} height={5} alt="" />
-        <p>FOR MUSICIANS.<br />FOR THE MUSIC.</p>
-      </footer>
       </main>
       {feedback && <p className={componentStyles.status} role="status">{feedback}</p>}
     </div>

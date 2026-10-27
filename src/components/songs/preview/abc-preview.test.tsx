@@ -11,7 +11,6 @@ const mocks = vi.hoisted(() => {
   return { synth, tune, timingOptions, renderOptions: vi.fn() };
 });
 
-vi.mock("next/font/google", () => ({ Roboto_Condensed: () => ({ className: "condensed" }) }));
 vi.mock("abcjs", () => ({ default: {
   parseOnly: () => [mocks.tune],
   strTranspose: (abc: string) => abc,

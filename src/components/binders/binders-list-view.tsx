@@ -17,9 +17,8 @@ type SortField = "name" | "itemCount" | "updatedAt";
 const countLabel = (count: number) => String(count).padStart(2, "0");
 const dateLabel = (timestamp: number) => new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-export function BindersListView({ binders, loading = false, onCreate, header, captionClassName }: {
+export function BindersListView({ binders, loading = false, onCreate, header }: {
   header?: ReactNode;
-  captionClassName?: string;
   binders: readonly BinderSummary[] | undefined;
   loading?: boolean;
   onCreate?: (name: string) => Promise<void>;
@@ -58,14 +57,9 @@ export function BindersListView({ binders, loading = false, onCreate, header, ca
   return (
     <EditorialLibraryView
       header={header}
-      captionClassName={captionClassName}
       section="binders"
       title="Binders"
       titleId="binders-heading"
-      eyebrow="YOUR SETS"
-      description={<>Your songs. Your order.<br /><span>A performance of your own.</span></>}
-      noteTitle="THE SONGS YOU BRING."
-      note={<>Gather them.<br />Find your flow.<br />Make the set yours.</>}
       stats={[
         ["YOUR BINDERS", allBinders.length],
         ["SONGS IN YOUR SETS", allBinders.reduce((count, binder) => count + binder.itemCount, 0)],
@@ -127,7 +121,6 @@ export function BindersListView({ binders, loading = false, onCreate, header, ca
         ) : null}
         <div className={styles.tableFooter}>
           <p role="status">{loading ? "LOADING YOUR BINDERS" : searchQuery ? `${countLabel(visibleBinders.length)} OF ${countLabel(allBinders.length)} BINDERS` : `${countLabel(allBinders.length)} BINDER${allBinders.length === 1 ? "" : "S"} IN YOUR COLLECTION`}</p>
-          <p>GATHER / ARRANGE / PERFORM</p>
         </div>
       </section>
     </EditorialLibraryView>

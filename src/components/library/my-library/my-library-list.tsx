@@ -23,7 +23,7 @@ type Sort = { field: "title" | "updatedAt"; ascending: boolean };
 const countLabel = (count: number) => String(count).padStart(2, "0");
 const dateLabel = (timestamp: number) => new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-export function MyLibraryList({ songs, loading = false, header, captionClassName }: { songs: readonly LibrarySong[] | undefined; loading?: boolean; header?: ReactNode; captionClassName?: string }) {
+export function MyLibraryList({ songs, loading = false, header }: { songs: readonly LibrarySong[] | undefined; loading?: boolean; header?: ReactNode }) {
   const [filter, setFilter] = useState<VisibilityFilter>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>({ field: "updatedAt", ascending: false });
@@ -49,14 +49,9 @@ export function MyLibraryList({ songs, loading = false, header, captionClassName
   return (
     <EditorialLibraryView
       header={header}
-      captionClassName={captionClassName}
       section="library"
       title="My Library"
       titleId="library-title"
-      eyebrow="YOUR COLLECTION"
-      description={<>Your saved songs.<br /><span>A repertoire of your own.</span></>}
-      noteTitle="THE SONGS YOU KEEP."
-      note={<>Study them.<br />Make them yours.<br />Take them further.</>}
       stats={[["IN YOUR LIBRARY", allSongs.length], ["PRIVATE", privateCount], ["PUBLISHED", allSongs.length - privateCount]]}
       loading={loading}
     >
@@ -114,7 +109,6 @@ export function MyLibraryList({ songs, loading = false, header, captionClassName
         ) : null}
         <div className={styles.tableFooter}>
           <p role="status">{loading ? "LOADING YOUR COLLECTION" : filter !== "all" || searchQuery ? `${countLabel(visibleSongs.length)} OF ${countLabel(allSongs.length)} SONGS` : `${countLabel(allSongs.length)} SONG${allSongs.length === 1 ? "" : "S"} IN YOUR LIBRARY`}</p>
-          <p>COLLECT / EDIT / TRANSPOSE</p>
         </div>
       </section>
     </EditorialLibraryView>

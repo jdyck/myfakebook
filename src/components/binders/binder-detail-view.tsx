@@ -3,10 +3,11 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Combobox } from "@base-ui/react/combobox";
 import Link from "next/link";
-import { Check, GripVertical, Plus, Search, Trash2, X } from "lucide-react";
+import { Check, GripVertical, Plus, Search, Settings, Trash2, X } from "lucide-react";
 
 import type { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
+import titleStyles from "@/components/ui/page-title.module.css";
 import libraryStyles from "@/components/library/editorial-library.module.css";
 import { PreviewPanel } from "@/components/songs/preview/preview-panel";
 import { DisplayControls } from "@/components/songs/workspace/display-controls";
@@ -51,6 +52,7 @@ export type BinderDetailViewProps = {
 
 export function BinderDetailView({ binder, availableSongs, loading, header, onDeleted, renameBinder, removeBinder, addSong, updateDisplaySettings, removeItem, reorder }: BinderDetailViewProps) {
   const validId = binder?._id ?? null;
+  const [isEditingName, setIsEditingName] = useState(false);
   const [nameOverride, setNameOverride] = useState<string | null>(null);
   const nameDraft = useRef<string | null>(null);
   const savedName = useRef(binder?.name ?? "");
@@ -59,7 +61,7 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
   const pendingNameSave = useRef<string | null>(null);
   const [isAddSongDialogOpen, setIsAddSongDialogOpen] = useState(false);
   const [songSearch, setSongSearch] = useState("");
-  const [selectedSongId, setSelectedSongId] = useState<Id<"songs"> | null>(null);
+  const [selectedSongIds, setSelectedSongIds] = useState<Id<"songs">[]>([]);
   const [addSongError, setAddSongError] = useState<string | null>(null);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [settingsByItem, setSettingsByItem] = useState<Record<string, SongDisplaySettings>>({});
@@ -82,7 +84,6 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
   const [status, setStatus] = useState<string | null>(null);
   const addSongDialogRef = useRef<HTMLDialogElement>(null);
   const addSongSearchRef = useRef<HTMLInputElement>(null);
-  const highlightedSongId = useRef<Id<"songs"> | null>(null);
   const addSongDialogId = useId();
   const addSongTitleId = useId();
   const addSongDescriptionId = useId();
@@ -90,7 +91,7 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
   const savedBinderName = binder?.name ?? "";
   const name = nameOverride ?? binder?.name ?? "";
   const songsToAdd = availableSongs?.filter((song) => !binder?.items.some((item) => item.songId === song.songId)) ?? [];
-  const selectedSong = songsToAdd.find((song) => song.songId === selectedSongId) ?? null;
+  const selectedSongs = songsToAdd.filter((song) => selectedSongIds.includes(song.songId));
   const selectedItem = binder?.items.find((item) => item._id === selectedItemId) ?? binder?.items[0];
   const selectedSettings = selectedItem
     ? settingsByItem[selectedItem._id] ?? { ...DEFAULT_DISPLAY_SETTINGS, ...selectedItem.displaySettings }
@@ -184,9 +185,8 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
 
   function openAddSongDialog() {
     setSongSearch("");
-    setSelectedSongId(null);
+    setSelectedSongIds([]);
     setAddSongError(null);
-    highlightedSongId.current = null;
     const dialog = addSongDialogRef.current;
     if (dialog && !dialog.open) dialog.showModal();
     setIsAddSongDialogOpen(true);
@@ -198,38 +198,31 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
     if (dialog?.open) dialog.close();
     setIsAddSongDialogOpen(false);
     setSongSearch("");
-    setSelectedSongId(null);
+    setSelectedSongIds([]);
     setAddSongError(null);
-    highlightedSongId.current = null;
-  }
-
-  async function addSongToBinder(songId: Id<"songs">) {
-    if (!validId) return;
-    const song = availableSongs?.find((candidate) => candidate.songId === songId);
-    if (!song || binder?.items.some((item) => item.songId === song.songId)) return;
-    setAddSongError(null);
-    const itemId = await runChange(() => addSong({ binderId: validId, songId: song.songId }), `${song.title} added`);
-    if (typeof itemId !== "string") {
-      setAddSongError("Couldn’t add that song. Please try again.");
-      return;
-    }
-    setSelectedItemId(itemId);
-    closeAddSongDialog();
   }
 
   async function handleAddSong(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!selectedSongId) return;
-    await addSongToBinder(selectedSongId);
-  }
-
-  function handleAddSongSearchKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key !== "Enter" || event.nativeEvent.isComposing || saving) return;
-    const songId = highlightedSongId.current;
-    if (!songId) return;
-    event.preventDefault();
-    event.stopPropagation();
-    void addSongToBinder(songId);
+    if (!validId || saving || !selectedSongs.length) return;
+    setAddSongError(null);
+    setSaving(true);
+    const remaining = selectedSongs.map((song) => song.songId);
+    try {
+      // Add in sequence so the selected songs keep their order in the binder.
+      for (const song of selectedSongs) {
+        const itemId = await addSong({ binderId: validId, songId: song.songId });
+        remaining.splice(remaining.indexOf(song.songId), 1);
+        setSelectedSongIds([...remaining]);
+        setSelectedItemId(itemId);
+      }
+      setStatus(`${selectedSongs.length} song${selectedSongs.length === 1 ? "" : "s"} added`);
+      closeAddSongDialog();
+    } catch (error) {
+      setAddSongError(error instanceof Error ? error.message : "Couldn’t add the selected songs. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function handleDeleteBinder() {
@@ -354,31 +347,44 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
           <>
             <section className={libraryStyles.pageHeading} aria-label="Binder details">
               <div className={componentStyles.titleAndDetails}>
-                <p className={libraryStyles.eyebrow}>YOUR PERFORMANCE <span>/</span> {String(binder.items.length).padStart(2, "0")} SONG{binder.items.length === 1 ? "" : "S"}</p>
-                <h1 className={componentStyles.binderTitle}>
-                  <input
-                    aria-label="Binder name"
-                    className={componentStyles.binderTitleInput}
-                    maxLength={80}
-                    onBlur={(event) => handleBinderNameBlur(event.currentTarget.value)}
-                    onChange={(event) => handleBinderNameChange(event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key !== "Enter") return;
-                      event.preventDefault();
-                      event.currentTarget.blur();
-                    }}
-                    value={name}
-                  />
-                </h1>
+                <Link className={componentStyles.binderBackLink} href="/binders">← All binders</Link>
+                <h1 className={`${titleStyles.title} ${componentStyles.binderTitle}`}>{name}</h1>
+                {isEditingName && (
+                  <div className={componentStyles.nameEditor}>
+                    <label htmlFor="binder-name">Binder name</label>
+                    <input
+                      id="binder-name"
+                      autoFocus
+                      className={componentStyles.binderTitleInput}
+                      maxLength={80}
+                      onBlur={(event) => handleBinderNameBlur(event.currentTarget.value)}
+                      onChange={(event) => handleBinderNameChange(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key !== "Enter") return;
+                        event.preventDefault();
+                        event.currentTarget.blur();
+                        setIsEditingName(false);
+                      }}
+                      value={name}
+                    />
+                  </div>
+                )}
               </div>
               <div className={libraryStyles.headingActions}>
-                <p>Your songs. Your order.<br /><span>Ready for the next set.</span></p>
-                <Link className={componentStyles.backToBindersLink} href="/binders">← All binders</Link>
+                <button
+                  type="button"
+                  className={componentStyles.sharedButton}
+                  aria-label="Edit binder settings"
+                  aria-expanded={isEditingName}
+                  onClick={() => setIsEditingName((current) => !current)}
+                >
+                  <Settings size={16} aria-hidden="true" />
+                  Settings
+                </button>
               </div>
             </section>
             <div className={componentStyles.binderWorkspace}>
               <aside className={componentStyles.binderSidebar} aria-label="Binder songs and actions">
-                <p className={libraryStyles.eyebrow}>THE RUNNING ORDER.</p>
 
                 <section className={componentStyles.binderSongsSection} aria-labelledby="binder-songs-heading">
                   <div className={componentStyles.songsSectionHeader}>
@@ -523,24 +529,25 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
                   className={componentStyles.addSongDialog}
                   id={addSongDialogId}
                   onClick={(event) => {
-                    if (event.target === event.currentTarget) closeAddSongDialog();
+                    if (event.target === event.currentTarget && !saving) closeAddSongDialog();
                   }}
+                  onCancel={(event) => { if (saving) event.preventDefault(); }}
                   onClose={() => {
                     setIsAddSongDialogOpen(false);
                     setSongSearch("");
-                    setSelectedSongId(null);
+                    setSelectedSongIds([]);
                     setAddSongError(null);
-                    highlightedSongId.current = null;
-                  }}
+                                  }}
                   ref={addSongDialogRef}
                 >
                   <section className={componentStyles.addSongDialogContent}>
                     <header className={componentStyles.addSongDialogHeader}>
                       <div>
-                        <h2 className={componentStyles.addSongDialogTitle} id={addSongTitleId}>Add a song</h2>
-                        <p className={componentStyles.addSongDialogDescription} id={addSongDescriptionId}>Search available songs for {binder.name}.</p>
+                        <h2 className={componentStyles.addSongDialogTitle} id={addSongTitleId}>Add songs</h2>
+                        <p className={componentStyles.addSongDialogDescription} id={addSongDescriptionId}>Select songs to add to {binder.name}.</p>
                       </div>
                       <button
+                        disabled={saving}
                         aria-label="Close add song dialog"
                         className={`${componentStyles.sharedButton} ${componentStyles.closeAddSongDialog}`}
                         onClick={closeAddSongDialog}
@@ -553,6 +560,8 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
                       <div className={componentStyles.addSongDialogBody}>
                         {songsToAdd.length ? (
                           <Combobox.Root
+                            multiple
+                            disabled={saving}
                             autoComplete="off"
                             autoHighlight
                             inline
@@ -561,21 +570,16 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
                             itemToStringLabel={(song: AvailableSong) => song.title}
                             itemToStringValue={(song: AvailableSong) => String(song.songId)}
                             items={songsToAdd}
-                            onInputValueChange={(value, { reason }) => {
+                            onInputValueChange={(value) => {
                               setSongSearch(value);
-                              if (reason !== "item-press") setSelectedSongId(null);
                               setAddSongError(null);
-                              highlightedSongId.current = null;
                             }}
-                            onItemHighlighted={(song, { reason }) => {
-                              highlightedSongId.current = reason === "keyboard" ? song?.songId ?? null : null;
-                            }}
-                            onValueChange={(song: AvailableSong | null) => {
-                              setSelectedSongId(song?.songId ?? null);
+                            onValueChange={(songs: AvailableSong[]) => {
+                              setSelectedSongIds(songs.map((song) => song.songId));
                               setAddSongError(null);
                             }}
                             open={isAddSongDialogOpen}
-                            value={selectedSong}
+                            value={selectedSongs}
                           >
                             <label className={componentStyles.addSongSearchLabel} htmlFor={addSongSearchId}>Search songs</label>
                             <div className={componentStyles.addSongSearchBox}>
@@ -584,7 +588,6 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
                                 id={addSongSearchId}
                                 placeholder="Type a song title…"
                                 ref={addSongSearchRef}
-                                onKeyDownCapture={handleAddSongSearchKeyDown}
                                 className={componentStyles.addSongSearchInput}
                               />
                             </div>
@@ -617,9 +620,9 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
                         {addSongError && <p className={componentStyles.addSongError} role="alert">{addSongError}</p>}
                       </div>
                       <footer className={componentStyles.addSongDialogActions}>
-                        <button className={componentStyles.sharedButton} onClick={closeAddSongDialog} type="button">Cancel</button>
-                        <button className={componentStyles.sharedPrimaryButton} disabled={saving || !selectedSong} type="submit">
-                          {saving ? "Adding…" : "Add song"}
+                        <button className={componentStyles.sharedButton} disabled={saving} onClick={closeAddSongDialog} type="button">Cancel</button>
+                        <button className={componentStyles.sharedPrimaryButton} disabled={saving || !selectedSongs.length} type="submit">
+                          {saving ? "Adding…" : selectedSongs.length ? `Add ${selectedSongs.length} song${selectedSongs.length === 1 ? "" : "s"}` : "Add songs"}
                         </button>
                       </footer>
                     </form>
@@ -667,10 +670,6 @@ export function BinderDetailView({ binder, availableSongs, loading, header, onDe
                 )}
               </section>
             </div>
-            <footer className={libraryStyles.pageFooter}>
-              <p>GATHER <span>/</span> ARRANGE <span>/</span> <b>PERFORM</b></p>
-              <p className="ml-auto">FOR MUSICIANS.<br />FOR THE MUSIC.</p>
-            </footer>
           </>
         )}
       </main>

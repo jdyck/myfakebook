@@ -12,7 +12,7 @@ import styles from "../editorial-library.module.css";
 type SortField = "title" | "writers" | "rhythm";
 const countLabel = (count: number) => String(count).padStart(2, "0");
 
-export function PublicSongsListView({ songs, isAdmin = false, header, captionClassName }: { songs: readonly PublicSong[] | undefined; isAdmin?: boolean; header?: ReactNode; captionClassName?: string }) {
+export function PublicSongsListView({ songs, isAdmin = false, header }: { songs: readonly PublicSong[] | undefined; isAdmin?: boolean; header?: ReactNode }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<{ field: SortField; ascending: boolean }>({ field: "title", ascending: true });
   const loading = songs === undefined;
@@ -34,14 +34,10 @@ export function PublicSongsListView({ songs, isAdmin = false, header, captionCla
   return (
     <EditorialLibraryView
       header={header}
-      captionClassName={captionClassName}
       section="songs"
       title="Songs"
       titleId="songs-heading"
-      eyebrow="THE SONG COLLECTION"
-      description={<>{isAdmin ? "Published songs in all territories." : "Songs available in your region."}<br /><span>A repertoire to explore.</span></>}
-      noteTitle="THE SONGS WE SHARE."
-      note={<>Discover them.<br />Make them yours.<br />Take them further.</>}
+      description={isAdmin ? "Published songs in all territories." : "Songs available in your region."}
       stats={[
         ["IN THE CATALOG", allSongs.length],
         ["COMPOSERS / WRITERS", new Set(allSongs.map((song) => song.writers.trim()).filter(Boolean)).size],
@@ -99,7 +95,6 @@ export function PublicSongsListView({ songs, isAdmin = false, header, captionCla
         ) : null}
         <div className={styles.tableFooter}>
           <p role="status">{loading ? "LOADING THE COLLECTION" : searchQuery ? `${countLabel(visibleSongs.length)} OF ${countLabel(allSongs.length)} SONGS` : `${countLabel(allSongs.length)} SONG${allSongs.length === 1 ? "" : "S"} IN THE CATALOG`}</p>
-          <p>DISCOVER / PLAY / MAKE IT YOURS</p>
         </div>
       </section>
     </EditorialLibraryView>

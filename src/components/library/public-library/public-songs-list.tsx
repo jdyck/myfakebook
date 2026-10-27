@@ -1,13 +1,10 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Roboto_Condensed } from "next/font/google";
 import { Header } from "@/components/app-shell/header/header";
 import type { PublicSong } from "@/lib/songs/public-library";
 import { usePublicSongs } from "./use-public-songs";
 import { PublicSongsListView } from "./public-songs-list-view";
-
-const condensed = Roboto_Condensed({ subsets: ["latin"], display: "swap" });
 
 type PublicSongsListProps = {
   clerkConfigured: boolean;
@@ -34,5 +31,5 @@ function ConnectedPublicSongsList({ clerkConfigured, isAdmin }: { clerkConfigure
 }
 
 export function PublicSongsList({ clerkConfigured, ...props }: PublicSongsListProps) {
-  return <PublicSongsListView {...props} header={<Header clerkConfigured={clerkConfigured} activeSection="songs" />} captionClassName={condensed.className} />;
+  return <PublicSongsListView {...props} header={<Header clerkConfigured={clerkConfigured} activeSection="songs" />} />;
 }

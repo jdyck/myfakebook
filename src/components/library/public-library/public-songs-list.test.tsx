@@ -6,7 +6,6 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/components/app-shell/header/header", () => ({ Header: () => null }));
-vi.mock("next/font/google", () => ({ Roboto_Condensed: () => ({ className: "condensed" }) }));
 
 import type { PublicSong } from "@/lib/songs/public-library";
 import { PublicSongsList } from "./public-songs-list";
